@@ -1,0 +1,15 @@
+{
+    "onMyManage": {
+        "title": "當前用戶可管轄的單位",
+        "type": "api",
+        "description": "",
+        "method": "get",
+        "url": "/user/onMyManage",
+        "request": {
+            "id": "用户的id"
+        },
+        "response": {
+            
+        }
+    }
+}

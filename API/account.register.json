@@ -1,0 +1,17 @@
+{
+    "register": {
+        "title": "注册",
+        "type": "api",
+        "description": "需要管理员授权情况下创建",
+        "method": "post",
+        "url": "/account/register",
+        "request": {
+            "Data": "#user.create#创建实体",
+            "Auth": "#static.verify.auth#授权码",
+            "verify": "#static.verify.imgverify#验证码"
+        },
+        "response": {
+            "id": "用户实体对应的id"
+        }
+    }
+}

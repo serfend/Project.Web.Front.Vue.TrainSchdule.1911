@@ -1,0 +1,15 @@
+{
+    "save": {
+        "title": "保存申请",
+        "type": "api",
+        "description": "申请提交后将会临时储存在库中，此时可以被审批流上任意层级看到，但状态是`未保存`，未被处理的申请将在24-48小时后被清理。",
+        "method": "put",
+        "url": "/apply/save",
+        "request": {
+            "id": "申请的id"
+        },
+        "response": {
+            "id": "申请的id"
+        }
+    }
+}

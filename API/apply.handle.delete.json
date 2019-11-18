@@ -1,0 +1,13 @@
+{
+    "delete": {
+        "title": "删除申请",
+        "type": "api",
+        "description": "需要拥有审核目标用户申请权限的用户操作",
+        "method": "delete",
+        "url": "/apply/delete",
+        "request": {
+            "id": "申请的id",
+            "Auth": "#static.verify.auth#操作人进行授权"
+        }
+    }
+}

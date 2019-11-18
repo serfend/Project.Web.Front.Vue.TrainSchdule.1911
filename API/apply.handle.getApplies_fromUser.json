@@ -1,0 +1,13 @@
+{
+    "fromUser": {
+        "title": "获取申请获取指定用户下可见的申请列表",
+        "type": "api",
+        "description": "",
+        "method": "get",
+        "url": "/apply/fromUser",
+        "request": {
+            "id": "用户的id"
+        },
+        "response": "#apply.applies#申请列表"
+    }
+}

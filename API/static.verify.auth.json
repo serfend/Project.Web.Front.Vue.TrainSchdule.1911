@@ -1,0 +1,11 @@
+{
+    "auth": {
+        "title": "GoogleAuth",
+        "type": "model",
+        "description": "用户下载Google身份验证器App后扫码使用",
+        "request": {
+            "AuthByUserID": "来自授权用户",
+            "Code": "101011 授权码"
+        }
+    }
+}

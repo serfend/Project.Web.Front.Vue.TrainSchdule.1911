@@ -1,0 +1,15 @@
+{
+    "login": {
+        "title": "修改用户密码",
+        "type": "api",
+        "description": "",
+        "method": "put",
+        "url": "/account/login",
+        "request": {
+            "id": "身份號，7或18位数字",
+            "password": "默认同身份号，第一次登录时应当提醒用户修改",
+            "newpassword": "新密碼",
+            "verify": "#static.verify.imgverify#滑動驗證碼"
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "remove": {
+        "title": "移除账号",
+        "type": "api",
+        "description": "需要管理员授权的情况下移除",
+        "method": "post",
+        "url": "/account/remove",
+        "request": {
+            "id": "用户的id",
+            "Auth": "#static.verify.auth#授权码，需要管理员权限"
+        },
+        "response": {
+            
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "location": {
+        "title": "行政区划",
+        "type": "api",
+        "description": "",
+        "method": "get",
+        "url": "/static/location",
+        "request": {
+            "code": "需要查找的區域代碼"
+        },
+        "response": [
+            "#static.adminDivision#行政区划列表"
+        ]
+    }
+}
+

@@ -1,0 +1,18 @@
+{
+    "application": {
+        "title": "系统信息",
+        "type": "api",
+        "description": "",
+        "method": "get",
+        "url": "/user/application",
+        "request": {
+            "id": "用户的id"
+        },
+        "response": {
+            "invitedBy": "root",
+            "about": "用户简介",
+            "create": "2019-10-28T21:03:50.3240173",
+            "email": "serfen@ff.com"
+        }
+    }
+}

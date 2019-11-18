@@ -1,0 +1,18 @@
+{
+    "child": {
+        "title": "获取下级单位",
+        "type": "api",
+        "description": "",
+        "method": "get",
+        "url": "/company/child",
+        "request": {
+            "id": "单位的id"
+        },
+        "response": {
+            "list": [{
+                "name": "层级1",
+                "code": "ADJC1AH11"
+            }]
+        }
+    }
+}

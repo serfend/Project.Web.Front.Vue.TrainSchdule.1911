@@ -1,0 +1,20 @@
+{
+    "managers": {
+        "title": "获取单位主管",
+        "type": "api",
+        "description": "",
+        "method": "get",
+        "url": "/company/managers",
+        "request": {
+            "id": "单位的id"
+        },
+        "response": {
+            "list": [{
+                "id": "1000000 主管id",
+                "realName": "测试管理员 主管姓名",
+                "duties": "助理工程师 主管职务",
+                "company": "层级1 单位名称"
+            }]
+        }
+    }
+}

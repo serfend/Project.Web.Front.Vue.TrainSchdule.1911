@@ -1,0 +1,14 @@
+{
+    "publish": {
+        "title": "发布申请",
+        "type": "api",
+        "description": "申请的状态由`未保存`或`已保存`变更为已发布",
+        "method": "Put",
+        "url": "/apply/publish",
+        "request": {
+            "id": "申请的id"
+        }
+    }
+}
+
+

@@ -1,0 +1,10 @@
+{
+    "verifyImg": {
+        "title": "滑动验证码",
+        "type": "model",
+        "description": "",
+        "request": {
+            "Code": "验证码数值"
+        }
+    }
+}

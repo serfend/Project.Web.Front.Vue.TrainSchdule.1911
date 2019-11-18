@@ -1,0 +1,20 @@
+{
+    "onMyManage": {
+        "title": "新增用户可管辖的单位",
+        "type": "api",
+        "description": "",
+        "method": "post",
+        "url": "/user/onMyManage",
+        "request": {
+            "id": "用户id",
+            "code": "单位代码",
+            "auth": {
+                "AuthByUserID": "使用何用户授权",
+                "code": "授权码"
+            }
+        },
+        "response": {
+
+        }
+    }
+}

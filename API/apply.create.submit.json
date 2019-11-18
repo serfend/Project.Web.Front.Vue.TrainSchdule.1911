@@ -1,0 +1,17 @@
+{
+    "submit": {
+        "title": "提交申请",
+        "type": "api",
+        "description": "用户可自行修改申请的个人信息，仅对本次申请有效。",
+        "method": "post",
+        "url": "/apply/submit",
+        "request": {
+            "baseid": "申请的用户信息所对应的id",
+            "requestid": "申请的具体请求信息所对应的id",
+            "verify": "#static.verify.imgverify#滑動驗證碼"
+        },
+        "response": {
+            "id": "申请的id"
+        }
+    }
+}

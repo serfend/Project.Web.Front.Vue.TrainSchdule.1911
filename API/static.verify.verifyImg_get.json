@@ -1,0 +1,12 @@
+{
+    "verify": {
+        "title": "刷新验证码",
+        "type": "api",
+        "description": "对于任何引用到`VerifyCode`字段的请求，均表示需要验证码\n验证码包含前景和背景，用户将前景拖动到背景缺失出即视为通过验证 ",
+        "method": "get",
+        "url": "/static/verify",
+        "response": {
+            "guid": "验证码序号"
+        }
+    }
+}

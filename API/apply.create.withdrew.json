@@ -1,0 +1,13 @@
+{
+    "withdrew": {
+        "title": "撤回申请",
+        "type": "api",
+        "description": "申请撤回后将仅用户自己可见",
+        "method": "put",
+        "url": "/apply/withdrew",
+        "request": {
+            "id": "申请的id"
+        }
+    }
+}
+

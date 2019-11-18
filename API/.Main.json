@@ -1,0 +1,15 @@
+
+{
+    "title":"休假登记和审核系统",
+    "base":{
+        "status":"状态码 为0时表示成功，其他表示异常。",
+        "message":"附加信息"
+    },
+    "description":"为0时表示成功，其他表示异常。约定`Get`操作符可分配 `page`和`pageSize`参数进行分页，`page`从0开始，`pageSize`默认为10 ",
+    "success":0,
+    "page":0,
+    "pageSize":10
+}
+
+
+

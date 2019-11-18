@@ -1,0 +1,17 @@
+
+
+{
+    "company.model": {
+        "title": "用户所提交的审批",
+        "type": "model",
+        "request": {
+            "Code":"单位代码",
+            "Name":"单位名称",
+            "CompanyTypeDesc":"单位等级描述",
+            "CompanyParentTypeDesc":"父单位等级描述",
+            "Managers":[
+                "单位管理者#UserSummary#用户简要信息"
+            ]
+        }
+    }
+}

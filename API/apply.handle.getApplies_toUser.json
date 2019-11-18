@@ -1,0 +1,14 @@
+{
+    "toUser": {
+        "title": "获取需要指定用户审批的可见的申请",
+        "type": "api",
+        "description": "",
+        "method": "get",
+        "url": "/apply/fromUser",
+        "request": {
+            "id": "用户的id",
+            "code": "单位的代码"
+        },
+        "response": "#apply.applies#申请列表"
+    }
+}
