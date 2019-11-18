@@ -1,7 +1,11 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
+import {
+  Message
+} from 'element-ui'
 import qs from 'qs'
-import { setTimeout } from 'timers'
+import {
+  setTimeout
+} from 'timers'
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASEURL, // api 的 base_url
@@ -56,10 +60,9 @@ service.interceptors.response.use(
     }
     const res = response.data
     if (res.status !== 0) {
-      const type = res.status === 12120 ? 'warn' : 'error'
       Message({
         message: res.message,
-        type,
+        type: 'error',
         duration: 5 * 1000
       })
       return Promise.reject(res)
