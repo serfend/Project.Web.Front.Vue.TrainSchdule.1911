@@ -621,7 +621,6 @@ export default {
         .catch(() => {
           this.onLoading = false
           this.formFinal.baseInfoId = ''
-          this.$message.error('基础信息提交失败，请检查填写信息')
         })
     },
 
@@ -649,9 +648,6 @@ export default {
           }
         })
         .catch(() => {
-          return this.$message.error('提交失败，请重新检查表单')
-        })
-        .finally(() => {
           this.onLoading = false
         })
     },
