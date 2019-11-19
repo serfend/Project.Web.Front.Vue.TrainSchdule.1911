@@ -101,7 +101,7 @@
               </el-select>
               <el-tooltip placement="top">
                 <div slot="content">如果您存在前期已休过假，但未记录的情况，则应选为【补充记录】</div>
-                <el-switch v-model="formApply.isArchitect" active-text="补充记录" inactive-text="新增申请" />
+                <el-switch v-model="formApply.isArchitect" active-text="补充记录" inactive-text="新增申请" active-color="#ff9999" />
               </el-tooltip>
             </el-form-item>
 
@@ -129,8 +129,10 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :lg="12" :md="12">
-                <el-form-item label="">
-                  <el-progress :percentage="Math.floor(100*((usersVocation.nowTimes+formApply.VocationLength)/usersVocation.yearlyLength))" />
+                <el-form-item label>
+                  <el-progress
+                    :percentage="Math.floor(100*((usersVocation.nowTimes+formApply.VocationLength)/usersVocation.yearlyLength))"
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -622,22 +624,14 @@ export default {
       return (() => {
         this.caculaingDate = {
           start: this.formApply.StampLeave,
-          length: this.formApply.VocationLength + this.formApply.OnTripLength
+          length:
+            parseInt(this.formApply.VocationLength) +
+            parseInt(this.formApply.OnTripLength)
         }
-        var lastStart =
-          this.formApply.StampLeave +
-          this.formApply.VocationLength +
-          this.formApply.OnTripLength
+        this.formApply.isArchitect = this.caculaingDate.start <= new Date()
+        if (this.onLoading) return
+        this.onLoading = true
         setTimeout(() => {
-          if (
-            lastStart !==
-            this.formApply.StampLeave +
-              this.formApply.VocationLength +
-              this.formApply.OnTripLength
-          ) {
-            return true
-          }
-
           getStampReturn(this.caculaingDate)
             .then(data => {
               this.formApply.StampReturn = data.endDate
@@ -649,6 +643,9 @@ export default {
             })
             .catch(err => {
               return this.$message.error(err)
+            })
+            .finally(() => {
+              this.onLoading = false
             })
         }, 1000)
       })()
