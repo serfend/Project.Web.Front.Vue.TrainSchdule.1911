@@ -101,7 +101,12 @@
               </el-select>
               <el-tooltip placement="top">
                 <div slot="content">如果您存在前期已休过假，但未记录的情况，则应选为【补充记录】</div>
-                <el-switch v-model="formApply.isArchitect" active-text="补充记录" inactive-text="新增申请" active-color="#ff9999" />
+                <el-switch
+                  v-model="formApply.isArchitect"
+                  active-text="补充记录"
+                  inactive-text="新增申请"
+                  active-color="#ff9999"
+                />
               </el-tooltip>
             </el-form-item>
 
@@ -290,6 +295,7 @@ export default {
     return {
       active: 0,
       OnloadingUserInfoes: false,
+      OnloadingUserStamp: false,
       onLoading: false,
       form: {
         id: '',
@@ -449,11 +455,18 @@ export default {
             this.form.companyName = company.company.name
             this.form.duties = duties.name
             this.form.Phone = social.phone
-            const { self, lover, parent, prevYearlyLength } = social.settle
+            const {
+              self,
+              lover,
+              parent,
+              loversParent,
+              prevYearlyLength
+            } = social.settle
             this.form.Settle = {
               self,
               lover,
               parent,
+              loversParent,
               prevYearlyLength
             }
           } catch (error) {
@@ -529,7 +542,8 @@ export default {
             return this.$message.success('申请信息提交完成，回执编号为' + id)
           }
         })
-        .catch(() => {
+        .catch(() => {})
+        .finally(() => {
           this.onLoading = false
         })
     },
@@ -594,6 +608,7 @@ export default {
           self: this.buildSettle(),
           lover: this.buildSettle(),
           parent: this.buildSettle(),
+          loversParent: this.buildSettle(),
           prevYearlyLength: 0
         }
       }
@@ -621,34 +636,32 @@ export default {
      * 用户计算预期归队日期
      */
     handleChange() {
-      return (() => {
-        this.caculaingDate = {
-          start: this.formApply.StampLeave,
-          length:
-            parseInt(this.formApply.VocationLength) +
-            parseInt(this.formApply.OnTripLength)
-        }
-        this.formApply.isArchitect = this.caculaingDate.start <= new Date()
-        if (this.onLoading) return
-        this.onLoading = true
-        setTimeout(() => {
-          getStampReturn(this.caculaingDate)
-            .then(data => {
-              this.formApply.StampReturn = data.endDate
-              this.$notify({
-                title: '预计归队时间',
-                message: data.endDate,
-                type: 'success'
-              })
+      this.caculaingDate = {
+        start: this.formApply.StampLeave,
+        length:
+          parseInt(this.formApply.VocationLength) +
+          parseInt(this.formApply.OnTripLength)
+      }
+      this.formApply.isArchitect = this.caculaingDate.start <= new Date()
+      if (this.OnloadingUserStamp) return
+      this.OnloadingUserStamp = true
+      setTimeout(() => {
+        getStampReturn(this.caculaingDate)
+          .then(data => {
+            this.formApply.StampReturn = data.endDate
+            this.$notify({
+              title: '预计归队时间',
+              message: data.endDate,
+              type: 'success'
             })
-            .catch(err => {
-              return this.$message.error(err)
-            })
-            .finally(() => {
-              this.onLoading = false
-            })
-        }, 1000)
-      })()
+          })
+          .catch(err => {
+            return this.$message.error(err)
+          })
+          .finally(() => {
+            this.OnloadingUserStamp = false
+          })
+      }, 1000)
     }
   }
 }
