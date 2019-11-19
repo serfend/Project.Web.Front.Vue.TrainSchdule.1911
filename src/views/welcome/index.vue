@@ -1,15 +1,15 @@
 <template>
   <el-container>
     <el-aside>
-      <div class="menu-item1">
+      <div class="menu-top">
         <div>
           <img src="/favicon-32x32.png" style="width:40px;">
         </div>
-        <div class="menu-item1-title">61035部队</div>
-        <div class="menu-item1-title">休假登记和审核系统</div>
+        <div class="menu-top-title">61035部队</div>
+        <div class="menu-top-title">休假登记和审核系统</div>
       </div>
       <router-link to="application/new">
-        <div class="menu-item2">
+        <div class="menu">
           <div>
             <svg-icon icon-class="menu-apply" />申请休假
           </div>
@@ -17,7 +17,7 @@
         </div>
       </router-link>
       <router-link to="login?redirect=application/list">
-        <div class="menu-item2">
+        <div class="menu">
           <div>
             <svg-icon icon-class="menu-search" />查询结果
           </div>
@@ -25,7 +25,7 @@
         </div>
       </router-link>
       <router-link to="login?redirect=application/examine">
-        <div class="menu-item2">
+        <div class="menu">
           <div>
             <svg-icon icon-class="menu-approval" />审核申请
           </div>
@@ -120,7 +120,7 @@ export default {
   background: rgba(255, 255, 255, 0.4);
   width: 300px;
 }
-.menu-item1 {
+.menu-top {
   color: rgb(25, 143, 255);
   font-weight: bold;
   background: rgba(255, 255, 255, 0.3);
@@ -130,18 +130,18 @@ export default {
   border-right: #808082 1px solid;
   vertical-align: middle;
   font-size: 1.15rem;
-  padding-top: 10%;
+  padding-top: 15%;
   letter-spacing: 2px;
   svg {
     font-size: 3.2rem;
     vertical-align: middle;
     margin-right: 20px;
   }
-  .menu-item1-title {
+  .menu-top-title {
     line-height: 25px;
   }
 }
-.menu-item2 {
+.menu {
   color: rgb(25, 143, 255);
   font-weight: bold;
   background: rgba(255, 255, 255, 0.3);
@@ -157,11 +157,13 @@ export default {
   justify-content: center; /*定义body的里的元素水平居中*/
   min-height: 150px;
   flex-direction: column;
+  //图标
   svg {
     font-size: 3.2rem;
     vertical-align: middle;
     margin-right: 25px;
   }
+  // 描述
   .menu-des {
     margin-top: -20px;
     opacity: 0;
@@ -169,18 +171,18 @@ export default {
     transition: margin-top 1s, opacity 1s ease-out;
   }
 }
-.menu-item2:hover {
+.menu:hover {
   .menu-des {
     opacity: 1;
     margin-top: 0;
   }
 }
-.menu-item2:hover::before {
-  .menu-des {
-    opacity: 0;
-    margin-top: 0;
-  }
-}
+// .menu-item2:hover::before {
+//   .menu-des {
+//     opacity: 0;
+//     margin-top: 0;
+//   }
+// }
 
 // .welcome {
 //   background-color: #2d3a4b;
