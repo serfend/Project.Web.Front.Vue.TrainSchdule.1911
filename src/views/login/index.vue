@@ -210,11 +210,6 @@ export default {
               this.$router.push({ path: this.redirect || '/' })
             })
             .catch(() => {
-              Message({
-                message: '无效的登录请求',
-                type: 'error',
-                duration: 5 * 1000
-              })
               this.loading = false
             })
         } else {
