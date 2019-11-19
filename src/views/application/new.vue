@@ -89,6 +89,7 @@
             <SettleFormItem v-model="form.Settle.self" label="本人所在地" />
             <SettleFormItem v-model="form.Settle.lover" label="配偶所在地" />
             <SettleFormItem v-model="form.Settle.parent" label="父母所在地" />
+            <SettleFormItem v-model="form.Settle.loversparent" label="配偶父母所在地" />
 
             <el-form-item label="初始全年天数">
               <el-input v-model="form.Settle.prevYearlyLength" disabled />
