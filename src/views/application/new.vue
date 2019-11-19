@@ -121,7 +121,7 @@
                   />
                 </el-form-item>
               </el-col>
-              <el-col :lg="6" :md="24">
+              <el-col :lg="9" :md="24">
                 <el-form-item label="预计归队时间">
                   <el-date-picker
                     v-model="formApply.StampReturn"
@@ -133,7 +133,7 @@
               </el-col>
             </el-row>
             <el-row :gutter="20">
-              <el-col :lg="12" :md="12">
+              <el-col :lg="12" :md="24">
                 <el-form-item label>
                   <el-progress
                     :percentage="Math.floor(100*((usersVocation.nowTimes+formApply.VocationLength)/usersVocation.yearlyLength))"
@@ -142,7 +142,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :lg="6" :md="24">
+              <el-col :lg="9" :md="24">
                 <el-form-item label="休假天数">
                   <el-input
                     v-model="formApply.VocationLength"
@@ -211,7 +211,7 @@
             <el-form-item label="所乘交通工具">
               <el-select v-model="formApply.ByTransportation" placeholder="火车">
                 <el-option label="火车" value="0" />
-                <el-option label="飞机" value="1" />
+                <!-- <el-option label="飞机" value="1" /> -->
                 <el-option label="汽车" value="2" />
                 <el-option label="其他" value="-1" />
               </el-select>

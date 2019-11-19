@@ -1,22 +1,11 @@
 <template>
   <div class="application-list ma-4">
     <el-row :gutter="8">
-      <el-col
-        :lg="5"
-        :md="6"
-        :sm="24"
-      >
+      <el-col :lg="5" :md="6" :sm="24">
         <el-card>
-          <el-form
-            ref="queryForm"
-            :model="queryForm"
-          >
+          <el-form ref="queryForm" :model="queryForm">
             <el-row>
-              <el-col
-                :md="24"
-                :sm="10"
-                class="mb-3"
-              >
+              <el-col :md="24" :sm="10" class="mb-3">
                 <div class="py-2 body-2 layout align-center row justify-space-between">
                   单位
                   <el-button
@@ -33,10 +22,7 @@
                   placeholder="选择管辖单位"
                   @change="companyChanged"
                 >
-                  <el-option
-                    label="--全部--"
-                    value
-                  />
+                  <el-option label="--全部--" value />
                   <el-option
                     v-for="item in myManages"
                     :key="item.code"
@@ -47,11 +33,7 @@
 
                 <!-- <el-input v-model="queryForm.companyCode"></el-input> -->
               </el-col>
-              <el-col
-                :md="24"
-                :sm="10"
-                class="mb-3"
-              >
+              <el-col :md="24" :sm="10" class="mb-3">
                 <div class="py-2 body-2 layout align-center row justify-space-between">
                   指定人员
                   <el-switch v-model="queryForm.isSearchUser" />
@@ -62,10 +44,7 @@
                   class="full-width"
                   placeholder
                 >
-                  <el-option
-                    :value="$store.state.user.userid"
-                    label="查我自己"
-                  />
+                  <el-option :value="$store.state.user.userid" label="查我自己" />
                   <el-option
                     v-for="item in membersOption"
                     :key="item.id"
@@ -75,37 +54,17 @@
                 </el-select>
               </el-col>
 
-              <el-col
-                :md="24"
-                :sm="4"
-                class="py-2"
-              >
-                <el-button
-                  class="full-width"
-                  type="primary"
-                  @click="searchData"
-                >查询</el-button>
+              <el-col :md="24" :sm="4" class="py-2">
+                <el-button class="full-width" type="primary" @click="searchData">查询</el-button>
               </el-col>
             </el-row>
           </el-form>
         </el-card>
       </el-col>
-      <el-col
-        :lg="19"
-        :md="18"
-        :sm="24"
-      >
-        <ApplicationList
-          :data-list="dataList"
-          :on-loading="onLoading"
-          @refresh="searchData"
-        >
+      <el-col :lg="19" :md="18" :sm="24">
+        <ApplicationList :data-list="dataList" :on-loading="onLoading" @refresh="searchData">
           <template slot="headeraction">
-            <el-button
-              icon="el-icon-edit"
-              type="primary"
-              @click="handleCreate"
-            >添加</el-button>
+            <el-button icon="el-icon-edit" type="primary" @click="handleCreate">添加</el-button>
 
             <el-button
               v-if="queryForm.isSearchUser"
@@ -121,10 +80,7 @@
               @click="exportCompanyApplies({company: queryForm.companyCode})"
             >导出单位申请</el-button>
           </template>
-          <template
-            slot="action"
-            slot-scope="{ row, applyid }"
-          >
+          <template slot="action" slot-scope="{ row, applyid }">
             <el-button @click="exportApply({apply: applyid})">导出</el-button>
             <el-dropdown
               split-button
@@ -309,10 +265,7 @@ export default {
           }
           this.$message.success(method + '成功，请求状态已改变')
         })
-        .catch(err => {
-          console.log(err)
-          this.$message.error('操作失败')
-        })
+        .catch(err => {})
         .finally(() => {
           this.onLoading = false
         })
