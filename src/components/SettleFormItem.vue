@@ -2,25 +2,13 @@
   <el-form-item :label="label">
     <el-row :gutter="8">
       <el-col :lg="8">
-        <el-input
-          v-model="form.address.name"
-          :disabled="disabled"
-          placeholder="详细地址"
-        >
-          <div slot="prepend">
-            详细地址
-          </div>
+        <el-input v-model="form.addressDetail" :disabled="disabled" placeholder="无信息">
+          <div slot="prepend">{{ form.address.name }}</div>
         </el-input>
       </el-col>
       <el-col :lg="8">
-        <el-input
-          v-model="form.date"
-          :disabled="disabled"
-          placeholder="居住开始时间"
-        >
-          <div slot="prepend">
-            居住开始时间
-          </div>
+        <el-input v-model="form.date" :disabled="disabled" placeholder="无信息">
+          <div slot="prepend">开始时间</div>
         </el-input>
       </el-col>
       <!-- <el-col :lg="6">
@@ -34,7 +22,7 @@
           v-model="form.HomeDetailAddress"
           placeholder="行政区划编号"
         />
-      </el-col> -->
+      </el-col>-->
     </el-row>
   </el-form-item>
 </template>
