@@ -98,7 +98,9 @@
 export default {
   name: '',
   data() {
-    return {}
+    return {
+      show: false
+    }
   }
 }
 </script>
@@ -161,16 +163,22 @@ export default {
     margin-right: 25px;
   }
   .menu-des {
-    font-size: 0.5rem;
+    margin-top: -20px;
     opacity: 0;
+    font-size: 0.5rem;
+    transition: margin-top 1s, opacity 1s ease-out;
   }
 }
 .menu-item2:hover {
   .menu-des {
     opacity: 1;
-    transition-property: opacity;
-    transition-duration: 1.5s;
-
+    margin-top: 0;
+  }
+}
+.menu-item2:hover::before {
+  .menu-des {
+    opacity: 0;
+    margin-top: 0;
   }
 }
 
