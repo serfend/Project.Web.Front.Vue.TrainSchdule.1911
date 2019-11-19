@@ -13,7 +13,7 @@
           <div>
             <svg-icon icon-class="menu-apply" />申请休假
           </div>
-          <div class="menu-des">这里是说明文字</div>
+          <div class="menu-des">个人提交休假申请窗口</div>
         </div>
       </router-link>
       <router-link to="login?redirect=application/list">
@@ -21,7 +21,7 @@
           <div>
             <svg-icon icon-class="menu-search" />查询结果
           </div>
-          <div class="menu-des">这里是说明文字</div>
+          <div class="menu-des">个人查询休假审批状态窗口</div>
         </div>
       </router-link>
       <router-link to="login?redirect=application/examine">
@@ -29,7 +29,7 @@
           <div>
             <svg-icon icon-class="menu-approval" />审核申请
           </div>
-          <div class="menu-des">这里是说明文字</div>
+          <div class="menu-des">单位逐级报批休假窗口</div>
         </div>
       </router-link>
     </el-aside>
@@ -167,8 +167,8 @@ export default {
   .menu-des {
     margin-top: -20px;
     opacity: 0;
-    font-size: 0.5rem;
-    transition: margin-top 1s, opacity 1s ease-out;
+    font-size: 1rem;
+    transition: margin-top 0.5s, opacity 1s ease-out;
   }
 }
 .menu:hover {
