@@ -2,25 +2,34 @@
   <el-container>
     <el-aside>
       <div class="menu-item1">
-        <div style="margin-bottom:20px;">
-          <svg-icon icon-class="menu-search" />
+        <div>
+          <img src="/favicon-32x32.png" style="width:40px;">
         </div>
         <div class="menu-item1-title">61035部队</div>
         <div class="menu-item1-title">休假登记和审核系统</div>
       </div>
       <router-link to="application/new">
         <div class="menu-item2">
-          <svg-icon icon-class="menu-apply" />申请休假
+          <div>
+            <svg-icon icon-class="menu-apply" />申请休假
+          </div>
+          <div class="menu-des">这里是说明文字</div>
         </div>
       </router-link>
       <router-link to="login?redirect=application/list">
         <div class="menu-item2">
-          <svg-icon icon-class="menu-search" />查询结果
+          <div>
+            <svg-icon icon-class="menu-search" />查询结果
+          </div>
+          <div class="menu-des">这里是说明文字</div>
         </div>
       </router-link>
       <router-link to="login?redirect=application/examine">
         <div class="menu-item2">
-          <svg-icon icon-class="menu-approval" />审核申请
+          <div>
+            <svg-icon icon-class="menu-approval" />审核申请
+          </div>
+          <div class="menu-des">这里是说明文字</div>
         </div>
       </router-link>
     </el-aside>
@@ -127,7 +136,7 @@ export default {
     margin-right: 20px;
   }
   .menu-item1-title {
-    line-height: 22px;
+    line-height: 25px;
   }
 }
 .menu-item2 {
@@ -140,12 +149,28 @@ export default {
   border-right: #808082 1px solid;
   vertical-align: middle;
   font-size: 1.15rem;
-  padding-top: 25%;
   letter-spacing: 2px;
+  display: flex;
+  align-items: center; /*定义body的元素垂直居中*/
+  justify-content: center; /*定义body的里的元素水平居中*/
+  min-height: 150px;
+  flex-direction: column;
   svg {
     font-size: 3.2rem;
     vertical-align: middle;
     margin-right: 25px;
+  }
+  .menu-des {
+    font-size: 0.5rem;
+    opacity: 0;
+  }
+}
+.menu-item2:hover {
+  .menu-des {
+    opacity: 1;
+    transition-property: opacity;
+    transition-duration: 1.5s;
+
   }
 }
 
