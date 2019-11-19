@@ -2,8 +2,8 @@
   <el-container>
     <el-aside>
       <div class="menu-item1">
-        <div style="margin-bottom:20px;">
-          <img src="/favicon-32x32.png" style="width:50px;">
+        <div>
+          <img src="/favicon-32x32.png" style="width:40px;">
         </div>
         <div class="menu-item1-title">61035部队</div>
         <div class="menu-item1-title">休假登记和审核系统</div>
