@@ -614,6 +614,7 @@ export default {
       }
       this.formApply = {
         StampLeave: '',
+        StampReturn: '',
         VocationLength: 0,
         OnTripLength: 0,
         VocationType: '',
@@ -645,10 +646,13 @@ export default {
       this.formApply.isArchitect = this.caculaingDate.start <= new Date()
       if (this.OnloadingUserStamp) return
       this.OnloadingUserStamp = true
+
       setTimeout(() => {
         getStampReturn(this.caculaingDate)
           .then(data => {
-            this.formApply.StampReturn = data.endDate
+            const endDate = data.endDate
+            debugger
+            this.formApply.StampReturn = endDate
             this.$notify({
               title: '预计归队时间',
               message: data.endDate,
