@@ -277,7 +277,7 @@
 
 <script>
 import SettleFormItem from '../../components/SettleFormItem'
-import { getUserInfo } from '../../api/usercompany'
+import { getUserAllInfo } from '../../api/usercompany'
 import { getUserIdByCid, getUsersVocationLimit } from '../../api/userinfo'
 import {
   postBaseInfo,
@@ -445,7 +445,7 @@ export default {
     },
 
     fetchUserInfoesDerect() {
-      getUserInfo(this.form.id)
+      getUserAllInfo(this.form.id)
         .then(data => {
           this.OnloadingUserInfoes = false
           const { base, company, duties, social } = data

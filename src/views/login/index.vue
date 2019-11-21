@@ -28,12 +28,7 @@
         />
       </el-form-item>
 
-      <el-tooltip
-        v-model="capsTooltip"
-        content="Caps lock is On"
-        manual
-        placement="right"
-      >
+      <el-tooltip v-model="capsTooltip" content="Caps lock is On" manual placement="right">
         <el-form-item prop="password">
           <span class="svg-container">
             <svg-icon icon-class="password" />
@@ -51,10 +46,7 @@
             @keyup.enter.native="handleLogin"
             @keyup.native="checkCapslock"
           />
-          <span
-            class="show-pwd"
-            @click="showPwd"
-          >
+          <span class="show-pwd" @click="showPwd">
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
           </span>
         </el-form-item>
@@ -74,10 +66,7 @@
       >{{ $t('register.title') }}</el-button>
     </el-form>
 
-    <el-dialog
-      :title="$t('login.thirdparty')"
-      :visible.sync="showDialog"
-    >
+    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
       {{ $t('login.thirdpartyTips') }}
       <br>
       <br>
@@ -152,7 +141,14 @@ export default {
     }
     getUserBase()
       .then(data => {
-        if (data) this.$router.push(this.redirect)
+        if (data) {
+          Message({
+            message: '欢迎您,' + data.base.realName,
+            type: 'success',
+            duration: 5000
+          })
+          this.$router.push(this.redirect)
+        }
       })
       .catch(() => {
         Message({

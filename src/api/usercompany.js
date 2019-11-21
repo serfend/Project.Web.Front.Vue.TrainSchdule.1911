@@ -47,7 +47,7 @@ export function removeMyManage(params) {
 /**
  * 一次性获取user所有的信息
  */
-export function getUserInfo(id) {
+export function getUserAllInfo(id) {
   return new Promise((resolve, reject) => {
     Promise.all([
       getUserBase(id),
@@ -64,6 +64,6 @@ export function getUserInfo(id) {
         diy
       }
       resolve(UserInfoes)
-    }).catch(reject)
+    }).catch(err => reject(err))
   })
 }

@@ -17,8 +17,9 @@ export function getUserBase(id) {
     }
   })
 }
+
 export function getUserDiy(id) {
-  return request.get('user/diyinfo', {
+  return request.get('users/diyinfo', {
     params: {
       id
     }

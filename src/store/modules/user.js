@@ -1,5 +1,6 @@
-
-import getUserInfo from '../../api/usercompany'
+import {
+  getUserAllInfo
+} from '../../api/usercompany'
 import {
   login,
   logout
@@ -76,7 +77,7 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      getUserInfo().then(data => {
+      getUserAllInfo().then(data => {
         if (!data) {
           reject('身份验证失败，可能需要重新登陆')
         }
