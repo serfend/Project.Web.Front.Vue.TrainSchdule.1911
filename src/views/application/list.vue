@@ -244,7 +244,7 @@ export default {
           id,
           Auth: {
             Code: 201700816,
-            AuthByUserID: $store.state.user.userid
+            AuthByUserID: this.$store.state.user.userid
           }
         }
       }
