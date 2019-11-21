@@ -313,7 +313,7 @@ export default {
         StampLeave: '',
         VocationLength: 0,
         OnTripLength: 0,
-        VocationType: '',
+        VocationType: "",
         vocationPlace: 0,
         vocationPlaceArr: [],
         vocationPlaceName: '',

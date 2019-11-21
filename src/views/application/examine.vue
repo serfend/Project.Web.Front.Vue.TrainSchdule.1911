@@ -33,7 +33,6 @@
                     :value="item.code"
                   />
                 </el-select>
-
                 <!-- <el-input v-model="queryForm.companyCode"></el-input> -->
               </el-col>
               <el-col :md="24" :sm="12" class="mb-3">
@@ -56,7 +55,6 @@
                   />
                 </el-select>
               </el-col>
-
               <el-col :span="24" class="py-2">
                 <el-button class="full-width" type="primary" @click="searchData">查询</el-button>
               </el-col>
@@ -68,16 +66,13 @@
         <ApplicationList :data-list="dataList" :on-loading="onLoading" multi @refresh="searchData">
           <template slot="headeraction">
             <el-button icon="el-icon-edit" type="primary" @click="showMultiDialog">批量审核</el-button>
-
             <el-button icon="el-icon-edit" type="primary" @click="handleCreate">添加</el-button>
-
             <el-button
               v-if="queryForm.isSearchUser"
               icon="el-icon-download"
               type="primary"
               @click="exportUserApplies({user: queryForm.userId})"
             >导出用户申请</el-button>
-
             <el-button
               v-else
               icon="el-icon-download"
@@ -96,7 +91,6 @@
             <el-button v-if="row.status!='deleted'" size="mini" type="danger">删除</el-button>
           </template>
         </ApplicationList>
-
         <el-dialog :visible="auditForm.show" title="提交审核" width="30%">
           <el-form ref="auditForm" :model="auditForm" label-width="80px">
             <el-form-item label="审核结果">
@@ -122,13 +116,11 @@
               <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
             </el-form-item>
           </el-form>
-
           <span slot="footer">
             <el-button @click="auditForm.show = false">取 消</el-button>
             <el-button type="primary" @click="SubmitAuditForm">确 定</el-button>
           </span>
         </el-dialog>
-
         <el-dialog
           :visible.sync="multiAuditForm.show"
           custom-class="p-fixed f-right mr-0"
@@ -147,15 +139,15 @@
 </template>
 
 <script>
-import ApplicationList from './components/ApplicationList'
-import { toCompany, toUser, audit, deleteApply } from '../../api/apply'
-import { getOnMyManage } from '../../api/usercompany'
-import { getMembers } from '../../api/company'
+import ApplicationList from "./components/ApplicationList";
+import { toCompany, toUser, audit, deleteApply } from "../../api/apply";
+import { getOnMyManage } from "../../api/usercompany";
+import { getMembers } from "../../api/company";
 import {
   exportUserApplies,
   exportApply,
   exportCompanyApplies
-} from '../../api/static'
+} from "../../api/static";
 // 将导出的方法以mixins的方式注入到vm实例
 const mixins = {
   methods: {
@@ -164,21 +156,21 @@ const mixins = {
     exportCompanyApplies,
     download(data) {
       if (!data) {
-        return
+        return;
       }
-      const url = window.URL.createObjectURL(new Blob([data]))
-      const link = document.createElement('a')
-      link.style.display = 'none'
-      link.href = url
-      link.setAttribute('download', 'excel.xlsx')
+      const url = window.URL.createObjectURL(new Blob([data]));
+      const link = document.createElement("a");
+      link.style.display = "none";
+      link.href = url;
+      link.setAttribute("download", "excel.xlsx");
 
-      document.body.appendChild(link)
-      link.click()
+      document.body.appendChild(link);
+      link.click();
     }
   }
-}
+};
 export default {
-  name: 'ApplyExamine',
+  name: "ApplyExamine",
   components: {
     ApplicationList
   },
@@ -186,8 +178,8 @@ export default {
   data() {
     return {
       queryForm: {
-        companyCode: '',
-        userId: '',
+        companyCode: "",
+        userId: "",
         isSearchUser: false
       },
       myManages: [],
@@ -196,75 +188,75 @@ export default {
       membersOption: [],
       cacheMembers: [],
       auditForm: {
-        applyId: '',
+        applyId: "",
         action: 1,
-        remark: '',
+        remark: "",
         show: false,
-        Code: '',
-        AuthByUserID: ''
+        Code: "",
+        AuthByUserID: ""
       },
       // 批量审批表单
       multiAuditForm: {
         show: false
       }
-    }
+    };
   },
   computed: {
     myUserid() {
-      return this.$store.state.user.userid
+      return this.$store.state.user.userid;
     }
   },
   created() {
-    this.getOnMyManage()
+    this.getOnMyManage();
   },
   methods: {
     showMultiDialog() {
-      this.multiAuditForm.show = true
+      this.multiAuditForm.show = true;
     },
     SubmitMultiAuditForm() {
-      return false
+      return false;
     },
     clearAuditForm() {
       this.auditForm = {
-        applyId: '',
+        applyId: "",
         action: 1,
-        remark: '',
+        remark: "",
         show: false,
-        Code: '',
+        Code: "",
         AuthByUserID: this.myUserid
-      }
+      };
     },
     DeleteApply(item) {
-      const authUser = prompt('输入授权账号', this.myUserid)
-      if (!authUser) return
+      const authUser = prompt("输入授权账号", this.myUserid);
+      if (!authUser) return;
       deleteApply({
         id: item.id,
         Auth: {
           AuthByUserID: authUser,
-          Code: prompt('输入授权码')
+          Code: prompt("输入授权码")
         }
       })
         .then(() => {
-          this.$message.success('删除成功')
-          this.searchData()
+          this.$message.success("删除成功");
+          this.searchData();
         })
         .catch(err => {
-          this.$message.error(err)
-        })
+          this.$message.error(err);
+        });
     },
     SubmitAuditForm() {
-      const { applyId, action, remark, Code, AuthByUserID } = this.auditForm
+      const { applyId, action, remark, Code, AuthByUserID } = this.auditForm;
       const list = [
         {
           id: applyId,
           action,
           remark
         }
-      ]
+      ];
       const Auth = {
         Code,
         AuthByUserID
-      }
+      };
       audit(
         {
           list
@@ -273,90 +265,90 @@ export default {
       )
         .then(resultlist => {
           resultlist.forEach(result => {
-            if (result.status === 0) this.$notify.success('已审批' + result.id)
-            else this.$notify.error(result.message + ':' + result.id)
-          })
+            if (result.status === 0) this.$notify.success("已审批" + result.id);
+            else this.$notify.error(result.message + ":" + result.id);
+          });
         })
         .catch(err => {
-          this.$message.error(err.message)
+          this.$message.error(err.message);
         })
         .finally(() => {
-          this.clearAuditForm()
-        })
+          this.clearAuditForm();
+        });
     },
     auditApply(row, action) {
-      this.clearAuditForm()
-      this.auditForm.show = true
-      this.auditForm.applyId = row.id
-      this.auditForm.action = action
+      this.clearAuditForm();
+      this.auditForm.show = true;
+      this.auditForm.applyId = row.id;
+      this.auditForm.action = action;
     },
     handleCreate() {
-      this.$router.push('/application/new')
+      this.$router.push("/application/new");
     },
     getOnMyManage() {
-      this.membersOption = []
-      this.cacheMembers = []
+      this.membersOption = [];
+      this.cacheMembers = [];
       this.queryForm = {
-        companyCode: '',
-        userId: '',
+        companyCode: "",
+        userId: "",
         isSearchUser: false
-      }
+      };
       getOnMyManage()
         .then(data => {
-          this.myManages = data.list || []
+          this.myManages = data.list || [];
         })
         .catch(err => {
-          console.warn(err)
-        })
+          console.warn(err);
+        });
     },
     companyChanged(val) {
-      this.queryForm.userId = ''
-      const cache = this.cacheMembers.find(d => d.companyCode === val)
+      this.queryForm.userId = "";
+      const cache = this.cacheMembers.find(d => d.companyCode === val);
       if (cache) {
-        this.membersOption = cache.list
+        this.membersOption = cache.list;
       } else {
         getMembers({
           code: val
         }).then(data => {
           if (data.list) {
-            this.membersOption = data.list
+            this.membersOption = data.list;
             this.cacheMembers.push({
               companyCode: val,
               list: data.list
-            })
+            });
           }
-        })
+        });
       }
     },
 
     // 查询数据
     searchData() {
       if (this.onLoading === true) {
-        return this.$message.warning('查询中，请等候')
+        return this.$message.warning("查询中，请等候");
       }
-      const { isSearchUser, userId, companyCode } = this.queryForm
-      let fn = toCompany
+      const { isSearchUser, userId, companyCode } = this.queryForm;
+      let fn = toCompany;
       const params = {
         code: companyCode
-      }
+      };
       // 如果查询指定用户，则异步方法换城toUser
       if (isSearchUser) {
-        fn = toUser
-        params.id = userId
+        fn = toUser;
+        params.id = userId;
       }
-      this.onLoading = true
-      this.dataList = []
+      this.onLoading = true;
+      this.dataList = [];
       fn(params)
         .then(data => {
-          const list = data.list
-          this.dataList = list || []
+          const list = data.list;
+          this.dataList = list || [];
         })
         .finally(() => {
-          return (this.onLoading = false)
-        })
+          return (this.onLoading = false);
+        });
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
