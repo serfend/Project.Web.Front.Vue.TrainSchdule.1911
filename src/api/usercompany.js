@@ -3,7 +3,8 @@ import {
   getUserBase,
   getUserCompany,
   getUserDuties,
-  getUserSocial
+  getUserSocial,
+  getUserDiy
 } from '../api/userinfo'
 
 /**
@@ -46,21 +47,23 @@ export function removeMyManage(params) {
 /**
  * 一次性获取user所有的信息
  */
-export function getUserInfo(id) {
+export function getUserAllInfo(id) {
   return new Promise((resolve, reject) => {
     Promise.all([
       getUserBase(id),
       getUserCompany(id),
       getUserDuties(id),
-      getUserSocial(id)
-    ]).then(([base, company, duties, social]) => {
+      getUserSocial(id),
+      getUserDiy(id)
+    ]).then(([base, company, duties, social, diy]) => {
       const UserInfoes = {
         base,
         company,
         duties,
-        social
+        social,
+        diy
       }
       resolve(UserInfoes)
-    }).catch(reject)
+    }).catch(err => reject(err))
   })
 }

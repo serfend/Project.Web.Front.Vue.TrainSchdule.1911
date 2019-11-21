@@ -1,4 +1,11 @@
 import request from '../utils/request'
+export function getUserSummary(id) {
+  return request.get('users/summary', {
+    params: {
+      id
+    }
+  })
+}
 /**
  * 基础信息
  * @description > ``` response
@@ -18,6 +25,13 @@ export function getUserBase(id) {
   })
 }
 
+export function getUserDiy(id) {
+  return request.get('users/diyinfo', {
+    params: {
+      id
+    }
+  })
+}
 /**
  * 社会关系 Get /Users/social
  * @description

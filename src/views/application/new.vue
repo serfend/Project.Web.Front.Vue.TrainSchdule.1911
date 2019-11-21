@@ -135,9 +135,7 @@
             <el-row :gutter="20">
               <el-col :lg="12" :md="24">
                 <el-form-item label>
-                  <el-progress
-                    :percentage="Math.floor(100*((usersVocation.nowTimes+formApply.VocationLength)/usersVocation.yearlyLength))"
-                  />
+                  <el-progress :percentage="caculateVocationPercentage()" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -160,7 +158,7 @@
                           </li>
                           <li>
                             <b class="bolder">当前已休次数：</b>
-                            <span class="text-orange">{{ usersVocation.nowTimes }}</span>天
+                            <span class="text-orange">{{ usersVocation.nowTimes }}</span>次
                           </li>
                           <li>
                             <b class="bolder">剩余假期长度：</b>
@@ -172,11 +170,11 @@
                           </li>
                           <li>
                             <b class="bolder">当前已休路途次数:</b>
-                            <span class="text-orange">{{ usersVocation.onTripTimes }}</span>天
+                            <span class="text-orange">{{ usersVocation.onTripTimes }}</span>次
                           </li>
                           <li>
                             <b class="bolder">休假描述:</b>
-                            <span>{{ usersVocation.description || `已婚且与妻子同地，探父母假20天。\n年初全年总假30天，因9月发生变化，按比例加权:(12-变化的月) * 变化后天数 + 变化的月 * 年初总假期=（3 * 20 + 9 * 30）/12=27。` }}</span>
+                            <span>{{ usersVocation.description || `暂无说明` }}</span>
                           </li>
                         </ul>
                       </div>
@@ -277,7 +275,7 @@
 
 <script>
 import SettleFormItem from '../../components/SettleFormItem'
-import { getUserInfo } from '../../api/usercompany'
+import { getUserAllInfo } from '../../api/usercompany'
 import { getUserIdByCid, getUsersVocationLimit } from '../../api/userinfo'
 import {
   postBaseInfo,
@@ -445,12 +443,12 @@ export default {
     },
 
     fetchUserInfoesDerect() {
-      getUserInfo(this.form.id)
+      getUserAllInfo(this.form.id)
         .then(data => {
           this.OnloadingUserInfoes = false
           const { base, company, duties, social } = data
           try {
-            this.form.realName = base.realName
+            this.form.realName = base.base.realName
             this.form.company = company.company.code
             this.form.companyName = company.company.name
             this.form.duties = duties.name
@@ -547,7 +545,14 @@ export default {
           this.onLoading = false
         })
     },
-
+    caculateVocationPercentage() {
+      var fn = parseInt
+      return Math.floor(
+        100 *
+          ((fn(this.usersVocation.yearlyLength) - fn(this.usersVocation.leftLength) + fn(this.formApply.VocationLength)) /
+            fn(this.usersVocation.yearlyLength))
+      )
+    },
     /**
      * 提交申请
      */

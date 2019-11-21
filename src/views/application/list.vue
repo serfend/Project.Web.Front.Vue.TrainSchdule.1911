@@ -77,7 +77,7 @@
               v-else
               icon="el-icon-download"
               type="primary"
-              @click="exportCompanyApplies({company: queryForm.companyCode})"
+              @click="exportCompanyApplies({company: queryForm.companyCode==''?$store.state.user.companyid:queryForm.companyCode })"
             >导出单位申请</el-button>
           </template>
           <template slot="action" slot-scope="{ row, applyid }">
@@ -244,7 +244,7 @@ export default {
           id,
           Auth: {
             Code: 201700816,
-            AuthByUserID: 'Root'
+            AuthByUserID: this.$store.state.user.userid
           }
         }
       }
@@ -265,7 +265,9 @@ export default {
           }
           this.$message.success(method + '成功，请求状态已改变')
         })
-        .catch(err => {})
+        .catch(err => {
+          console.log(err)
+        })
         .finally(() => {
           this.onLoading = false
         })
