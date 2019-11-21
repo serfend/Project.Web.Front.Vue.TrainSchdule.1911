@@ -17,7 +17,13 @@ export function getUserBase(id) {
     }
   })
 }
-
+export function getUserDiy(id) {
+  return request.get('user/diyinfo', {
+    params: {
+      id
+    }
+  })
+}
 /**
  * 社会关系 Get /Users/social
  * @description

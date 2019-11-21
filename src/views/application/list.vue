@@ -265,7 +265,9 @@ export default {
           }
           this.$message.success(method + '成功，请求状态已改变')
         })
-        .catch(err => {})
+        .catch(err => {
+          console.log(err)
+        })
         .finally(() => {
           this.onLoading = false
         })

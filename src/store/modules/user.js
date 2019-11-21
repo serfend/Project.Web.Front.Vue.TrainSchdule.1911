@@ -1,7 +1,8 @@
+
+import getUserInfo from '../../api/usercompany'
 import {
   login,
-  logout,
-  getUserInfo
+  logout
 } from '../../api/account'
 import {
   getToken,
@@ -79,19 +80,16 @@ const actions = {
         if (!data) {
           reject('身份验证失败，可能需要重新登陆')
         }
-        const {
-          avatar, /*  gender, */ id/* , privateAccount */, realName
-        } = data
         // roles = ['admin']
         // roles must be a non-empty array
         // if (!roles || roles.length <= 0) {
         //   reject('getInfo: roles must be a non-null array!')
         // }
         // commit('SET_ROLES', roles)
-        commit('SET_NAME', realName)
-        commit('SET_USERID', id)
-        commit('SET_AVATAR', process.env.VUE_APP_BASE_API + avatar)
-        commit('SET_INTRODUCTION', '无简介')
+        commit('SET_NAME', data.base.realName)
+        commit('SET_USERID', data.username)
+        commit('SET_AVATAR', process.env.VUE_APP_BASE_API + data.base.avatar)
+        commit('SET_INTRODUCTION', data.diyInfo.about)
         resolve(data)
       }).catch(error => {
         reject(error)

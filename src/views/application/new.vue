@@ -450,7 +450,7 @@ export default {
           this.OnloadingUserInfoes = false
           const { base, company, duties, social } = data
           try {
-            this.form.realName = base.realName
+            this.form.realName = base.base.realName
             this.form.company = company.company.code
             this.form.companyName = company.company.name
             this.form.duties = duties.name

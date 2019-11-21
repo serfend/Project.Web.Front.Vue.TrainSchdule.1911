@@ -3,7 +3,8 @@ import {
   getUserBase,
   getUserCompany,
   getUserDuties,
-  getUserSocial
+  getUserSocial,
+  getUserDiy
 } from '../api/userinfo'
 
 /**
@@ -52,13 +53,15 @@ export function getUserInfo(id) {
       getUserBase(id),
       getUserCompany(id),
       getUserDuties(id),
-      getUserSocial(id)
-    ]).then(([base, company, duties, social]) => {
+      getUserSocial(id),
+      getUserDiy(id)
+    ]).then(([base, company, duties, social, diy]) => {
       const UserInfoes = {
         base,
         company,
         duties,
-        social
+        social,
+        diy
       }
       resolve(UserInfoes)
     }).catch(reject)
