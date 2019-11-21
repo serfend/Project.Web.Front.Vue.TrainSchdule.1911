@@ -1,12 +1,7 @@
 <template>
   <el-card class="application-list">
     <div class="layout row justify-space-between px-2 pb-3">
-      <el-button
-        v-waves
-        icon="el-icon-search"
-        type="primary"
-        @click="emitRefresh"
-      >刷新</el-button>
+      <el-button v-waves icon="el-icon-search" type="primary" @click="emitRefresh">刷新</el-button>
       <div>
         <slot name="headeraction" />
         <!-- <el-button
@@ -25,136 +20,74 @@
       :data="formatedList"
       highlight-current-row
     >
-      <el-table-column
-        v-if="multi"
-        type="selection"
-        width="42px"
-      />
-      <el-table-column
-        label="申请人"
-        min-width="100px"
-      >
+      <el-table-column v-if="multi" type="selection" width="42px" />
+      <el-table-column label="申请人" min-width="100px">
         <template slot-scope="{row}">
-          <el-tooltip
-            content="点击查看详情"
-            effect="dark"
-          >
+          <el-tooltip content="点击查看详情" effect="dark">
             <!-- content to trigger tooltip here -->
-            <el-button
-              plain
-              size="mini"
-              type="info"
-              @click="handleDetail(row, row.id)"
-            >
+            <el-button plain size="mini" type="info" @click="handleDetail(row, row.id)">
               <i class="el-icon-info blue--text" />
               <span class="info--text">{{ row.base.realName }}</span>
             </el-button>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="单位"
-      >
+      <el-table-column align="center" label="单位">
         <template slot-scope="{row}">
           <span class="caption">{{ row.base.companyName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="当前审批"
-      >
+      <el-table-column align="center" label="当前审批">
         <template slot-scope="{row}">
           <span class="caption">{{ row.nowAuditCompany }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="创建"
-      >
+      <el-table-column align="center" label="创建">
         <template slot-scope="scope">
           <span>{{ scope.row.create }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        header-align="center"
-        label="申请时间"
-      >
-        <el-table-column
-          align="center"
-          label="申请离队时间"
-        >
+      <el-table-column header-align="center" label="申请时间">
+        <el-table-column align="center" label="申请离队时间">
           <template slot-scope="scope">
             <span>{{ scope.row.stampLeave }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          align="center"
-          label="预计归队时间"
-        >
+        <el-table-column align="center" label="预计归队时间">
           <template slot-scope="scope">
             <span>{{ scope.row.stampReturn }}</span>
           </template>
         </el-table-column>
       </el-table-column>
-       <el-table-column
-        align="center"
-        label="休假地点"
-      >
+      <el-table-column align="center" label="休假地点">
         <template slot-scope="scope">
-            <span>{{ scope.row.request.vocationPlace? scope.row.request.vocationPlace.name :""}}</span>
+          <span>{{ scope.row.request.vocationPlace? scope.row.request.vocationPlace.name :"" }}</span>
         </template>
       </el-table-column>
-  <el-table-column
-        align="center"
-        label="正休假时长"
-      width="50">
+      <el-table-column align="center" label="正休假时长" width="50">
         <template slot-scope="scope">
-            <span>{{ scope.row.request.vocationLength }}</span>
+          <span>{{ scope.row.request.vocationLength }}</span>
         </template>
       </el-table-column>
- <el-table-column
-        align="center"
-        label="路途时长"
-         width="50"
-      >
+      <el-table-column align="center" label="路途时长" width="50">
         <template slot-scope="scope">
-            <span>{{ scope.row.request.onTripLength}}</span>
+          <span>{{ scope.row.request.onTripLength }}</span>
         </template>
       </el-table-column>
- <el-table-column
-        align="center"
-        label="其他假时长"
-         width="50"
-      >
+      <el-table-column align="center" label="其他假时长" width="50">
         <template slot-scope="scope">
-            <span>{{  countOtherTime(scope.row.request) }}</span>
+          <span>{{ countOtherTime(scope.row.request) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        align="center"
-        label="状态"
-      >
+      <el-table-column align="center" label="状态">
         <template slot-scope="{row}">
-          <el-tag
-            :color="row.statusColor"
-            class="white--text"
-          >{{ row.statusDesc }}</el-tag>
+          <el-tag :color="row.statusColor" class="white--text">{{ row.statusDesc }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="操作"
-        min-width="120"
-      >
+      <el-table-column align="center" label="操作" min-width="120">
         <template slot-scope="{row}">
-          <slot
-            v-if="myUserid"
-            :applyid="row.id"
-            :row="row"
-            name="action"
-          />
+          <slot v-if="myUserid" :applyid="row.id" :row="row" name="action" />
           <span v-else>
             请先
             <a href="login">登录</a>
@@ -169,10 +102,7 @@
       top="0"
       width="408px"
     >
-      <div
-        slot="title"
-        class="apply-detail-header"
-      >
+      <div slot="title" class="apply-detail-header">
         <div class="layout row justify-space-between align-center">
           详情
           <div class="d-flex align-center">
@@ -190,14 +120,8 @@
                 @click="changeApply('next')"
               />
             </el-button-group>
-            <el-tooltip
-              content="关闭"
-              effect="dark"
-            >
-              <i
-                class="el-icon-remove red--text title ml-2"
-                @click="detailDrawer.show = false"
-              />
+            <el-tooltip content="关闭" effect="dark">
+              <i class="el-icon-remove red--text title ml-2" @click="detailDrawer.show = false" />
               <!-- content to trigger tooltip here -->
             </el-tooltip>
           </div>
@@ -255,10 +179,9 @@ export default {
     multi: {
       type: Boolean,
       default: false
-    },
-    
+    }
   },
-  
+
   data() {
     return {
       tableKey: 0,
@@ -306,8 +229,7 @@ export default {
     },
     myUserid() {
       return this.$store.state.user.userid
-    },
-  
+    }
   },
   async created() {
     await this.getAllStatus()
@@ -316,24 +238,26 @@ export default {
   //   detailDrawer
   // },
   methods: {
-    countOtherTime(row){
-      return this.datedifference(row.stampLeave,row.stampReturn)-row.onTripLength-row.vocationLength;
+    countOtherTime(row) {
+      return (
+        this.datedifference(row.stampLeave, row.stampReturn) -
+        row.onTripLength -
+        row.vocationLength
+      )
     },
-    datedifference(sDate1, sDate2) {    //sDate1和sDate2是2006-12-18格式 
-        var dateSpan,
-            tempDate,
-            iDays;
-        sDate1 = Date.parse(sDate1);
-        sDate2 = Date.parse(sDate2);
-        dateSpan = sDate2 - sDate1;
-        dateSpan = Math.abs(dateSpan);
-        iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
-        return iDays
+    datedifference(sDate1, sDate2) {
+      // sDate1和sDate2是2006-12-18格式
+      var dateSpan, iDays
+      sDate1 = Date.parse(sDate1)
+      sDate2 = Date.parse(sDate2)
+      dateSpan = sDate2 - sDate1
+      dateSpan = Math.abs(dateSpan)
+      iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
+      return iDays
     },
-    getChecked()
-    {
-      //获取选中的
- return this.$refs["singleTable"].selection;
+    getChecked() {
+      // 获取选中的
+      return this.$refs['singleTable'].selection
     },
     // 获取所有的状态字典
     getAllStatus() {
