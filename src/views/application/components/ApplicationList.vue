@@ -97,6 +97,41 @@
           </template>
         </el-table-column>
       </el-table-column>
+       <el-table-column
+        align="center"
+        label="休假地点"
+      >
+        <template slot-scope="scope">
+            <span>{{ scope.row.request.vocationPlace? scope.row.request.vocationPlace.name :""}}</span>
+        </template>
+      </el-table-column>
+  <el-table-column
+        align="center"
+        label="正休假时长"
+      width="50">
+        <template slot-scope="scope">
+            <span>{{ scope.row.request.vocationLength }}</span>
+        </template>
+      </el-table-column>
+ <el-table-column
+        align="center"
+        label="路途时长"
+         width="50"
+      >
+        <template slot-scope="scope">
+            <span>{{ scope.row.request.onTripLength}}</span>
+        </template>
+      </el-table-column>
+ <el-table-column
+        align="center"
+        label="其他假时长"
+         width="50"
+      >
+        <template slot-scope="scope">
+            <span>{{  countOtherTime(scope.row.request) }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column
         align="center"
         label="状态"
@@ -220,8 +255,10 @@ export default {
     multi: {
       type: Boolean,
       default: false
-    }
+    },
+    
   },
+  
   data() {
     return {
       tableKey: 0,
@@ -258,8 +295,8 @@ export default {
         const statusObj = statusOptions[item.status]
         item.statusDesc = statusObj ? statusObj.desc : '不明类型'
         item.statusColor = statusObj ? statusObj.color : 'white'
-        item.stampLeave = moment(item.stampLeave).format('LLLL')
-        item.stampReturn = moment(item.stampReturn).format('LLLL')
+        item.stampLeave = moment(item.request.stampLeave).format('LLLL')
+        item.stampReturn = moment(item.request.stampReturn).format('LLLL')
         item.create = format(item.create, 'zh_CN')
         // item.stampLeave = parseTime(item.stampLeave, 'YYYY年MM月dd日')
         // item.stampReturn = parseTime(item.stampReturn, 'YYYY年MM月dd日')
@@ -269,7 +306,8 @@ export default {
     },
     myUserid() {
       return this.$store.state.user.userid
-    }
+    },
+  
   },
   async created() {
     await this.getAllStatus()
@@ -278,6 +316,25 @@ export default {
   //   detailDrawer
   // },
   methods: {
+    countOtherTime(row){
+      return this.datedifference(row.stampLeave,row.stampReturn)-row.onTripLength-row.vocationLength;
+    },
+    datedifference(sDate1, sDate2) {    //sDate1和sDate2是2006-12-18格式 
+        var dateSpan,
+            tempDate,
+            iDays;
+        sDate1 = Date.parse(sDate1);
+        sDate2 = Date.parse(sDate2);
+        dateSpan = sDate2 - sDate1;
+        dateSpan = Math.abs(dateSpan);
+        iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
+        return iDays
+    },
+    getChecked()
+    {
+      //获取选中的
+ return this.$refs["singleTable"].selection;
+    },
     // 获取所有的状态字典
     getAllStatus() {
       return getAllStatus().then(status => {
