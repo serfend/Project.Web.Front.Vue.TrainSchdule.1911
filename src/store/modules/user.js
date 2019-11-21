@@ -1,6 +1,6 @@
 import {
-  getUserAllInfo
-} from '../../api/usercompany'
+  getUserSummary
+} from '../../api/userinfo'
 import {
   login,
   logout
@@ -17,6 +17,7 @@ import router, {
 const state = {
   token: getToken(),
   name: '',
+  companyid: '',
   userid: '',
   avatar: '',
   introduction: '',
@@ -35,6 +36,9 @@ const mutations = {
   },
   SET_NAME: (state, name) => {
     state.name = name
+  },
+  SET_CMPID: (state, name) => {
+    state.companyid = name
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
@@ -77,20 +81,19 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      getUserAllInfo().then(data => {
-        if (!data) {
-          reject('身份验证失败，可能需要重新登陆')
-        }
+      getUserSummary().then(data => {
         // roles = ['admin']
         // roles must be a non-empty array
         // if (!roles || roles.length <= 0) {
         //   reject('getInfo: roles must be a non-null array!')
         // }
         // commit('SET_ROLES', roles)
-        commit('SET_NAME', data.base.realName)
-        commit('SET_USERID', data.username)
-        commit('SET_AVATAR', process.env.VUE_APP_BASE_API + data.base.avatar)
-        commit('SET_INTRODUCTION', data.diyInfo.about)
+
+        commit('SET_NAME', data.realName)
+        commit('SET_USERID', data.id)
+        commit('SET_CMPID', data.companyCode)
+        commit('SET_AVATAR', data.avatar)
+        commit('SET_INTRODUCTION', data.about)
         resolve(data)
       }).catch(error => {
         reject(error)

@@ -1,4 +1,11 @@
 import request from '../utils/request'
+export function getUserSummary(id) {
+  return request.get('users/summary', {
+    params: {
+      id
+    }
+  })
+}
 /**
  * 基础信息
  * @description > ``` response
