@@ -81,14 +81,25 @@
             >导出单位申请</el-button>
           </template>
           <template slot="action" slot-scope="{row}">
-            <el-button size="mini" type="success" @click="auditApply(row, 1)">通过</el-button>
-            <el-button
-              v-if="row.status!='publish'"
-              size="mini"
-              type="warning"
-              @click="auditApply(row, 2)"
-            >驳回</el-button>
-            <el-button v-if="row.status!='deleted'" size="mini" type="danger">删除</el-button>
+            <div v-if="$store.state.user.companyid==row.userBase.companyCode">
+              <el-button
+                v-if="row.status!='publish'"
+                size="mini"
+                type="primary"
+                @click="recallApply(row)"
+              >召回</el-button>
+
+              <el-button size="mini" type="success" @click="auditApply(row, 1)">通过</el-button>
+              <el-button
+                v-if="row.status!='publish'"
+                size="mini"
+                type="warning"
+                @click="auditApply(row, 2)"
+              >驳回</el-button>
+              <el-button v-if="row.status!='deleted'" size="mini" type="danger">删除</el-button>
+            </div>
+
+            <div v-if="$store.state.user.companyid!=row.userBase.companyCode">不可审批</div>
           </template>
         </ApplicationList>
         <el-dialog :visible="auditForm.show" title="提交审核" width="30%">
@@ -121,6 +132,24 @@
             <el-button type="primary" @click="SubmitAuditForm">确 定</el-button>
           </span>
         </el-dialog>
+
+        <el-dialog :visible="recallShow" title="召回订单" width="30%">
+          <el-form ref="auditForm" :model="auditForm" label-width="80px">
+            <el-form-item label="备注">
+              <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
+            </el-form-item>
+            <el-form-item label="安全码">
+              <el-input v-model="auditForm.Code" placeholder="请输入安全码" />
+            </el-form-item>
+            <el-form-item hidden label="审核人">
+              <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
+            </el-form-item>
+          </el-form>
+          <span slot="footer">
+            <el-button @click="recallShow = false">取 消</el-button>
+            <el-button type="primary" @click="SubmitRecall">确 定</el-button>
+          </span>
+        </el-dialog>
         <el-dialog
           :visible.sync="multiAuditForm.show"
           custom-class="p-fixed f-right mr-0"
@@ -140,7 +169,13 @@
 
 <script>
 import ApplicationList from "./components/ApplicationList";
-import { toCompany, toUser, audit, deleteApply } from "../../api/apply";
+import {
+  toCompany,
+  toUser,
+  audit,
+  deleteApply,
+  recallOrder
+} from "../../api/apply";
 import { getOnMyManage } from "../../api/usercompany";
 import { getMembers } from "../../api/company";
 import {
@@ -198,7 +233,8 @@ export default {
       // 批量审批表单
       multiAuditForm: {
         show: false
-      }
+      },
+      recallShow: false //打开召回弹窗
     };
   },
   computed: {
@@ -223,7 +259,8 @@ export default {
         remark: "",
         show: false,
         Code: "",
-        AuthByUserID: this.myUserid
+        AuthByUserID: this.myUserid,
+        IsRecall: false
       };
     },
     DeleteApply(item) {
@@ -275,6 +312,41 @@ export default {
         .finally(() => {
           this.clearAuditForm();
         });
+    },
+
+    SubmitRecall() {
+      const { applyId, remark, Code, AuthByUserID } = this.auditForm;
+      const model = {
+        apply: applyId,
+        reason: remark,
+        recallBy: this.$store.state.user.userid
+      };
+      const Auth = {
+        Code,
+        AuthByUserID: this.$store.state.user.userid
+      };
+      recallOrder({
+        data: model,
+        Auth: Auth
+      })
+        .then(result => {
+          if (result.status === 0) this.$notify.success("已召回" + result.id);
+          else this.$notify.error(result.message + ":" + result.id);
+        })
+        .catch(err => {
+          this.$message.error(err.message);
+        })
+        .finally(() => {
+          this.clearAuditForm();
+          this.recallShow = false;
+        });
+    },
+    recallApply(row) {
+      //打开召回弹框
+      this.clearAuditForm();
+      this.recallShow = true;
+
+      this.auditForm.applyId = row.id;
     },
     auditApply(row, action) {
       this.clearAuditForm();

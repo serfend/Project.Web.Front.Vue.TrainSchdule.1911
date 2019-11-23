@@ -68,64 +68,64 @@
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
       {{ $t('login.thirdpartyTips') }}
-      <br>
-      <br>
-      <br>
+      <br />
+      <br />
+      <br />
       <social-sign />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-import LangSelect from '@/components/LangSelect'
-import SocialSign from './components/SocialSignin'
-import { Message } from 'element-ui'
-import { getUserBase } from '../../api/userinfo'
+import { validUsername } from "@/utils/validate";
+import LangSelect from "@/components/LangSelect";
+import SocialSign from "./components/SocialSignin";
+import { Message } from "element-ui";
+import { getUserBase } from "../../api/userinfo";
 export default {
-  name: 'Login',
+  name: "Login",
   components: { LangSelect, SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error("Please enter the correct user name"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error("The password can not be less than 6 digits"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       loginForm: {
-        username: '1000000',
-        password: '11111111',
+        username: "1000000",
+        password: "ffffffff",
         RememberMe: false,
         verify: 201700816
       },
       loginRules: {
         username: [
-          { required: true, trigger: 'blur', validator: validateUsername }
+          { required: true, trigger: "blur", validator: validateUsername }
         ],
         password: [
-          { required: true, trigger: 'blur', validator: validatePassword }
+          { required: true, trigger: "blur", validator: validatePassword }
         ]
       },
-      passwordType: 'password',
+      passwordType: "password",
       capsTooltip: false,
       loading: false,
       showDialog: false,
       redirect: undefined
-    }
+    };
   },
   watch: {
     $route: {
       handler: function(route) {
-        this.redirect = route.query && route.query.redirect
+        this.redirect = route.query && route.query.redirect;
       },
       immediate: true
     }
@@ -134,29 +134,29 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
-    } else if (this.loginForm.password === '') {
-      this.$refs.password.focus()
+    if (this.loginForm.username === "") {
+      this.$refs.username.focus();
+    } else if (this.loginForm.password === "") {
+      this.$refs.password.focus();
     }
     getUserBase()
       .then(data => {
         if (data) {
           Message({
-            message: '欢迎您,' + data.base.realName,
-            type: 'success',
+            message: "欢迎您," + data.base.realName,
+            type: "success",
             duration: 5000
-          })
-          this.$router.push(this.redirect)
+          });
+          this.$router.push(this.redirect);
         }
       })
       .catch(() => {
         Message({
-          message: '注意，请务必不要泄露密码',
-          type: 'warning',
+          message: "注意，请务必不要泄露密码",
+          type: "warning",
           duration: 5000
-        })
-      })
+        });
+      });
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
@@ -165,58 +165,58 @@ export default {
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (
-          (shiftKey && (key >= 'a' && key <= 'z')) ||
-          (!shiftKey && (key >= 'A' && key <= 'Z'))
+          (shiftKey && (key >= "a" && key <= "z")) ||
+          (!shiftKey && (key >= "A" && key <= "Z"))
         ) {
-          this.capsTooltip = true
+          this.capsTooltip = true;
         } else {
-          this.capsTooltip = false
+          this.capsTooltip = false;
         }
       }
-      if (key === 'CapsLock' && this.capsTooltip === true) {
-        this.capsTooltip = false
+      if (key === "CapsLock" && this.capsTooltip === true) {
+        this.capsTooltip = false;
       }
     },
     showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
+      if (this.passwordType === "password") {
+        this.passwordType = "";
       } else {
-        this.passwordType = 'password'
+        this.passwordType = "password";
       }
       this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
+        this.$refs.password.focus();
+      });
     },
     handleReg() {
-      this.$router.push({ path: '/register' })
+      this.$router.push({ path: "/register" });
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch("user/login", this.loginForm)
             .then(data => {
-              this.loading = false
+              this.loading = false;
               Message({
-                message: this.$t('login.success'),
-                type: 'success',
+                message: this.$t("login.success"),
+                type: "success",
                 duration: 5 * 1000
-              })
-              this.$router.push({ path: this.redirect || '/' })
+              });
+              this.$router.push({ path: this.redirect || "/" });
             })
             .catch(() => {
-              this.loading = false
-            })
+              this.loading = false;
+            });
         } else {
           Message({
-            message: '无效的登录请求',
-            type: 'error',
+            message: "无效的登录请求",
+            type: "error",
             duration: 5 * 1000
-          })
-          return false
+          });
+          return false;
         }
-      })
+      });
     }
     // afterQRScan() {
     //   if (e.key === 'x-admin-oauth-code') {
@@ -237,7 +237,7 @@ export default {
     //   }
     // }
   }
-}
+};
 </script>
 
 <style lang="scss">

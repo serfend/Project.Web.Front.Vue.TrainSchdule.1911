@@ -219,3 +219,14 @@ export function detail(id) {
     }
   })
 }
+
+/**
+ *召回
+ *
+ * @export
+ * @param {*} id
+ * @returns
+ */
+export function recallOrder(data) {
+  return request.post('/apply/recallorder',data);
+}
