@@ -63,7 +63,13 @@
         </el-card>
       </el-col>
       <el-col :lg="19" :md="18" :sm="24">
-        <ApplicationList :data-list="dataList" :on-loading="onLoading" multi @refresh="searchData">
+        <ApplicationList
+          ref="applicationlist"
+          :data-list="dataList"
+          :on-loading="onLoading"
+          multi
+          @refresh="searchData"
+        >
           <template slot="headeraction">
             <el-button icon="el-icon-edit" type="primary" @click="showMultiDialog">批量审核</el-button>
             <el-button icon="el-icon-edit" type="primary" @click="handleCreate">添加</el-button>
@@ -81,14 +87,15 @@
             >导出单位申请</el-button>
           </template>
           <template slot="action" slot-scope="{row}">
-            <div v-if="$store.state.user.companyid==row.userBase.companyCode">
-              <el-button
-                v-if="row.status!='publish'"
-                size="mini"
-                type="primary"
-                @click="recallApply(row)"
-              >召回</el-button>
-
+            <el-button
+              v-if="row.status==100&& $store.state.user.companyid==row.nowAuditCompany"
+              size="mini"
+              type="primary"
+              @click="recallApply(row)"
+            >召回</el-button>
+            <div
+              v-if="$store.state.user.companyid==row.userBase.companyCode&&row.status!=30&&row.status!=100"
+            >
               <el-button size="mini" type="success" @click="auditApply(row, 1)">通过</el-button>
               <el-button
                 v-if="row.status!='publish'"
@@ -98,12 +105,11 @@
               >驳回</el-button>
               <el-button v-if="row.status!='deleted'" size="mini" type="danger">删除</el-button>
             </div>
-
             <div v-if="$store.state.user.companyid!=row.userBase.companyCode">不可审批</div>
           </template>
         </ApplicationList>
         <el-dialog :visible="auditForm.show" title="提交审核" width="30%">
-          <el-form ref="auditForm" :model="auditForm" label-width="80px">
+          <el-form ref="auditForm" :model="auditForm" label-width="80px" :rules="auditFormRules">
             <el-form-item label="审核结果">
               <el-switch
                 v-model="auditForm.action"
@@ -120,8 +126,8 @@
             <el-form-item label="备注">
               <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
             </el-form-item>
-            <el-form-item label="安全码">
-              <el-input v-model="auditForm.Code" placeholder="请输入安全码" />
+            <el-form-item label="安全码" prop="Code">
+              <el-input v-model.number="auditForm.Code" placeholder="请输入安全码" />
             </el-form-item>
             <el-form-item hidden label="审核人">
               <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
@@ -157,6 +163,30 @@
           top="0"
           width="408px"
         >
+          <el-form ref="auditForm" :model="auditForm" :rules="auditFormRules" label-width="80px">
+            <el-form-item label="审核结果">
+              <el-switch
+                v-model="auditForm.action"
+                :active-value="1"
+                :inactive-value="2"
+                active-color="#13ce66"
+                active-text="通过"
+                class="pt-2"
+                inactive-color="#ff4949"
+                inactive-text="驳回"
+                style="display: block"
+              />
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
+            </el-form-item>
+            <el-form-item label="安全码" prop="Code">
+              <el-input v-model.number="auditForm.Code" placeholder="请输入安全码" />
+            </el-form-item>
+            <el-form-item hidden label="审核人" prop="AuthByUserID">
+              <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
+            </el-form-item>
+          </el-form>
           <span slot="footer">
             <el-button @click="multiAuditForm.show = false">取 消</el-button>
             <el-button type="primary" @click="SubmitMultiAuditForm">确 定</el-button>
@@ -234,7 +264,19 @@ export default {
       multiAuditForm: {
         show: false
       },
-      recallShow: false //打开召回弹窗
+      recallShow: false, //打开召回弹窗
+      auditFormRules: {
+        Code: [
+          { required: true, message: "请输入六位数字", trigger: "blur" },
+          {
+            min: 100000,
+            max: 999999,
+            message: "请输入六位数字",
+            trigger: "blur",
+            type: "number"
+          }
+        ]
+      }
     };
   },
   computed: {
@@ -250,7 +292,47 @@ export default {
       this.multiAuditForm.show = true;
     },
     SubmitMultiAuditForm() {
-      return false;
+      this.$refs["auditForm"].validate(valid => {
+        if (!valid) {
+          return;
+        }
+
+        var dataList = this.$refs["applicationlist"].getChecked();
+        var list = [];
+        const { applyId, action, remark, Code, AuthByUserID } = this.auditForm;
+        for (var i = 0; i < dataList.length; i++) {
+          list.push({
+            id: dataList[i].id,
+            action,
+            remark
+          });
+        }
+        const Auth = {
+          Code,
+          AuthByUserID: this.myUserid
+        };
+        audit(
+          {
+            list
+          },
+          Auth
+        )
+          .then(resultlist => {
+            resultlist.forEach(result => {
+              if (result.status === 0)
+                this.$notify.success("已审批" + result.id);
+              else this.$notify.error(result.message + ":" + result.id);
+              this.searchData();
+            });
+          })
+          .catch(err => {
+            this.$message.error(err.message);
+          })
+          .finally(() => {
+            this.clearAuditForm();
+            this.multiAuditForm.show = false;
+          });
+      });
     },
     clearAuditForm() {
       this.auditForm = {
@@ -282,36 +364,44 @@ export default {
         });
     },
     SubmitAuditForm() {
-      const { applyId, action, remark, Code, AuthByUserID } = this.auditForm;
-      const list = [
-        {
-          id: applyId,
-          action,
-          remark
+      this.$refs["auditForm"].validate(valid => {
+        if (!valid) {
+          return;
         }
-      ];
-      const Auth = {
-        Code,
-        AuthByUserID
-      };
-      audit(
-        {
-          list
-        },
-        Auth
-      )
-        .then(resultlist => {
-          resultlist.forEach(result => {
-            if (result.status === 0) this.$notify.success("已审批" + result.id);
-            else this.$notify.error(result.message + ":" + result.id);
+        const { applyId, action, remark, Code, AuthByUserID } = this.auditForm;
+        const list = [
+          {
+            id: applyId,
+            action,
+            remark
+          }
+        ];
+        const Auth = {
+          Code,
+          AuthByUserID
+        };
+        audit(
+          {
+            list
+          },
+          Auth
+        )
+          .then(resultlist => {
+            resultlist.forEach(result => {
+              if (result.status === 0)
+                this.$notify.success("已审批" + result.id);
+              else this.$notify.error(result.message + ":" + result.id);
+
+              this.searchData();
+            });
+          })
+          .catch(err => {
+            this.$message.error(err.message);
+          })
+          .finally(() => {
+            this.clearAuditForm();
           });
-        })
-        .catch(err => {
-          this.$message.error(err.message);
-        })
-        .finally(() => {
-          this.clearAuditForm();
-        });
+      });
     },
 
     SubmitRecall() {
@@ -332,6 +422,7 @@ export default {
         .then(result => {
           if (result.status === 0) this.$notify.success("已召回" + result.id);
           else this.$notify.error(result.message + ":" + result.id);
+          this.searchData();
         })
         .catch(err => {
           this.$message.error(err.message);
