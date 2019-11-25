@@ -94,7 +94,7 @@
               @click="recallApply(row)"
             >召回</el-button>
             <div
-              v-if="$store.state.user.companyid!=row.nowAuditCompany&&row.status!=30&&row.status!=100"
+              v-if="$store.state.user.companyid==row.nowAuditCompany&&row.status!=30&&row.status!=100"
             >
               <el-button size="mini" type="success" @click="auditApply(row, 1)">通过</el-button>
               <el-button
@@ -104,7 +104,9 @@
                 @click="auditApply(row, 2)"
               >驳回</el-button>
             </div>
-            <div v-if="$store.state.user.companyid==row.nowAuditCompany">仅{{ row.nowAuditCompany }}可审批</div>
+            <div
+              v-if="$store.state.user.companyid!=row.nowAuditCompany"
+            >仅{{ row.nowAuditCompany }}可审批</div>
           </template>
         </ApplicationList>
         <el-dialog :visible="auditForm.show" title="提交审核" width="30%">
@@ -318,7 +320,9 @@ export default {
         )
           .then(resultlist => {
             resultlist.forEach(result => {
-              if (result.status === 0) { this.$notify.success('已审批' + result.id) } else this.$notify.error(result.message + ':' + result.id)
+              if (result.status === 0) {
+                this.$notify.success('已审批' + result.id)
+              } else this.$notify.error(result.message + ':' + result.id)
               this.searchData()
             })
           })
@@ -385,7 +389,9 @@ export default {
         )
           .then(resultlist => {
             resultlist.forEach(result => {
-              if (result.status === 0) { this.$notify.success('已审批' + result.id) } else this.$notify.error(result.message + ':' + result.id)
+              if (result.status === 0) {
+                this.$notify.success('已审批' + result.id)
+              } else this.$notify.error(result.message + ':' + result.id)
 
               this.searchData()
             })
