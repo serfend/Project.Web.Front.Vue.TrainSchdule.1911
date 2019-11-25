@@ -115,7 +115,11 @@
                 <el-button type="primary" @click="OpenOtherVacation('')">添加休假内容</el-button>
               </el-form-item>
               <el-collapse accordion>
-                <el-collapse-item v-for="(item,index) in SelectVacationList" :key="item.value">
+                <el-collapse-item
+                  v-for="(item,index) in SelectVacationList"
+                  :key="item.value"
+                  style="position:relative;"
+                >
                   <template slot="title">
                     {{item.name}} {{item.length}}天
                     <i
@@ -438,6 +442,7 @@ export default {
     removeVacation(index) {
       console.log(index);
       this.SelectVacationList.splice(index, 1);
+      this.handleChange();
     },
     SaveOtherVacation() {
       this.$refs["VacationModel"].validate(valid => {
@@ -471,7 +476,7 @@ export default {
             description: obj.description
           });
         }
-
+        this.handleChange();
         this.dialogVisible = false;
       });
     },
@@ -688,7 +693,7 @@ export default {
         id: this.form.id
       });
       this.onLoading = true;
-      infoParam["vocationAdditionals"]=this.SelectVacationList;
+      infoParam["vocationAdditionals"] = this.SelectVacationList;
       postRequestInfo(infoParam)
         .then(data => {
           const id = data.id;
@@ -801,11 +806,17 @@ export default {
      * 用户计算预期归队日期
      */
     handleChange() {
+      var SelectVacationCount = 0;
+      this.SelectVacationList.forEach(v => {
+        SelectVacationCount += v.length;
+      });
+      console.log(SelectVacationCount)
       this.caculaingDate = {
         start: this.formApply.StampLeave,
         length:
           parseInt(this.formApply.VocationLength) +
-          parseInt(this.formApply.OnTripLength)
+          parseInt(this.formApply.OnTripLength) +
+          SelectVacationCount
       };
       this.formApply.isArchitect = this.caculaingDate.start <= new Date();
       if (this.OnloadingUserStamp) return;
@@ -815,7 +826,6 @@ export default {
         getStampReturn(this.caculaingDate)
           .then(data => {
             const endDate = data.endDate;
-            debugger;
             this.formApply.StampReturn = endDate;
             this.$notify({
               title: "预计归队时间",
@@ -907,6 +917,7 @@ hr.divider {
   margin-right: 20px;
   position: absolute;
   right: 50px;
+  top: 10px;
 }
 .group-edit {
   color: #999;
@@ -916,5 +927,6 @@ hr.divider {
   margin-right: 20px;
   position: absolute;
   right: 100px;
+  top: 10px;
 }
 </style>

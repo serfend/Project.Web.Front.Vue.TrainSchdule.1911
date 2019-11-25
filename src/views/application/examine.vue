@@ -388,10 +388,11 @@ export default {
         )
           .then(resultlist => {
             resultlist.forEach(result => {
-              if (result.status === 0)
+              if (result.status === 0) {
                 this.$notify.success("已审批" + result.id);
-              else this.$notify.error(result.message + ":" + result.id);
-
+              } else {
+                this.$notify.error(result.message + ":" + result.id);
+              }
               this.searchData();
             });
           })
@@ -405,7 +406,7 @@ export default {
     },
 
     SubmitRecall() {
-      const { applyId, remark, Code, AuthByUserID } = this.auditForm;
+      const { applyId, remark, Code } = this.auditForm;
       const model = {
         apply: applyId,
         reason: remark,
@@ -433,7 +434,7 @@ export default {
         });
     },
     recallApply(row) {
-      //打开召回弹框
+      // 打开召回弹框
       this.clearAuditForm();
       this.recallShow = true;
 
@@ -483,7 +484,6 @@ export default {
         });
       }
     },
-
     // 查询数据
     searchData() {
       if (this.onLoading === true) {
