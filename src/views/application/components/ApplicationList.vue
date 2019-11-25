@@ -47,7 +47,7 @@
           <span>{{ scope.row.create }}</span>
         </template>
       </el-table-column>
-      <el-table-column header-align="center" align="center" label="休假时间" width="160" >
+      <el-table-column header-align="center" align="center" label="休假时间" width="160">
         <template slot-scope="scope">
           <span>{{ scope.row.stampLeave+"-"+scope.row.stampReturn }}</span>
         </template>
@@ -71,13 +71,18 @@
         <template slot-scope="scope">
           <el-dropdown>
             <span class="el-dropdown-link">
-              <span>{{ countTime(scope.row.request)}}天</span>
-              <i class="el-icon-arrow-down el-icon--right"></i>
+              <span>{{ countTime(scope.row.request) }}天</span>
+              <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>正休假时长{{ scope.row.request.vocationLength }}天</el-dropdown-item>
               <el-dropdown-item>路途时长{{ scope.row.request.onTripLength }}天</el-dropdown-item>
-              <el-dropdown-item>其他假时长{{ countOtherTime(scope.row.request) }}天</el-dropdown-item>
+
+              <el-dropdown-item
+                v-for="additial in scope.row.request.additialVocations"
+                v-show="scope.row.request.additialVocations.length>0"
+                :key="additial"
+              >{{ additial.name }} {{ additial.length }}天</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -169,16 +174,16 @@
 </template>
 
 <script>
-import { format } from "timeago.js";
-import moment from "moment";
-import { getAllStatus, detail } from "../../../api/apply";
-import ApplicationDetail from "./ApplicationDetail";
-import waves from "@/directive/waves"; // waves directive
-import { parseTime } from "../../../utils";
-moment.locale("zh-cn");
+import { format } from 'timeago.js'
+import moment from 'moment'
+import { getAllStatus, detail } from '../../../api/apply'
+import ApplicationDetail from './ApplicationDetail'
+import waves from '@/directive/waves' // waves directive
+import { parseTime } from '../../../utils'
+moment.locale('zh-cn')
 
 export default {
-  name: "ApplicationList",
+  name: 'ApplicationList',
   directives: { waves },
   components: {
     ApplicationDetail
@@ -187,7 +192,7 @@ export default {
     dataList: {
       type: Array,
       default() {
-        return [];
+        return []
       }
     },
     onLoading: {
@@ -218,102 +223,102 @@ export default {
         // importance: undefined,
         // keyword: undefined,
         status: undefined,
-        userid: "",
-        company: ""
+        userid: '',
+        company: ''
       },
       statusOptions: {},
       downloadLoading: false
-    };
+    }
   },
   computed: {
     /**
      * 状态字典翻译
      */
     formatedList() {
-      const { statusOptions } = this;
+      const { statusOptions } = this
       return this.dataList.map(li => {
-        const { ...item } = li;
-        const statusObj = statusOptions[item.status];
-        item.statusDesc = statusObj ? statusObj.desc : "不明类型";
-        item.statusColor = statusObj ? statusObj.color : "white";
-        var stampLeave = new Date(item.request.stampLeave);
+        const { ...item } = li
+        const statusObj = statusOptions[item.status]
+        item.statusDesc = statusObj ? statusObj.desc : '不明类型'
+        item.statusColor = statusObj ? statusObj.color : 'gray'
+        var stampLeave = new Date(item.request.stampLeave)
         item.stampLeave =
-          stampLeave.getMonth() + 1 + "月" + stampLeave.getDate() + "日"; //moment(item.request.stampLeave).format('LLLL')
-        var stampReturn = new Date(item.request.stampReturn);
+          stampLeave.getMonth() + 1 + '月' + stampLeave.getDate() + '日' // moment(item.request.stampLeave).format('LLLL')
+        var stampReturn = new Date(item.request.stampReturn)
         item.stampReturn =
-          stampReturn.getMonth() + 1 + "月" + stampReturn.getDate() + "日"; //moment(item.request.stampReturn).format('LLLL')
-        item.create = format(item.create, "zh_CN");
+          stampReturn.getMonth() + 1 + '月' + stampReturn.getDate() + '日' // moment(item.request.stampReturn).format('LLLL')
+        item.create = format(item.create, 'zh_CN')
         // item.stampLeave = parseTime(item.stampLeave, 'YYYY年MM月dd日')
         // item.stampReturn = parseTime(item.stampReturn, 'YYYY年MM月dd日')
         // item.create = parseTime(item.create, 'YYYY年MM月dd日')
-        return item;
-      });
+        return item
+      })
     },
     myUserid() {
-      return this.$store.state.user.userid;
+      return this.$store.state.user.userid
     }
   },
   async created() {
-    await this.getAllStatus();
+    await this.getAllStatus()
   },
   // mounted() {
   //   detailDrawer
   // },
   methods: {
     countOtherTime(row) {
-      //休假其他时间
+      // 休假其他时间
       return (
         this.datedifference(row.stampLeave, row.stampReturn) -
         row.onTripLength -
         row.vocationLength
-      );
+      )
     },
     countTime(row) {
-      //总休假时间
-      return this.datedifference(row.stampLeave, row.stampReturn);
+      // 总休假时间
+      return this.datedifference(row.stampLeave, row.stampReturn)
     },
     datedifference(sDate1, sDate2) {
       // sDate1和sDate2是2006-12-18格式
-      var dateSpan, iDays;
-      sDate1 = Date.parse(sDate1);
-      sDate2 = Date.parse(sDate2);
-      dateSpan = sDate2 - sDate1;
-      dateSpan = Math.abs(dateSpan);
-      iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
-      return iDays;
+      var dateSpan, iDays
+      sDate1 = Date.parse(sDate1)
+      sDate2 = Date.parse(sDate2)
+      dateSpan = sDate2 - sDate1
+      dateSpan = Math.abs(dateSpan)
+      iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
+      return iDays
     },
     getChecked() {
       // 获取选中的
-      return this.$refs["singleTable"].selection;
+      return this.$refs['singleTable'].selection
     },
     // 获取所有的状态字典
     getAllStatus() {
       return getAllStatus().then(status => {
         if (status.list) {
-          this.statusOptions = status.list;
+          this.statusOptions = status.list
         }
-      });
+      })
     },
 
     changeApply(oper) {
-      const { id } = this.detailDrawer;
+      const { id } = this.detailDrawer
       const matchedItemIndex = this.formatedList.findIndex(
         item => item.id === id
-      );
-      const listLen = this.formatedList.length;
-      let nextIndex = 0;
+      )
+      const listLen = this.formatedList.length
+      let nextIndex = 0
       // 上一个
-      if (oper === "prev") {
+      if (oper === 'prev') {
         nextIndex =
-          matchedItemIndex - 1 < 0 ? listLen - 1 : matchedItemIndex - 1;
-      } else if (oper === "next") {
+          matchedItemIndex - 1 < 0 ? listLen - 1 : matchedItemIndex - 1
+      } else if (oper === 'next') {
         nextIndex =
-          matchedItemIndex + 1 > listLen - 1 ? 0 : matchedItemIndex + 1;
+          matchedItemIndex + 1 > listLen - 1 ? 0 : matchedItemIndex + 1
       }
-      const newRow = this.formatedList[nextIndex];
-      const newId = newRow.id;
-      this.$refs.singleTable.setCurrentRow(newRow);
-      this.handleDetail(newRow, newId);
+      const newRow = this.formatedList[nextIndex]
+      const newId = newRow.id
+      this.$refs.singleTable.setCurrentRow(newRow)
+      this.handleDetail(newRow, newId)
     },
 
     /**
@@ -322,36 +327,30 @@ export default {
     handleDetail(row, id) {
       detail(id).then(data => {
         if (data) {
-          this.detailDrawer.show = true;
-          this.detailDrawer.data = data;
-          this.detailDrawer.basic = row;
-          this.detailDrawer.id = id;
+          this.detailDrawer.show = true
+          this.detailDrawer.data = data
+          this.detailDrawer.basic = row
+          this.detailDrawer.id = id
         }
-      });
+      })
     },
 
     /**
      * 执行导出
      */
     handleDownload() {
-      this.downloadLoading = true;
-      import("@/vendor/Export2Excel").then(excel => {
-        const tHeader = ["timestamp", "title", "type", "importance", "status"];
-        const filterVal = [
-          "timestamp",
-          "title",
-          "type",
-          "importance",
-          "status"
-        ];
-        const data = this.formatJson(filterVal, this.list);
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
+        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const data = this.formatJson(filterVal, this.list)
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "table-list"
-        });
-        this.downloadLoading = false;
-      });
+          filename: 'table-list'
+        })
+        this.downloadLoading = false
+      })
     },
 
     /**
@@ -360,24 +359,24 @@ export default {
     formatJson(filterVal, jsonData) {
       return jsonData.map(v =>
         filterVal.map(j => {
-          if (j === "timestamp") {
-            return parseTime(v[j]);
+          if (j === 'timestamp') {
+            return parseTime(v[j])
           } else {
-            return v[j];
+            return v[j]
           }
         })
-      );
+      )
     },
 
     /**
      * 请求刷新
      */
     emitRefresh() {
-      this.getAllStatus();
-      this.$emit("refresh");
+      this.getAllStatus()
+      this.$emit('refresh')
     }
   }
-};
+}
 </script>
 
 <style lang="scss">
