@@ -27,9 +27,18 @@
             <!-- content to trigger tooltip here -->
             <el-button plain size="mini" type="info" @click="handleDetail(row, row.id)">
               <i class="el-icon-info blue--text" />
-              <span class="info--text">{{ row.base.realName }}</span>
+              {{ row.base.realName }}
             </el-button>
           </el-tooltip>
+          <el-button
+            v-for="additialVocation in row.request.additialVocations"
+            :key="additialVocation"
+            plain
+            size="mini"
+            type="info"
+          >
+            <span class="info--text">{{ additialVocation.name }}</span>
+          </el-button>
         </template>
       </el-table-column>
       <el-table-column align="center" label="单位">
@@ -77,7 +86,6 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>正休假时长{{ scope.row.request.vocationLength }}天</el-dropdown-item>
               <el-dropdown-item>路途时长{{ scope.row.request.onTripLength }}天</el-dropdown-item>
-
               <el-dropdown-item
                 v-for="additial in scope.row.request.additialVocations"
                 v-show="scope.row.request.additialVocations.length>0"
@@ -87,21 +95,6 @@
           </el-dropdown>
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="正休假时长" width="50">
-        <template slot-scope="scope">
-          <span>{{ scope.row.request.vocationLength }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="路途时长" width="50">
-        <template slot-scope="scope">
-          <span>{{ scope.row.request.onTripLength }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="其他假时长" width="50">
-        <template slot-scope="scope">
-          <span>{{ countOtherTime(scope.row.request) }}</span>
-        </template>
-      </el-table-column>-->
 
       <el-table-column align="center" label="状态">
         <template slot-scope="{row}">

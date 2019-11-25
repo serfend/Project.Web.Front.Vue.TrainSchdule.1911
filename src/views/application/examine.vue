@@ -130,7 +130,7 @@
             <el-form-item label="安全码" prop="Code">
               <el-input v-model.number="auditForm.Code" placeholder="请输入安全码" />
             </el-form-item>
-            <el-form-item hidden label="审核人">
+            <el-form-item label="审核人">
               <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
             </el-form-item>
           </el-form>
@@ -140,7 +140,7 @@
           </span>
         </el-dialog>
 
-        <el-dialog :visible="recallShow" title="召回订单" width="30%">
+        <el-dialog :visible="recallShow" title="召回" width="30%">
           <el-form ref="auditForm" :model="auditForm" label-width="80px">
             <el-form-item label="备注">
               <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
@@ -184,7 +184,7 @@
             <el-form-item label="安全码" prop="Code">
               <el-input v-model.number="auditForm.Code" placeholder="请输入安全码" />
             </el-form-item>
-            <el-form-item hidden label="审核人" prop="AuthByUserID">
+            <el-form-item label="审核人" prop="AuthByUserID">
               <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
             </el-form-item>
           </el-form>
@@ -290,6 +290,7 @@ export default {
   },
   methods: {
     showMultiDialog() {
+      this.clearAuditForm()
       this.multiAuditForm.show = true
     },
     SubmitMultiAuditForm() {
@@ -300,7 +301,7 @@ export default {
 
         var dataList = this.$refs['applicationlist'].getChecked()
         var list = []
-        const { applyId, action, remark, Code, AuthByUserID } = this.auditForm
+        const { action, remark, Code, AuthByUserID } = this.auditForm
         for (var i = 0; i < dataList.length; i++) {
           list.push({
             id: dataList[i].id,
@@ -310,7 +311,7 @@ export default {
         }
         const Auth = {
           Code,
-          AuthByUserID: this.myUserid
+          AuthByUserID: AuthByUserID
         }
         audit(
           {
@@ -414,7 +415,7 @@ export default {
       }
       const Auth = {
         Code,
-        AuthByUserID: this.$store.state.user.userid
+        AuthByUserID: AuthByUserID
       }
       recallOrder({
         data: model,
