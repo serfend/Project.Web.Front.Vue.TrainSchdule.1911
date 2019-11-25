@@ -94,7 +94,7 @@
               @click="recallApply(row)"
             >召回</el-button>
             <div
-              v-if="$store.state.user.companyid==row.userBase.companyCode&&row.status!=30&&row.status!=100"
+              v-if="$store.state.user.companyid==row.nowAuditCompany&&row.status!=30&&row.status!=100"
             >
               <el-button size="mini" type="success" @click="auditApply(row, 1)">通过</el-button>
               <el-button
@@ -103,9 +103,10 @@
                 type="warning"
                 @click="auditApply(row, 2)"
               >驳回</el-button>
-              <el-button v-if="row.status!='deleted'" size="mini" type="danger">删除</el-button>
             </div>
-            <div v-if="$store.state.user.companyid!=row.userBase.companyCode">不可审批</div>
+            <div
+              v-if="$store.state.user.companyid!=row.nowAuditCompany"
+            >仅{{ row.nowAuditCompany }}可审批</div>
           </template>
         </ApplicationList>
         <el-dialog :visible="auditForm.show" title="提交审核" width="30%">
@@ -129,7 +130,7 @@
             <el-form-item label="安全码" prop="Code">
               <el-input v-model.number="auditForm.Code" placeholder="请输入安全码" />
             </el-form-item>
-            <el-form-item hidden label="审核人">
+            <el-form-item label="审核人">
               <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
             </el-form-item>
           </el-form>
@@ -139,7 +140,7 @@
           </span>
         </el-dialog>
 
-        <el-dialog :visible="recallShow" title="召回订单" width="30%">
+        <el-dialog :visible="recallShow" title="召回" width="30%">
           <el-form ref="auditForm" :model="auditForm" label-width="80px">
             <el-form-item label="备注">
               <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
@@ -183,7 +184,7 @@
             <el-form-item label="安全码" prop="Code">
               <el-input v-model.number="auditForm.Code" placeholder="请输入安全码" />
             </el-form-item>
-            <el-form-item hidden label="审核人" prop="AuthByUserID">
+            <el-form-item label="审核人" prop="AuthByUserID">
               <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
             </el-form-item>
           </el-form>
@@ -198,21 +199,21 @@
 </template>
 
 <script>
-import ApplicationList from "./components/ApplicationList";
+import ApplicationList from './components/ApplicationList'
 import {
   toCompany,
   toUser,
   audit,
   deleteApply,
   recallOrder
-} from "../../api/apply";
-import { getOnMyManage } from "../../api/usercompany";
-import { getMembers } from "../../api/company";
+} from '../../api/apply'
+import { getOnMyManage } from '../../api/usercompany'
+import { getMembers } from '../../api/company'
 import {
   exportUserApplies,
   exportApply,
   exportCompanyApplies
-} from "../../api/static";
+} from '../../api/static'
 // 将导出的方法以mixins的方式注入到vm实例
 const mixins = {
   methods: {
@@ -221,21 +222,21 @@ const mixins = {
     exportCompanyApplies,
     download(data) {
       if (!data) {
-        return;
+        return
       }
-      const url = window.URL.createObjectURL(new Blob([data]));
-      const link = document.createElement("a");
-      link.style.display = "none";
-      link.href = url;
-      link.setAttribute("download", "excel.xlsx");
+      const url = window.URL.createObjectURL(new Blob([data]))
+      const link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      link.setAttribute('download', 'excel.xlsx')
 
-      document.body.appendChild(link);
-      link.click();
+      document.body.appendChild(link)
+      link.click()
     }
   }
-};
+}
 export default {
-  name: "ApplyExamine",
+  name: 'ApplyExamine',
   components: {
     ApplicationList
   },
@@ -243,8 +244,8 @@ export default {
   data() {
     return {
       queryForm: {
-        companyCode: "",
-        userId: "",
+        companyCode: '',
+        userId: '',
         isSearchUser: false
       },
       myManages: [],
@@ -253,133 +254,65 @@ export default {
       membersOption: [],
       cacheMembers: [],
       auditForm: {
-        applyId: "",
+        applyId: '',
         action: 1,
-        remark: "",
+        remark: '',
         show: false,
-        Code: "",
-        AuthByUserID: ""
+        Code: '',
+        AuthByUserID: ''
       },
       // 批量审批表单
       multiAuditForm: {
         show: false
       },
-      recallShow: false, //打开召回弹窗
+      recallShow: false, // 打开召回弹窗
       auditFormRules: {
         Code: [
-          { required: true, message: "请输入六位数字", trigger: "blur" },
+          { required: true, message: '请输入六位数字', trigger: 'blur' },
           {
             min: 100000,
             max: 999999,
-            message: "请输入六位数字",
-            trigger: "blur",
-            type: "number"
+            message: '请输入六位数字',
+            trigger: 'blur',
+            type: 'number'
           }
         ]
       }
-    };
+    }
   },
   computed: {
     myUserid() {
-      return this.$store.state.user.userid;
+      return this.$store.state.user.userid
     }
   },
   created() {
-    this.getOnMyManage();
+    this.getOnMyManage()
   },
   methods: {
     showMultiDialog() {
-      this.multiAuditForm.show = true;
+      this.clearAuditForm()
+      this.multiAuditForm.show = true
     },
     SubmitMultiAuditForm() {
-      this.$refs["auditForm"].validate(valid => {
+      this.$refs['auditForm'].validate(valid => {
         if (!valid) {
-          return;
+          return
         }
 
-        var dataList = this.$refs["applicationlist"].getChecked();
-        var list = [];
-        const { applyId, action, remark, Code, AuthByUserID } = this.auditForm;
+        var dataList = this.$refs['applicationlist'].getChecked()
+        var list = []
+        const { action, remark, Code, AuthByUserID } = this.auditForm
         for (var i = 0; i < dataList.length; i++) {
           list.push({
             id: dataList[i].id,
             action,
             remark
-          });
+          })
         }
         const Auth = {
           Code,
-          AuthByUserID: this.myUserid
-        };
-        audit(
-          {
-            list
-          },
-          Auth
-        )
-          .then(resultlist => {
-            resultlist.forEach(result => {
-              if (result.status === 0)
-                this.$notify.success("已审批" + result.id);
-              else this.$notify.error(result.message + ":" + result.id);
-              this.searchData();
-            });
-          })
-          .catch(err => {
-            this.$message.error(err.message);
-          })
-          .finally(() => {
-            this.clearAuditForm();
-            this.multiAuditForm.show = false;
-          });
-      });
-    },
-    clearAuditForm() {
-      this.auditForm = {
-        applyId: "",
-        action: 1,
-        remark: "",
-        show: false,
-        Code: "",
-        AuthByUserID: this.myUserid,
-        IsRecall: false
-      };
-    },
-    DeleteApply(item) {
-      const authUser = prompt("输入授权账号", this.myUserid);
-      if (!authUser) return;
-      deleteApply({
-        id: item.id,
-        Auth: {
-          AuthByUserID: authUser,
-          Code: prompt("输入授权码")
+          AuthByUserID: AuthByUserID
         }
-      })
-        .then(() => {
-          this.$message.success("删除成功");
-          this.searchData();
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
-    },
-    SubmitAuditForm() {
-      this.$refs["auditForm"].validate(valid => {
-        if (!valid) {
-          return;
-        }
-        const { applyId, action, remark, Code, AuthByUserID } = this.auditForm;
-        const list = [
-          {
-            id: applyId,
-            action,
-            remark
-          }
-        ];
-        const Auth = {
-          Code,
-          AuthByUserID
-        };
         audit(
           {
             list
@@ -389,129 +322,197 @@ export default {
           .then(resultlist => {
             resultlist.forEach(result => {
               if (result.status === 0) {
-                this.$notify.success("已审批" + result.id);
-              } else {
-                this.$notify.error(result.message + ":" + result.id);
-              }
-              this.searchData();
-            });
+                this.$notify.success('已审批' + result.id)
+              } else this.$notify.error(result.message + ':' + result.id)
+              this.searchData()
+            })
           })
           .catch(err => {
-            this.$message.error(err.message);
+            this.$message.error(err.message)
           })
           .finally(() => {
-            this.clearAuditForm();
-          });
-      });
+            this.clearAuditForm()
+            this.multiAuditForm.show = false
+          })
+      })
+    },
+    clearAuditForm() {
+      this.auditForm = {
+        applyId: '',
+        action: 1,
+        remark: '',
+        show: false,
+        Code: '',
+        AuthByUserID: this.myUserid,
+        IsRecall: false
+      }
+    },
+    DeleteApply(item) {
+      const authUser = prompt('输入授权账号', this.myUserid)
+      if (!authUser) return
+      deleteApply({
+        id: item.id,
+        Auth: {
+          AuthByUserID: authUser,
+          Code: prompt('输入授权码')
+        }
+      })
+        .then(() => {
+          this.$message.success('删除成功')
+          this.searchData()
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+    },
+    SubmitAuditForm() {
+      this.$refs['auditForm'].validate(valid => {
+        if (!valid) {
+          return
+        }
+        const { applyId, action, remark, Code, AuthByUserID } = this.auditForm
+        const list = [
+          {
+            id: applyId,
+            action,
+            remark
+          }
+        ]
+        const Auth = {
+          Code,
+          AuthByUserID
+        }
+        audit(
+          {
+            list
+          },
+          Auth
+        )
+          .then(resultlist => {
+            resultlist.forEach(result => {
+              if (result.status === 0) {
+                this.$notify.success('已审批' + result.id)
+              } else this.$notify.error(result.message + ':' + result.id)
+
+              this.searchData()
+            })
+          })
+          .catch(err => {
+            this.$message.error(err.message)
+          })
+          .finally(() => {
+            this.clearAuditForm()
+          })
+      })
     },
 
     SubmitRecall() {
-      const { applyId, remark, Code } = this.auditForm;
+      const { applyId, remark, Code } = this.auditForm
       const model = {
         apply: applyId,
         reason: remark,
         recallBy: this.$store.state.user.userid
-      };
+      }
       const Auth = {
         Code,
-        AuthByUserID: this.$store.state.user.userid
-      };
+        AuthByUserID: AuthByUserID
+      }
       recallOrder({
         data: model,
         Auth: Auth
       })
         .then(result => {
-          if (result.status === 0) this.$notify.success("已召回" + result.id);
-          else this.$notify.error(result.message + ":" + result.id);
-          this.searchData();
+          if (result.status === 0) this.$notify.success('已召回' + result.id)
+          else this.$notify.error(result.message + ':' + result.id)
+          this.searchData()
         })
         .catch(err => {
-          this.$message.error(err.message);
+          this.$message.error(err.message)
         })
         .finally(() => {
-          this.clearAuditForm();
-          this.recallShow = false;
-        });
+          this.clearAuditForm()
+          this.recallShow = false
+        })
     },
     recallApply(row) {
       // 打开召回弹框
-      this.clearAuditForm();
-      this.recallShow = true;
+      this.clearAuditForm()
+      this.recallShow = true
 
-      this.auditForm.applyId = row.id;
+      this.auditForm.applyId = row.id
     },
     auditApply(row, action) {
-      this.clearAuditForm();
-      this.auditForm.show = true;
-      this.auditForm.applyId = row.id;
-      this.auditForm.action = action;
+      this.clearAuditForm()
+      this.auditForm.show = true
+      this.auditForm.applyId = row.id
+      this.auditForm.action = action
     },
     handleCreate() {
-      this.$router.push("/application/new");
+      this.$router.push('/application/new')
     },
     getOnMyManage() {
-      this.membersOption = [];
-      this.cacheMembers = [];
+      this.membersOption = []
+      this.cacheMembers = []
       this.queryForm = {
-        companyCode: "",
-        userId: "",
+        companyCode: '',
+        userId: '',
         isSearchUser: false
-      };
+      }
       getOnMyManage()
         .then(data => {
-          this.myManages = data.list || [];
+          this.myManages = data.list || []
         })
         .catch(err => {
-          console.warn(err);
-        });
+          console.warn(err)
+        })
     },
     companyChanged(val) {
-      this.queryForm.userId = "";
-      const cache = this.cacheMembers.find(d => d.companyCode === val);
+      this.queryForm.userId = ''
+      const cache = this.cacheMembers.find(d => d.companyCode === val)
       if (cache) {
-        this.membersOption = cache.list;
+        this.membersOption = cache.list
       } else {
         getMembers({
           code: val
         }).then(data => {
           if (data.list) {
-            this.membersOption = data.list;
+            this.membersOption = data.list
             this.cacheMembers.push({
               companyCode: val,
               list: data.list
-            });
+            })
           }
-        });
+        })
       }
     },
     // 查询数据
     searchData() {
       if (this.onLoading === true) {
-        return this.$message.warning("查询中，请等候");
+        return this.$message.warning('查询中，请等候')
       }
-      const { isSearchUser, userId, companyCode } = this.queryForm;
-      let fn = toCompany;
+      const { isSearchUser, userId, companyCode } = this.queryForm
+      let fn = toCompany
       const params = {
         code: companyCode
-      };
+      }
       // 如果查询指定用户，则异步方法换城toUser
       if (isSearchUser) {
-        fn = toUser;
-        params.id = userId;
+        fn = toUser
+        params.id = userId
       }
-      this.onLoading = true;
-      this.dataList = [];
+      this.onLoading = true
+      this.dataList = []
       fn(params)
         .then(data => {
-          const list = data.list;
-          this.dataList = list || [];
+          const list = data.list
+          this.dataList = list || []
         })
         .finally(() => {
-          return (this.onLoading = false);
-        });
+          return (this.onLoading = false)
+        })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
