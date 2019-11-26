@@ -1,8 +1,5 @@
 <template>
-  <el-card
-    :body-style="{ padding: '0px' }"
-    class="application-detail"
-  >
+  <el-card :body-style="{ padding: '0px' }" class="application-detail">
     <div class="applyinfo-card">
       <div class="applyinfo-no caption py-2">
         创建于.
@@ -15,11 +12,7 @@
         <div class="applyinfo-content">
           <div class="applyinfo-content-title">
             {{ basic.base.realName }}
-            <el-tag
-              class="ml-2"
-              size="mini"
-              type="info"
-            >{{ basic.base.dutiesName }}</el-tag>
+            <el-tag class="ml-2" size="mini" type="info">{{ basic.base.dutiesName }}</el-tag>
           </div>
           <div
             :title="basic.base.companyName"
@@ -30,11 +23,7 @@
       <div class="applyinfo-footer pa-2">
         <div class="layout row justify-space-between">
           <el-tag type="info">{{ basic.statusDesc }}</el-tag>
-          <el-tooltip
-            content="点击下载用户的休假情况登记卡"
-            effect="dark"
-            placement="top"
-          >
+          <el-tooltip content="点击下载用户的休假情况登记卡" effect="dark" placement="top">
             <!-- content to trigger tooltip here -->
             <el-button
               icon="el-icon-download"
@@ -58,8 +47,23 @@
           <div class="row layout justify-space-between applyinfo-duration">
             <span class>休假时长</span>
             <span class="caption">
-              <span class="title">{{ requestInfo.onTripLength + requestInfo.vocationLength }}</span>
-              天
+              <!-- <span class="title">{{ requestInfo.onTripLength + requestInfo.vocationLength }}</span>
+              天-->
+              <el-dropdown>
+                <span class="el-dropdown-link">
+                  <span>{{ requestInfo.onTripLength + requestInfo.vocationLength }}天</span>
+                  <i class="el-icon-arrow-down el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>正休假时长{{ requestInfo.vocationLength }}天</el-dropdown-item>
+                  <el-dropdown-item>路途时长{{ requestInfo.onTripLength }}天</el-dropdown-item>
+                  <el-dropdown-item
+                    v-for="additial in requestInfo.additialVocations"
+                    v-show="requestInfo.additialVocations.length>0"
+                    :key="additial"
+                  >{{ additial.name }} {{ additial.length }}天</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </span>
           </div>
           <el-row class="py-2 mx-2 mb-2 px-2 white el-row">
@@ -92,20 +96,9 @@
 
         <el-row class="py-2 px-3 my-2">
           <div class="applyinfo-list-title">审核流程</div>
-          <el-steps
-            :active="activedProcess"
-            class="pa-2"
-            direction="vertical"
-          >
-            <el-step
-              v-for="(step) in response"
-              :key="step.companyName"
-              finish-status="success"
-            >
-              <div
-                slot="description"
-                class="audit-process-card"
-              >
+          <el-steps :active="activedProcess" class="pa-2" direction="vertical">
+            <el-step v-for="(step) in response" :key="step.companyName" finish-status="success">
+              <div slot="description" class="audit-process-card">
                 <div class="audit-process-status">
                   <span v-if="step.status === 0">
                     <i class="el-icon-loading title grey-text" />
@@ -136,16 +129,8 @@
                   <span class="audit-process-person">{{ step.auditingUserRealName }}</span>
                   <span class="audit-process-handleStamp">{{ step.handleStamp|timeAgo }}</span>
                 </div>
-                <div
-                  v-if="step.remark"
-                  class="audit-process-remark"
-                >
-                  <el-input
-                    v-model="step.remark"
-                    placeholder="审批备注"
-                    readonly
-                    type="textarea"
-                  />
+                <div v-if="step.remark" class="audit-process-remark">
+                  <el-input v-model="step.remark" placeholder="审批备注" readonly type="textarea" />
                 </div>
               </div>
             </el-step>
@@ -157,11 +142,7 @@
 
     <div class="apply-detail-action">
       <div class="layout row justify-center">
-        <slot
-          :applyid="applyId"
-          :row="basic"
-          name="action"
-        />
+        <slot :applyid="applyId" :row="basic" name="action" />
       </div>
     </div>
     <!-- card body -->
@@ -169,24 +150,24 @@
 </template>
 
 <script>
-import moment from 'moment'
-import { exportUserApplies } from '../../../api/static'
-moment.locales('zh_CN')
+import moment from "moment";
+import { exportUserApplies } from "../../../api/static";
+moment.locales("zh_CN");
 export default {
-  name: 'ApplicationDetail',
+  name: "ApplicationDetail",
   filters: {
     timeAgo(val) {
-      return moment(val).fromNow()
+      return moment(val).fromNow();
     },
     formatTime(val) {
-      return moment(val).format('LLL')
+      return moment(val).format("LLL");
     }
   },
   props: {
     basic: {
       type: Object,
       default() {
-        return {}
+        return {};
       }
     },
     applyId: {
@@ -196,37 +177,37 @@ export default {
     detail: {
       type: Object,
       default() {
-        return {}
+        return {};
       }
     }
   },
   data() {
-    return {}
+    return {};
   },
   computed: {
     response() {
-      return this.detail.response
+      return this.detail.response;
     },
     requestInfo() {
-      return this.detail.requestInfo
+      return this.detail.requestInfo;
     },
     activedProcess() {
-      const { nowAuditCompany } = this.basic
-      const { response } = this
+      const { nowAuditCompany } = this.basic;
+      const { response } = this;
       const index = response.findIndex(
         val => val.companyName === nowAuditCompany
-      )
-      return index + 1 < 1 ? -1 : index
+      );
+      return index + 1 < 1 ? -1 : index;
     }
   },
   methods: {
     downloadUserApplies(id) {
       exportUserApplies({
         user: id
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
