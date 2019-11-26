@@ -169,16 +169,11 @@ export function getAllStatus() {
  * @param {*} companyCode
  * @returns
  */
-export function toCompany(companyCode) {
-  const {
-    code
-  } = companyCode
+export function toCompany(param) {
   return request({
     url: '/apply/toCompany',
     method: 'get',
-    params: {
-      code
-    }
+    params:param
   })
 }
 

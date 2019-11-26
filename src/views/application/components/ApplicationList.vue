@@ -19,6 +19,7 @@
       v-loading="onLoading"
       :data="formatedList"
       highlight-current-row
+      v-infinite-scroll="LoadPage"
     >
       <el-table-column v-if="multi" type="selection" width="42px" />
       <el-table-column label="申请人" min-width="100px">
@@ -258,6 +259,9 @@ export default {
   //   detailDrawer
   // },
   methods: {
+    LoadPage(){
+ this.$emit("LoadPage");
+    },
     countOtherTime(row) {
       // 休假其他时间
       return (
