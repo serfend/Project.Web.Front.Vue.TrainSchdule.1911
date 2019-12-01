@@ -134,9 +134,11 @@ export function withdrew(id) {
  * @returns
  */
 export function toUser(data) {
-  return request.get('/apply/toUser', {
-    params: data
-  })
+
+  return request.post('/apply/list', {params:data})
+  // return request.get('/apply/toUser', {
+  //   params: data
+  // })
 }
 
 /**
@@ -170,11 +172,7 @@ export function getAllStatus() {
  * @returns
  */
 export function toCompany(param) {
-  return request({
-    url: '/apply/toCompany',
-    method: 'get',
-    params:param
-  })
+  return request.post('/apply/list', param)
 }
 
 /**
