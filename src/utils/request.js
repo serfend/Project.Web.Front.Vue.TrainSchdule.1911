@@ -6,9 +6,11 @@ import qs from 'qs'
 import {
   setTimeout
 } from 'timers'
+import Vue from 'vue'
+
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASEURL, // api 的 base_url
+  baseURL: "http://39.97.229.104/",// process.env.VUE_APP_BASEURL, // api 的 base_url
   withCredentials: true, // 跨域请求时发送 cookies
   timeout: 10 * 1000 // request timeout
 })
@@ -19,6 +21,7 @@ service.interceptors.request.use(
     if (config.headers['Content-Type'] === 'application/urlencoded') {
       config.data = qs.stringify(config.data)
     }
+
     return config
   },
   error => {
@@ -59,6 +62,17 @@ service.interceptors.response.use(
       }, 10)
     }
     const res = response.data
+    if (res.message == '用户未登录'&&response.config.url.toLowerCase().indexOf('base')<=0) {
+      Message({
+        message: '登录失效, 2秒后跳转到登录页',
+        type: 'error',
+      })
+      setTimeout(() => {
+          top.location.href =  '/'
+        // Vue.$router.replace('/login')
+      }, 2000)
+    }
+
     if (res.status !== 0) {
       Message({
         message: res.message,

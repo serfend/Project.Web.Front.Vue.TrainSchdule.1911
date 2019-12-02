@@ -145,15 +145,9 @@ export function toUser(data) {
  *查询指定单位的申请
  * @param {*} companyCode
  */
-export function fromCompany(companyCode) {
-  const {
-    code
-  } = companyCode
-  return request.get('/apply/fromCompany', {
-    params: {
-      code
-    }
-  })
+export function fromCompany(data) {
+ 
+  return request.post('/apply/list',data)
 }
 
 /**
