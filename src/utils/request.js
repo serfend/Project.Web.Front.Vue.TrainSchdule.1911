@@ -6,7 +6,36 @@ import qs from 'qs'
 import {
   setTimeout
 } from 'timers'
-import Vue from 'vue'
+
+// // 数据存储
+// export const cache = {
+//   data: {},
+//   set(key, data) {
+//     this.data[key] = data
+//   },
+//   get(key) {
+//     return this.data[key]
+//   },
+//   clear(key) {
+//     delete this.data[key]
+//   }
+// }
+
+// // 建立唯一的key值
+// export const buildUniqueUrl = (url, method, params = {}, data = {}) => {
+//   const paramStr = (obj) => {
+//     if (toString.call(obj) === '[object Object]') {
+//       return JSON.stringify(Object.keys(obj).sort().reduce((result, key) => {
+//         result[key] = obj[key]
+//         return result
+//       }, {}))
+//     } else {
+//       return JSON.stringify(obj)
+//     }
+//   }
+//   url += `?${paramStr(params)}&${paramStr(data)}&${method}`
+//   return url
+// }
 
 // create an axios instance
 const service = axios.create({
@@ -15,13 +44,32 @@ const service = axios.create({
   timeout: 10 * 1000 // request timeout
 })
 
+// const getCache = (config) => {
+//   const defaultOptions = {
+//     time: 0, // 设置为0，不清除缓存
+//     ...options
+//   }
+//   const index = buildUniqueUrl(config.url, config.method, config.params, config.data)
+//   let responsePromise = cache.get(index)
+//   if (!responsePromise) {
+//     cache.set(index, responsePromise)
+//     if (defaultOptions.time !== 0) {
+//       setTimeout(() => {
+//         cache.clear(index)
+//       }, defaultOptions.time)
+//     }
+//   }
+// }
+// TODO 增加缓存功能
+
 // request interceptor
 service.interceptors.request.use(
   config => {
     if (config.headers['Content-Type'] === 'application/urlencoded') {
       config.data = qs.stringify(config.data)
     }
-
+    // var responseCache = getCache(config)
+    // if(responseCache)return responseCache
     return config
   },
   error => {
@@ -61,8 +109,17 @@ service.interceptors.response.use(
         document.body.removeChild(link)
       }, 10)
     }
+    if (response.config.responseType === 'arraybuffer') {
+      const data = response.data
+      if (!data) {
+        return Promise.reject('图片加载失败')
+      }
+      return 'data:image/png;base64,' + btoa(
+        new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+      )
+    }
     const res = response.data
-    if (res.message == '用户未登录' && response.config.url.toLowerCase().indexOf('base') <= 0) {
+    if (res.message === '用户未登录' && response.config.url.toLowerCase().indexOf('base') <= 0) {
       Message({
         message: '登录失效, 2秒后跳转到登录页',
         type: 'error'

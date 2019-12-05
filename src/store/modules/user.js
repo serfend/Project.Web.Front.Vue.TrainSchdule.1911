@@ -15,6 +15,7 @@ import router, {
 } from '@/router'
 
 const state = {
+  data: {},
   token: getToken(),
   name: '',
   companyid: '',
@@ -39,6 +40,9 @@ const mutations = {
   },
   SET_CMPID: (state, name) => {
     state.companyid = name
+  },
+  SET_DATA: (state, data) => {
+    state.data = data
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
@@ -94,6 +98,7 @@ const actions = {
         commit('SET_CMPID', data.companyName)
         commit('SET_AVATAR', data.avatar)
         commit('SET_INTRODUCTION', data.about)
+        commit('SET_DATA', data)
         resolve(data)
       }).catch(error => {
         reject(error)

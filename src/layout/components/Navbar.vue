@@ -26,7 +26,6 @@
       </el-tooltip>
       <el-dropdown v-else class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar" class="user-avatar" />
           <span class="caption">{{ name }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
@@ -41,11 +40,7 @@
             <el-dropdown-item>{{ $t("navbar.welcome") }}</el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">
-              {{
-              $t("navbar.logOut")
-              }}
-            </span>
+            <span style="display:block;" @click="logout">{{ $t("navbar.logOut") }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -57,18 +52,24 @@
       width="500px"
     >
       <el-form ref="editPwd" :model="editPwd" :rules="rulePwd" label-width="100px">
-        <el-form-item label="旧密码" prop="oldPassword">
-          <el-input type="password" v-model="editPwd.oldPassword" style="width:215px"></el-input>
-        </el-form-item>
-        <el-form-item label="新密码" prop="newPassword">
-          <el-input type="password" v-model="editPwd.newPassword" style="width:215px"></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="confirmNewPassword">
-          <el-input type="password" v-model="editPwd.confirmNewPassword" style="width:215px"></el-input>
-        </el-form-item>
-        <el-form-item label="安全码" prop="Auth">
-          <el-input v-model="editPwd.Auth" placeholder="请输入安全码" style="width:215px" />
-        </el-form-item>
+        <div>
+          <el-form-item label="修改账号" prop="username">
+            <el-input v-model="editPwd.username" type="input" style="width:215px" />
+          </el-form-item>
+          <el-form-item label="旧密码" prop="oldPassword">
+            <el-input v-model="editPwd.oldPassword" type="password" style="width:215px" />
+          </el-form-item>
+          <el-form-item label="新密码" prop="newPassword">
+            <el-input v-model="editPwd.newPassword" type="password" style="width:215px" />
+          </el-form-item>
+          <el-form-item label="确认密码" prop="confirmNewPassword">
+            <el-input v-model="editPwd.confirmNewPassword" type="password" style="width:215px" />
+          </el-form-item>
+          <el-form-item label="安全码" prop="Auth">
+            <el-input v-model="editPwd.Auth" placeholder="请输入安全码" style="width:215px" />
+          </el-form-item>
+        </div>
+        <el-image :src="authKeyUrl" />
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="savePwd()">确认修改</el-button>
@@ -84,60 +85,78 @@ import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import Search from '@/components/HeaderSearch'
-import { getUserSummary, accountPassword } from "../../api/userinfo";
+import { getUserSummary, accountPassword } from '../../api/userinfo'
+import { getAuthKey } from '../../api/account'
+
 export default {
+  components: {
+    Breadcrumb,
+    Hamburger,
+    ErrorLog,
+    Screenfull,
+    Search
+  },
   data() {
     var validatenewPassword = (rule, value, callback) => {
-      var reg = /[a-zA-Z]/;
-      var reg1 = /[0-9]/;
-      if (value === "") {
-        callback(new Error("请输入新密码"));
-      } else if (value == this.editPwd.oldPassword) {
-        callback(new Error("新密码不能和旧密码相同"));
+      var reg = /[a-zA-Z]/
+      var reg1 = /[0-9]/
+      if (value === '') {
+        callback(new Error('请输入新密码'))
+      } else if (value === this.editPwd.oldPassword) {
+        callback(new Error('新密码不能和旧密码相同'))
       } else if (value.length > 16 || value.length < 8) {
-        callback(new Error("新密码必须8-16位数字与字母的组合"));
+        callback(new Error('新密码必须8-16位数字与字母的组合'))
       } else if (!(reg.test(value) && reg1.test(value))) {
-        callback(new Error("新密码必须数字与字母的组合"));
+        callback(new Error('新密码必须数字与字母的组合'))
       } else {
-        if (this.editPwd.validatenewPassword !== "") {
-          this.$refs.editPwd.validateField("validatenewPassword");
+        if (this.editPwd.validatenewPassword !== '') {
+          this.$refs.editPwd.validateField('validatenewPassword')
         }
-        callback();
+        callback()
       }
-    };
+    }
     var validateconfirmNewPassword = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
       } else if (value !== this.editPwd.newPassword) {
-        callback(new Error("两次输入密码不一致!"));
+        callback(new Error('两次输入密码不一致!'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     var checkAuth = (rule, value, callback) => {
       if (value) {
         if (!/^[0-9]{6}$/.test(value.toString())) {
-          return callback('请输入六位数字');
+          return callback('请输入六位数字')
         }
       } else {
-        return callback('请输入六位数字');
+        return callback('请输入六位数字')
       }
-      callback();
-    };
+      callback()
+    }
     return {
-      dialogUpdatePwdVisible: false, //修改密码弹窗
+      dialogUpdatePwdVisible: false, // 修改密码弹窗
       editPwd: {
-        oldPassword: "",
-        newPassword: "",
-        confirmNewPassword: "",
+        username: this.$store.state.user.userid,
+        oldPassword: '',
+        newPassword: '',
+        confirmNewPassword: ''
       },
+      authKeyUrl: '',
       rulePwd: {
-        oldPassword: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
+        username: [{ required: true, message: '请输入账号' }],
+        oldPassword: [
+          { required: true, message: '请输入旧密码', trigger: 'blur' }
+        ],
         newPassword: [
-          { required: true, validator: validatenewPassword, trigger: "blur" }
+          { required: true, validator: validatenewPassword, trigger: 'blur' }
         ],
         confirmNewPassword: [
-          { required: true, validator: validateconfirmNewPassword, trigger: "blur" }
+          {
+            required: true,
+            validator: validateconfirmNewPassword,
+            trigger: 'blur'
+          }
         ],
         Auth: [
           {
@@ -147,14 +166,7 @@ export default {
           }
         ]
       }
-    };
-  },
-  components: {
-    Breadcrumb,
-    Hamburger,
-    ErrorLog,
-    Screenfull,
-    Search
+    }
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'device']),
@@ -162,22 +174,29 @@ export default {
       return this.$store.state.user.userid
     },
     name() {
-      return this.$store.state.user.name
+      var tmpName =
+        this.$store.state.user.data.companyName +
+        this.$store.state.user.data.dutiesName +
+        this.$store.state.user.data.realName
+      return tmpName
     }
   },
   created() {
+    this.getAuthKeyImg()
     getUserSummary()
       .then(data => {
         if (!data.isInitPassword) {
-          this.dialogUpdatePwdVisible = true;
+          this.dialogUpdatePwdVisible = true
         }
-        console.log(data);
       })
-      .catch(() => {
-
-      });
+      .catch(() => {})
   },
   methods: {
+    getAuthKeyImg() {
+      getAuthKey().then(r => {
+        this.authKeyUrl = r
+      })
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
@@ -189,25 +208,21 @@ export default {
       return this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     },
     savePwd() {
-      this.$refs["editPwd"].validate(valid => {
+      this.$refs['editPwd'].validate(valid => {
         if (valid) {
-          this.editPwd["id"] = this.$store.state.user.userid
+          this.editPwd['id'] =
+            this.editPwd.username | this.$store.state.user.userid
           accountPassword(this.editPwd).then(res => {
-            if (res.return_code == "0") {
+            if (res.return_code === '0') {
               this.$showMsg({
-                type: "success",
-                message: "修改成功"
-              });
-              this.dialogUpdatePwdVisible = false;
-            } else {
-              this.$showMsg({
-                type: "error",
-                message: res.return_msg
-              });
-            }
-          });
+                type: 'success',
+                message: '修改成功'
+              })
+              this.dialogUpdatePwdVisible = false
+            } else this.$showMsg({ type: 'error', message: res.message })
+          })
         }
-      });
+      })
     }
   }
 }
