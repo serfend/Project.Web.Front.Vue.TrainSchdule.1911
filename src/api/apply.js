@@ -107,19 +107,14 @@ export function withdrew(id) {
 }
 
 /**
- *查询用户管辖单位下需要审核的申请
+ *按筛选查询申请列表
  *
  * @export
  * @param {json} data
- *      {string} data.code 单位代码
- *      {string} data.id 用户id
  * @returns
  */
 export function queryList(data) {
-  return request.post('/apply/list', { params: data })
-  // return request.get('/apply/toUser', {
-  //   params: data
-  // })
+  return request.post('/apply/list', data)
 }
 
 /**
