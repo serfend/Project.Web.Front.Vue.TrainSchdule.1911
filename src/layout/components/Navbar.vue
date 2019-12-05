@@ -7,50 +7,26 @@
       @toggleClick="toggleSideBar"
     />
 
-    <breadcrumb
-      id="breadcrumb-container"
-      class="breadcrumb-container"
-    />
+    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
-        <search
-          id="header-search"
-          class="right-menu-item"
-        />
+        <search id="header-search" class="right-menu-item" />
 
         <error-log class="errLog-container right-menu-item hover-effect" />
 
-        <screenfull
-          id="screenfull"
-          class="right-menu-item hover-effect"
-        />
+        <screenfull id="screenfull" class="right-menu-item hover-effect" />
       </template>
 
-      <el-tooltip
-        v-if="!hasLogin"
-        content="未登录状态，点击登录可获取更多权限"
-        effect="dark"
-        placement="left"
-      >
-        <div
-          class="orange right-menu-item hover-effect"
-          @click="login"
-        >
+      <el-tooltip v-if="!hasLogin" content="未登录状态，点击登录可获取更多权限" effect="dark" placement="left">
+        <div class="orange right-menu-item hover-effect" @click="login">
           <i class="el-icon-user" />未登录
         </div>
         <!-- content to trigger tooltip here -->
       </el-tooltip>
-      <el-dropdown
-        v-else
-        class="avatar-container right-menu-item hover-effect"
-        trigger="click"
-      >
+      <el-dropdown v-else class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img
-            :src="avatar"
-            class="user-avatar"
-          >
+          <img :src="avatar" class="user-avatar" />
           <span class="caption">{{ name }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
@@ -65,18 +41,39 @@
             <el-dropdown-item>{{ $t("navbar.welcome") }}</el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
-            <span
-              style="display:block;"
-              @click="logout"
-            >
+            <span style="display:block;" @click="logout">
               {{
-                $t("navbar.logOut")
+              $t("navbar.logOut")
               }}
             </span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog
+      title="第一次登录，请修改密码"
+      :modal="false"
+      :visible.sync="dialogUpdatePwdVisible"
+      width="500px"
+    >
+      <el-form ref="editPwd" :model="editPwd" :rules="rulePwd" label-width="100px">
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input type="password" v-model="editPwd.oldPassword" style="width:215px"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input type="password" v-model="editPwd.newPassword" style="width:215px"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmNewPassword">
+          <el-input type="password" v-model="editPwd.confirmNewPassword" style="width:215px"></el-input>
+        </el-form-item>
+        <el-form-item label="安全码" prop="Auth">
+          <el-input v-model="editPwd.Auth" placeholder="请输入安全码" style="width:215px" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="savePwd()">确认修改</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -87,8 +84,71 @@ import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import Search from '@/components/HeaderSearch'
-
+import { getUserSummary, accountPassword } from "../../api/userinfo";
 export default {
+  data() {
+    var validatenewPassword = (rule, value, callback) => {
+      var reg = /[a-zA-Z]/;
+      var reg1 = /[0-9]/;
+      if (value === "") {
+        callback(new Error("请输入新密码"));
+      } else if (value == this.editPwd.oldPassword) {
+        callback(new Error("新密码不能和旧密码相同"));
+      } else if (value.length > 16 || value.length < 8) {
+        callback(new Error("新密码必须8-16位数字与字母的组合"));
+      } else if (!(reg.test(value) && reg1.test(value))) {
+        callback(new Error("新密码必须数字与字母的组合"));
+      } else {
+        if (this.editPwd.validatenewPassword !== "") {
+          this.$refs.editPwd.validateField("validatenewPassword");
+        }
+        callback();
+      }
+    };
+    var validateconfirmNewPassword = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
+      } else if (value !== this.editPwd.newPassword) {
+        callback(new Error("两次输入密码不一致!"));
+      } else {
+        callback();
+      }
+    };
+    var checkAuth = (rule, value, callback) => {
+      if (value) {
+        if (!/^[0-9]{6}$/.test(value.toString())) {
+          return callback('请输入六位数字');
+        }
+      } else {
+        return callback('请输入六位数字');
+      }
+      callback();
+    };
+    return {
+      dialogUpdatePwdVisible: false, //修改密码弹窗
+      editPwd: {
+        oldPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      },
+      rulePwd: {
+        oldPassword: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
+        newPassword: [
+          { required: true, validator: validatenewPassword, trigger: "blur" }
+        ],
+        confirmNewPassword: [
+          { required: true, validator: validateconfirmNewPassword, trigger: "blur" }
+        ],
+        Auth: [
+          {
+            required: true,
+            validator: checkAuth,
+            trigger: 'blur'
+          }
+        ]
+      }
+    };
+  },
   components: {
     Breadcrumb,
     Hamburger,
@@ -105,6 +165,18 @@ export default {
       return this.$store.state.user.name
     }
   },
+  created() {
+    getUserSummary()
+      .then(data => {
+        if (!data.isInitPassword) {
+          this.dialogUpdatePwdVisible = true;
+        }
+        console.log(data);
+      })
+      .catch(() => {
+
+      });
+  },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
@@ -115,6 +187,27 @@ export default {
     },
     login() {
       return this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    savePwd() {
+      this.$refs["editPwd"].validate(valid => {
+        if (valid) {
+          this.editPwd["id"] = this.$store.state.user.userid
+          accountPassword(this.editPwd).then(res => {
+            if (res.return_code == "0") {
+              this.$showMsg({
+                type: "success",
+                message: "修改成功"
+              });
+              this.dialogUpdatePwdVisible = false;
+            } else {
+              this.$showMsg({
+                type: "error",
+                message: res.return_msg
+              });
+            }
+          });
+        }
+      });
     }
   }
 }

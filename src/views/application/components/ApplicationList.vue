@@ -2,53 +2,53 @@
   <!-- <el-card class='application-list'> -->
   <div>
     <!-- <div class='layout row justify-space-between px-2 pb-3'> -->
-       <!-- <slot name='headeraction' /> -->
+    <!-- <slot name='headeraction' /> -->
     <el-table
-      :key='tableKey'
-      ref='singleTable'
-      v-loading='onLoading'
-      :data='formatedList'
+      :key="tableKey"
+      ref="singleTable"
+      v-loading="onLoading"
+      :data="formatedList"
       highlight-current-row
     >
-       <!-- v-infinite-scroll='LoadPage' -->
-      <el-table-column v-if='multi' type='selection' width='42px' />
-      <el-table-column label='申请人' min-width='100px'>
-        <template slot-scope='{row}'>
-          <el-tooltip content='点击查看详情' effect='dark'>
+      <!-- v-infinite-scroll='LoadPage' -->
+      <el-table-column v-if="multi" type="selection" width="42px" />
+      <el-table-column label="申请人" min-width="100px">
+        <template slot-scope="{row}">
+          <el-tooltip content="点击查看详情" effect="dark">
             <!-- content to trigger tooltip here -->
-            <el-button plain size='mini' type='info' @click='handleDetail(row, row.id)'>
-              <i class='el-icon-info blue--text' />
+            <el-button plain size="mini" type="info" @click="handleDetail(row, row.id)">
+              <i class="el-icon-info blue--text" />
               {{ row.base.realName }}
             </el-button>
           </el-tooltip>
           <el-button
-            v-for='additialVocation in row.request.additialVocations'
-            :key='additialVocation.name'
+            v-for="additialVocation in row.request.additialVocations"
+            :key="additialVocation.name"
             plain
-            size='mini'
-            type='info'
+            size="mini"
+            type="info"
           >
-            <span class='info--text'>{{ additialVocation.name }}</span>
+            <span class="info--text">{{ additialVocation.name }}</span>
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column align='center' label='单位'>
-        <template slot-scope='{row}'>
-          <span class='caption'>{{ row.base.companyName }}</span>
+      <el-table-column align="center" label="单位">
+        <template slot-scope="{row}">
+          <span class="caption">{{ row.base.companyName }}</span>
         </template>
       </el-table-column>
-      <el-table-column align='center' label='当前审批'>
-        <template slot-scope='{row}'>
-          <span class='caption'>{{ row.nowAuditCompany }}</span>
+      <el-table-column align="center" label="当前审批">
+        <template slot-scope="{row}">
+          <span class="caption">{{ row.nowAuditCompany }}</span>
         </template>
       </el-table-column>
-      <el-table-column align='center' label='创建'>
-        <template slot-scope='scope'>
+      <el-table-column align="center" label="创建">
+        <template slot-scope="scope">
           <span>{{ scope.row.create }}</span>
         </template>
       </el-table-column>
-      <el-table-column header-align='center' align='center' label='休假时间' width='160'>
-        <template slot-scope='scope'>
+      <el-table-column header-align="center" align="center" label="休假时间" width="160">
+        <template slot-scope="scope">
           <span>{{ scope.row.stampLeave+'-'+scope.row.stampReturn }}</span>
         </template>
         <!-- <el-table-column align='center' label='申请离队时间'>
@@ -62,94 +62,94 @@
           </template>
         </el-table-column>-->
       </el-table-column>
-      <el-table-column align='center' label='休假地点'>
-        <template slot-scope='scope'>
+      <el-table-column align="center" label="休假地点">
+        <template slot-scope="scope">
           <span>{{ scope.row.request.vocationPlace? scope.row.request.vocationPlace.name :'' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align='center' label='休假总天数'>
-        <template slot-scope='scope'>
+      <el-table-column align="center" label="休假总天数">
+        <template slot-scope="scope">
           <el-dropdown>
-            <span class='el-dropdown-link'>
+            <span class="el-dropdown-link">
               <span>{{ countTime(scope.row.request) }}天</span>
-              <i class='el-icon-arrow-down el-icon--right' />
+              <i class="el-icon-arrow-down el-icon--right" />
             </span>
-            <el-dropdown-menu slot='dropdown'>
+            <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>正休假时长{{ scope.row.request.vocationLength }}天</el-dropdown-item>
               <el-dropdown-item>路途时长{{ scope.row.request.onTripLength }}天</el-dropdown-item>
               <el-dropdown-item
-                v-for='additial in scope.row.request.additialVocations'
-                v-show='scope.row.request.additialVocations.length>0'
-                :key='additial.name'
+                v-for="additial in scope.row.request.additialVocations"
+                v-show="scope.row.request.additialVocations.length>0"
+                :key="additial.name"
               >{{ additial.name }} {{ additial.length }}天</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
       </el-table-column>
 
-      <el-table-column align='center' label='状态'>
-        <template slot-scope='{row}'>
-          <el-tag :color='row.statusColor' class='white--text'>{{ row.statusDesc }}</el-tag>
+      <el-table-column align="center" label="状态">
+        <template slot-scope="{row}">
+          <el-tag :color="row.statusColor" class="white--text">{{ row.statusDesc }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align='center' label='操作' min-width='120'>
-        <template slot-scope='{row}'>
-          <slot v-if='myUserid' :applyid='row.id' :row='row' name='action' />
+      <el-table-column align="center" label="操作" min-width="120">
+        <template slot-scope="{row}">
+          <slot v-if="myUserid" :applyid="row.id" :row="row" name="action" />
           <span v-else>
             请先
-            <a href='login'>登录</a>
+            <a href="login">登录</a>
           </span>
         </template>
       </el-table-column>
     </el-table>
     <el-dialog
-      :show-close='false'
-      :visible.sync='detailDrawer.show'
-      custom-class='p-fixed f-right apply-detail'
-      top='0'
-      width='408px'
+      :show-close="false"
+      :visible.sync="detailDrawer.show"
+      custom-class="p-fixed f-right apply-detail"
+      top="0"
+      width="408px"
     >
-      <div slot='title' class='apply-detail-header'>
-        <div class='layout row justify-space-between align-center'>
+      <div slot="title" class="apply-detail-header">
+        <div class="layout row justify-space-between align-center">
           详情
-          <div class='d-flex align-center'>
+          <div class="d-flex align-center">
             <el-button-group>
               <el-button
-                icon='el-icon-caret-left'
-                size='small'
-                type='primary'
-                @click='changeApply('prev')'
+              icon='el-icon-caret-left'
+              size='small'
+              type='primary'
+              @click='changeApply('prev')'
               />
               <el-button
-                icon='el-icon-caret-right'
-                size='small'
-                type='primary'
-                @click='changeApply('next')'
+              icon='el-icon-caret-right'
+              size='small'
+              type='primary'
+              @click='changeApply('next')'
               />
             </el-button-group>
-            <el-tooltip content='关闭' effect='dark'>
-              <i class='el-icon-remove red--text title ml-2' @click='detailDrawer.show = false' />
+            <el-tooltip content="关闭" effect="dark">
+              <i class="el-icon-remove red--text title ml-2" @click="detailDrawer.show = false" />
               <!-- content to trigger tooltip here -->
             </el-tooltip>
           </div>
         </div>
       </div>
       <ApplicationDetail
-        :apply-id='detailDrawer.id'
-        :basic='detailDrawer.basic'
-        :detail='detailDrawer.data'
+        :apply-id="detailDrawer.id"
+        :basic="detailDrawer.basic"
+        :detail="detailDrawer.data"
       >
         <slot
-          v-if='myUserid'
-          slot='action'
-          slot-scope='{applyid, row}'
-          :applyid='applyid'
-          :row='row'
-          name='action'
+          v-if="myUserid"
+          slot="action"
+          slot-scope="{applyid, row}"
+          :applyid="applyid"
+          :row="row"
+          name="action"
         />
         <span v-else>
           请先
-          <a href='login'>登录</a>
+          <a href="login">登录</a>
         </span>
       </ApplicationDetail>
     </el-dialog>

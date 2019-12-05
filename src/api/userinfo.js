@@ -25,6 +25,8 @@ export function getUserBase(id) {
   })
 }
 
+
+
 export function getUserDiy(id) {
   return request.get('users/diyinfo', {
     params: {
@@ -118,4 +120,12 @@ export function getUsersVocationLimit(id) {
       id
     }
   })
+}
+
+/**
+ * 获取用户休假限制时长和次数
+ * @param {*} id
+ */
+export function accountPassword(param) {
+  return request.post('/account/password', param);
 }

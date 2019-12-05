@@ -47,3 +47,21 @@ new Vue({
   i18n,
   render: h => h(App)
 })
+
+
+
+
+Vue.prototype.showConfirm = ({ content, title = '提示', type = 'info', confirmButtonText = '确定', cancelButtonText = '取消' } = {}) => {
+  // options (content, title, type, scallback, ecallback)
+  return new Promise((resolve, reject) => {
+    Vue.prototype.$confirm(content, title, {
+      confirmButtonText,
+      cancelButtonText,
+      type
+    }).then(() => {
+      resolve()
+    }).catch(() => {
+      reject()
+    });
+  })
+}
