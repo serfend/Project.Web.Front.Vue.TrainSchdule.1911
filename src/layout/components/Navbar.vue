@@ -40,36 +40,59 @@
             <el-dropdown-item>{{ $t("navbar.welcome") }}</el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
+            <span style="display:block;" @click="dialogUpdatePwdVisible = true">修改密码</span>
+          </el-dropdown-item>
+          <el-dropdown-item divided>
             <span style="display:block;" @click="logout">{{ $t("navbar.logOut") }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
     <el-dialog
-      title="第一次登录，请修改密码"
+      title="修改密码"
       :modal="false"
       :visible.sync="dialogUpdatePwdVisible"
       width="500px"
+      @keyup.enter="savePwd()"
     >
       <el-form ref="editPwd" :model="editPwd" :rules="rulePwd" label-width="100px">
-        <div>
-          <el-form-item label="修改账号" prop="username">
-            <el-input v-model="editPwd.username" type="input" style="width:215px" />
-          </el-form-item>
-          <el-form-item label="旧密码" prop="oldPassword">
-            <el-input v-model="editPwd.oldPassword" type="password" style="width:215px" />
-          </el-form-item>
-          <el-form-item label="新密码" prop="newPassword">
-            <el-input v-model="editPwd.newPassword" type="password" style="width:215px" />
-          </el-form-item>
-          <el-form-item label="确认密码" prop="confirmNewPassword">
-            <el-input v-model="editPwd.confirmNewPassword" type="password" style="width:215px" />
-          </el-form-item>
-          <el-form-item label="安全码" prop="Auth">
-            <el-input v-model="editPwd.Auth" placeholder="请输入安全码" style="width:215px" />
-          </el-form-item>
-        </div>
-        <el-image :src="authKeyUrl" />
+        <el-form-item label="修改账号" prop="username">
+          <el-input v-model="editPwd.username" type="input" style="width:215px" />
+        </el-form-item>
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input v-model="editPwd.oldPassword" type="password" style="width:215px" />
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="editPwd.newPassword" type="password" style="width:215px" />
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmNewPassword">
+          <el-input v-model="editPwd.confirmNewPassword" type="password" style="width:215px" />
+        </el-form-item>
+        <el-divider>
+          <i class="el-icon-key" />
+        </el-divider>
+        <el-form-item label="授权码">
+          <el-input v-model="editPwd.authbyuserid" placeholder="授权人" style="width:215px" />
+          <el-input v-model="editPwd.code" placeholder="授权码" style="width:215px" />
+          <el-tooltip>
+            <div slot="content">
+              授权码是用于敏感操作认证的密钥
+              <br>请手机下载身份验证器
+              <el-tooltip>
+                <div slot="content">
+                  身份验证器下载:
+                  <br>
+                  <el-image :src="apkImage" style="width:200px" />
+                </div>
+                <i class="el-icon-info blue--text" />
+              </el-tooltip>后扫描此码以获取密钥
+              <br>妥善保管此码
+              <br>
+              <el-image :src="authKeyUrl" style="width:200px" />
+            </div>
+            <i class="el-icon-info blue--text" />授权码
+          </el-tooltip>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="savePwd()">确认修改</el-button>
@@ -87,7 +110,7 @@ import Screenfull from '@/components/Screenfull'
 import Search from '@/components/HeaderSearch'
 import { getUserSummary, accountPassword } from '../../api/userinfo'
 import { getAuthKey } from '../../api/account'
-
+import apkImage from '@/assets/jpg/apk.jpg'
 export default {
   components: {
     Breadcrumb,
@@ -124,23 +147,16 @@ export default {
         callback()
       }
     }
-    var checkAuth = (rule, value, callback) => {
-      if (value) {
-        if (!/^[0-9]{6}$/.test(value.toString())) {
-          return callback('请输入六位数字')
-        }
-      } else {
-        return callback('请输入六位数字')
-      }
-      callback()
-    }
     return {
+      apkImage: apkImage,
       dialogUpdatePwdVisible: false, // 修改密码弹窗
       editPwd: {
         username: this.$store.state.user.userid,
         oldPassword: '',
         newPassword: '',
-        confirmNewPassword: ''
+        confirmNewPassword: '',
+        authbyuserid: '',
+        code: ''
       },
       authKeyUrl: '',
       rulePwd: {
@@ -155,13 +171,6 @@ export default {
           {
             required: true,
             validator: validateconfirmNewPassword,
-            trigger: 'blur'
-          }
-        ],
-        Auth: [
-          {
-            required: true,
-            validator: checkAuth,
             trigger: 'blur'
           }
         ]
@@ -210,16 +219,25 @@ export default {
     savePwd() {
       this.$refs['editPwd'].validate(valid => {
         if (valid) {
-          this.editPwd['id'] =
+          const submitId = (
             this.editPwd.username | this.$store.state.user.userid
-          accountPassword(this.editPwd).then(res => {
-            if (res.return_code === '0') {
-              this.$showMsg({
-                type: 'success',
-                message: '修改成功'
-              })
-              this.dialogUpdatePwdVisible = false
-            } else this.$showMsg({ type: 'error', message: res.message })
+          ).toString()
+          const submitPwd = {
+            id: submitId,
+            auth: {
+              AuthByUserID:
+                this.editPwd.authbyuserid === ''
+                  ? '0'
+                  : this.editPwd.authbyuserid,
+              code: this.editPwd.code === '' ? '0' : this.editPwd.code
+            },
+            oldPassword: this.editPwd.oldPassword,
+            newPassword: this.editPwd.newPassword,
+            confirmNewPassword: this.editPwd.confirmNewPassword
+          }
+          accountPassword(submitPwd).then(() => {
+            this.$message.success('修改密码成功')
+            this.dialogUpdatePwdVisible = false
           })
         }
       })

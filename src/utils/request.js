@@ -138,7 +138,7 @@ service.interceptors.response.use(
       })
       return Promise.reject(res)
     } else {
-      return res.data
+      return Promise.resolve(res.data)
     }
   },
   error => {
