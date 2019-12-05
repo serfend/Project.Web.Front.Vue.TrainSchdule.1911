@@ -1,24 +1,6 @@
 import request from '../utils/request'
 
 /**
- *查询指定用户的申请
- *
- * @export
- * @param {*} userid
- * @returns
- */
-export function fromUser(userid) {
-  const {
-    id
-  } = userid
-  return request.get('/apply/fromUser', {
-    params: {
-      id
-    }
-  })
-}
-
-/**
  *获取归队时间
  *
  * @export
@@ -133,25 +115,15 @@ export function withdrew(id) {
  *      {string} data.id 用户id
  * @returns
  */
-export function toUser(data) {
-
-  return request.post('/apply/list', {params:data})
+export function queryList(data) {
+  return request.post('/apply/list', { params: data })
   // return request.get('/apply/toUser', {
   //   params: data
   // })
 }
 
 /**
- *查询指定单位的申请
- * @param {*} companyCode
- */
-export function fromCompany(data) {
- 
-  return request.post('/apply/list',data)
-}
-
-/**
- *查询指定单位的申请
+ *查询所有状态
  * @returns
  */
 export function getAllStatus() {
@@ -215,5 +187,5 @@ export function detail(id) {
  * @returns
  */
 export function recallOrder(data) {
-  return request.post('/apply/recallorder',data);
+  return request.post('/apply/recallorder', data)
 }
