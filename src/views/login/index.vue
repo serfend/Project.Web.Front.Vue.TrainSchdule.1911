@@ -88,14 +88,14 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入正确的用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码不少于6位'))
       } else {
         callback()
       }
@@ -149,13 +149,6 @@ export default {
           })
           this.$router.push(this.redirect)
         }
-      })
-      .catch(() => {
-        Message({
-          message: '注意，请务必不要泄露密码',
-          type: 'warning',
-          duration: 5000
-        })
       })
   },
   destroyed() {
