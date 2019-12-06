@@ -150,24 +150,24 @@
 </template>
 
 <script>
-import moment from "moment";
-import { exportUserApplies } from "../../../api/static";
-moment.locales("zh_CN");
+import moment from 'moment'
+import { exportUserApplies } from '../../../api/static'
+moment.locales('zh_CN')
 export default {
-  name: "ApplicationDetail",
+  name: 'ApplicationDetail',
   filters: {
     timeAgo(val) {
-      return moment(val).fromNow();
+      return moment(val).fromNow()
     },
     formatTime(val) {
-      return moment(val).format("LLL");
+      return moment(val).format('LLL')
     }
   },
   props: {
     basic: {
       type: Object,
       default() {
-        return {};
+        return {}
       }
     },
     applyId: {
@@ -177,37 +177,37 @@ export default {
     detail: {
       type: Object,
       default() {
-        return {};
+        return {}
       }
     }
   },
   data() {
-    return {};
+    return {}
   },
   computed: {
     response() {
-      return this.detail.response;
+      return this.detail.response
     },
     requestInfo() {
-      return this.detail.requestInfo;
+      return this.detail.requestInfo
     },
     activedProcess() {
-      const { nowAuditCompany } = this.basic;
-      const { response } = this;
+      const { nowAuditCompany } = this.basic
+      const { response } = this
       const index = response.findIndex(
         val => val.companyName === nowAuditCompany
-      );
-      return index + 1 < 1 ? -1 : index;
+      )
+      return index + 1 < 1 ? -1 : index
     }
   },
   methods: {
     downloadUserApplies(id) {
       exportUserApplies({
         user: id
-      });
+      })
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

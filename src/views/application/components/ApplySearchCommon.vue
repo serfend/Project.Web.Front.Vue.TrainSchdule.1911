@@ -1,114 +1,114 @@
 <template>
   <el-form
-    ref='tableForm'
-    :model='tableForm'
-    label-width='90px'
-    :inline='true'
-    size='small'
+    ref="tableForm"
+    :model="tableForm"
+    label-width="90px"
+    :inline="true"
+    size="small"
     @submit.native.prevent
   >
-    <el-form-item label='申请人' prop='createFor.value'>
+    <el-form-item label="申请人" prop="createFor.value">
       <el-input
-        v-model='tableForm.createFor.value'
+        v-model="tableForm.createFor.value"
         placeholder
-        class='mr10'
-        maxlength='40'
+        class="mr10"
+        maxlength="40"
         clearable
-      ></el-input>
+      />
     </el-form-item>
-    <el-form-item label='创建人' prop='createBy.value'>
+    <el-form-item label="创建人" prop="createBy.value">
       <el-input
-        v-model='tableForm.createBy.value'
+        v-model="tableForm.createBy.value"
         placeholder
-        class='mr10'
-        maxlength='40'
+        class="mr10"
+        maxlength="40"
         clearable
-      ></el-input>
+      />
     </el-form-item>
-    <el-form-item label='审核人' prop='auditBy.value'>
-      <el-input v-model='tableForm.auditBy.value' placeholder class='mr10' maxlength='40' clearable></el-input>
+    <el-form-item label="审核人" prop="auditBy.value">
+      <el-input v-model="tableForm.auditBy.value" placeholder class="mr10" maxlength="40" clearable />
     </el-form-item>
-    <el-form-item label='审核单位' prop='auditByCompany.value'>
+    <el-form-item label="审核单位" prop="auditByCompany.value">
       <el-input
-        v-model='tableForm.auditByCompany.value'
+        v-model="tableForm.auditByCompany.value"
         placeholder
-        class='mr10'
-        maxlength='40'
+        class="mr10"
+        maxlength="40"
         clearable
-      ></el-input>
+      />
     </el-form-item>
-    <el-form-item label='审核状态' prop='status.arrays'>
+    <el-form-item label="审核状态" prop="status.arrays">
       <el-select
-        v-model='tableForm.status.arrays'
-        class='full-width'
-        placeholder='选择审核状态'
+        v-model="tableForm.status.arrays"
+        class="full-width"
+        placeholder="选择审核状态"
         multiple
         clearable
       >
         <el-option
-          v-for='item in statusOptions'
-          :key='item.code'
-          :label='item.desc'
-          :value='item.code'
+          v-for="item in statusOptions"
+          :key="item.code"
+          :label="item.desc"
+          :value="item.code"
         />
       </el-select>
     </el-form-item>
-    <el-form-item label='创建时间' prop='addTime'>
+    <el-form-item label="创建时间" prop="addTime">
       <el-date-picker
-        v-model='tableForm.addTime'
-        type='daterange'
-        align='right'
+        v-model="tableForm.addTime"
+        type="daterange"
+        align="right"
         unlink-panels
-        range-separator='-'
-        start-placeholder='开始日期'
-        end-placeholder='结束日期'
-        :picker-options='pickerOptions'
-        format='yyyy-MM-dd'
-        value-format='yyyy-MM-dd'
+        range-separator="-"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions"
+        format="yyyy-MM-dd"
+        value-format="yyyy-MM-dd"
         clearable
-      ></el-date-picker>
+      />
     </el-form-item>
-    <el-form-item label='休假开始时间' label-width='120' prop='stampLeaveTime'>
+    <el-form-item label="休假开始时间" label-width="120" prop="stampLeaveTime">
       <el-date-picker
-        v-model='tableForm.stampLeaveTime'
-        type='daterange'
-        align='right'
+        v-model="tableForm.stampLeaveTime"
+        type="daterange"
+        align="right"
         unlink-panels
-        range-separator='-'
-        start-placeholder='开始日期'
-        end-placeholder='结束日期'
-        :picker-options='pickerOptions'
-        format='yyyy-MM-dd'
-        value-format='yyyy-MM-dd'
+        range-separator="-"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions"
+        format="yyyy-MM-dd"
+        value-format="yyyy-MM-dd"
         clearable
-      ></el-date-picker>
+      />
     </el-form-item>
 
-    <el-form-item label='休假结束时间' label-width='120' prop='stampReturnTime'>
+    <el-form-item label="休假结束时间" label-width="120" prop="stampReturnTime">
       <el-date-picker
-        v-model='tableForm.stampReturnTime'
-        type='daterange'
-        align='right'
+        v-model="tableForm.stampReturnTime"
+        type="daterange"
+        align="right"
         unlink-panels
-        range-separator='-'
-        start-placeholder='开始日期'
-        end-placeholder='结束日期'
-        :picker-options='pickerOptions'
-        format='yyyy-MM-dd'
-        value-format='yyyy-MM-dd'
+        range-separator="-"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions"
+        format="yyyy-MM-dd"
+        value-format="yyyy-MM-dd"
         clearable
-      ></el-date-picker>
+      />
     </el-form-item>
     <el-form-item>
-      <el-button type='primary' @click='clearForm'>清空</el-button>
-      <el-button type='primary' @click='searchData'>查询</el-button>
+      <el-button type="primary" @click="clearForm">清空</el-button>
+      <el-button type="primary" @click="searchData">查询</el-button>
     </el-form-item>
-    <slot name='ExtendForm' />
+    <slot name="ExtendForm" />
   </el-form>
 </template>
 
 <script>
-import { getAllStatus } from '../../../api/apply';
+import { getAllStatus } from '../../../api/apply'
 export default {
   props: {
     tableForm: {
@@ -152,7 +152,7 @@ export default {
             start: '',
             end: ''
           }
-        };
+        }
       }
     }
   },
@@ -164,49 +164,49 @@ export default {
           {
             text: '最近一周',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
             }
           },
           {
             text: '最近一个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
             }
           },
           {
             text: '最近三个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
             }
           }
         ]
       }
-    };
+    }
   },
   created() {
     getAllStatus().then(status => {
-      console.log(status);
+      console.log(status)
       if (status.list) {
-        this.statusOptions = status.list;
+        this.statusOptions = status.list
       }
-    });
+    })
   },
   methods: {
     clearForm() {
-      this.$refs.tableForm.resetFields();
+      this.$refs.tableForm.resetFields()
     },
     searchData() {
-    this.$emit('searchData',this.tableForm);
+      this.$emit('searchData', this.tableForm)
     }
   }
-};
+}
 </script>

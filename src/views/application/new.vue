@@ -64,7 +64,7 @@
               <el-input v-model="form.Phone" />
             </el-form-item>
 
-            <hr class="divider" />
+            <hr class="divider">
             <el-form-item label="回执编号">
               <el-input v-model="formFinal.baseInfoId" :style="{ width: '400px' }" disabled>
                 <div slot="prepend">
@@ -110,7 +110,7 @@
               </el-tooltip>
             </el-form-item>
 
-            <el-row class="sv-row" v-if="formApply.VocationType=='正休'">
+            <el-row v-if="formApply.VocationType=='正休'" class="sv-row">
               <el-form-item label="休假详情" label-width="100px">
                 <el-button type="primary" @click="OpenOtherVacation('')">添加休假内容</el-button>
               </el-form-item>
@@ -121,18 +121,18 @@
                   style="position:relative;"
                 >
                   <template slot="title">
-                    {{item.name}} {{item.length}}天
+                    {{ item.name }} {{ item.length }}天
                     <i
                       class="el-icon-edit group-edit"
                       @click="OpenOtherVacation(index)"
-                    ></i>
+                    />
                     <!-- .stop="doSomething($event) -->
                     <i
                       class="el-icon-delete group-remove"
                       @click.stop="removeVacation(index,$event)"
-                    ></i>
+                    />
                   </template>
-                  {{item.description}}
+                  {{ item.description }}
                 </el-collapse-item>
               </el-collapse>
             </el-row>
@@ -298,7 +298,7 @@
       </el-card>
     </el-card>
 
-    <el-dialog title="添加" :close-on-click-modal="fase" :visible.sync="dialogVisible" width="600px">
+    <el-dialog title="添加" :close-on-click-modal="false" :visible.sync="dialogVisible" width="600px">
       <el-form ref="VacationModel" :rules="VacationModelRules" :model="VacationModel">
         <el-form-item label="福利假" prop="name">
           <el-autocomplete
@@ -306,7 +306,7 @@
             :fetch-suggestions="querySearch"
             placeholder="选择/输入福利假"
             @select="handleSelect"
-          ></el-autocomplete>
+          />
         </el-form-item>
         <el-form-item label="休假天数" prop="length">
           <el-input v-model.number="VacationModel.length" />
@@ -324,18 +324,18 @@
 </template>
 
 <script>
-import SettleFormItem from "../../components/SettleFormItem";
-import { getUserAllInfo } from "../../api/usercompany";
-import { getUserIdByCid, getUsersVocationLimit } from "../../api/userinfo";
+import SettleFormItem from '../../components/SettleFormItem'
+import { getUserAllInfo } from '../../api/usercompany'
+import { getUserIdByCid, getUsersVocationLimit } from '../../api/userinfo'
 import {
   postBaseInfo,
   postRequestInfo,
   submitApply,
   getStampReturn
-} from "../../api/apply";
-import { locationChildren } from "../../api/static";
+} from '../../api/apply'
+import { locationChildren } from '../../api/static'
 export default {
-  name: "NewApply",
+  name: 'NewApply',
   components: {
     SettleFormItem
   },
@@ -346,35 +346,35 @@ export default {
       OnloadingUserStamp: false,
       onLoading: false,
       form: {
-        id: "",
-        realName: "",
-        company: "",
-        companyName: "",
-        duties: "",
+        id: '',
+        realName: '',
+        company: '',
+        companyName: '',
+        duties: '',
         Settle: {
           self: {},
           lover: {},
           parent: {},
           prevYearlyLength: 0
         },
-        Phone: ""
+        Phone: ''
       },
       formApply: {
-        StampLeave: "",
+        StampLeave: '',
         VocationLength: 0,
         OnTripLength: 0,
-        VocationType: "",
+        VocationType: '',
         vocationPlace: 0,
         vocationPlaceArr: [],
-        vocationPlaceName: "",
-        ByTransportation: "0",
-        reason: "",
-        StampReturn: "",
+        vocationPlaceName: '',
+        ByTransportation: '0',
+        reason: '',
+        StampReturn: '',
         isArchitect: false
       },
       formFinal: {
-        baseInfoId: "",
-        RequestId: ""
+        baseInfoId: '',
+        RequestId: ''
       },
       usersVocation: {
         yearlyLength: 0,
@@ -385,258 +385,257 @@ export default {
       },
       locationOptions: [
         {
-          label: "选择地域",
+          label: '选择地域',
           value: 0,
           children: []
         },
         {
-          label: "不选择",
+          label: '不选择',
           value: -1
         }
       ],
       isAfterSubmit: false,
       caculaingDate: {},
-      restaurants: [], //福利假选择
+      restaurants: [], // 福利假选择
       SelectVacationList: [],
       VacationModel: {
-        name: "",
-        length: "",
-        description: ""
+        name: '',
+        length: '',
+        description: ''
       },
       dialogVisible: false,
-      VacationIndex: "",
+      VacationIndex: '',
       VacationModelRules: {
         name: [
-          { required: true, message: "请选择/输入福利假", trigger: "change" }
+          { required: true, message: '请选择/输入福利假', trigger: 'change' }
         ],
         length: [
-          { required: true, message: "请输入假期天数", trigger: "blur" },
+          { required: true, message: '请输入假期天数', trigger: 'blur' },
           {
             min: 1,
-            message: "天数不能少于1天",
-            type: "number",
-            trigger: "blur"
+            message: '天数不能少于1天',
+            type: 'number',
+            trigger: 'blur'
           }
         ]
       }
-    };
+    }
   },
   computed: {
     showAll() {
-      return this.active === 3;
+      return this.active === 3
     },
     theme() {
-      return this.$store.state.settings.theme;
+      return this.$store.state.settings.theme
     },
     isAllowGoStepTow() {
-      return this.formFinal.baseInfoId && this.form.id;
+      return this.formFinal.baseInfoId && this.form.id
     }
   },
   created() {
-    this.createNew();
+    this.createNew()
   },
   mounted() {
-    this.restaurants = this.loadAll();
+    this.restaurants = this.loadAll()
   },
   methods: {
     removeVacation(index) {
-      console.log(index);
-      this.SelectVacationList.splice(index, 1);
-      this.handleChange();
+      console.log(index)
+      this.SelectVacationList.splice(index, 1)
+      this.handleChange()
     },
     SaveOtherVacation() {
-      this.$refs["VacationModel"].validate(valid => {
+      this.$refs['VacationModel'].validate(valid => {
         if (!valid) {
-          return;
+          return
         }
         for (var i = 0; i < this.SelectVacationList.length; i++) {
           if (
-            this.SelectVacationList[i].name == this.VacationModel.name &&
+            this.SelectVacationList[i].name === this.VacationModel.name &&
             this.VacationIndex !== i
           ) {
             this.$message({
-              type: "info",
+              type: 'info',
               message: `已添加过该假期`
-            });
-            return;
+            })
+            return
           }
         }
-        var obj = JSON.parse(JSON.stringify(this.VacationModel));
+        var obj = JSON.parse(JSON.stringify(this.VacationModel))
 
-        if (this.VacationIndex !== "") {
-          this.SelectVacationList[this.VacationIndex].name = obj.name;
-          this.SelectVacationList[this.VacationIndex].length = obj.length;
+        if (this.VacationIndex !== '') {
+          this.SelectVacationList[this.VacationIndex].name = obj.name
+          this.SelectVacationList[this.VacationIndex].length = obj.length
           this.SelectVacationList[this.VacationIndex].description =
-            obj.description;
-          this.VacationIndex = "";
+            obj.description
+          this.VacationIndex = ''
         } else {
           this.SelectVacationList.push({
             name: obj.name,
             length: obj.length,
             description: obj.description
-          });
+          })
         }
-        this.handleChange();
-        this.dialogVisible = false;
-      });
+        this.handleChange()
+        this.dialogVisible = false
+      })
     },
     OpenOtherVacation(index) {
-      this.VacationIndex = index;
-      this.$refs["VacationModel"] && this.$refs["VacationModel"].resetFields();
-      if (index !== "") {
+      this.VacationIndex = index
+      this.$refs['VacationModel'] && this.$refs['VacationModel'].resetFields()
+      if (index !== '') {
         this.VacationModel.name = this.SelectVacationList[
           this.VacationIndex
-        ].name;
+        ].name
         this.VacationModel.length = this.SelectVacationList[
           this.VacationIndex
-        ].length;
+        ].length
         this.VacationModel.description = this.SelectVacationList[
           this.VacationIndex
-        ].description;
+        ].description
       }
-
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
     querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
+      var restaurants = this.restaurants
       var results = queryString
         ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
+        : restaurants
       // 调用 callback 返回建议列表的数据
-      cb(results);
+      cb(results)
     },
     createFilter(queryString) {
       return restaurant => {
         return (
           restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
           0
-        );
-      };
+        )
+      }
     },
     loadAll() {
       return [
-        { value: "婚假", length: 10 },
-        { value: "护理假", length: 30 },
-        { value: "产假", length: 188 }
-      ];
+        { value: '婚假', length: 10 },
+        { value: '护理假', length: 30 },
+        { value: '产假', length: 188 }
+      ]
     },
     handleSelect(item) {
-      this.VacationModel.length = item.length;
+      this.VacationModel.length = item.length
     },
 
     goStepTwo() {
       if (this.isAllowGoStepTow) {
-        this.active = 1;
+        this.active = 1
       } else {
-        this.$message.error("请生成回执编号");
+        this.$message.error('请生成回执编号')
       }
     },
     getLocationChildrenIndexByValue(item, value) {
       for (var i = 0; i < item.children.length; i++) {
-        if (item.children[i].value === value) return i;
+        if (item.children[i].value === value) return i
       }
-      return 0;
+      return 0
     },
     handleItemChange(val) {
       if (val) {
-        const deep = val.length - 1;
-        const id = val[deep];
-        this.formApply.vocationPlaceArr = val;
+        const deep = val.length - 1
+        const id = val[deep]
+        this.formApply.vocationPlaceArr = val
         locationChildren(id).then(data => {
           const children = data.list.map(d => ({
             label: d.name,
             value: d.code,
             children: []
-          }));
-          var item = this.locationOptions[0];
-          var nextIndex = 0;
+          }))
+          var item = this.locationOptions[0]
+          var nextIndex = 0
           for (var i = 0; i < deep; i++) {
-            nextIndex = this.getLocationChildrenIndexByValue(item, val[i + 1]);
-            item = item.children[nextIndex];
+            nextIndex = this.getLocationChildrenIndexByValue(item, val[i + 1])
+            item = item.children[nextIndex]
           }
-          item.children = children;
+          item.children = children
           if (item.children.length === 0) {
             item.children[0] = {
-              label: "无下一层级",
+              label: '无下一层级',
               disabled: true
-            };
+            }
           }
-        });
+        })
       } else {
-        this.$message.error("无效的地址");
+        this.$message.error('无效的地址')
       }
     },
     fetchUserInfoes() {
-      const id = this.form.id;
-      this.formFinal.RequestId = "";
-      this.formFinal.baseInfoId = "";
+      const id = this.form.id
+      this.formFinal.RequestId = ''
+      this.formFinal.baseInfoId = ''
       if (this.OnloadingUserInfoes === true) {
         return this.$message.info({
-          message: "用户信息获取中，请稍等"
-        });
+          message: '用户信息获取中，请稍等'
+        })
       }
       if (id.length === 7 || id.length === 18) {
-        this.OnloadingUserInfoes = true;
+        this.OnloadingUserInfoes = true
         if (id.length === 18) {
           getUserIdByCid(id)
             .then(data => {
-              this.OnloadingUserInfoes = false;
-              this.form.id = data.id;
+              this.OnloadingUserInfoes = false
+              this.form.id = data.id
               this.$message.success({
-                message: "身份证识别成功:" + data.id
-              });
-              this.fetchUserInfoesDerect();
+                message: '身份证识别成功:' + data.id
+              })
+              this.fetchUserInfoesDerect()
             })
             .catch(err => {
-              this.OnloadingUserInfoes = false;
+              this.OnloadingUserInfoes = false
               return this.$message.error({
                 message: err.message
-              });
-            });
+              })
+            })
         } else if (id.length === 7) {
-          this.fetchUserInfoesDerect();
+          this.fetchUserInfoesDerect()
         }
       } else {
         this.$message.warning({
-          message: "非正确身份号码,正确格式为7位身份号或者18位法定身份证号码"
-        });
+          message: '非正确身份号码,正确格式为7位身份号或者18位法定身份证号码'
+        })
       }
     },
 
     fetchUserInfoesDerect() {
       getUserAllInfo(this.form.id)
         .then(data => {
-          this.OnloadingUserInfoes = false;
-          const { base, company, duties, social } = data;
+          this.OnloadingUserInfoes = false
+          const { base, company, duties, social } = data
           try {
-            this.form.realName = base.base.realName;
-            this.form.company = company.company.code;
-            this.form.companyName = company.company.name;
-            this.form.duties = duties.name;
-            this.form.Phone = social.phone;
+            this.form.realName = base.base.realName
+            this.form.company = company.company.code
+            this.form.companyName = company.company.name
+            this.form.duties = duties.name
+            this.form.Phone = social.phone
             const {
               self,
               lover,
               parent,
               loversParent,
               prevYearlyLength
-            } = social.settle;
+            } = social.settle
             this.form.Settle = {
               self,
               lover,
               parent,
               loversParent,
               prevYearlyLength
-            };
+            }
           } catch (error) {
-            console.warn(error);
+            console.warn(error)
           }
-          return this.$message.success("获取成功，已自动填充到表单");
+          return this.$message.success('获取成功，已自动填充到表单')
         })
         .catch(err => {
-          this.OnloadingUserInfoes = false;
-          return this.$message.warning(err.message);
-        });
+          this.OnloadingUserInfoes = false
+          return this.$message.warning(err.message)
+        })
     },
 
     getUsersVocationLimit(userid) {
@@ -648,15 +647,15 @@ export default {
           onTripTimes: 0,
           maxTripTimes: 0,
           ...data
-        };
-      });
+        }
+      })
     },
 
     // 提交基础信息
     submitBaseInfo() {
-      const { id, realName, company, duties, Phone } = this.form;
-      this.onLoading = true;
-      this.getUsersVocationLimit(id);
+      const { id, realName, company, duties, Phone } = this.form
+      this.onLoading = true
+      this.getUsersVocationLimit(id)
       postBaseInfo({
         id,
         realName,
@@ -666,16 +665,16 @@ export default {
         Settle: null
       })
         .then(data => {
-          this.onLoading = false;
+          this.onLoading = false
           if (data.id) {
-            this.formFinal.baseInfoId = data.id;
-            this.$message.success("成功提交，回执编号为：" + data.id);
+            this.formFinal.baseInfoId = data.id
+            this.$message.success('成功提交，回执编号为：' + data.id)
           }
         })
         .catch(() => {
-          this.onLoading = false;
-          this.formFinal.baseInfoId = "";
-        });
+          this.onLoading = false
+          this.formFinal.baseInfoId = ''
+        })
     },
 
     /**
@@ -683,50 +682,50 @@ export default {
      */
     submitRequestInfo() {
       if (this.onLoading === true) {
-        return this.$message.info("生成中，请等待");
+        return this.$message.info('生成中，请等待')
       }
-      const { vocationPlaceArr, ...param } = this.formApply;
+      const { vocationPlaceArr, ...param } = this.formApply
       if (vocationPlaceArr && vocationPlaceArr.length > 0) {
-        param.vocationPlace = vocationPlaceArr[vocationPlaceArr.length - 1];
+        param.vocationPlace = vocationPlaceArr[vocationPlaceArr.length - 1]
       }
       const infoParam = Object.assign({}, param, {
         id: this.form.id
-      });
-      this.onLoading = true;
-      infoParam["vocationAdditionals"] = this.SelectVacationList;
+      })
+      this.onLoading = true
+      infoParam['vocationAdditionals'] = this.SelectVacationList
       postRequestInfo(infoParam)
         .then(data => {
-          const id = data.id;
-          this.formFinal.RequestId = id;
+          const id = data.id
+          this.formFinal.RequestId = id
           if (id) {
-            return this.$message.success("申请信息提交完成，回执编号为" + id);
+            return this.$message.success('申请信息提交完成，回执编号为' + id)
           }
         })
         .catch(() => {})
         .finally(() => {
-          this.onLoading = false;
-        });
+          this.onLoading = false
+        })
     },
     caculateVocationPercentage() {
-      var fn = parseInt;
+      var fn = parseInt
       return Math.floor(
         100 *
           ((fn(this.usersVocation.yearlyLength) -
             fn(this.usersVocation.leftLength) +
             fn(this.formApply.VocationLength)) /
             fn(this.usersVocation.yearlyLength))
-      );
+      )
     },
     /**
      * 提交申请
      */
     submitApply() {
       if (this.onLoading === true) {
-        return this.$message.info("提交中，请等待");
+        return this.$message.info('提交中，请等待')
       }
-      const BaseId = this.formFinal.baseInfoId;
-      const RequestId = this.formFinal.RequestId;
-      this.onLoading = true;
+      const BaseId = this.formFinal.baseInfoId
+      const RequestId = this.formFinal.RequestId
+      this.onLoading = true
       submitApply({
         RequestId,
         BaseId,
@@ -735,43 +734,43 @@ export default {
         }
       })
         .then(data => {
-          this.active = 3;
-          this.isAfterSubmit = true;
-          return this.$message.success("保存成功");
+          this.active = 3
+          this.isAfterSubmit = true
+          return this.$message.success('保存成功')
         })
         .catch(() => {
-          return this.$message.error("保存失败");
+          return this.$message.error('保存失败')
         })
         .finally(() => {
-          return (this.onLoading = false);
-        });
+          return (this.onLoading = false)
+        })
     },
 
     buildSettle() {
       return {
-        date: "",
-        valid: "",
+        date: '',
+        valid: '',
         address: {
-          parentId: "",
-          rank: "",
-          name: "",
-          shortname: ""
+          parentId: '',
+          rank: '',
+          name: '',
+          shortname: ''
         },
-        addressDetail: ""
-      };
+        addressDetail: ''
+      }
     },
 
     /**
      * 创建新的申请
      */
     createNew() {
-      this.active = 0;
+      this.active = 0
       this.form = {
-        id: "",
-        realName: "",
-        company: "",
-        companyName: "",
-        duties: "",
+        id: '',
+        realName: '',
+        company: '',
+        companyName: '',
+        duties: '',
         Phone: 0,
         Settle: {
           self: this.buildSettle(),
@@ -780,36 +779,36 @@ export default {
           loversParent: this.buildSettle(),
           prevYearlyLength: 0
         }
-      };
+      }
       this.formApply = {
-        StampLeave: "",
-        StampReturn: "",
+        StampLeave: '',
+        StampReturn: '',
         VocationLength: 0,
         OnTripLength: 0,
-        VocationType: "",
+        VocationType: '',
         vocationPlace: 0,
-        vocationPlaceName: "",
+        vocationPlaceName: '',
         vocationPlaceArr: [],
-        reason: "",
-        ByTransportation: "0"
-      };
+        reason: '',
+        ByTransportation: '0'
+      }
       this.formFinal = {
-        baseInfoId: "",
-        RequestId: ""
-      };
-      this.onLoading = false;
-      this.isAfterSubmit = false;
-      this.caculaingDate = {};
+        baseInfoId: '',
+        RequestId: ''
+      }
+      this.onLoading = false
+      this.isAfterSubmit = false
+      this.caculaingDate = {}
     },
 
     /**
      * 用户计算预期归队日期
      */
     handleChange() {
-      var SelectVacationCount = 0;
+      var SelectVacationCount = 0
       this.SelectVacationList.forEach(v => {
-        SelectVacationCount += v.length;
-      });
+        SelectVacationCount += v.length
+      })
       console.log(SelectVacationCount)
       this.caculaingDate = {
         start: this.formApply.StampLeave,
@@ -817,32 +816,32 @@ export default {
           parseInt(this.formApply.VocationLength) +
           parseInt(this.formApply.OnTripLength) +
           SelectVacationCount
-      };
-      this.formApply.isArchitect = this.caculaingDate.start <= new Date();
-      if (this.OnloadingUserStamp) return;
-      this.OnloadingUserStamp = true;
+      }
+      this.formApply.isArchitect = this.caculaingDate.start <= new Date()
+      if (this.OnloadingUserStamp) return
+      this.OnloadingUserStamp = true
 
       setTimeout(() => {
         getStampReturn(this.caculaingDate)
           .then(data => {
-            const endDate = data.endDate;
-            this.formApply.StampReturn = endDate;
+            const endDate = data.endDate
+            this.formApply.StampReturn = endDate
             this.$notify({
-              title: "预计归队时间",
+              title: '预计归队时间',
               message: data.endDate,
-              type: "success"
-            });
+              type: 'success'
+            })
           })
           .catch(err => {
-            return this.$message.error(err);
+            return this.$message.error(err)
           })
           .finally(() => {
-            this.OnloadingUserStamp = false;
-          });
-      }, 1000);
+            this.OnloadingUserStamp = false
+          })
+      }, 1000)
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

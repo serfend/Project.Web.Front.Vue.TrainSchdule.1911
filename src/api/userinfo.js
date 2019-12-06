@@ -25,8 +25,6 @@ export function getUserBase(id) {
   })
 }
 
-
-
 export function getUserDiy(id) {
   return request.get('users/diyinfo', {
     params: {
@@ -127,5 +125,5 @@ export function getUsersVocationLimit(id) {
  * @param {*} id
  */
 export function accountPassword(param) {
-  return request.post('/account/password', param);
+  return request.post('/account/password', param)
 }
