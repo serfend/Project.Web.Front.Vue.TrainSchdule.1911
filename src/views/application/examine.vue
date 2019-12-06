@@ -279,11 +279,15 @@ export default {
     }
   },
   computed: {
+    myAuditCompany() {
+      return this.$store.state.user.data.companyCode
+    },
     myUserid() {
       return this.$store.state.user.userid
     }
   },
   created() {
+    // this.tmpqueryAppliesForm.auditByCompany.value = this.myAuditCompany
     this.getOnMyManage()
     this.searchData()
   },
@@ -480,57 +484,57 @@ export default {
       this.onLoading = true
       this.dataList = []
 
-      var queryAppliesForm = {}
+      var tmpqueryAppliesForm = {}
       if (sForm) {
-        this.tableForm = sForm
+        this.queryAppliesForm = sForm
       }
 
-      queryAppliesForm.pages = {
+      tmpqueryAppliesForm.pages = {
         pageIndex: this.pages.pageIndex - 1,
         pageSize: this.pages.pageSize
       }
-      if (this.tableForm.addTime && this.tableForm.addTime[0]) {
-        queryAppliesForm.create = {
-          start: this.tableForm.addTime[0],
-          end: this.tableForm.addTime[1]
+      if (this.queryAppliesForm.addTime && this.queryAppliesForm.addTime[0]) {
+        tmpqueryAppliesForm.create = {
+          start: this.queryAppliesForm.addTime[0],
+          end: this.queryAppliesForm.addTime[1]
         }
       }
 
-      if (this.tableForm.stampLeaveTime && this.tableForm.stampLeaveTime[0]) {
-        queryAppliesForm.stampLeave = {
-          start: this.tableForm.stampLeaveTime[0],
-          end: this.tableForm.stampLeaveTime[1]
+      if (this.queryAppliesForm.stampLeaveTime && this.queryAppliesForm.stampLeaveTime[0]) {
+        tmpqueryAppliesForm.stampLeave = {
+          start: this.queryAppliesForm.stampLeaveTime[0],
+          end: this.queryAppliesForm.stampLeaveTime[1]
         }
       }
-      if (this.tableForm.stampReturnTime && this.tableForm.stampReturnTime[0]) {
-        queryAppliesForm.stampReturn = {
-          start: this.tableForm.stampReturnTime[0],
-          end: this.tableForm.stampReturnTime[1]
+      if (this.queryAppliesForm.stampReturnTime && this.queryAppliesForm.stampReturnTime[0]) {
+        tmpqueryAppliesForm.stampReturn = {
+          start: this.queryAppliesForm.stampReturnTime[0],
+          end: this.queryAppliesForm.stampReturnTime[1]
         }
       }
-      if (this.tableForm.status.arrays.length > 0) {
-        queryAppliesForm['status'] = { arrays: this.tableForm.status.arrays }
+      if (this.queryAppliesForm.status.arrays.length > 0) {
+        tmpqueryAppliesForm['status'] = { arrays: this.queryAppliesForm.status.arrays }
       }
-      if (this.tableForm.createFor.value) {
-        queryAppliesForm['createFor'] = {
-          value: this.tableForm.createFor.value
-        }
-      }
-
-      if (this.tableForm.createBy.value) {
-        queryAppliesForm['createBy'] = { value: this.tableForm.createBy.value }
-      }
-      if (this.tableForm.auditBy.value) {
-        queryAppliesForm['auditBy'] = { value: this.tableForm.auditBy.value }
-      }
-
-      if (this.tableForm.auditByCompany.value) {
-        queryAppliesForm['auditByCompany'] = {
-          value: this.tableForm.auditByCompany.value
+      if (this.queryAppliesForm.createFor.value) {
+        tmpqueryAppliesForm['createFor'] = {
+          value: this.queryAppliesForm.createFor.value
         }
       }
 
-      queryList(queryAppliesForm)
+      if (this.queryAppliesForm.createBy.value) {
+        tmpqueryAppliesForm['createBy'] = { value: this.queryAppliesForm.createBy.value }
+      }
+      if (this.queryAppliesForm.auditBy.value) {
+        tmpqueryAppliesForm['auditBy'] = { value: this.queryAppliesForm.auditBy.value }
+      }
+
+      if (this.queryAppliesForm.auditByCompany.value) {
+        tmpqueryAppliesForm['auditByCompany'] = {
+          value: this.queryAppliesForm.auditByCompany.value
+        }
+      }
+
+      queryList(tmpqueryAppliesForm)
         .then(data => {
           const list = data.list
           this.dataList = list || []
