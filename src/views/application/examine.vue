@@ -240,6 +240,9 @@ export default {
         auditByCompany: {
           value: ''
         },
+        createCompany: {
+          value: ''
+        },
         stampLeave: {
           start: '',
           end: ''
@@ -287,7 +290,7 @@ export default {
     }
   },
   created() {
-    // this.tmpqueryAppliesForm.auditByCompany.value = this.myAuditCompany
+    this.queryAppliesForm.auditByCompany.value = this.myAuditCompany
     this.getOnMyManage()
     this.searchData()
   },
@@ -500,20 +503,28 @@ export default {
         }
       }
 
-      if (this.queryAppliesForm.stampLeaveTime && this.queryAppliesForm.stampLeaveTime[0]) {
+      if (
+        this.queryAppliesForm.stampLeaveTime &&
+        this.queryAppliesForm.stampLeaveTime[0]
+      ) {
         tmpqueryAppliesForm.stampLeave = {
           start: this.queryAppliesForm.stampLeaveTime[0],
           end: this.queryAppliesForm.stampLeaveTime[1]
         }
       }
-      if (this.queryAppliesForm.stampReturnTime && this.queryAppliesForm.stampReturnTime[0]) {
+      if (
+        this.queryAppliesForm.stampReturnTime &&
+        this.queryAppliesForm.stampReturnTime[0]
+      ) {
         tmpqueryAppliesForm.stampReturn = {
           start: this.queryAppliesForm.stampReturnTime[0],
           end: this.queryAppliesForm.stampReturnTime[1]
         }
       }
       if (this.queryAppliesForm.status.arrays.length > 0) {
-        tmpqueryAppliesForm['status'] = { arrays: this.queryAppliesForm.status.arrays }
+        tmpqueryAppliesForm['status'] = {
+          arrays: this.queryAppliesForm.status.arrays
+        }
       }
       if (this.queryAppliesForm.createFor.value) {
         tmpqueryAppliesForm['createFor'] = {
@@ -522,10 +533,14 @@ export default {
       }
 
       if (this.queryAppliesForm.createBy.value) {
-        tmpqueryAppliesForm['createBy'] = { value: this.queryAppliesForm.createBy.value }
+        tmpqueryAppliesForm['createBy'] = {
+          value: this.queryAppliesForm.createBy.value
+        }
       }
       if (this.queryAppliesForm.auditBy.value) {
-        tmpqueryAppliesForm['auditBy'] = { value: this.queryAppliesForm.auditBy.value }
+        tmpqueryAppliesForm['auditBy'] = {
+          value: this.queryAppliesForm.auditBy.value
+        }
       }
 
       if (this.queryAppliesForm.auditByCompany.value) {
@@ -533,7 +548,11 @@ export default {
           value: this.queryAppliesForm.auditByCompany.value
         }
       }
-
+      if (this.queryAppliesForm.createCompany.value) {
+        tmpqueryAppliesForm['createCompany'] = {
+          value: this.queryAppliesForm.createCompany.value
+        }
+      }
       queryList(tmpqueryAppliesForm)
         .then(data => {
           const list = data.list

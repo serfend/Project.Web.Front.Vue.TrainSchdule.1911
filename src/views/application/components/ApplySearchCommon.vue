@@ -26,11 +26,26 @@
       />
     </el-form-item>
     <el-form-item label="审核人" prop="auditBy.value">
-      <el-input v-model="tableForm.auditBy.value" placeholder class="mr10" maxlength="40" clearable />
+      <el-input
+        v-model="tableForm.auditBy.value"
+        placeholder
+        class="mr10"
+        maxlength="40"
+        clearable
+      />
     </el-form-item>
     <el-form-item label="审核单位" prop="auditByCompany.value">
       <el-input
         v-model="tableForm.auditByCompany.value"
+        placeholder
+        class="mr10"
+        maxlength="40"
+        clearable
+      />
+    </el-form-item>
+    <el-form-item label="来自单位" prop="createCompany.value">
+      <el-input
+        v-model="tableForm.createCompany.value"
         placeholder
         class="mr10"
         maxlength="40"
@@ -123,35 +138,15 @@ export default {
           addTime: '',
           stampLeaveTime: '',
           stampReturnTime: '',
-          status: {
-            status: '',
-            end: '',
-            arrays: []
-          },
-          create: {
-            start: '',
-            end: ''
-          },
-          createFor: {
-            value: ''
-          },
-          createBy: {
-            value: ''
-          },
-          auditBy: {
-            value: ''
-          },
-          auditByCompany: {
-            value: ''
-          },
-          stampLeave: {
-            start: '',
-            end: ''
-          },
-          stampReturn: {
-            start: '',
-            end: ''
-          }
+          status: { status: '', end: '', arrays: [] },
+          create: { start: '', end: '' },
+          createFor: { value: '' },
+          createBy: { value: '' },
+          auditBy: { value: '' },
+          auditByCompany: { value: '' },
+          createCompany: { value: '' },
+          stampLeave: { start: '', end: '' },
+          stampReturn: { start: '', end: '' }
         }
       }
     }
