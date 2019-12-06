@@ -43,6 +43,20 @@
         </template>
       </ApplicationList>
     </el-card>
+    <el-dialog :visible="authForm.show" title="敏感操作授权" width="30%">
+      <el-form ref="authForm" :model="authForm" label-width="80px">
+        <el-form-item label="安全码">
+          <el-input v-model="authForm.code" placeholder="请输入安全码" />
+        </el-form-item>
+        <el-form-item label="审核人">
+          <el-input v-model="authForm.authByUserId" placeholder="请输入审核人的id" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="authForm.show = false">取 消</el-button>
+        <el-button type="primary" @click="authForm.applyAuthFormMethod">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-card>
       <Pagination
         :pagesetting="pages"
@@ -173,16 +187,26 @@ export default {
           type: 'danger',
           disabled: false
         }
-      ]
+      ],
+      authForm: {
+        code: '',
+        authByUserId: '',
+        show: false,
+        applyAuthFormMethod: {}
+      }
     }
   },
   computed: {
     myCreateCompany() {
       return this.$store.state.user.data.companyCode
+    },
+    myUserid() {
+      return this.$store.state.user.userid
     }
   },
   created() {
     this.queryAppliesForm.createCompany.value = this.myCreateCompany
+    this.authForm.authByUserId = this.myUserid
     this.getOnMyManage()
     this.searchData()
   },
@@ -205,18 +229,27 @@ export default {
         })
     },
 
-    hendleExecute(method, row, id) {
+    hendleExecute(method, row, id, beenAudit) {
       if (this.onLoading === true) {
         return false
       }
       let params = id
       const fn = method.fn
-      if (method === '删除') {
+      if (method.name === '删除') {
+        if (!beenAudit) {
+          this.authForm.applyAuthFormMethod = () => {
+            console.log('授权完成，执行')
+            this.authForm.show = false
+            this.hendleExecute(method, row, id, true)
+          }
+          this.authForm.show = true
+          return
+        }
         params = {
           id,
           Auth: {
-            Code: prompt('输入授权码'),
-            AuthByUserID: this.$store.state.user.userid
+            code: this.authForm.code,
+            authByUserId: this.authForm.authByUserId
           }
         }
       }
