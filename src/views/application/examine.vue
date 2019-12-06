@@ -1,7 +1,11 @@
 <template>
   <div class="application-examine ma-4">
     <el-card>
-      <ApplySearchCommon ref="queryAppliesForm" :table-form="queryAppliesForm" @searchData="searchData">
+      <ApplySearchCommon
+        ref="queryAppliesForm"
+        :table-form="queryAppliesForm"
+        @searchData="searchData"
+      >
         <template slot="ExtendForm">
           <el-form-item>
             <el-button icon="el-icon-edit" type="primary" @click="showMultiDialog">批量审核</el-button>
@@ -140,23 +144,25 @@
         </span>
       </el-dialog>
     </el-card>
-    <!-- </el-col> -->
-    <!-- </el-row> -->
+    <el-card>
+      <Pagination
+        :pagesetting="pages"
+        @updatepage="updatepage"
+        @handleCurrentChange="searchData"
+        @handleSizeChange="searchData"
+      />
+    </el-card>
   </div>
 </template>
 
 <script>
 import ApplicationList from './components/ApplicationList'
 import ApplySearchCommon from './components/ApplySearchCommon'
+import Pagination from '../pagination'
 
-import {
-  audit,
-  deleteApply,
-  recallOrder,
-  queryList
-} from '../../api/apply'
+import { audit, deleteApply, recallOrder, queryList } from '../../api/apply'
 import { getOnMyManage } from '../../api/usercompany'
-import { getMembers } from '../../api/company'
+// import { getMembers } from '../../api/company'
 import {
   exportUserApplies,
   exportApply,
@@ -187,7 +193,8 @@ export default {
   name: 'ApplyExamine',
   components: {
     ApplicationList,
-    ApplySearchCommon
+    ApplySearchCommon,
+    Pagination
   },
   mixins: [mixins],
   data() {
@@ -202,11 +209,12 @@ export default {
       callback()
     }
     return {
+      pages: {
+        pageIndex: 1,
+        pageSize: 20,
+        totalCount: 10
+      },
       queryAppliesForm: {
-        pages: {
-          pageIndex: 0,
-          pageSize: 20
-        },
         code: '',
         addTime: '',
         stampLeaveTime: '',
@@ -266,14 +274,6 @@ export default {
             validator: checkCode,
             trigger: 'blur'
           }
-          // {
-          //   min: 100000,
-          //   max: 999999,
-          //   message: '请输入六位数字',
-          //   trigger: 'blur',
-          //   type: 'number'
-          //    /^[0-9]{6}$/.test('000000')
-          // }
         ]
       }
     }
@@ -288,6 +288,10 @@ export default {
     this.searchData()
   },
   methods: {
+    updatepage(newpage) {
+      this.pages = newpage
+      this.searchData()
+    },
     LoadPage() {
       this.searchData()
     }, // 滚动加载
@@ -468,85 +472,69 @@ export default {
           console.warn(err)
         })
     },
-    companyChanged(val) {
-      this.queryForm.userId = ''
-      const cache = this.cacheMembers.find(d => d.companyCode === val)
-      if (cache) {
-        this.membersOption = cache.list
-      } else {
-        getMembers({
-          code: val
-        }).then(data => {
-          if (data.list) {
-            this.membersOption = data.list
-            this.cacheMembers.push({
-              companyCode: val,
-              list: data.list
-            })
-          }
-        })
-      }
-    },
     // 查询数据
     searchData(sForm) {
       if (this.onLoading === true) {
         return this.$message.warning('查询中，请等候')
       }
-      this.queryAppliesForm.code = this.queryAppliesForm.companyCode
       this.onLoading = true
       this.dataList = []
 
-      var QueryAppliesForm = {}
+      var queryAppliesForm = {}
       if (sForm) {
-        this.queryAppliesForm = sForm
+        this.tableForm = sForm
       }
 
-      QueryAppliesForm['pages'] = this.queryAppliesForm.pages
-      if (this.queryAppliesForm.addTime && this.queryAppliesForm.addTime[0]) {
-        QueryAppliesForm.create = {
-          start: this.queryAppliesForm.addTime[0],
-          end: this.queryAppliesForm.addTime[1]
+      queryAppliesForm.pages = {
+        pageIndex: this.pages.pageIndex - 1,
+        pageSize: this.pages.pageSize
+      }
+      if (this.tableForm.addTime && this.tableForm.addTime[0]) {
+        queryAppliesForm.create = {
+          start: this.tableForm.addTime[0],
+          end: this.tableForm.addTime[1]
         }
       }
 
-      if (this.queryAppliesForm.stampLeaveTime && this.queryAppliesForm.stampLeaveTime[0]) {
-        QueryAppliesForm.stampLeave = {
-          start: this.queryAppliesForm.stampLeaveTime[0],
-          end: this.queryAppliesForm.stampLeaveTime[1]
+      if (this.tableForm.stampLeaveTime && this.tableForm.stampLeaveTime[0]) {
+        queryAppliesForm.stampLeave = {
+          start: this.tableForm.stampLeaveTime[0],
+          end: this.tableForm.stampLeaveTime[1]
         }
       }
-      if (this.queryAppliesForm.stampReturnTime && this.queryAppliesForm.stampReturnTime[0]) {
-        QueryAppliesForm.stampReturn = {
-          start: this.queryAppliesForm.stampReturnTime[0],
-          end: this.queryAppliesForm.stampReturnTime[1]
+      if (this.tableForm.stampReturnTime && this.tableForm.stampReturnTime[0]) {
+        queryAppliesForm.stampReturn = {
+          start: this.tableForm.stampReturnTime[0],
+          end: this.tableForm.stampReturnTime[1]
         }
       }
-      if (this.queryAppliesForm.status.arrays.length > 0) {
-        QueryAppliesForm['status'] = { arrays: this.queryAppliesForm.status.arrays }
+      if (this.tableForm.status.arrays.length > 0) {
+        queryAppliesForm['status'] = { arrays: this.tableForm.status.arrays }
       }
-      if (this.queryAppliesForm.createFor.value) {
-        QueryAppliesForm['createFor'] = {
-          value: this.queryAppliesForm.createFor.value
-        }
-      }
-
-      if (this.queryAppliesForm.createBy.value) {
-        QueryAppliesForm['createBy'] = { value: this.queryAppliesForm.createBy.value }
-      }
-      if (this.queryAppliesForm.auditBy.value) {
-        QueryAppliesForm['auditBy'] = { value: this.queryAppliesForm.auditBy.value }
-      }
-
-      if (this.queryAppliesForm.auditByCompany.value) {
-        QueryAppliesForm['auditByCompany'] = {
-          value: this.queryAppliesForm.auditByCompany.value
+      if (this.tableForm.createFor.value) {
+        queryAppliesForm['createFor'] = {
+          value: this.tableForm.createFor.value
         }
       }
 
-      queryList(QueryAppliesForm)
+      if (this.tableForm.createBy.value) {
+        queryAppliesForm['createBy'] = { value: this.tableForm.createBy.value }
+      }
+      if (this.tableForm.auditBy.value) {
+        queryAppliesForm['auditBy'] = { value: this.tableForm.auditBy.value }
+      }
+
+      if (this.tableForm.auditByCompany.value) {
+        queryAppliesForm['auditByCompany'] = {
+          value: this.tableForm.auditByCompany.value
+        }
+      }
+
+      queryList(queryAppliesForm)
         .then(data => {
           const list = data.list
           this.dataList = list || []
+          this.pages.totalCount = data.totalCount
         })
         .finally(() => {
           return (this.onLoading = false)

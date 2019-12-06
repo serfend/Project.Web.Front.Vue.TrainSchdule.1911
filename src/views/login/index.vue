@@ -102,8 +102,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '1000000',
-        password: 'ffffffff',
+        username: '',
+        password: '',
         RememberMe: false,
         verify: 201700816
       },

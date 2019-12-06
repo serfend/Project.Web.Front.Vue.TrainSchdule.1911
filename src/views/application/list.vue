@@ -20,7 +20,7 @@
           </el-form-item>
         </template>
       </ApplySearchCommon>
-      <ApplicationList :data-list="dataList" :on-loading="onLoading" @refresh="searchData">
+      <ApplicationList :on-loading="onLoading" :data-list="dataList" @refresh="searchData">
         <template slot="action" slot-scope="{ row, applyid }">
           <el-button @click="exportApply({apply: applyid})">导出</el-button>
           <el-dropdown
@@ -39,15 +39,21 @@
         </template>
       </ApplicationList>
     </el-card>
-
-    <!-- </el-col>
-    </el-row>-->
+    <el-card>
+      <Pagination
+        :pagesetting="pages"
+        @updatepage="updatepage"
+        @handleCurrentChange="searchData"
+        @handleSizeChange="searchData"
+      />
+    </el-card>
   </div>
 </template>
 
 <script>
 import ApplicationList from './components/ApplicationList'
 import ApplySearchCommon from './components/ApplySearchCommon'
+import Pagination from '../pagination'
 import { queryList } from '../../api/apply'
 import {
   exportUserApplies,
@@ -56,7 +62,7 @@ import {
 } from '../../api/static'
 import { getOnMyManage } from '../../api/usercompany'
 import { deleteApply, publish, save, withdrew } from '../../api/apply'
-import { getMembers } from '../../api/company'
+// import { getMembers } from '../../api/company'
 
 // 将导出的方法以mixins的方式注入到vm实例
 const mixins = {
@@ -84,16 +90,18 @@ export default {
   name: 'ApplyList',
   components: {
     ApplicationList,
-    ApplySearchCommon
+    ApplySearchCommon,
+    Pagination
   },
   mixins: [mixins],
   data() {
     return {
+      pages: {
+        pageIndex: 1,
+        pageSize: 20,
+        totalCount: 10
+      },
       tableForm: {
-        pages: {
-          pageIndex: 0,
-          pageSize: 20
-        },
         code: '',
         addTime: '',
         stampLeaveTime: '',
@@ -166,6 +174,10 @@ export default {
     this.searchData()
   },
   methods: {
+    updatepage(newpage) {
+      this.pages = newpage
+      this.searchData()
+    },
     getOnMyManage() {
       this.membersOption = []
       this.cacheMembers = []
@@ -226,7 +238,10 @@ export default {
         this.tableForm = sForm
       }
 
-      queryAppliesForm['pages'] = this.tableForm.pages
+      queryAppliesForm.pages = {
+        pageIndex: this.pages.pageIndex - 1,
+        pageSize: this.pages.pageSize
+      }
       if (this.tableForm.addTime && this.tableForm.addTime[0]) {
         queryAppliesForm.create = {
           start: this.tableForm.addTime[0],
@@ -272,6 +287,7 @@ export default {
         .then(data => {
           const list = data.list
           this.dataList = list || []
+          this.pages.totalCount = data.totalCount
         })
         .finally(() => {
           return (this.onLoading = false)

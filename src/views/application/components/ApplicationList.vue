@@ -1,8 +1,5 @@
 <template>
-  <!-- <el-card class='application-list'> -->
   <div>
-    <!-- <div class='layout row justify-space-between px-2 pb-3'> -->
-    <!-- <slot name='headeraction' /> -->
     <el-table
       :key="tableKey"
       ref="singleTable"
@@ -10,7 +7,6 @@
       :data="formatedList"
       highlight-current-row
     >
-      <!-- v-infinite-scroll='LoadPage' -->
       <el-table-column v-if="multi" type="selection" width="42px" />
       <el-table-column label="申请人" min-width="100px">
         <template slot-scope="{row}">
@@ -51,16 +47,6 @@
         <template slot-scope="scope">
           <span>{{ scope.row.stampLeave+'-'+scope.row.stampReturn }}</span>
         </template>
-        <!-- <el-table-column align='center' label='申请离队时间'>
-          <template slot-scope='scope'>
-            <span>{{ scope.row.stampLeave }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align='center' label='预计归队时间'>
-          <template slot-scope='scope'>
-            <span>{{ scope.row.stampReturn }}</span>
-          </template>
-        </el-table-column>-->
       </el-table-column>
       <el-table-column align="center" label="休假地点">
         <template slot-scope="scope">
@@ -153,11 +139,8 @@
         </span>
       </ApplicationDetail>
     </el-dialog>
-    <!-- card body -->
-    <!-- </el-card> -->
   </div>
 </template>
-
 <script>
 import { format } from 'timeago.js'
 import moment from 'moment'
@@ -201,16 +184,6 @@ export default {
       },
       list: [],
       listLoading: true,
-      // @TODO 查询条件
-      listQuery: {
-        // page: 1,
-        // limit: 20,
-        // importance: undefined,
-        // keyword: undefined,
-        status: undefined,
-        userid: '',
-        company: ''
-      },
       statusOptions: {},
       downloadLoading: false
     }
