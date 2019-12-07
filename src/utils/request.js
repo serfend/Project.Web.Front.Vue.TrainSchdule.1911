@@ -119,16 +119,6 @@ service.interceptors.response.use(
       )
     }
     const res = response.data
-    if (res.message === '用户未登录' && response.config.url.toLowerCase().indexOf('base') <= 0) {
-      Message({
-        message: '登录失效, 2秒后跳转到登录页',
-        type: 'error'
-      })
-      setTimeout(() => {
-        top.location.href = '/'
-        // Vue.$router.replace('/login')
-      }, 2000)
-    }
 
     if (res.status !== 0) {
       Message({

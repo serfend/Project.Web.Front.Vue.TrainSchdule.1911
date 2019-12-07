@@ -35,63 +35,6 @@
     </el-aside>
     <el-main />
   </el-container>
-  <!--<div class="welcome d-flex align-center">
-
-     <el-rows
-      class="row-bg"
-      justify="space-around"
-      type="flex"
-    >
-      <el-col
-        :md="6"
-        :sm="24"
-      >
-        <router-link to="application/new">
-          <el-card
-            :body-style="{ padding: '0px' }"
-            class="welcome-card"
-          >
-            <div class="title">
-              <span>创建申请</span>
-            </div>
-            <svg-icon icon-class="测试申请" />
-          </el-card>
-        </router-link>
-      </el-col>
-      <el-col
-        :md="6"
-        :sm="24"
-      >
-        <router-link to="login?redirect=application/examine">
-          <el-card
-            :body-style="{ padding: '0px' }"
-            class="welcome-card"
-          >
-            <div class="title">
-              <span>审核申请</span>
-            </div>
-            <svg-icon icon-class="提案审批" />
-          </el-card>
-        </router-link>
-      </el-col>
-      <el-col
-        :md="6"
-        :sm="24"
-      >
-        <router-link to="login?redirect=application/list">
-          <el-card
-            :body-style="{ padding: '0px' }"
-            class="welcome-card"
-          >
-            <div class="title">
-              <span>查询申请</span>
-            </div>
-            <svg-icon icon-class="无序排列" />
-          </el-card>
-        </router-link>
-      </el-col>
-    </el-row>
-  </div>-->
 </template>
 
 <script>
