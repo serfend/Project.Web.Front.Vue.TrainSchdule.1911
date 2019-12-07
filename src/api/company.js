@@ -10,11 +10,13 @@ import request from '../utils/request'
  *      {string} list[i].name:""
  *      {string} list[i].code:""
  */
-export function child(id) {
+export function companyChild(id) {
   return request({
     url: '/company/child',
     method: 'get',
-    id
+    params: {
+      id: id
+    }
   })
 }
 

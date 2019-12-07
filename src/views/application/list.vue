@@ -26,12 +26,12 @@
       </ApplySearchCommon>
       <ApplicationList :on-loading="onLoading" :data-list="dataList" @refresh="searchData">
         <template slot="action" slot-scope="{ row, applyid }">
-          <el-button @click="exportApply({apply: applyid})">导出</el-button>
+          <el-button @click="exportApply({ apply: applyid })">导出</el-button>
           <el-dropdown
             split-button
             szie="small"
             trigger="click"
-            @command="(action) => hendleExecute(action, row, applyid)"
+            @command="action => hendleExecute(action, row, applyid)"
           >
             操作
             <el-dropdown-menu slot="dropdown">

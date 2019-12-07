@@ -35,21 +35,23 @@
       />
     </el-form-item>
     <el-form-item label="审核单位" prop="auditByCompany.value">
-      <el-input
-        v-model="tableForm.auditByCompany.value"
-        placeholder
+      <el-cascader
+        v-model="formQuery.auditCompanyArr"
         class="mr10"
-        maxlength="40"
-        clearable
+        :options="auditCompanyOption"
+        :placeholder="formQuery.auditCompanyName"
+        :show-all-levels="false"
+        @active-item-change="handleAuditCompanyChange"
       />
     </el-form-item>
     <el-form-item label="来自单位" prop="createCompany.value">
-      <el-input
-        v-model="tableForm.createCompany.value"
-        placeholder
+      <el-cascader
+        v-model="formQuery.createCompanyArr"
         class="mr10"
-        maxlength="40"
-        clearable
+        :options="createCompanyOption"
+        :placeholder="formQuery.fromCompanyName"
+        :show-all-levels="false"
+        @active-item-change="handleFromCompanyChange"
       />
     </el-form-item>
     <el-form-item label="审核状态" prop="status.arrays">
@@ -124,6 +126,8 @@
 
 <script>
 import { getAllStatus } from '../../../api/apply'
+import { companyChild } from '../../../api/company'
+import { updateSelect } from '../../../api/cascaderSelector'
 export default {
   props: {
     tableForm: {
@@ -184,7 +188,25 @@ export default {
             }
           }
         ]
-      }
+      },
+      formQuery: {
+        createCompanyArr: [],
+        auditCompanyArr: []
+      },
+      auditCompanyOption: [
+        {
+          label: '选择单位',
+          value: '',
+          children: []
+        }
+      ],
+      createCompanyOption: [
+        {
+          label: '选择单位',
+          value: '',
+          children: []
+        }
+      ]
     }
   },
   created() {
@@ -196,6 +218,24 @@ export default {
     })
   },
   methods: {
+    handleAuditCompanyChange(val) {
+      this.formQuery.auditCompanyArr = val //用于更新页面实体
+      updateSelect(
+        this.auditCompanyOption,
+        val,
+        this.tableForm.auditByCompany,
+        companyChild
+      )
+    },
+    handleFromCompanyChange(val) {
+      this.formQuery.createCompanyArr = val
+      updateSelect(
+        this.createCompanyOption,
+        val,
+        this.tableForm.createCompany,
+        companyChild
+      )
+    },
     clearForm() {
       this.$refs.tableForm.resetFields()
     },
