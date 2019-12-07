@@ -39,7 +39,6 @@
         v-model="formQuery.auditCompanyArr"
         class="mr10"
         :options="auditCompanyOption"
-        :placeholder="formQuery.auditCompanyName"
         :show-all-levels="false"
         @active-item-change="handleAuditCompanyChange"
       />
@@ -49,7 +48,6 @@
         v-model="formQuery.createCompanyArr"
         class="mr10"
         :options="createCompanyOption"
-        :placeholder="formQuery.fromCompanyName"
         :show-all-levels="false"
         @active-item-change="handleFromCompanyChange"
       />
