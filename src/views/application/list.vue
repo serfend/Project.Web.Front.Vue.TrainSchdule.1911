@@ -27,14 +27,14 @@
       </ApplySearchCommon>
       <ApplicationList :on-loading="onLoading" :data-list="dataList" @refresh="searchData">
         <template slot="action" slot-scope="{ row, applyid }">
-          <el-button @click="exportApply({ apply: applyid })">导出</el-button>
           <el-dropdown
             split-button
             szie="small"
             trigger="click"
+            @click="exportApply({ apply: applyid })"
             @command="action => hendleExecute(action, row, applyid)"
           >
-            操作
+            <i class="el-icon-download" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="item in userActionDic" :key="item.name" :command="item">
                 <el-button :disabled="item.disabled" :type="item.type" size="mini">{{ item.name }}</el-button>
