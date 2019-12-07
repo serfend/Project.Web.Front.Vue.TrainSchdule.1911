@@ -1,7 +1,12 @@
 <template>
   <div class="block">
     <el-timeline>
-      <el-timeline-item v-for="(item,index) of timeline" :key="index" :timestamp="item.timestamp" placement="top">
+      <el-timeline-item
+        v-for="(item,index) of timeline"
+        :key="index"
+        :timestamp="item.timestamp"
+        placement="top"
+      >
         <el-card>
           <h4>{{ item.title }}</h4>
           <p>{{ item.content }}</p>
@@ -16,6 +21,16 @@ export default {
   data() {
     return {
       timeline: [
+        {
+          timestamp: '2019/12/7',
+          title: '初步内测完成并根据需求更新',
+          content: '待进一步更新'
+        },
+        {
+          timestamp: '2019/10/30',
+          title: '展开初步内测',
+          content: '多项内源性bug及功能待修复'
+        },
         {
           timestamp: '2019/5/14',
           title: '初版完成',
