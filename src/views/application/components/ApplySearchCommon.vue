@@ -114,11 +114,20 @@
         clearable
       />
     </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="clearForm">清空</el-button>
-      <el-button type="primary" @click="searchData">查询</el-button>
-    </el-form-item>
+    <el-row />
     <slot name="ExtendForm" />
+    <el-col :lg="24">
+      <el-button-group style="width:100%">
+        <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          style="width:80%"
+          :loading="onLoading"
+          @click="searchData"
+        >执行查询</el-button>
+      </el-button-group>
+    </el-col>
   </el-form>
 </template>
 
@@ -128,6 +137,10 @@ import { companyChild } from '../../../api/company'
 import { updateSelect } from '../../../api/cascaderSelector'
 export default {
   props: {
+    onLoading: {
+      type: Boolean,
+      default: false
+    },
     tableForm: {
       type: Object,
       default() {
@@ -217,7 +230,7 @@ export default {
   },
   methods: {
     handleAuditCompanyChange(val) {
-      this.formQuery.auditCompanyArr = val //用于更新页面实体
+      this.formQuery.auditCompanyArr = val // 用于更新页面实体
       updateSelect(
         this.auditCompanyOption,
         val,

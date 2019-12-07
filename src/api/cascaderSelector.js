@@ -19,7 +19,6 @@ export function updateSelect(finalOption, val, targetItem, getChildMethod) {
     const deep = val.length - 1
     const id = val[deep]
     targetItem.value = id
-    console.log("finnal opt select to " + id)
     getChildMethod(id).then(data => {
       const children = data.list.map(d => ({
         label: d.name,

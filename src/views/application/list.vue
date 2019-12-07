@@ -4,6 +4,7 @@
       <ApplySearchCommon
         ref="queryAppliesForm"
         :table-form="queryAppliesForm"
+        :on-loading="onLoading"
         @searchData="searchData"
       >
         <template slot="ExtendForm">
