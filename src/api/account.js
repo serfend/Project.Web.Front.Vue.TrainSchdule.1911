@@ -1,15 +1,21 @@
 import request from '../utils/request'
-
+import rsa from '../utils/crtypto/rsa'
+import { parseTime } from '../utils'
+import crypto from 'crypto'
 /**
  * 登录账号
  * @param { {
- * Username: String,
- * Password: any,
+ * username: String,
+ * password: any,
  * RememberMe: Boolean,
  * Verify: { Code: any }
  * } } params
  */
 export function login(params) {
+  const md5 = crypto.createHash('md5')
+  md5.update(params.username)
+  params.password = parseTime(new Date(), '{yyyy}{mm}{dd}') + params.password + md5.digest('hex')
+  params.password = rsa.encrypt(params.password)
   return request.post('account/login', params)
 }
 
