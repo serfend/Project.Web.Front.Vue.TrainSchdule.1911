@@ -199,6 +199,7 @@ export default {
         const statusObj = statusOptions[item.status]
         item.statusDesc = statusObj ? statusObj.desc : '不明类型'
         item.statusColor = statusObj ? statusObj.color : 'gray'
+        item.acessable = statusObj ? statusObj.acessable : []
         var stampLeave = new Date(item.request.stampLeave)
         item.stampLeave =
           stampLeave.getMonth() + 1 + '月' + stampLeave.getDate() + '日' // moment(item.request.stampLeave).format('LLLL')
@@ -333,7 +334,6 @@ export default {
      * 请求刷新
      */
     emitRefresh() {
-      this.getAllStatus()
       this.$emit('refresh')
     }
   }

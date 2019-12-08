@@ -37,7 +37,11 @@
             <i class="el-icon-download" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="item in userActionDic" :key="item.name" :command="item">
-                <el-button :disabled="item.disabled" :type="item.type" size="mini">{{ item.name }}</el-button>
+                <el-button
+                  v-if="row.acessable.indexOf(item.name)>-1"
+                  :type="item.type"
+                  size="mini"
+                >{{ item.description }}</el-button>
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -165,28 +169,28 @@ export default {
       cacheMembers: [],
       userActionDic: [
         {
-          name: '保存',
+          name: 'Save',
+          description: '保存',
           fn: save,
-          type: 'primary',
-          disabled: false
+          type: 'primary'
         },
         {
-          name: '撤回',
+          name: 'Withdrew',
+          description: '撤回',
           fn: withdrew,
-          type: 'info',
-          disabled: false
+          type: 'info'
         },
         {
-          name: '发布',
+          name: 'Publish',
+          description: '发布',
           fn: publish,
-          type: 'success',
-          disabled: false
+          type: 'success'
         },
         {
-          name: '删除',
+          name: 'Delete',
+          description: '删除',
           fn: deleteApply,
-          type: 'danger',
-          disabled: false
+          type: 'danger'
         }
       ],
       authForm: {
