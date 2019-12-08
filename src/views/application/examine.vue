@@ -60,7 +60,7 @@
         </template>
       </ApplicationList>
 
-      <el-dialog :visible="auditForm.show" title="提交审核" width="30%">
+      <el-dialog :visible.sync="auditForm.show" title="提交审核" width="30%">
         <el-form ref="auditForm" :model="auditForm" label-width="80px" :rules="auditFormRules">
           <el-form-item label="审核结果">
             <el-switch
