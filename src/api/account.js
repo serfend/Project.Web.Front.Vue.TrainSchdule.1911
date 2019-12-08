@@ -2,6 +2,12 @@ import request from '../utils/request'
 import rsa from '../utils/crtypto/rsa'
 import { parseTime } from '../utils'
 import crypto from 'crypto'
+function formatPsw(username, rawPsw) {
+  const md5 = crypto.createHash('md5')
+  md5.update(username)
+  var tmpraw = parseTime(new Date(), '{yyyy}{mm}{dd}') + rawPsw + md5.digest('hex')
+  return rsa.encrypt(tmpraw)
+}
 /**
  * 登录账号
  * @param { {
@@ -12,10 +18,7 @@ import crypto from 'crypto'
  * } } params
  */
 export function login(params) {
-  const md5 = crypto.createHash('md5')
-  md5.update(params.username)
-  params.password = parseTime(new Date(), '{yyyy}{mm}{dd}') + params.password + md5.digest('hex')
-  params.password = rsa.encrypt(params.password)
+  params.password = formatPsw(params.username, params.password)
   return request.post('account/login', params)
 }
 
@@ -65,7 +68,20 @@ export function removeAccount(params) {
  * } } params
  */
 export function register(params) {
+  params.password = formatPsw(params.username, params.password)
+  params.confirmpassword = formatPsw(params.username, params.confirmpassword)
   return request.post('account/register', params)
+}
+
+/**
+ * 修改用户密码
+ * @param {*} params
+ */
+export function accountPassword(params) {
+  params.newPassword = formatPsw(params.id, params.newPassword)
+  params.confirmNewPassword = formatPsw(params.id, params.confirmNewPassword)
+  params.oldPassword = formatPsw(params.id, params.oldPassword)
+  return request.post('/account/password', params)
 }
 
 /**

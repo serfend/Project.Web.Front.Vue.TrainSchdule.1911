@@ -77,17 +77,17 @@
           <el-tooltip>
             <div slot="content">
               授权码是用于敏感操作认证的密钥
-              <br>请手机下载身份验证器
+              <el-row />请手机下载身份验证器
               <el-tooltip>
                 <div slot="content">
                   身份验证器下载:
-                  <br>
+                  <el-row />
                   <el-image :src="apkImage" style="width:200px" />
                 </div>
                 <i class="el-icon-info blue--text" />
               </el-tooltip>后扫描此码以获取密钥
-              <br>妥善保管此码
-              <br>
+              <el-row />妥善保管此码
+              <el-row />
               <el-image :src="authKeyUrl" style="width:200px" />
             </div>
             <i class="el-icon-info blue--text" />授权码
@@ -108,8 +108,8 @@ import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import Search from '@/components/HeaderSearch'
-import { getUserSummary, accountPassword } from '../../api/userinfo'
-import { getAuthKey } from '../../api/account'
+import { getUserSummary } from '../../api/userinfo'
+import { getAuthKey, accountPassword } from '../../api/account'
 import apkImage from '@/assets/jpg/apk.jpg'
 export default {
   components: {
