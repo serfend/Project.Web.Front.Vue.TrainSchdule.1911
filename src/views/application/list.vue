@@ -240,7 +240,7 @@ export default {
       }
       let params = id
       const fn = method.fn
-      if (method.name === '删除') {
+      if (method.name === 'Delete') {
         if (!beenAudit) {
           this.authForm.applyAuthFormMethod = () => {
             console.log('授权完成，执行')

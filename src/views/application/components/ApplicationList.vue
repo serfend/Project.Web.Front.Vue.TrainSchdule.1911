@@ -237,7 +237,7 @@ export default {
     },
     countTime(row) {
       // 总休假时间
-      return this.datedifference(row.stampLeave, row.stampReturn)
+      return this.datedifference(row.stampLeave, row.stampReturn) + 1
     },
     datedifference(sDate1, sDate2) {
       // sDate1和sDate2是2006-12-18格式

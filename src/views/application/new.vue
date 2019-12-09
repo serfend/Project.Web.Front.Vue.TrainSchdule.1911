@@ -64,7 +64,7 @@
               <el-input v-model="form.Phone" />
             </el-form-item>
 
-            <hr class="divider">
+            <el-row class="divider" />
             <el-form-item label="回执编号">
               <el-input v-model="formFinal.baseInfoId" :style="{ width: '400px' }" disabled>
                 <div slot="prepend">
@@ -148,6 +148,17 @@
                   />
                 </el-form-item>
               </el-col>
+              <el-col :lg="6" :md="24">
+                <el-form-item
+                  v-show="lawVocations.length>0&&formApply.VocationType=='正休'"
+                  label="法定节假日"
+                >
+                  <el-tag
+                    v-for="item in lawVocations"
+                    :key="item.start"
+                  >{{ item.start|parseTime("{mm}月{dd}日") }}{{ item.name }}{{ item.length }} 天</el-tag>
+                </el-form-item>
+              </el-col>
               <el-col :lg="9" :md="24">
                 <el-form-item label="预计归队时间">
                   <el-date-picker
@@ -161,7 +172,7 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :lg="12" :md="24">
-                <el-form-item label>
+                <el-form-item label="全年休假完成率">
                   <el-progress :percentage="caculateVocationPercentage()" />
                 </el-form-item>
               </el-col>
@@ -324,6 +335,7 @@
 </template>
 
 <script>
+import { parseTime } from '../../utils'
 import SettleFormItem from '../../components/SettleFormItem'
 import { getUserAllInfo } from '../../api/usercompany'
 import { getUserIdByCid, getUsersVocationLimit } from '../../api/userinfo'
@@ -397,6 +409,7 @@ export default {
       isAfterSubmit: false,
       caculaingDate: {},
       restaurants: [], // 福利假选择
+      lawVocations: [],
       SelectVacationList: [],
       VacationModel: {
         name: '',
@@ -693,6 +706,7 @@ export default {
       })
       this.onLoading = true
       infoParam['vocationAdditionals'] = this.SelectVacationList
+      infoParam.StampLeave = parseTime(infoParam.StampLeave, '{yyyy}-{mm}-{dd}')
       postRequestInfo(infoParam)
         .then(data => {
           const id = data.id
@@ -809,13 +823,14 @@ export default {
       this.SelectVacationList.forEach(v => {
         SelectVacationCount += v.length
       })
-      console.log(SelectVacationCount)
+      var caculateVocationCount = this.formApply.VocationType === '正休'
       this.caculaingDate = {
-        start: this.formApply.StampLeave,
+        start: parseTime(this.formApply.StampLeave, '{yyyy}-{mm}-{dd}'),
         length:
-          parseInt(this.formApply.VocationLength) +
-          parseInt(this.formApply.OnTripLength) +
-          SelectVacationCount
+          parseInt(this.formApply.VocationLength) + caculateVocationCount
+            ? parseInt(this.formApply.OnTripLength) + SelectVacationCount
+            : 0,
+        caculateLawVocation: caculateVocationCount
       }
       this.formApply.isArchitect = this.caculaingDate.start <= new Date()
       if (this.OnloadingUserStamp) return
@@ -826,6 +841,7 @@ export default {
           .then(data => {
             const endDate = data.endDate
             this.formApply.StampReturn = endDate
+            this.lawVocations = data.descriptions ? data.descriptions : []
             this.$notify({
               title: '预计归队时间',
               message: data.endDate,
