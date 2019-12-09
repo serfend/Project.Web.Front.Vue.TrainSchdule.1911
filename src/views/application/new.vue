@@ -827,9 +827,10 @@ export default {
       this.caculaingDate = {
         start: parseTime(this.formApply.StampLeave, '{yyyy}-{mm}-{dd}'),
         length:
-          parseInt(this.formApply.VocationLength) + caculateVocationCount
+          parseInt(this.formApply.VocationLength) +
+          (caculateVocationCount
             ? parseInt(this.formApply.OnTripLength) + SelectVacationCount
-            : 0,
+            : 0),
         caculateLawVocation: caculateVocationCount
       }
       this.formApply.isArchitect = this.caculaingDate.start <= new Date()
