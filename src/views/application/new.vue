@@ -83,7 +83,7 @@
             </el-form-item>
 
             <el-row class="divider" />
-            <el-form-item label="回执编号">
+            <!-- <el-form-item label="回执编号">
               <el-input v-model="formFinal.baseInfoId" :style="{ width: '400px' }" disabled>
                 <div slot="prepend">
                   <el-button type="primary" @click="submitBaseInfo">生成</el-button>
@@ -98,9 +98,9 @@
                 />
                 <el-button v-else slot="append" :loading="onLoading" icon="el-icon-question" />
               </el-input>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item v-show="showAll == false">
-              <el-button :disabled="!isAllowGoStepTow" @click="goStepTwo">下一步</el-button>
+              <el-button type="success" style="width:100%" @click="goStepTwo">下一步</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -270,7 +270,7 @@
                 <el-option label="其他" value="-1" />
               </el-select>
             </el-form-item>
-            <el-form-item label="回执编号">
+            <!-- <el-form-item label="回执编号">
               <el-input v-model="formFinal.RequestId" :style="{ width: '400px' }" disabled>
                 <div slot="prepend">
                   <el-button type="primary" @click="submitRequestInfo">生成</el-button>
@@ -285,11 +285,13 @@
                 />
                 <el-button v-else slot="append" :loading="onLoading" icon="el-icon-question" />
               </el-input>
-            </el-form-item>
+            </el-form-item>-->
 
-            <el-form-item v-show="showAll == false">
-              <el-button @click="active = 0">上一步</el-button>
-              <el-button :disabled="!formFinal.RequestId" @click="active = 2">下一步</el-button>
+            <el-form-item v-show="showAll == false" style="width:100%">
+              <el-button-group style="width:100%">
+                <el-button style="width:50%" type="info" @click="active = 0">上一步</el-button>
+                <el-button style="width:50%" type="success" @click="goStepThree">下一步</el-button>
+              </el-button-group>
             </el-form-item>
           </el-form>
         </div>
@@ -562,11 +564,13 @@ export default {
     },
 
     goStepTwo() {
-      if (this.isAllowGoStepTow) {
-        this.active = 1
-      } else {
-        this.$message.error('请生成回执编号')
-      }
+      this.submitBaseInfo().then(() => {
+        if (this.isAllowGoStepTow) {
+          this.active = 1
+        } else {
+          this.$message.error('请生成回执编号')
+        }
+      })
     },
     getLocationChildrenIndexByValue(item, value) {
       for (var i = 0; i < item.children.length; i++) {
@@ -614,7 +618,7 @@ export default {
         })
       }
       if (byIdOrRealname === 'id') {
-        if (id.length === 7 || id.length === 18) {
+        if (id && (id.length === 7 || id.length === 18)) {
           this.OnloadingUserInfoes = true
           if (id.length === 18) {
             getUserIdByCid(id)
@@ -642,27 +646,31 @@ export default {
         }
       } else {
         this.OnloadingUserInfoes = true
-        getUserIdByRealName(realName).then(data => {
-          this.OnloadingUserInfoes = false
-          const list = data.list
-          if (!list || list.length === 0) {
-            this.$message.warning({
-              message: '无' + realName + '的信息，请核对'
+        return getUserIdByRealName(realName)
+          .then(data => {
+            this.OnloadingUserInfoes = false
+            const list = data.list
+            if (!list || list.length === 0) {
+              this.$message.warning({
+                message: '无' + realName + '的信息，请核对'
+              })
+              return Promise.reject()
+            }
+            this.form.id = list[0].id
+            this.$message.success({
+              message: '成功获取' + list[0].base.realName + '的信息'
             })
-            return
-          }
-          this.form.id = list[0].id
-          this.$message.success({
-            message: '成功获取' + list[0].base.realName + '的信息'
+            return this.fetchUserInfoesDerect()
           })
-          this.fetchUserInfoesDerect()
-        })
+          .finally(() => {
+            this.OnloadingUserInfoes = false
+          })
       }
     },
 
     fetchUserInfoesDerect() {
       this.OnloadingUserInfoes = true
-      getUserAllInfo(this.form.id)
+      return getUserAllInfo(this.form.id)
         .then(data => {
           const { base, company, duties, social } = data
           try {
@@ -688,11 +696,13 @@ export default {
           } catch (error) {
             console.warn(error)
           }
-          return this.$message.success('获取成功，已自动填充到表单')
+          this.$message.success('获取成功，已自动填充到表单')
+          return Promise.resolve()
         })
         .catch(err => {
           this.OnloadingUserInfoes = false
-          return this.$message.warning(err.message)
+          this.$message.warning(err.message)
+          return Promise.reject()
         })
         .finally(() => {
           this.OnloadingUserInfoes = true
@@ -717,7 +727,7 @@ export default {
       const { id, realName, company, duties, Phone } = this.form
       this.onLoading = true
       this.getUsersVocationLimit(id)
-      postBaseInfo({
+      return postBaseInfo({
         id,
         realName,
         company,
@@ -731,13 +741,20 @@ export default {
             this.formFinal.baseInfoId = data.id
             this.$message.success('成功提交，回执编号为：' + data.id)
           }
+          return Promise.resolve()
         })
         .catch(() => {
           this.onLoading = false
           this.formFinal.baseInfoId = ''
+          this.$message.error('提交失败')
+          return Promise.reject()
         })
     },
-
+    goStepThree() {
+      this.submitRequestInfo().then(() => {
+        this.active = 2
+      })
+    },
     /**
      * 提交请求信息
      */
@@ -755,15 +772,19 @@ export default {
       this.onLoading = true
       infoParam['vocationAdditionals'] = this.SelectVacationList
       infoParam.StampLeave = parseTime(infoParam.StampLeave, '{yyyy}-{mm}-{dd}')
-      postRequestInfo(infoParam)
+      return postRequestInfo(infoParam)
         .then(data => {
           const id = data.id
           this.formFinal.RequestId = id
           if (id) {
-            return this.$message.success('申请信息提交完成，回执编号为' + id)
+            this.$message.success('申请信息提交完成，回执编号为' + id)
+            return Promise.resolve()
           }
         })
-        .catch(() => {})
+        .catch(() => {
+          this.$message.error('失败，请检查')
+          return Promise.reject()
+        })
         .finally(() => {
           this.onLoading = false
         })
