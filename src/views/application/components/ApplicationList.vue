@@ -57,7 +57,7 @@
         <template slot-scope="scope">
           <el-dropdown>
             <span class="el-dropdown-link">
-              <span>{{ countTime(scope.row.request) }}天</span>
+              <span>{{ datedifference(scope.row.request.stampLeave, scope.row.request.stampReturn) + 1 }}天</span>
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -147,7 +147,7 @@ import moment from 'moment'
 import { getAllStatus, detail } from '../../../api/apply'
 import ApplicationDetail from './ApplicationDetail'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '../../../utils'
+import { parseTime, datedifference } from '../../../utils'
 moment.locale('zh-cn')
 
 export default {
@@ -227,27 +227,16 @@ export default {
     LoadPage() {
       this.$emit('LoadPage')
     },
+    datedifference(date1, date2) {
+      return datedifference(date1, date2)
+    },
     countOtherTime(row) {
       // 休假其他时间
       return (
-        this.datedifference(row.stampLeave, row.stampReturn) -
+        datedifference(row.stampLeave, row.stampReturn) -
         row.onTripLength -
         row.vocationLength
       )
-    },
-    countTime(row) {
-      // 总休假时间
-      return this.datedifference(row.stampLeave, row.stampReturn) + 1
-    },
-    datedifference(sDate1, sDate2) {
-      // sDate1和sDate2是2006-12-18格式
-      var dateSpan, iDays
-      sDate1 = Date.parse(sDate1)
-      sDate2 = Date.parse(sDate2)
-      dateSpan = sDate2 - sDate1
-      dateSpan = Math.abs(dateSpan)
-      iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
-      return iDays
     },
     getChecked() {
       // 获取选中的

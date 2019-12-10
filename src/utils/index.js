@@ -3,6 +3,25 @@
  */
 
 /**
+ *比较两个日期之间相差的天数
+ *
+ * @export
+ * @param {*} sDate1
+ * @param {*} sDate2
+ * @returns
+ */
+export function datedifference(sDate1, sDate2) {
+  // sDate1和sDate2是2006-12-18格式
+  var dateSpan, iDays
+  sDate1 = Date.parse(sDate1)
+  sDate2 = Date.parse(sDate2)
+  dateSpan = sDate2 - sDate1
+  dateSpan = Math.abs(dateSpan)
+  iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
+  return iDays
+}
+
+/**
  * Parse the time to string
  * @param {(Object|string|number)} time
  * @param {string} cFormat
@@ -37,7 +56,7 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
     let value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
     if (result.length > 0 && value < 10) {
       value = '0' + value
     }
@@ -163,12 +182,12 @@ export function param2Obj(url) {
   }
   return JSON.parse(
     '{"' +
-      decodeURIComponent(search)
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"')
-        .replace(/\+/g, ' ') +
-      '"}'
+    decodeURIComponent(search)
+      .replace(/"/g, '\\"')
+      .replace(/&/g, '","')
+      .replace(/=/g, '":"')
+      .replace(/\+/g, ' ') +
+    '"}'
   )
 }
 

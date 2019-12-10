@@ -48,7 +48,7 @@
         </template>
       </ApplicationList>
     </el-card>
-    <el-dialog :visible="authForm.show" title="敏感操作授权" width="30%">
+    <el-dialog :visible.sync="authForm.show" title="敏感操作授权" width="30%">
       <el-form ref="authForm" :model="authForm" label-width="80px">
         <el-form-item label="安全码">
           <el-input v-model="authForm.code" placeholder="请输入安全码" />

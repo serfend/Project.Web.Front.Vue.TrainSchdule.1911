@@ -114,9 +114,13 @@ service.interceptors.response.use(
       if (!data) {
         return Promise.reject('图片加载失败')
       }
-      return 'data:image/png;base64,' + btoa(
-        new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
-      )
+      return Promise.resolve({
+        msg: null,
+        status: 0,
+        url: 'data:image/png;base64,' + btoa(
+          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        )
+      })
     }
     const res = response.data
 

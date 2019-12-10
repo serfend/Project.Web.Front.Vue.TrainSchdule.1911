@@ -21,7 +21,7 @@
               <el-input
                 v-model="form.id"
                 :style="{ width: '400px' }"
-                @keydown.native.enter="fetchUserInfoes"
+                @keydown.native.enter="fetchUserInfoes('id')"
               >
                 <el-tooltip
                   slot="append"
@@ -33,13 +33,31 @@
                   <el-button
                     :loading="OnloadingUserInfoes"
                     icon="el-icon-search"
-                    @click="fetchUserInfoes"
+                    @click="fetchUserInfoes('id')"
                   />
                 </el-tooltip>
               </el-input>
             </el-form-item>
             <el-form-item label="真实姓名">
-              <el-input v-model="form.realName" disabled />
+              <el-input
+                v-model="form.realName"
+                :style="{ width: '400px' }"
+                @keydown.native.enter="fetchUserInfoes('realName')"
+              >
+                <el-tooltip
+                  slot="append"
+                  class="item"
+                  content="点击自动查询对应信息"
+                  effect="dark"
+                  placement="bottom"
+                >
+                  <el-button
+                    :loading="OnloadingUserInfoes"
+                    icon="el-icon-search"
+                    @click="fetchUserInfoes('realName')"
+                  />
+                </el-tooltip>
+              </el-input>
             </el-form-item>
             <el-form-item label="所在部门">
               <el-input v-model="form.companyName" disabled />
@@ -338,7 +356,11 @@
 import { parseTime } from '../../utils'
 import SettleFormItem from '../../components/SettleFormItem'
 import { getUserAllInfo } from '../../api/usercompany'
-import { getUserIdByCid, getUsersVocationLimit } from '../../api/userinfo'
+import {
+  getUserIdByCid,
+  getUserIdByRealName,
+  getUsersVocationLimit
+} from '../../api/userinfo'
 import {
   postBaseInfo,
   postRequestInfo,
@@ -443,6 +465,9 @@ export default {
     },
     isAllowGoStepTow() {
       return this.formFinal.baseInfoId && this.form.id
+    },
+    currentUser() {
+      return this.$store.state.user.data
     }
   },
   created() {
@@ -578,7 +603,8 @@ export default {
         this.$message.error('无效的地址')
       }
     },
-    fetchUserInfoes() {
+    fetchUserInfoes(byIdOrRealname) {
+      const realName = this.form.realName
       const id = this.form.id
       this.formFinal.RequestId = ''
       this.formFinal.baseInfoId = ''
@@ -587,38 +613,57 @@ export default {
           message: '用户信息获取中，请稍等'
         })
       }
-      if (id.length === 7 || id.length === 18) {
-        this.OnloadingUserInfoes = true
-        if (id.length === 18) {
-          getUserIdByCid(id)
-            .then(data => {
-              this.OnloadingUserInfoes = false
-              this.form.id = data.id
-              this.$message.success({
-                message: '身份证识别成功:' + data.id
+      if (byIdOrRealname === 'id') {
+        if (id.length === 7 || id.length === 18) {
+          this.OnloadingUserInfoes = true
+          if (id.length === 18) {
+            getUserIdByCid(id)
+              .then(data => {
+                this.OnloadingUserInfoes = false
+                this.form.id = data.id
+                this.$message.success({
+                  message: '身份证识别成功:' + data.id
+                })
+                this.fetchUserInfoesDerect()
               })
-              this.fetchUserInfoesDerect()
-            })
-            .catch(err => {
-              this.OnloadingUserInfoes = false
-              return this.$message.error({
-                message: err.message
+              .catch(err => {
+                this.OnloadingUserInfoes = false
+                return this.$message.error({
+                  message: err.message
+                })
               })
-            })
-        } else if (id.length === 7) {
-          this.fetchUserInfoesDerect()
+          } else if (id.length === 7) {
+            this.fetchUserInfoesDerect()
+          }
+        } else {
+          this.$message.warning({
+            message: '非正确身份号码,正确格式为7位身份号或者18位法定身份证号码'
+          })
         }
       } else {
-        this.$message.warning({
-          message: '非正确身份号码,正确格式为7位身份号或者18位法定身份证号码'
+        this.OnloadingUserInfoes = true
+        getUserIdByRealName(realName).then(data => {
+          this.OnloadingUserInfoes = false
+          const list = data.list
+          if (!list || list.length === 0) {
+            this.$message.warning({
+              message: '无' + realName + '的信息，请核对'
+            })
+            return
+          }
+          this.form.id = list[0].id
+          this.$message.success({
+            message: '成功获取' + list[0].base.realName + '的信息'
+          })
+          this.fetchUserInfoesDerect()
         })
       }
     },
 
     fetchUserInfoesDerect() {
+      this.OnloadingUserInfoes = true
       getUserAllInfo(this.form.id)
         .then(data => {
-          this.OnloadingUserInfoes = false
           const { base, company, duties, social } = data
           try {
             this.form.realName = base.base.realName
@@ -648,6 +693,9 @@ export default {
         .catch(err => {
           this.OnloadingUserInfoes = false
           return this.$message.warning(err.message)
+        })
+        .finally(() => {
+          this.OnloadingUserInfoes = true
         })
     },
 
@@ -780,8 +828,8 @@ export default {
     createNew() {
       this.active = 0
       this.form = {
-        id: '',
-        realName: '',
+        id: this.currentUser.id,
+        realName: this.currentUser.realName,
         company: '',
         companyName: '',
         duties: '',

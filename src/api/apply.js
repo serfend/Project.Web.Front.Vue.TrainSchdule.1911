@@ -7,6 +7,7 @@ import request from '../utils/request'
  * @param {*} params
  *      date  params.start
  *      int  params.length
+ *      boolean params.caculateLawVocation
  * @returns
  */
 export function getStampReturn(params) {

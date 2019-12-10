@@ -109,6 +109,21 @@ export function getUserIdByCid(cid) {
 }
 
 /**
+ *通过真实姓名查询身份号
+ *
+ * @export
+ * @param {*} realName
+ * @returns
+ */
+export function getUserIdByRealName(realName) {
+  return request.get('/account/GetUserIdByRealName', {
+    params: {
+      realName
+    }
+  })
+}
+
+/**
  * 获取用户休假限制时长和次数
  * @param {*} id
  */

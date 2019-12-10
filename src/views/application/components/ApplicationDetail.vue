@@ -51,7 +51,7 @@
               天-->
               <el-dropdown>
                 <span class="el-dropdown-link">
-                  <span>{{ requestInfo.onTripLength + requestInfo.vocationLength }}天</span>
+                  <span>{{ datedifference(requestInfo.stampLeave, requestInfo.stampReturn) + 1 }}天</span>
                   <i class="el-icon-arrow-down el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
@@ -60,7 +60,7 @@
                   <el-dropdown-item
                     v-for="additial in requestInfo.additialVocations"
                     v-show="requestInfo.additialVocations.length>0"
-                    :key="additial"
+                    :key="additial.length"
                   >{{ additial.name }} {{ additial.length }}天</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -152,6 +152,7 @@
 <script>
 import moment from 'moment'
 import { exportUserApplies } from '../../../api/static'
+import { parseTime, datedifference } from '../../../utils'
 moment.locales('zh_CN')
 export default {
   name: 'ApplicationDetail',
@@ -201,6 +202,12 @@ export default {
     }
   },
   methods: {
+    datedifference(date1, date2) {
+      return datedifference(date1, date2)
+    },
+    parseTime(rawtime, format) {
+      return parseTime(rawtime, format)
+    },
     downloadUserApplies(id) {
       exportUserApplies({
         user: id

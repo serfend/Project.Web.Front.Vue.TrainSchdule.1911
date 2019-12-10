@@ -45,18 +45,17 @@
             type="primary"
             @click="recallApply(row)"
           >召回</el-button>
-          <div
-            v-if="$store.state.user.companyid==row.nowAuditCompany&&row.status!=30&&row.status!=100"
-          >
-            <el-button size="mini" type="success" @click="auditApply(row, 1)">通过</el-button>
-            <el-button
-              v-if="row.status!='publish'"
-              size="mini"
-              type="warning"
-              @click="auditApply(row, 2)"
-            >驳回</el-button>
+          <div v-if="row.status>30&&row.status<100">
+            <el-button-group>
+              <el-button size="mini" type="success" @click="auditApply(row, 1)">通过</el-button>
+              <el-button
+                v-if="row.status!='publish'"
+                size="mini"
+                type="warning"
+                @click="auditApply(row, 2)"
+              >驳回</el-button>
+            </el-button-group>
           </div>
-          <div v-if="$store.state.user.companyid!=row.nowAuditCompany">仅{{ row.nowAuditCompany }}可审批</div>
         </template>
       </ApplicationList>
 
