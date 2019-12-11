@@ -95,7 +95,7 @@ const actions = {
 
         commit('SET_NAME', data.realName)
         commit('SET_USERID', data.id)
-        commit('SET_CMPID', data.companyName)
+        commit('SET_CMPID', data.companyCode)
         commit('SET_AVATAR', data.avatar)
         commit('SET_INTRODUCTION', data.about)
         commit('SET_DATA', data)

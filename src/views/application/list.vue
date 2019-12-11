@@ -15,13 +15,13 @@
             <el-button
               icon="el-icon-download"
               type="primary"
-              @click="exportUserApplies({user: queryForm.userId})"
-            >导出用户申请</el-button>
+              @click="exportUserApplies(queryAppliesForm.createFor.value===''?myUserid:queryAppliesForm.createFor.value)"
+            >导出{{ queryAppliesForm.createFor.value===''?myUserid:queryAppliesForm.createFor.value }}申请</el-button>
             <el-button
               icon="el-icon-download"
               type="primary"
-              @click="exportCompanyApplies({company: queryForm.companyCode==''?$store.state.user.companyid:queryForm.companyCode })"
-            >导出单位申请</el-button>
+              @click="exportCompanyApplies(queryAppliesForm.createCompany.value===''?myCreateCompany:queryAppliesForm.createCompany.value )"
+            >导出{{ queryAppliesForm.createCompany.value===''?myCreateCompany:queryAppliesForm.createCompany.value }}的申请</el-button>
           </el-form-item>
         </template>
       </ApplySearchCommon>

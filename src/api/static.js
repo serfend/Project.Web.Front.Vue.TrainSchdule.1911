@@ -67,16 +67,13 @@ const exportXSL = (data) => {
 /**
  * 导出休假登记模版
  * @param {{
-    "Templete":"干部休假登记卡.xlsx",
+    "templete":"干部休假登记卡.xlsx",
       "user":"ADJC1AH121"
   }} params
  */
-export function exportUserApplies({
-  Templete = '干部休假登记卡.xlsx',
-  user
-}) {
+export function exportUserApplies(user, templete = '干部休假登记卡.xlsx') {
   return exportXSL({
-    Templete,
+    templete,
     user
   })
 }
@@ -84,18 +81,15 @@ export function exportUserApplies({
 /**
  * 导出休假请求列表
  * @param {{
-    "Templete":"休假人员统计表.xlsx",
+    "templete":"休假人员统计表.xlsx",
     "Model":{
       "apply":"ADJC1AH121"
     }
   }} params
  */
-export function exportApply({
-  Templete = '干部请假单.xlsx',
-  apply
-}) {
+export function exportApply(apply, templete = '干部请假单.xlsx') {
   return exportXSL({
-    Templete,
+    templete,
     apply
   })
 }
@@ -103,18 +97,16 @@ export function exportApply({
 /**
  * 导出汇总状态
  * @param {{
-    "Templete":"休假人员统计表.xlsx",
+    "templete":"休假人员统计表.xlsx",
     "Model":{
       "company":"ADJC1AH121"
     }
   }} params
  */
-export function exportCompanyApplies({
-  Templete = '休假人员统计表.xlsx',
-  company
-}) {
+export function exportCompanyApplies(company, templete = '休假人员统计表.xlsx') {
+  alert(company)
   return exportXSL({
-    Templete,
+    templete,
     company
   })
 }
