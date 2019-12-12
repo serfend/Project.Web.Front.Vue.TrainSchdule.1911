@@ -121,16 +121,12 @@ export default {
   },
   data() {
     var validatenewPassword = (rule, value, callback) => {
-      var reg = /[a-zA-Z]/
-      var reg1 = /[0-9]/
       if (value === '') {
         callback(new Error('请输入新密码'))
       } else if (value === this.editPwd.oldPassword) {
         callback(new Error('新密码不能和旧密码相同'))
       } else if (value.length > 16 || value.length < 8) {
         callback(new Error('新密码必须8-16位数字与字母的组合'))
-      } else if (!(reg.test(value) && reg1.test(value))) {
-        callback(new Error('新密码必须数字与字母的组合'))
       } else {
         if (this.editPwd.validatenewPassword !== '') {
           this.$refs.editPwd.validateField('validatenewPassword')
@@ -219,8 +215,9 @@ export default {
     savePwd() {
       this.$refs['editPwd'].validate(valid => {
         if (valid) {
-          const submitId = (
-            this.editPwd.username | this.$store.state.user.userid
+          const submitId = (this.editPwd.username === ''
+            ? this.$store.state.user.userid
+            : this.editPwd.username
           ).toString()
           const submitPwd = {
             id: submitId,

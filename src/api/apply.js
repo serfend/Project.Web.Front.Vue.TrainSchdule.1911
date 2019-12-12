@@ -174,14 +174,27 @@ export function detail(id) {
     }
   })
 }
-
 /**
- *召回
+ *
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function postRecallOrder(data) {
+  return request.post('/apply/recallorder', data)
+}
+/**
+ * 获取召回信息
  *
  * @export
  * @param {*} id
  * @returns
  */
-export function recallOrder(data) {
-  return request.post('/apply/recallorder', data)
+export function getRecallOrder(id) {
+  return request.get('/apply/recallorder', {
+    params: {
+      id
+    }
+  })
 }

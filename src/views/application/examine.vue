@@ -40,7 +40,7 @@
           <el-button
             v-if="row.status==100&&row.recallId===null"
             size="mini"
-            type="primary"
+            type="warning"
             @click="recallApply(row)"
           >召回</el-button>
           <div v-else-if="row.status>30&&row.status<100">
@@ -54,11 +54,11 @@
               >驳回</el-button>
             </el-button-group>
           </div>
-          <el-button v-else-if="row.recallId!==null" @click="showRecallMsg(row.recallId)">召回信息</el-button>
+          <el-button v-else-if="row.recallId!==null" @click="showRecallMsg(row)">召回信息</el-button>
         </template>
       </ApplicationList>
 
-      <el-dialog :visible.sync="auditForm.show" title="提交审核" width="30%">
+      <el-dialog :visible.sync="auditShow" title="提交审核" width="30%">
         <el-form ref="auditForm" :model="auditForm" label-width="80px">
           <el-form-item label="审核结果">
             <el-switch
@@ -80,37 +80,54 @@
             <el-input v-model="auditForm.code" placeholder="请输入安全码" />
           </el-form-item>
           <el-form-item label="审核人">
-            <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
+            <el-input v-model="auditForm.authByUserId" placeholder="请输入审核人的id" />
           </el-form-item>
         </el-form>
         <span slot="footer">
-          <el-button @click="auditForm.show = false">取 消</el-button>
+          <el-button @click="auditShow = false">取 消</el-button>
           <el-button type="primary" @click="SubmitAuditForm">确 定</el-button>
         </span>
       </el-dialog>
 
-      <el-dialog :visible="recallShow" title="召回" width="30%">
+      <el-dialog :visible.sync="recallShow" title="召回" width="30%">
         <el-form ref="auditForm" :model="auditForm" label-width="80px">
-          <el-form-item v-show="isShowRecallWithSubmit" label="召回创建时间">
-            <el-date-picker v-model="auditForm.create" disabled />
+          <el-form-item v-show="!isShowRecallWithSubmit" label="召回创建">
+            <el-date-picker
+              v-model="auditForm.recallData.create"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              disabled
+            />
           </el-form-item>
-          <el-form-item label="归队时间">
-            <el-date-picker v-model="auditForm.stampReturn" placeholder="请选择归队时间" />
+          <el-form-item label="原归队时">
+            <el-date-picker
+              v-model="auditForm.recallData.rawStampReturn"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              disabled
+            />
+          </el-form-item>
+          <el-form-item label="召回截止">
+            <el-date-picker
+              v-model="auditForm.stampReturn"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+            />
           </el-form-item>
           <el-form-item label="备注">
             <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
           </el-form-item>
-          <el-form-item v-show="!isShowRecallWithSubmit" label="安全码">
+          <el-form-item v-show="isShowRecallWithSubmit" label="安全码">
             <el-input v-model="auditForm.code" placeholder="请输入安全码" />
           </el-form-item>
           <el-form-item label="审核人">
-            <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
+            <el-input v-model="auditForm.authByUserId" placeholder="请输入审核人的id" />
           </el-form-item>
         </el-form>
         <span slot="footer">
           <el-button-group v-if="isShowRecallWithSubmit">
-            <el-button @click="recallShow = false">取 消</el-button>
-            <el-button type="primary" @click="SubmitRecall">确 定</el-button>
+            <el-button type="info" @click="recallShow = false">取 消</el-button>
+            <el-button type="warning" @click="SubmitRecall">召 回</el-button>
           </el-button-group>
           <el-button v-else @click="isShowRecallWithSubmit=recallShow=false">确 定</el-button>
         </span>
@@ -142,8 +159,8 @@
           <el-form-item label="安全码" prop="code">
             <el-input v-model="auditForm.code" placeholder="请输入安全码" />
           </el-form-item>
-          <el-form-item label="审核人" prop="AuthByUserID">
-            <el-input v-model="auditForm.AuthByUserID" placeholder="请输入审核人的id" />
+          <el-form-item label="审核人" prop="authByUserId">
+            <el-input v-model="auditForm.authByUserId" placeholder="请输入审核人的id" />
           </el-form-item>
         </el-form>
         <span slot="footer">
@@ -168,7 +185,12 @@ import ApplicationList from './components/ApplicationList'
 import ApplySearchCommon from './components/ApplySearchCommon'
 import Pagination from '../pagination'
 
-import { audit, recallOrder, queryList } from '../../api/apply'
+import {
+  audit,
+  postRecallOrder,
+  getRecallOrder,
+  queryList
+} from '../../api/apply'
 import { getOnMyManage } from '../../api/usercompany'
 // import { getMembers } from '../../api/company'
 import {
@@ -255,14 +277,8 @@ export default {
       onLoading: false,
       membersOption: [],
       cacheMembers: [],
-      auditForm: {
-        applyId: '',
-        action: 1,
-        remark: '',
-        show: false,
-        code: '000000',
-        AuthByUserID: ''
-      },
+      auditShow: false,
+      auditForm: this.auditFormInit(),
       // 批量审批表单
       multiAuditForm: {
         show: false
@@ -288,6 +304,20 @@ export default {
     this.searchData()
   },
   methods: {
+    auditFormInit() {
+      return {
+        recallData: {
+          create: '',
+          stampReturn: '',
+          rawStampReturn: '',
+          recallBy: {}
+        },
+        action: 1,
+        remark: '',
+        code: '',
+        authByUserId: this.myUserid
+      }
+    },
     updatepage(newpage) {
       this.pages = newpage
       this.searchData()
@@ -301,30 +331,15 @@ export default {
     },
     SubmitMultiAuditForm() {
       this.$refs['auditForm'].validate(valid => {
-        if (!valid) {
-          return
-        }
-
+        if (!valid) return
         var dataList = this.$refs['applicationlist'].getChecked()
         var list = []
-        const { action, remark, code, AuthByUserID } = this.auditForm
+        const { action, remark, code, authByUserId } = this.auditForm
         for (var i = 0; i < dataList.length; i++) {
-          list.push({
-            id: dataList[i].id,
-            action,
-            remark
-          })
+          list.push({ id: dataList[i].id, action, remark })
         }
-        const Auth = {
-          code,
-          AuthByUserID: AuthByUserID
-        }
-        audit(
-          {
-            list
-          },
-          Auth
-        )
+        const Auth = { code, authByUserId: authByUserId }
+        audit({ list }, Auth)
           .then(resultlist => {
             resultlist.forEach(result => {
               if (result.status === 0) {
@@ -343,75 +358,47 @@ export default {
       })
     },
     clearAuditForm() {
-      this.auditForm = {
-        applyId: '',
-        action: 1,
-        remark: '',
-        show: false,
-        code: '000000',
-        AuthByUserID: this.myUserid,
-        IsRecall: false
-      }
+      this.auditForm = this.auditFormInit()
     },
     SubmitAuditForm() {
-      this.$refs['auditForm'].validate(valid => {
-        if (!valid) {
-          return
-        }
-        const { applyId, action, remark, code, AuthByUserID } = this.auditForm
-        const list = [
-          {
-            id: applyId,
-            action,
-            remark
-          }
-        ]
-        const Auth = {
-          code,
-          AuthByUserID
-        }
-        audit(
-          {
-            list
-          },
-          Auth
-        )
-          .then(resultlist => {
-            resultlist.forEach(result => {
-              if (result.status === 0) {
-                this.$notify.success('已审批' + result.id)
-              } else this.$notify.error(result.message + ':' + result.id)
-
-              this.searchData()
-            })
+      const { applyId, action, remark, code, authByUserId } = this.auditForm
+      const list = [{ id: applyId, action, remark }]
+      const Auth = { code, authByUserId }
+      this.auditShow = false
+      audit({ list }, Auth)
+        .then(resultlist => {
+          resultlist.forEach(result => {
+            if (result.status === 0) {
+              this.$notify.success('已审批' + result.id)
+            } else this.$notify.error(result.message + ':' + result.id)
+            this.searchData()
           })
-          .catch(err => {
-            this.$message.error(err.message)
-          })
-          .finally(() => {
-            this.clearAuditForm()
-          })
-      })
+        })
+        .catch(err => {
+          this.$message.error(err.message)
+        })
+        .finally(() => {
+          this.clearAuditForm()
+        })
     },
 
     SubmitRecall() {
-      const { applyId, remark, code, AuthByUserID } = this.auditForm
       const model = {
-        apply: applyId,
-        reason: remark,
-        recallBy: this.$store.state.user.userid
+        apply: this.auditForm.applyId,
+        reason: this.auditForm.remark,
+        returnStamp: this.auditForm.stampReturn,
+        recallBy: this.myUserid
       }
       const Auth = {
-        code,
-        AuthByUserID: AuthByUserID
+        code: this.auditForm.code,
+        authByUserId: this.auditForm.authByUserId
       }
-      recallOrder({
+      postRecallOrder({
         data: model,
         Auth: Auth
       })
         .then(result => {
-          if (result.status === 0) this.$notify.success('已召回' + result.id)
-          else this.$notify.error(result.message + ':' + result.id)
+          this.$notify.success('已召回' + result.id)
           this.searchData()
         })
         .catch(err => {
@@ -422,19 +409,28 @@ export default {
           this.recallShow = false
         })
     },
-    showRecallMsg(recallId) {
+    showRecallMsg(row) {
+      this.clearAuditForm()
       this.recallShow = true
+      this.auditForm.recallData.rawStampReturn = row.request.stampReturn
+      getRecallOrder(row.recallId).then(res => {
+        this.auditForm.recallData.create = res.create
+        this.auditForm.recallData.stampReturn = res.returnStamp
+        this.auditForm.remark = res.reason
+        this.auditForm.authByUserId = res.recallBy.realName
+      })
     },
     recallApply(row) {
       // 打开召回弹框
       this.clearAuditForm()
       this.recallShow = true
-
+      this.isShowRecallWithSubmit = true
       this.auditForm.applyId = row.id
+      this.auditForm.recallData.rawStampReturn = row.request.stampReturn
     },
     auditApply(row, action) {
       this.clearAuditForm()
-      this.auditForm.show = true
+      this.auditShow = true
       this.auditForm.applyId = row.id
       this.auditForm.action = action
     },
