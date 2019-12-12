@@ -355,21 +355,21 @@
 </template>
 
 <script>
-import { parseTime } from '../../utils'
-import SettleFormItem from '../../components/SettleFormItem'
-import { getUserAllInfo } from '../../api/usercompany'
+import { parseTime } from '@/utils'
+import SettleFormItem from '@/components/SettleFormItem'
+import { getUserAllInfo } from '@/api/usercompany'
 import {
   getUserIdByCid,
   getUserIdByRealName,
   getUsersVocationLimit
-} from '../../api/userinfo'
+} from '@/api/userinfo'
 import {
   postBaseInfo,
   postRequestInfo,
   submitApply,
   getStampReturn
-} from '../../api/apply'
-import { locationChildren } from '../../api/static'
+} from '@/api/apply'
+import { locationChildren } from '@/api/static'
 export default {
   name: 'NewApply',
   components: {

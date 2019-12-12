@@ -151,8 +151,8 @@
 
 <script>
 import moment from 'moment'
-import { exportUserApplies } from '../../../api/static'
-import { parseTime, datedifference } from '../../../utils'
+import { exportUserApplies } from '@/api/static'
+import { parseTime, datedifference } from '@/utils'
 moment.locales('zh_CN')
 export default {
   name: 'ApplicationDetail',

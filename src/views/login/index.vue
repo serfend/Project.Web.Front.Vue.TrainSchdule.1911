@@ -59,7 +59,6 @@
         @click.native.prevent="handleLogin"
       >{{ $t('login.logIn') }}</el-button>
       <el-button
-        :disabled="true"
         style="width:100%;margin-bottom:5px;margin-left:0px"
         type="primary"
         @click.native.prevent="handleReg"
@@ -81,7 +80,7 @@ import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
 import { Message } from 'element-ui'
-import { getUserBase } from '../../api/userinfo'
+import { getUserBase } from '@/api/userinfo'
 export default {
   name: 'Login',
   components: { LangSelect, SocialSign },

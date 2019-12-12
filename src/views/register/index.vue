@@ -13,10 +13,6 @@
       class="register-form"
       label-position="left"
     >
-      <!-- <div class="title-container">
-        <h3 class="title">{{ $t('register.title') }}</h3>
-
-      </div>-->
       <lang-select class="set-language" />
       <el-form-item prop="username">
         <span class="svg-container">
@@ -24,7 +20,7 @@
         </span>
         <el-input
           ref="username"
-          v-model="registerForm.username"
+          v-model="registerForm.application.username"
           :placeholder="$t('login.username')"
           auto-complete="on"
           name="username"
@@ -81,13 +77,15 @@
           <svg-icon icon-class="company" />
         </span>
       </el-form-item>
-      <el-form-item label="休假目的地">
-        <el-cascader
-          v-model="registerForm.companyArr"
-          :options="locationOptions"
-          :show-all-levels="false"
-          @active-item-change="handleItemChange"
-        />
+      <SettleFormItem v-model="form.Settle.self" label="本人所在地" />
+      <SettleFormItem v-model="form.Settle.lover" label="配偶所在地" />
+      <SettleFormItem v-model="form.Settle.parent" label="父母所在地" />
+      <SettleFormItem v-model="form.Settle.loversparent" label="配偶父母所在地" />
+      <el-form-item label="初始全年天数">
+        <el-input v-model="form.Settle.prevYearlyLength" disabled />
+      </el-form-item>
+      <el-form-item label="联系方式">
+        <el-input v-model="form.Phone" />
       </el-form-item>
       <transition name="el-zoom-in-center">
         <div v-show="!loading" class="transition-box">
@@ -112,10 +110,10 @@ var emailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(
 import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import { setTimeout } from 'timers'
+import SettleFormItem from '@/components/SettleFormItem'
 export default {
   name: 'Register',
-  components: { LangSelect },
-
+  components: { LangSelect, SettleFormItem },
   data() {
     var validateUsername = (rule, value, callback) => {
       if (value.trim().length === 0 || !validUsername(value)) {
@@ -149,13 +147,72 @@ export default {
     }
     return {
       registerForm: {
-        username: '',
-        password: '',
-        confirm: '',
-        company: '',
-        email: '',
-        verifyCode: '',
-        companyArr: []
+        base: {
+          cid: '111111111111123456',
+          realName: '王涛',
+          avatar: '',
+          gender: 1,
+          time_Work: '2018-6-30',
+          time_BirthDay: '1996-1-13',
+          time_Party: '2018-6-30'
+        },
+        social: {
+          phone: '13627272634',
+          settle: {
+            self: {
+              date: '2018-5-10',
+              valid: true,
+              address: {
+                code: '420104'
+              },
+              addressDetail: 'details'
+            },
+            lover: {
+              date: '2014-6-10',
+              valid: true,
+              address: {
+                code: '110102'
+              },
+              addressDetail: 'details'
+            },
+            parent: {
+              date: '2012-8-10',
+              valid: true,
+              address: {
+                code: '110102'
+              },
+              addressDetail: 'details'
+            },
+            loversParent: {
+              date: '2019-1-10',
+              valid: true,
+              address: {
+                code: '430101'
+              },
+              addressDetail: 'details'
+            },
+            prevYearlyLength: 30
+          }
+        },
+        company: {
+          company: {
+            code: 'Root'
+          },
+          duties: {
+            name: '干事'
+          }
+        },
+        application: {
+          username: '11111111',
+          about: 'user about',
+          email: 'useremail@txt.mtl'
+        },
+        diy: {
+          about: 'test about',
+          avatar: '' /* TODO提供上传头像的方式 */
+        },
+        password: 'ffffffff',
+        confirmPassword: 'ffffffff'
       },
       registerRules: {
         username: [

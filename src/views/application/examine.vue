@@ -237,14 +237,14 @@ import {
   postRecallOrder,
   getRecallOrder,
   queryList
-} from '../../api/apply'
-import { getOnMyManage } from '../../api/usercompany'
-// import { getMembers } from '../../api/company'
+} from '@/api/apply'
+import { getOnMyManage } from '@/api/usercompany'
+// import { getMembers } from '@/api/company'
 import {
   exportUserApplies,
   exportApply,
   exportCompanyApplies
-} from '../../api/static'
+} from '@/api/static'
 // 将导出的方法以mixins的方式注入到vm实例
 const mixins = {
   methods: {

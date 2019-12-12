@@ -132,9 +132,9 @@
 </template>
 
 <script>
-import { getAllStatus } from '../../../api/apply'
-import { companyChild } from '../../../api/company'
-import { updateSelect } from '../../../api/cascaderSelector'
+import { getAllStatus } from '@/api/apply'
+import { companyChild } from '@/api/company'
+import { updateSelect } from '@/api/cascaderSelector'
 export default {
   props: {
     onLoading: {

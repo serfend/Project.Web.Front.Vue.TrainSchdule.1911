@@ -144,10 +144,10 @@
 <script>
 import { format } from 'timeago.js'
 import moment from 'moment'
-import { getAllStatus, detail } from '../../../api/apply'
+import { getAllStatus, detail } from '@/api/apply'
 import ApplicationDetail from './ApplicationDetail'
 import waves from '@/directive/waves' // waves directive
-import { parseTime, datedifference } from '../../../utils'
+import { parseTime, datedifference } from '@/utils'
 moment.locale('zh-cn')
 
 export default {

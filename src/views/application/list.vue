@@ -77,15 +77,15 @@
 import ApplicationList from './components/ApplicationList'
 import ApplySearchCommon from './components/ApplySearchCommon'
 import Pagination from '../pagination'
-import { queryList } from '../../api/apply'
+import { queryList } from '@/api/apply'
 import {
   exportUserApplies,
   exportApply,
   exportCompanyApplies
-} from '../../api/static'
-import { getOnMyManage } from '../../api/usercompany'
-import { deleteApply, publish, save, withdrew } from '../../api/apply'
-// import { getMembers } from '../../api/company'
+} from '@/api/static'
+import { getOnMyManage } from '@/api/usercompany'
+import { deleteApply, publish, save, withdrew } from '@/api/apply'
+// import { getMembers } from '@/api/company'
 
 // 将导出的方法以mixins的方式注入到vm实例
 const mixins = {

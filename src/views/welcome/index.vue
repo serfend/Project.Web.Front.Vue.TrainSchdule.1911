@@ -50,7 +50,7 @@ export default {
 
 <style lang="scss" scoped>
 .el-container {
-  background: url(../../assets/jpg/bg.jpg) no-repeat center center;
+  background: url(/assets/jpg/bg.jpg) no-repeat center center;
   background-size: 100%;
   height: 100%;
   background-size: cover;

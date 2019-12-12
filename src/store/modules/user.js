@@ -1,15 +1,15 @@
 import {
   getUserSummary
-} from '../../api/userinfo'
+} from '@/api/userinfo'
 import {
   login,
   logout
-} from '../../api/account'
+} from '@/api/account'
 import {
   getToken,
   setToken,
   removeToken
-} from '../../utils/auth'
+} from '@/utils/auth'
 import router, {
   resetRouter
 } from '@/router'

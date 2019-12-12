@@ -108,8 +108,8 @@ import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import Search from '@/components/HeaderSearch'
-import { getUserSummary } from '../../api/userinfo'
-import { getAuthKey, accountPassword } from '../../api/account'
+import { getUserSummary } from '@/api/userinfo'
+import { getAuthKey, accountPassword } from '@/api/account'
 import apkImage from '@/assets/jpg/apk.jpg'
 export default {
   components: {
