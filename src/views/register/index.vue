@@ -8,38 +8,12 @@
     <el-form
       ref="registerForm"
       :model="registerForm"
-      :rules="registerRules"
       auto-complete="on"
       class="register-form"
       label-position="left"
     >
       <lang-select class="set-language" />
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="registerForm.application.username"
-          :placeholder="$t('login.username')"
-          auto-complete="on"
-          name="username"
-          type="text"
-        />
-      </el-form-item>
-      <el-form-item prop="email">
-        <span class="svg-container">
-          <svg-icon icon-class="email" />
-        </span>
-        <el-input
-          ref="email"
-          v-model="registerForm.email"
-          :placeholder="$t('register.checkemail')"
-          auto-complete="on"
-          name="email"
-          type="text"
-        />
-      </el-form-item>
+
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
@@ -72,32 +46,17 @@
           <svg-icon :icon-class="confirmType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
-      <el-form-item prop="company">
-        <span class="svg-container">
-          <svg-icon icon-class="company" />
-        </span>
-      </el-form-item>
-      <SettleFormItem v-model="form.Settle.self" label="本人所在地" />
-      <SettleFormItem v-model="form.Settle.lover" label="配偶所在地" />
-      <SettleFormItem v-model="form.Settle.parent" label="父母所在地" />
-      <SettleFormItem v-model="form.Settle.loversparent" label="配偶父母所在地" />
-      <el-form-item label="初始全年天数">
-        <el-input v-model="form.Settle.prevYearlyLength" disabled />
-      </el-form-item>
-      <el-form-item label="联系方式">
-        <el-input v-model="form.Phone" />
-      </el-form-item>
-      <transition name="el-zoom-in-center">
-        <div v-show="!loading" class="transition-box">
-          <el-button
-            :loading="loading"
-            style="width:100%"
-            type="primary"
-            @click.native.prevent="handleSubmit"
-          >{{ $t('register.submit') }}</el-button>
-        </div>
-      </transition>
     </el-form>
+    <transition name="el-zoom-in-center">
+      <div v-show="!loading" class="transition-box">
+        <el-button
+          :loading="loading"
+          style="width:100%"
+          type="primary"
+          @click.native.prevent="handleSubmit"
+        >{{ $t('register.submit') }}</el-button>
+      </div>
+    </transition>
     <el-dialog :title="$t('register.checkemail')" :visible.sync="showDialog">
       {{ $t('register.emailstatus') }}
       <social-sign />
@@ -106,135 +65,37 @@
 </template>
 
 <script>
-var emailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import { setTimeout } from 'timers'
-import SettleFormItem from '@/components/SettleFormItem'
 export default {
   name: 'Register',
-  components: { LangSelect, SettleFormItem },
+  components: { LangSelect },
   data() {
-    var validateUsername = (rule, value, callback) => {
-      if (value.trim().length === 0 || !validUsername(value)) {
-        callback(new Error(this.$t('login.validate.username.invalid')))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error(this.$t('login.validate.psw.len')))
-      } else {
-        callback()
-      }
-    }
-    const validateConfirmPassword = (rule, value, callback) => {
-      if (value.trim().length === 0) {
-        callback(new Error(this.$t('register.validate.psw.confirmRequired')))
-      } else if (value !== this.registerForm.password) {
-        callback(new Error(this.$t('register.validate.psw.inconform')))
-      } else {
-        callback()
-      }
-    }
-    const validateEmail = (rule, value, callback) => {
-      if (emailRE.test(value)) {
-        callback()
-      } else {
-        callback(new Error(this.$t('register.validate.email.notmatch')))
-      }
-    }
+    // const validatePassword = (rule, value, callback) => {
+    //   if (value.length < 6) {
+    //     callback(new Error(this.$t('login.validate.psw.len')))
+    //   } else {
+    //     callback()
+    //   }
+    // }
+    // const validateConfirmPassword = (rule, value, callback) => {
+    //   if (value.trim().length === 0) {
+    //     callback(new Error(this.$t('register.validate.psw.confirmRequired')))
+    //   } else if (value !== this.registerForm.password) {
+    //     callback(new Error(this.$t('register.validate.psw.inconform')))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
       registerForm: {
-        base: {
-          cid: '111111111111123456',
-          realName: '王涛',
-          avatar: '',
-          gender: 1,
-          time_Work: '2018-6-30',
-          time_BirthDay: '1996-1-13',
-          time_Party: '2018-6-30'
-        },
-        social: {
-          phone: '13627272634',
-          settle: {
-            self: {
-              date: '2018-5-10',
-              valid: true,
-              address: {
-                code: '420104'
-              },
-              addressDetail: 'details'
-            },
-            lover: {
-              date: '2014-6-10',
-              valid: true,
-              address: {
-                code: '110102'
-              },
-              addressDetail: 'details'
-            },
-            parent: {
-              date: '2012-8-10',
-              valid: true,
-              address: {
-                code: '110102'
-              },
-              addressDetail: 'details'
-            },
-            loversParent: {
-              date: '2019-1-10',
-              valid: true,
-              address: {
-                code: '430101'
-              },
-              addressDetail: 'details'
-            },
-            prevYearlyLength: 30
-          }
-        },
-        company: {
-          company: {
-            code: 'Root'
-          },
-          duties: {
-            name: '干事'
-          }
-        },
-        application: {
-          username: '11111111',
-          about: 'user about',
-          email: 'useremail@txt.mtl'
-        },
-        diy: {
-          about: 'test about',
-          avatar: '' /* TODO提供上传头像的方式 */
-        },
-        password: 'ffffffff',
-        confirmPassword: 'ffffffff'
-      },
-      registerRules: {
-        username: [
-          { required: true, trigger: 'blur', validator: validateUsername }
-        ],
-        password: [
-          { required: true, trigger: 'blur', validator: validatePassword }
-        ],
-        confirm: [
-          {
-            required: true,
-            trigger: 'blur',
-            validator: validateConfirmPassword
-          }
-        ],
-        email: [
-          {
-            required: true,
-            trigger: 'blur',
-            validator: validateEmail
-          }
-        ]
+        base: {},
+        social: {},
+        company: {},
+        application: {},
+        diy: {},
+        password: '',
+        confirmPassword: ''
       },
       passwordType: 'password',
       confirmType: 'password',
