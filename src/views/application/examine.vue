@@ -73,8 +73,8 @@
               style="display: block"
             />
           </el-form-item>
-          <el-form-item label="备注">
-            <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
+          <el-form-item label="批复内容">
+            <el-input v-model="auditForm.remark" placeholder="请输入批复" type="textarea" />
           </el-form-item>
           <el-form-item label="安全码" prop="code">
             <el-input v-model="auditForm.code" placeholder="请输入安全码" />
@@ -132,41 +132,89 @@
           <el-button v-else @click="isShowRecallWithSubmit=recallShow=false">确 定</el-button>
         </span>
       </el-dialog>
-      <el-dialog
-        :visible.sync="multiAuditForm.show"
-        custom-class="p-fixed f-right mr-0"
-        title="批量审核"
-        top="0"
-        width="408px"
-      >
-        <el-form ref="auditForm" :model="auditForm" label-width="80px">
-          <el-form-item label="审核结果">
-            <el-switch
-              v-model="auditForm.action"
-              :active-value="1"
-              :inactive-value="2"
-              active-color="#13ce66"
-              active-text="通过"
-              class="pt-2"
-              inactive-color="#ff4949"
-              inactive-text="驳回"
-              style="display: block"
-            />
-          </el-form-item>
-          <el-form-item label="备注" prop="remark">
-            <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
-          </el-form-item>
-          <el-form-item label="安全码" prop="code">
-            <el-input v-model="auditForm.code" placeholder="请输入安全码" />
-          </el-form-item>
-          <el-form-item label="审核人" prop="authByUserId">
-            <el-input v-model="auditForm.authByUserId" placeholder="请输入审核人的id" />
-          </el-form-item>
-        </el-form>
-        <span slot="footer">
-          <el-button @click="multiAuditForm.show = false">取 消</el-button>
-          <el-button type="primary" @click="SubmitMultiAuditForm">确 定</el-button>
-        </span>
+      <el-dialog :visible.sync="multiAuditForm.show" title="批量审核">
+        <div v-if="multiAuditForm.responseList.length>0">
+          <el-form ref="auditForm" :model="auditForm">
+            <el-form-item label="审核结果">
+              <el-switch
+                v-model="auditForm.action"
+                :active-value="1"
+                :inactive-value="2"
+                active-color="#13ce66"
+                active-text="通过"
+                class="pt-2"
+                inactive-color="#ff4949"
+                inactive-text="驳回"
+                style="display: block"
+                @change="multiAuditUpdateAll"
+              />
+            </el-form-item>
+            <el-form-item label="批复内容" prop="remark">
+              <el-input
+                v-model="auditForm.remark"
+                placeholder="请输入批复"
+                type="textarea"
+                @change="multiAuditUpdateAll"
+              />
+            </el-form-item>
+            <el-form-item label="安全码" prop="code">
+              <el-input v-model="auditForm.code" placeholder="请输入安全码" />
+            </el-form-item>
+            <el-form-item label="审核人" prop="authByUserId">
+              <el-input v-model="auditForm.authByUserId" placeholder="请输入审核人的id" />
+            </el-form-item>
+          </el-form>
+          <span slot="footer">
+            <el-button @click="multiAuditForm.show = false">取 消</el-button>
+            <el-button type="primary" @click="SubmitMultiAuditForm">确 定</el-button>
+          </span>
+
+          <el-collapse
+            v-for="r in multiAuditForm.responseList"
+            :key="r.id"
+            style="overflow:auto"
+            accordion
+          >
+            <el-collapse-item>
+              <template slot="title">
+                <el-button
+                  :type="r.modefiedByUser?'warning':'success'"
+                  size="mini"
+                >{{ r.apply.base.realName }}</el-button>
+                <el-switch
+                  v-model="r.action"
+                  :active-value="1"
+                  :inactive-value="2"
+                  active-color="#13ce66"
+                  active-text="通过"
+                  class="pt-2"
+                  inactive-color="#ff4949"
+                  inactive-text="驳回"
+                  style="display: block"
+                  @change="r.modefiedByUser=true"
+                />
+              </template>
+              <el-form>
+                <el-form-item label="批复内容">
+                  <el-input v-model="r.remark" @change="r.modefiedByUser=true" />
+                </el-form-item>
+                <el-form-item label="部职别">
+                  {{ r.apply.base.companyName }}
+                  {{ r.apply.base.dutiesName }}
+                </el-form-item>
+                <el-form-item label="休假原因">{{ r.apply.request.reason }}</el-form-item>
+                <el-form-item label="休假地点">{{ r.apply.request.vocationPlace.name }})</el-form-item>
+                <el-form-item label="开始时间">{{ r.apply.request.stampLeave }}</el-form-item>
+                <el-form-item label="结束时间">{{ r.apply.request.stampReturn }}</el-form-item>
+                <div v-for="a in r.apply.request.additialVocations" :key="a.length">
+                  <el-tag>{{ a.name }}{{ a.length }}天</el-tag>
+                  {{ a.description }}
+                </div>
+              </el-form>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+        <div v-else>当前暂时没有选中可审批的申请</div>
       </el-dialog>
     </el-card>
     <el-card>
@@ -184,7 +232,6 @@
 import ApplicationList from './components/ApplicationList'
 import ApplySearchCommon from './components/ApplySearchCommon'
 import Pagination from '../pagination'
-
 import {
   audit,
   postRecallOrder,
@@ -281,7 +328,8 @@ export default {
       auditForm: this.auditFormInit(),
       // 批量审批表单
       multiAuditForm: {
-        show: false
+        show: false,
+        responseList: []
       },
       isShowRecallWithSubmit: false, // 当前的召回窗口是用于提交还是用于显示结果
       recallShow: false // 打开召回弹窗
@@ -327,19 +375,37 @@ export default {
     }, // 滚动加载
     showMultiDialog() {
       this.clearAuditForm()
+      var dataList = this.$refs['applicationlist'].getChecked()
+      this.multiAuditForm.responseList = []
+      for (var i = 0; i < dataList.length; i++) {
+        var item = dataList[i]
+        if (item.status !== 100) {
+          this.multiAuditForm.responseList.push({
+            apply: item,
+            id: item.id,
+            action: '',
+            remark: '',
+            modefiedByUser: false
+          })
+        }
+      }
       this.multiAuditForm.show = true
+      this.multiAuditUpdateAll()
+    },
+    multiAuditUpdateAll() {
+      this.multiAuditForm.responseList.forEach(r => {
+        if (!r.modefiedByUser) {
+          r.remark = this.auditForm.remark
+          r.action = this.auditForm.action
+        }
+      })
     },
     SubmitMultiAuditForm() {
       this.$refs['auditForm'].validate(valid => {
         if (!valid) return
-        var dataList = this.$refs['applicationlist'].getChecked()
-        var list = []
-        const { action, remark, code, authByUserId } = this.auditForm
-        for (var i = 0; i < dataList.length; i++) {
-          list.push({ id: dataList[i].id, action, remark })
-        }
+        const { code, authByUserId } = this.auditForm
         const Auth = { code, authByUserId: authByUserId }
-        audit({ list }, Auth)
+        audit({ list: this.multiAuditForm.responseList }, Auth)
           .then(resultlist => {
             resultlist.forEach(result => {
               if (result.status === 0) {
