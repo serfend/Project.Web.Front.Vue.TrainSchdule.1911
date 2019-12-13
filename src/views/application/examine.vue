@@ -91,7 +91,7 @@
 
       <el-dialog :visible.sync="recallShow" title="召回" width="30%">
         <el-form ref="auditForm" :model="auditForm" label-width="80px">
-          <el-form-item v-show="!isShowRecallWithSubmit" label="召回创建">
+          <el-form-item v-show="isOnlyToShowRecallMsg" label="召回创建">
             <el-date-picker
               v-model="auditForm.recallData.create"
               format="yyyy-MM-dd"
@@ -117,7 +117,7 @@
           <el-form-item label="备注">
             <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
           </el-form-item>
-          <el-form-item v-show="isShowRecallWithSubmit" label="安全码">
+          <el-form-item v-show="!isOnlyToShowRecallMsg" label="安全码">
             <el-input v-model="auditForm.code" placeholder="请输入安全码" />
           </el-form-item>
           <el-form-item label="审核人">
@@ -125,11 +125,11 @@
           </el-form-item>
         </el-form>
         <span slot="footer">
-          <el-button-group v-if="isShowRecallWithSubmit">
+          <el-button-group v-if="!isOnlyToShowRecallMsg">
             <el-button type="info" @click="recallShow = false">取 消</el-button>
             <el-button type="warning" @click="SubmitRecall">召 回</el-button>
           </el-button-group>
-          <el-button v-else @click="isShowRecallWithSubmit=recallShow=false">确 定</el-button>
+          <el-button v-else @click="isOnlyToShowRecallMsg=recallShow=false">确 定</el-button>
         </span>
       </el-dialog>
       <el-dialog :visible.sync="multiAuditForm.show" title="批量审核">
@@ -232,12 +232,7 @@
 import ApplicationList from './components/ApplicationList'
 import ApplySearchCommon from './components/ApplySearchCommon'
 import Pagination from '../pagination'
-import {
-  audit,
-  postRecallOrder,
-  getRecallOrder,
-  queryList
-} from '@/api/apply'
+import { audit, postRecallOrder, getRecallOrder, queryList } from '@/api/apply'
 import { getOnMyManage } from '@/api/usercompany'
 // import { getMembers } from '@/api/company'
 import {
@@ -331,7 +326,7 @@ export default {
         show: false,
         responseList: []
       },
-      isShowRecallWithSubmit: false, // 当前的召回窗口是用于提交还是用于显示结果
+      isOnlyToShowRecallMsg: false, // 当前的召回窗口是用于提交还是用于显示结果
       recallShow: false // 打开召回弹窗
     }
   },
@@ -478,6 +473,7 @@ export default {
     showRecallMsg(row) {
       this.clearAuditForm()
       this.recallShow = true
+      this.isOnlyToShowRecallMsg = true
       this.auditForm.recallData.rawStampReturn = row.request.stampReturn
       getRecallOrder(row.recallId).then(res => {
         this.auditForm.recallData.create = res.create
@@ -490,7 +486,7 @@ export default {
       // 打开召回弹框
       this.clearAuditForm()
       this.recallShow = true
-      this.isShowRecallWithSubmit = true
+      this.isOnlyToShowRecallMsg = false
       this.auditForm.applyId = row.id
       this.auditForm.recallData.rawStampReturn = row.request.stampReturn
     },
