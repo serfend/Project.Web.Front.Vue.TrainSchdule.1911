@@ -257,10 +257,12 @@
               <el-cascader
                 v-model="formApply.vocationPlaceArr"
                 :options="locationOptions"
-                :placeholder="formApply.vocationPlaceName"
-                :show-all-levels="false"
+                :show-all-levels="true"
                 @active-item-change="handleItemChange"
               />
+            </el-form-item>
+            <el-form-item label="详细地址">
+              <el-input v-model="formApply.vocationPlaceName" />
             </el-form-item>
             <el-form-item label="所乘交通工具">
               <el-select v-model="formApply.ByTransportation" placeholder="火车">
@@ -296,7 +298,7 @@
           </el-form>
         </div>
 
-        <div v-show="showAll == true || active == 2" class="row layout">
+        <!-- <div v-show="showAll == true || active == 2" class="row layout">
           <el-form ref="formFinal" :model="formFinal" class="full-width" label-width="180px">
             <div class="subheading pa-3">最后一步、准备提交</div>
             <el-form-item label="基础信息回执编号">
@@ -313,7 +315,7 @@
               <el-button @click="active = 1">上一步</el-button>
             </el-form-item>
           </el-form>
-        </div>
+        </div>-->
         <div v-show="showAll == true || active == 3" class="row layout" />
         <div v-if="showAll" class="mask" />
         <div v-if="showAll" :style="{'backgroundColor': theme}" class="footer-nav">
@@ -381,33 +383,8 @@ export default {
       OnloadingUserInfoes: false,
       OnloadingUserStamp: false,
       onLoading: false,
-      form: {
-        id: '',
-        realName: '',
-        company: '',
-        companyName: '',
-        duties: '',
-        Settle: {
-          self: {},
-          lover: {},
-          parent: {},
-          prevYearlyLength: 0
-        },
-        Phone: ''
-      },
-      formApply: {
-        StampLeave: '',
-        VocationLength: 0,
-        OnTripLength: 0,
-        VocationType: '',
-        vocationPlace: 0,
-        vocationPlaceArr: [],
-        vocationPlaceName: '',
-        ByTransportation: '0',
-        reason: '',
-        StampReturn: '',
-        isArchitect: false
-      },
+      form: this.createNewBase,
+      formApply: this.createNewRequest,
       formFinal: {
         baseInfoId: '',
         RequestId: ''
@@ -470,6 +447,38 @@ export default {
     },
     currentUser() {
       return this.$store.state.user.data
+    },
+    createNewBase() {
+      return {
+        id: this.currentUser.id === null ? '' : this.currentUser.id,
+        realName:
+          this.currentUser.realName === null ? '' : this.currentUser.realName,
+        company: '',
+        companyName: '',
+        duties: '',
+        Phone: 0,
+        Settle: {
+          self: this.buildSettle(),
+          lover: this.buildSettle(),
+          parent: this.buildSettle(),
+          loversParent: this.buildSettle(),
+          prevYearlyLength: 0
+        }
+      }
+    },
+    createNewRequest() {
+      return {
+        StampLeave: '',
+        StampReturn: '',
+        VocationLength: 0,
+        OnTripLength: 0,
+        VocationType: '',
+        vocationPlace: 0,
+        vocationPlaceName: '',
+        vocationPlaceArr: [],
+        reason: '',
+        ByTransportation: '0'
+      }
     }
   },
   created() {
@@ -752,7 +761,7 @@ export default {
     },
     goStepThree() {
       this.submitRequestInfo().then(() => {
-        this.active = 2
+        this.active = 3
       })
     },
     /**
@@ -790,14 +799,18 @@ export default {
         })
     },
     caculateVocationPercentage() {
+      if (this.usersVocation.yearlyLength === 0) return 100
       var fn = parseInt
-      return Math.floor(
+      var result = Math.floor(
         100 *
           ((fn(this.usersVocation.yearlyLength) -
             fn(this.usersVocation.leftLength) +
             fn(this.formApply.VocationLength)) /
             fn(this.usersVocation.yearlyLength))
       )
+      if (result < 0) result = 0
+      if (result > 100) result = 100
+      return result
     },
     /**
      * 提交申请
@@ -842,39 +855,13 @@ export default {
         addressDetail: ''
       }
     },
-
     /**
      * 创建新的申请
      */
     createNew() {
       this.active = 0
-      this.form = {
-        id: this.currentUser.id,
-        realName: this.currentUser.realName,
-        company: '',
-        companyName: '',
-        duties: '',
-        Phone: 0,
-        Settle: {
-          self: this.buildSettle(),
-          lover: this.buildSettle(),
-          parent: this.buildSettle(),
-          loversParent: this.buildSettle(),
-          prevYearlyLength: 0
-        }
-      }
-      this.formApply = {
-        StampLeave: '',
-        StampReturn: '',
-        VocationLength: 0,
-        OnTripLength: 0,
-        VocationType: '',
-        vocationPlace: 0,
-        vocationPlaceName: '',
-        vocationPlaceArr: [],
-        reason: '',
-        ByTransportation: '0'
-      }
+      this.form = this.createNewBase
+      this.formApply = this.createNewRequest
       this.formFinal = {
         baseInfoId: '',
         RequestId: ''
@@ -902,7 +889,8 @@ export default {
             : 0),
         caculateLawVocation: caculateVocationCount
       }
-      this.formApply.isArchitect = this.caculaingDate.start <= new Date()
+      this.formApply.isArchitect =
+        new Date(this.caculaingDate.start) <= new Date()
       if (this.OnloadingUserStamp) return
       this.OnloadingUserStamp = true
 

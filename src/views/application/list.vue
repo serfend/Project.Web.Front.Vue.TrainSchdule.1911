@@ -31,7 +31,7 @@
             split-button
             szie="small"
             trigger="click"
-            @click="exportApply({ apply: applyid })"
+            @click="exportApply(applyid)"
             @command="action => hendleExecute(action, row, applyid)"
           >
             <i class="el-icon-download" />
