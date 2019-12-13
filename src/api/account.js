@@ -143,6 +143,6 @@ export function postAuthKey(params) {
  */
 export function getAuthKey() {
   return request.get('account/AuthKey', { responseType: 'arraybuffer' }).then(res => {
-    Promise.resolve(res.url)
+    return Promise.resolve(res.url)
   })
 }

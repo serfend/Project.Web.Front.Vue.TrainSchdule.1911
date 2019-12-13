@@ -187,9 +187,9 @@ export default {
     }
   },
   created() {
-    this.getAuthKeyImg()
     getUserSummary()
       .then(data => {
+        this.getAuthKeyImg()
         if (!data.isInitPassword) {
           this.dialogUpdatePwdVisible = true
         }
