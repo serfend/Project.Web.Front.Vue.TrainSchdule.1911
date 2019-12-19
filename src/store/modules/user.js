@@ -1,5 +1,5 @@
 import {
-  getUserSummary, getUserAvatar
+  getUserSummary, getUserAvatar, getUsersVocationLimit
 } from '@/api/userinfo'
 import {
   login,
@@ -13,13 +13,15 @@ import {
 import router, {
   resetRouter
 } from '@/router'
-
+import { queryList } from '@/api/apply'
 const state = {
   data: {},
   token: getToken(),
   name: '',
   companyid: '',
   userid: '',
+  vocation: {}, // 当前休假状态
+  vocationList: [], // 休假记录列表
   avatar: '',
   introduction: '',
   roles: []
@@ -49,6 +51,12 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_VOCA: (state, vocation) => {
+    state.vocation = vocation
+  },
+  SET_VOCAHIS: (state, vocationList) => {
+    state.vocationList = vocationList
   }
 }
 
@@ -82,6 +90,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getUserSummary().then(data => {
         commit('SET_NAME', data.realName)
+        if (state.userid !== data.id) this.dispatch('user/initVocationList')
         commit('SET_USERID', data.id)
         commit('SET_CMPID', data.companyCode)
         commit('SET_INTRODUCTION', data.about)
@@ -100,6 +109,24 @@ const actions = {
       }).catch(() => {
         return reject()
       })
+    })
+  },
+  initVocation({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getUsersVocationLimit().then(data => {
+        commit('SET_VOCA', data)
+        return resolve()
+      }).catch(() => {
+        return reject()
+      })
+    })
+  },
+  initVocationList({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      queryList({ createFor: state.userid }).then((data) => {
+        commit('SET_VOCAHIS', data.list)
+        return resolve()
+      }).catch(() => { return reject() })
     })
   },
   // user logout

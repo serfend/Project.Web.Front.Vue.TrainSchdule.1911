@@ -144,7 +144,7 @@
 <script>
 import { format } from 'timeago.js'
 import moment from 'moment'
-import { getAllStatus, detail } from '@/api/apply'
+import { detail } from '@/api/apply'
 import ApplicationDetail from './ApplicationDetail'
 import waves from '@/directive/waves' // waves directive
 import { parseTime, datedifference } from '@/utils'
@@ -184,16 +184,12 @@ export default {
       },
       list: [],
       listLoading: true,
-      statusOptions: {},
       downloadLoading: false
     }
   },
   computed: {
-    /**
-     * 状态字典翻译
-     */
     formatedList() {
-      const { statusOptions } = this
+      var statusOptions = this.$store.state.vocation.statusDic
       return this.dataList.map(li => {
         const { ...item } = li
         const statusObj = statusOptions[item.status]
@@ -217,9 +213,7 @@ export default {
       return this.$store.state.user.userid
     }
   },
-  async created() {
-    await this.getAllStatus()
-  },
+  async created() {},
   // mounted() {
   //   detailDrawer
   // },
@@ -242,15 +236,6 @@ export default {
       // 获取选中的
       return this.$refs['singleTable'].selection
     },
-    // 获取所有的状态字典
-    getAllStatus() {
-      return getAllStatus().then(status => {
-        if (status.list) {
-          this.statusOptions = status.list
-        }
-      })
-    },
-
     changeApply(oper) {
       const { id } = this.detailDrawer
       const matchedItemIndex = this.formatedList.findIndex(

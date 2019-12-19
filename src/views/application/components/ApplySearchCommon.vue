@@ -133,7 +133,6 @@
 </template>
 
 <script>
-import { getAllStatus } from '@/api/apply'
 import { companyChild } from '@/api/company'
 import { updateSelect } from '@/api/cascaderSelector'
 export default {
@@ -169,7 +168,6 @@ export default {
   },
   data() {
     return {
-      statusOptions: [],
       pickerOptions: {
         shortcuts: [
           {
@@ -221,14 +219,12 @@ export default {
       ]
     }
   },
-  created() {
-    getAllStatus().then(status => {
-      console.log(status)
-      if (status.list) {
-        this.statusOptions = status.list
-      }
-    })
+  computed: {
+    statusOptions() {
+      return this.$store.state.vocation.statusDic
+    }
   },
+  created() {},
   methods: {
     handleAuditCompanyChange(val) {
       this.formQuery.auditCompanyArr = val // 用于更新页面实体

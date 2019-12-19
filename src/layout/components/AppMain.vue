@@ -25,6 +25,8 @@ export default {
   created() {
     this.$store.dispatch('user/initBase')
     this.$store.dispatch('user/initAvatar')
+    this.$store.dispatch('user/initVocation')
+    this.$store.dispatch('vocation/initDic')
   }
 }
 </script>

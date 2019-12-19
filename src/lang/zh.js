@@ -86,9 +86,9 @@ export default {
     welcome: '欢迎页'
   },
   profile: {
-    activity: '动态',
-    timeline: '轨迹',
-    account: '账号'
+    activity: '操作日志',
+    timeline: '我的休假',
+    account: '关于我'
   },
   login: {
     validate: {

@@ -16,7 +16,7 @@ router.beforeEach(async(to, from, next) => {
   document.title = getPageTitle(to.meta.title)
   const { verify } = to.meta
   if (verify && verify === 'on') {
-    store.dispatch('user/getInfo')
+    store.dispatch('user/initBase')
   }
   const routersLoaded = store.state.permission.routersLoaded
   if (routersLoaded === true) {
@@ -24,7 +24,7 @@ router.beforeEach(async(to, from, next) => {
   } else {
     // get user info
     // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
-    // const { roles } = await store.dispatch('user/getInfo')
+    // const { roles } = await store.dispatch('user/initBase')
     const roles = ['admin']
 
     // generate accessible routes map based on roles

@@ -72,6 +72,11 @@ export default {
     theme: 'Theme',
     size: 'Global Size'
   },
+  profile: {
+    activity: 'action log',
+    timeline: 'my vocation',
+    account: 'about me'
+  },
   login: {
     title: 'Login Form',
     logIn: 'Login',
