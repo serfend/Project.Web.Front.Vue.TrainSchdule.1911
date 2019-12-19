@@ -23,8 +23,8 @@ export default {
     }
   },
   created() {
-    // 主页面需要重新获取用户信息
-    this.$store.dispatch('user/getInfo')
+    this.$store.dispatch('user/initBase')
+    this.$store.dispatch('user/initAvatar')
   }
 }
 </script>

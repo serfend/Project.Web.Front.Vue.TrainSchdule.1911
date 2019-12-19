@@ -142,7 +142,5 @@ export function postAuthKey(params) {
  * 获取授权码
  */
 export function getAuthKey() {
-  return request.get('account/AuthKey', { responseType: 'arraybuffer' }).then(res => {
-    return Promise.resolve(res.url)
-  })
+  return request.get('account/AuthKey', { responseType: 'arraybuffer' })
 }

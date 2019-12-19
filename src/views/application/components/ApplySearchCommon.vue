@@ -124,6 +124,7 @@
           icon="el-icon-search"
           style="width:80%"
           :loading="onLoading"
+          autofocus
           @click="searchData"
         >执行查询</el-button>
       </el-button-group>

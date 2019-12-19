@@ -1,138 +1,104 @@
 <template>
   <el-card>
-    <div slot="header" class="clearfix">
-      <span>关于</span>
-    </div>
-
-    <div class="user-profile">
-      <div class="box-center">
-        <pan-thumb :height="'100px'" :hoverable="false" :image="user.avatar" :width="'100px'">
-          <div>您好</div>
-          {{ user.role }}
-        </pan-thumb>
-      </div>
-      <div class="box-center">
-        <div class="user-name text-center">{{ user.name }}</div>
-        <div class="user-role text-center text-muted">{{ user.role | uppercaseFirst }}</div>
-      </div>
-    </div>
-
-    <div class="user-bio">
-      <div class="user-education user-bio-section">
-        <div class="user-bio-section-header">
-          <svg-icon icon-class="component" />
-          <span>签名</span>
-        </div>
-        <div class="user-bio-section-body">
-          <div class="text-muted">个人信息页面</div>
-        </div>
-      </div>
-
-      <div class="user-skills user-bio-section">
-        <div class="user-bio-section-header">
-          <svg-icon icon-class="skill" />
-          <span>进度</span>
-        </div>
-        <div class="user-bio-section-body">
-          <div class="progress-item">
-            <span>A</span>
-            <el-progress :percentage="70" />
-          </div>
-          <div class="progress-item">
-            <span>B</span>
-            <el-progress :percentage="18" />
-          </div>
-          <div class="progress-item">
-            <span>C</span>
-            <el-progress :percentage="12" />
-          </div>
-          <div class="progress-item">
-            <span>D</span>
-            <el-progress :percentage="100" status="success" />
-          </div>
-        </div>
-      </div>
-    </div>
+    <el-row type="flex">
+      <el-col :span="6">
+        <el-upload
+          :action="avatarSubmitUrl"
+          :before-upload="beforeAvatarUpload"
+          class="avatar-uploader"
+          :show-file-list="false"
+        >
+          <el-avatar v-if="user.avatar" :size="100" shape="square" :src="user.avatar" />
+          <i v-else class="el-icon-plus avatar-uploader-icon" />
+        </el-upload>
+      </el-col>
+      <el-col :span="6">
+        <el-link style="font-size:1.5em">{{ user.realName }}</el-link>
+        <el-link icon="el-icon-edit">{{ user.about }}</el-link>
+      </el-col>
+    </el-row>
   </el-card>
 </template>
 
 <script>
-import PanThumb from '@/components/PanThumb'
-
+import { postUserAvatar } from '@/api/userinfo'
 export default {
-  components: { PanThumb },
+  components: {},
   props: {
     user: {
       type: Object,
       default: () => {
         return {
-          name: '',
-          email: '',
+          id: '',
+          realName: '',
+          about: '',
+          gender: 1,
           avatar: '',
-          roles: ''
+          companyCode: '',
+          dutiesCode: 0,
+          companyName: '',
+          dutiesName: '',
+          lastLogin: {}
         }
       }
+    }
+  },
+  data() {
+    return {
+      avatarSubmitUrl: ''
+    }
+  },
+  created() {
+    this.avatarSubmitUrl = process.env.VUE_APP_BASE_API + '/users/avatar'
+  },
+  methods: {
+    avatarRefresh() {
+      this.$emit('avatarRefresh')
+    },
+    beforeAvatarUpload(file) {
+      const isLt2M = file.size / 1024 / 1024 / 1024 < 200
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 200KB')
+      }
+      if (isLt2M) {
+        var reader = new FileReader()
+        const fn = this.avatarRefresh
+        reader.onload = function(evt) {
+          var base64 = evt.target.result
+          postUserAvatar(base64).then(() => {
+            fn()
+          })
+        }
+        reader.readAsDataURL(file)
+      }
+      return false
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.box-center {
-  margin: 0 auto;
-  display: table;
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
-
-.text-muted {
-  color: #777;
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
 }
-
-.user-profile {
-  .user-name {
-    font-weight: bold;
-  }
-
-  .box-center {
-    padding-top: 10px;
-  }
-
-  .user-role {
-    padding-top: 10px;
-    font-weight: 400;
-    font-size: 14px;
-  }
-
-  .box-social {
-    padding-top: 30px;
-
-    .el-table {
-      border-top: 1px solid #dfe6ec;
-    }
-  }
-
-  .user-follow {
-    padding-top: 20px;
-  }
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
 }
-
-.user-bio {
-  margin-top: 20px;
-  color: #606266;
-
-  span {
-    padding-left: 4px;
-  }
-
-  .user-bio-section {
-    font-size: 14px;
-    padding: 15px 0;
-
-    .user-bio-section-header {
-      border-bottom: 1px solid #dfe6ec;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-  }
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>

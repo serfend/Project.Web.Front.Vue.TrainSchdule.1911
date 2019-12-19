@@ -1,5 +1,5 @@
 import {
-  getUserSummary
+  getUserSummary, getUserAvatar
 } from '@/api/userinfo'
 import {
   login,
@@ -78,34 +78,30 @@ const actions = {
       })
     })
   },
-
-  // get user info
-  getInfo({
-    commit,
-    state
-  }) {
+  initBase({ commit, state }) {
     return new Promise((resolve, reject) => {
       getUserSummary().then(data => {
-        // roles = ['admin']
-        // roles must be a non-empty array
-        // if (!roles || roles.length <= 0) {
-        //   reject('getInfo: roles must be a non-null array!')
-        // }
-        // commit('SET_ROLES', roles)
-
         commit('SET_NAME', data.realName)
         commit('SET_USERID', data.id)
         commit('SET_CMPID', data.companyCode)
-        commit('SET_AVATAR', data.avatar)
         commit('SET_INTRODUCTION', data.about)
         commit('SET_DATA', data)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
+        return resolve()
+      }).catch(() => {
+        return reject()
       })
     })
   },
-
+  initAvatar({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getUserAvatar().then(data => {
+        commit('SET_AVATAR', data.url)
+        return resolve()
+      }).catch(() => {
+        return reject()
+      })
+    })
+  },
   // user logout
   logout({
     commit,
@@ -146,16 +142,12 @@ const actions = {
   }, role) {
     return new Promise(async resolve => {
       const token = role + '-token'
-
       commit('SET_TOKEN', token)
       setToken(token)
-
       const {
         roles
       } = await dispatch('getInfo')
-
       resetRouter()
-
       // generate accessible routes map based on roles
       const accessRoutes = await dispatch('permission/generateRoutes', roles, {
         root: true

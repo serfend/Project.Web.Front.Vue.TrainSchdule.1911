@@ -134,3 +134,32 @@ export function getUsersVocationLimit(id) {
     }
   })
 }
+
+/**
+ * 获取用户头像
+ *
+ * @export
+ * @param {string} id 用户id，默认为当前用户
+ * @param {guid} avatarId 头像id，默认为null
+ * @returns
+ */
+export function getUserAvatar(id, avatarId) {
+  return request.get('/users/avatar', {
+    params: {
+      id,
+      avatarId
+    }
+  })
+}
+/**
+ *修改用户头像
+ *
+ * @export
+ * @param {*} newAvatar
+ * @returns
+ */
+export function postUserAvatar(newAvatar) {
+  return request.post('/users/avatar', {
+    url: newAvatar
+  })
+}

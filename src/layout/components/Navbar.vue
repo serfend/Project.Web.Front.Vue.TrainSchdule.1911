@@ -40,7 +40,7 @@
             <el-dropdown-item>{{ $t("navbar.welcome") }}</el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="dialogUpdatePwdVisible = true">修改密码</span>
+            <span style="display:block;" @click="isToShowPasswordModefier = true">修改密码</span>
           </el-dropdown-item>
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">{{ $t("navbar.logOut") }}</span>
@@ -51,7 +51,7 @@
     <el-dialog
       title="修改密码"
       :modal="false"
-      :visible.sync="dialogUpdatePwdVisible"
+      :visible.sync="isToShowPasswordModefier"
       width="500px"
       @keyup.enter="savePwd()"
     >
@@ -108,7 +108,6 @@ import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import Search from '@/components/HeaderSearch'
-import { getUserSummary } from '@/api/userinfo'
 import { getAuthKey, accountPassword } from '@/api/account'
 import apkImage from '@/assets/jpg/apk.jpg'
 export default {
@@ -144,8 +143,8 @@ export default {
       }
     }
     return {
+      isToShowPasswordModefier: false, // 是否显示修改密码
       apkImage: apkImage,
-      dialogUpdatePwdVisible: false, // 修改密码弹窗
       editPwd: {
         username: this.$store.state.user.userid,
         oldPassword: '',
@@ -183,23 +182,20 @@ export default {
         this.$store.state.user.data.companyName +
         this.$store.state.user.data.dutiesName +
         this.$store.state.user.data.realName
+
       return tmpName
     }
   },
   created() {
-    getUserSummary()
-      .then(data => {
-        this.getAuthKeyImg()
-        if (!data.isInitPassword) {
-          this.dialogUpdatePwdVisible = true
-        }
-      })
-      .catch(() => {})
+    this.getAuthKeyImg()
   },
   methods: {
     getAuthKeyImg() {
       getAuthKey().then(r => {
-        this.authKeyUrl = r
+        this.authKeyUrl = r.url
+        if (!this.$store.state.user.data.isInitPassword) {
+          this.isToShowPasswordModefier = true
+        }
       })
     },
     toggleSideBar() {
@@ -234,7 +230,7 @@ export default {
           }
           accountPassword(submitPwd).then(() => {
             this.$message.success('修改密码成功')
-            this.dialogUpdatePwdVisible = false
+            this.isToShowPasswordModefier = true
           })
         }
       })
