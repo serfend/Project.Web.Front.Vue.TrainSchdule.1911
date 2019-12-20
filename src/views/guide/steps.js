@@ -2,39 +2,39 @@ const steps = [
   {
     element: '#hamburger-container',
     popover: {
-      title: 'Hamburger',
-      description: 'Open && Close sidebar',
+      title: '菜单按钮',
+      description: '在此处选择一些功能',
       position: 'bottom'
     }
   },
   {
     element: '#breadcrumb-container',
     popover: {
-      title: 'Breadcrumb',
-      description: 'Indicate the current page location',
+      title: '多层级菜单',
+      description: '可以通过此处快速的定位页面',
       position: 'bottom'
     }
   },
   {
     element: '#header-search',
     popover: {
-      title: 'Page Search',
-      description: 'Page search, quick navigation',
+      title: '搜索框',
+      description: '通过此处搜索可能的功能',
       position: 'left'
     }
   },
   {
     element: '#screenfull',
     popover: {
-      title: 'Screenfull',
-      description: 'Set the page into fullscreen',
+      title: '全屏',
+      description: '将会切换全屏模式',
       position: 'left'
     }
   },
   {
     element: '#size-select',
     popover: {
-      title: 'Switch Size',
+      title: '系统尺寸',
       description: 'Switch the system size',
       position: 'left'
     }
@@ -42,8 +42,8 @@ const steps = [
   {
     element: '#tags-view-container',
     popover: {
-      title: 'Tags view',
-      description: 'The history of the page you visited',
+      title: '多个标签',
+      description: '快速切换到你已经访问过的标签',
       position: 'bottom'
     },
     padding: 0

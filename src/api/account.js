@@ -68,8 +68,9 @@ export function removeAccount(params) {
  * } } params
  */
 export function register(params) {
-  params.password = formatPsw(params.username, params.password)
-  params.confirmpassword = formatPsw(params.username, params.confirmpassword)
+  // 注册接口暂时不使用加密
+  // params.password = formatPsw(params.username, params.password)
+  // params.confirmpassword = formatPsw(params.username, params.confirmpassword)
   return request.post('account/register', params)
 }
 

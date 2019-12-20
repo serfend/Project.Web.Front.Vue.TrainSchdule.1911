@@ -142,7 +142,7 @@ export default {
     cancel: '取消'
   },
   guide: {
-    description: '引导页对于一些第一次进入项目的人很有用，你可以简单介绍下项目的功能。本 Demo 是基于',
+    description: '引导页，后续可能会考虑取消此功能',
     button: '打开引导'
   },
   components: {

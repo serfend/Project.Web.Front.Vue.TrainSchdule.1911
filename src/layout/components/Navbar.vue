@@ -42,6 +42,9 @@
           <el-dropdown-item divided>
             <span style="display:block;" @click="isToShowPasswordModefier = true">修改密码</span>
           </el-dropdown-item>
+          <router-link to="/register">
+            <el-dropdown-item>{{ $t("register.title") }}</el-dropdown-item>
+          </router-link>
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">{{ $t("navbar.logOut") }}</span>
           </el-dropdown-item>
