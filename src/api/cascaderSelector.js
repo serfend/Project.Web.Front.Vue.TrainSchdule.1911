@@ -33,6 +33,11 @@ export function updateSelect(finalOption, val, targetItem, getChildMethod) {
         nextIndex = getLocationChildrenIndexByValue(item, val[i + 1])
         item = item.children[nextIndex]
       }
+      console.log(item)
+      item.children.push({
+        label: 'd.name',
+        value: 'd.code',
+      })
       // 更新这个节点
       // item.children = children
       // if (item.children.length === 0) {

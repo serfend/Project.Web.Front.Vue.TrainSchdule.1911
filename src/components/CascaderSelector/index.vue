@@ -1,15 +1,13 @@
 <template>
   <el-cascader
-    v-model="dataArrInner"
-    :options="dataOptionsInner"
+    :props="props"
     :show-all-levels="true"
-    @active-item-change="handleItemChange"
+    style="width:100%"
+    @change="handleItemChange"
   />
 </template>
 
 <script>
-import { deepClone } from '@/utils'
-import { updateSelect } from '@/api/cascaderSelector'
 export default {
   name: 'CascaderSelector',
   props: {
@@ -21,21 +19,9 @@ export default {
       type: String,
       default: ''
     },
-    dataArr: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    dataOptions: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
     code: {
       type: String,
-      default: '1'
+      default: ''
     },
     childGetterMethod: {
       type: Function,
@@ -46,62 +32,31 @@ export default {
   },
   data() {
     return {
-      dataArrInner: [],
-      dataOptionsInner: [
-        {
-          label: '选择地域',
-          value: 0,
-          children: []
+      props: {
+        getChild: id => {
+          return this.childGetterMethod(id)
         },
-        {
-          label: '不选择',
-          value: -1
+        lazy: true,
+        checkStrictly: true,
+        lazyLoad(node, resolve) {
+          this.getChild(node.value).then(data => {
+            var list = data.list
+            const nodes = Array.from(list).map(item => ({
+              value: item.code + '',
+              label: item.name,
+              leaf: false
+            }))
+            resolve(nodes)
+          })
         }
-      ],
-      codeInner: {
-        value: ''
       }
     }
   },
-  watch: {
-    // code: {
-    //   handler(val) {
-    //     this.codeInner.value = val.toString()
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // },
-    // codeInner: {
-    //   handler(val) {
-    //     this.$emit('update:code', val.value)
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // },
-    // dataArr: {
-    //   handler(val) {
-    //     this.dataArrInner = val
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // },
-    // dataOptions: {
-    //   handler(val) {
-    //     // this.dataOptionsInner = val
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // }
-  },
   methods: {
     handleItemChange(val) {
-      this.dataArrInner = val // 用于更新页面实体
-      updateSelect(
-        this.dataOptionsInner,
-        this.dataArrInner,
-        this.codeInner,
-        this.childGetterMethod
-      )
+      var v = val[val.length - 1]
+      this.props
+      this.$emit('update:code', v)
     }
   }
 }

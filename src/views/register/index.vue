@@ -9,7 +9,7 @@
         :icon="opt.icon"
       />
     </el-steps>
-    <el-form>
+    <el-form label-position="right" label-width="120px">
       <el-collapse v-model="nowStep" accordion>
         <el-collapse-item v-for="opt in stepOptions" :key="opt.index" :name="opt.index">
           <template slot="title">

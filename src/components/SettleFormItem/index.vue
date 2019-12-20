@@ -1,24 +1,20 @@
 <template>
   <el-form-item :label="label">
     <el-row :gutter="8">
-      <el-col :lg="8">
-        <el-input v-model="form.addressDetail" :disabled="disabled" placeholder="无信息">
-          <div slot="prepend">{{ form.address.name }}</div>
-        </el-input>
-      </el-col>
-      <el-col :lg="8">
-        <el-input v-model="form.date" :disabled="disabled" placeholder="无信息">
-          <div slot="prepend">开始时间</div>
-        </el-input>
-      </el-col>
       <el-col :lg="6">
-        <cascader-selector
-          :value="form.address.code"
-          label="行政区划编号"
-          :data-arr="dataArr"
-          :data-options="dataOptions"
-          :child-getter-method="childGetterMethod"
-        />
+        <el-input v-model="form.addressDetail" :disabled="disabled" placeholder="无信息">
+          <div slot="prepend">详细地址</div>
+        </el-input>
+      </el-col>
+      <el-col :lg="4">
+        <el-tooltip content="生效时间，表示最后一次更换地点的时间">
+          <el-date-picker v-model="form.date" :disabled="disabled" placeholder="无信息" />
+        </el-tooltip>
+      </el-col>
+      <el-col :lg="4">
+        <el-tooltip content="行政区划">
+          <cascader-selector :code="form.address.code" :child-getter-method="locationChildren" />
+        </el-tooltip>
       </el-col>
     </el-row>
   </el-form-item>
@@ -26,16 +22,12 @@
 
 <script>
 import CascaderSelector from '@/components/CascaderSelector'
+import { locationChildren } from '@/api/static'
 const VALUE_CONSTRUCT = {
   date: '',
   valid: '',
   address: {
-    code: '',
-    dataArr: [],
-    dataOptions: [],
-    childGetter: () => {
-      return []
-    }
+    code: ''
   },
   addressDetail: ''
 }
@@ -57,24 +49,6 @@ export default {
       default() {
         return VALUE_CONSTRUCT
       }
-    },
-    dataArr: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    dataOptions: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    childGetter: {
-      type: Function,
-      default() {
-        return () => {}
-      }
     }
   },
   computed: {
@@ -90,6 +64,11 @@ export default {
       get() {
         return this.value
       }
+    }
+  },
+  methods: {
+    locationChildren(id) {
+      return locationChildren(id)
     }
   }
 }

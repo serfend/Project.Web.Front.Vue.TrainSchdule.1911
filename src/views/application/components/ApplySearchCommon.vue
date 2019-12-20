@@ -35,22 +35,10 @@
       />
     </el-form-item>
     <el-form-item label="审核单位" prop="auditByCompany.value">
-      <el-cascader
-        v-model="formQuery.auditCompanyArr"
-        class="mr10"
-        :options="auditCompanyOption"
-        :show-all-levels="false"
-        @active-item-change="handleAuditCompanyChange"
-      />
+      <cascader-selector v-model="auditByCompany.value" :child-getter-method="companyChild" />
     </el-form-item>
     <el-form-item label="来自单位" prop="createCompany.value">
-      <el-cascader
-        v-model="formQuery.createCompanyArr"
-        class="mr10"
-        :options="createCompanyOption"
-        :show-all-levels="false"
-        @active-item-change="handleFromCompanyChange"
-      />
+      <cascader-selector v-model="createCompany.value" :child-getter-method="companyChild" />
     </el-form-item>
     <el-form-item label="审核状态" prop="status.arrays">
       <el-select
@@ -134,8 +122,9 @@
 
 <script>
 import { companyChild } from '@/api/company'
-import { updateSelect } from '@/api/cascaderSelector'
+import CascaderSelector from '@/components/CascaderSelector'
 export default {
+  components: { CascaderSelector },
   props: {
     onLoading: {
       type: Boolean,
@@ -198,25 +187,7 @@ export default {
             }
           }
         ]
-      },
-      formQuery: {
-        createCompanyArr: [],
-        auditCompanyArr: []
-      },
-      auditCompanyOption: [
-        {
-          label: '选择单位',
-          value: '',
-          children: []
-        }
-      ],
-      createCompanyOption: [
-        {
-          label: '选择单位',
-          value: '',
-          children: []
-        }
-      ]
+      }
     }
   },
   computed: {
@@ -226,23 +197,8 @@ export default {
   },
   created() {},
   methods: {
-    handleAuditCompanyChange(val) {
-      this.formQuery.auditCompanyArr = val // 用于更新页面实体
-      updateSelect(
-        this.auditCompanyOption,
-        val,
-        this.tableForm.auditByCompany,
-        companyChild
-      )
-    },
-    handleFromCompanyChange(val) {
-      this.formQuery.createCompanyArr = val
-      updateSelect(
-        this.createCompanyOption,
-        val,
-        this.tableForm.createCompany,
-        companyChild
-      )
+    companyChild(id) {
+      return companyChild(id)
     },
     clearForm() {
       this.$refs.tableForm.resetFields()

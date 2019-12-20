@@ -1,73 +1,32 @@
 <template>
   <div>
-    <cascader-selector
-      :code.sync="settle.self.address.code"
-      :data-arr="dataArr"
-      :data-options="dataOpts"
-      :child-getter-method="locationChildren"
-    />
-    <!-- <SettleFormItem
-      v-model="settle.self"
-      :data-options="dataOpts"
-      :child-getter="locationChildren"
-      label="本人所在地"
-      :disabled="false"
-    />
-    <SettleFormItem
-      v-model="settle.lover"
-      :data-options="dataOpts"
-      :child-getter="locationChildren"
-      label="配偶所在地"
-      :disabled="false"
-    />
-    <SettleFormItem
-      v-model="settle.parent"
-      :data-options="dataOpts"
-      :child-getter="locationChildren"
-      label="父母所在地"
-      :disabled="false"
-    />
-    <SettleFormItem
-      v-model="settle.loversparent"
-      :data-options="dataOpts"
-      :child-getter="locationChildren"
-      label="配偶父母所在地"
-      :disabled="false"
-    />-->
-    <el-form-item label="初始全年休假天数">
-      <el-input-number v-model="settle.prevYearlyLength" />
-      <el-tooltip content="如果无特殊情况，此项可不填，系统将自动计算" effect="dark" placement="bottom">
-        <i class="el-icon-question" />
-      </el-tooltip>
+    <SettleFormItem v-model="settle.self" label="本人居住地" :disabled="false" />
+    <SettleFormItem v-model="settle.lover" label="配偶居住地" :disabled="false" />
+    <SettleFormItem v-model="settle.parent" label="本人父母居住地" :disabled="false" />
+    <SettleFormItem v-model="settle.loversparent" label="配偶父母居住地" :disabled="false" />
+    <el-form-item label="初始休假天数">
+      <el-col :lg="8">
+        <el-input-number v-model="settle.prevYearlyLength" />
+        <el-tooltip content="如果无特殊情况，此项可不填，系统将自动计算" effect="dark" placement="bottom">
+          <i class="el-icon-question" />
+        </el-tooltip>
+      </el-col>
     </el-form-item>
     <el-form-item label="联系方式">
-      <el-input v-model="phone" />
+      <el-col :lg="8">
+        <el-input v-model="phone" />
+      </el-col>
     </el-form-item>
   </div>
 </template>
 
 <script>
 import SettleFormItem from '@/components/SettleFormItem'
-import CascaderSelector from '@/components/CascaderSelector'
-
-import { locationChildren } from '@/api/static'
 export default {
   name: 'Social',
-  components: { SettleFormItem, CascaderSelector },
+  components: { SettleFormItem },
   data() {
     return {
-      dataOpts: [
-        {
-          label: '选择地域',
-          value: 0,
-          children: []
-        },
-        {
-          label: '不选择',
-          value: -1
-        }
-      ],
-      dataArr: [],
       phone: '',
       settle: {
         self: {
@@ -106,11 +65,7 @@ export default {
       }
     }
   },
-  methods: {
-    locationChildren(code) {
-      return locationChildren(code)
-    }
-  }
+  methods: {}
 }
 </script>
 
