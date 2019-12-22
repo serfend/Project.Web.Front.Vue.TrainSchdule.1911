@@ -3,7 +3,7 @@
     <SettleFormItem :form.sync="innerForm.settle.self" label="本人居住地" :disabled="false" />
     <SettleFormItem :form.sync="innerForm.settle.lover" label="配偶居住地" :disabled="false" />
     <SettleFormItem :form.sync="innerForm.settle.parent" label="本人父母居住地" :disabled="false" />
-    <SettleFormItem :form.sync="innerForm.settle.loversparent" label="配偶父母居住地" :disabled="false" />
+    <SettleFormItem :form.sync="innerForm.settle.loversParent" label="配偶父母居住地" :disabled="false" />
     <el-form-item label="初始休假天数">
       <el-col :lg="8">
         <el-input-number v-model="innerForm.settle.prevYearlyLength" />
@@ -30,38 +30,10 @@ export default {
       innerForm: {
         phone: '',
         settle: {
-          self: {
-            date: '',
-            valid: false,
-            address: {
-              code: ''
-            },
-            addressDetail: ''
-          },
-          lover: {
-            date: '',
-            valid: false,
-            address: {
-              code: ''
-            },
-            addressDetail: ''
-          },
-          parent: {
-            date: '',
-            valid: false,
-            address: {
-              code: ''
-            },
-            addressDetail: ''
-          },
-          loversParent: {
-            date: '',
-            valid: false,
-            address: {
-              code: ''
-            },
-            addressDetail: ''
-          },
+          self: {},
+          lover: {},
+          parent: {},
+          loversParent: {},
           prevYearlyLength: 0
         }
       }

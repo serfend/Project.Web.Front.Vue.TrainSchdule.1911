@@ -1,6 +1,8 @@
 <template>
   <el-form-item :label="label">
-    <el-switch v-model="innerForm.valid" active-text="启用" inactive-text="禁用" />
+    <el-tooltip content="无此项（例如未婚、离婚、去世）时则将此项禁用">
+      <el-switch v-model="innerForm.valid" active-text="启用" inactive-text="禁用" />
+    </el-tooltip>
     <el-row :gutter="8">
       <el-col :span="12">
         <el-input v-model="innerForm.addressDetail" :disabled="disabled" placeholder="无信息">
@@ -15,7 +17,8 @@
       <el-col :span="6">
         <el-tooltip content="行政区划">
           <cascader-selector
-            :code="innerForm.address.code"
+            :placeholder="innerForm.address.name"
+            :code.sync="innerForm.address.code"
             :child-getter-method="locationChildren"
           />
         </el-tooltip>
@@ -33,7 +36,7 @@ export default {
   props: {
     disabled: {
       type: Boolean,
-      default: true
+      default: false
     },
     label: {
       type: String,
@@ -49,18 +52,36 @@ export default {
   data() {
     return {
       innerForm: {
-        date: '',
-        valid: '',
+        date: '2000-1-1',
+        valid: true,
         address: {
-          code: ''
+          code: '0'
         },
-        addressDetail: ''
+        addressDetail: '0'
       }
     }
   },
   watch: {
+    form: {
+      handler(val) {
+        if (this.innerForm === this.form) return
+        this.innerForm = this.form
+        if (this.form.address) {
+          this.innerForm.address = {
+            code: this.form.address.code + '',
+            name: this.form.address.name
+          }
+        } else {
+          this.innerForm.address = {
+            code: '',
+            name: '未选择'
+          }
+        }
+      },
+      deep: true
+    },
     innerForm: {
-      handler(val, oldVal) {
+      handler(val) {
         this.$emit('update:form', val)
       },
       deep: true

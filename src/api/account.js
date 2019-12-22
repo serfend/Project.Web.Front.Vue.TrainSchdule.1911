@@ -152,11 +152,12 @@ export function getAuthKey() {
  * @export
  * @param {*} authByUserId
  * @param {*} code
+ * @param {Boolean} ignoreErr
  * @returns
  */
-export function checkAuthCode(authByUserId, code) {
-  return request.get('account/checkAuthCode', {
-    params: {
+export function checkAuthCode(authByUserId, code, ignoreErr) {
+  return request.post('account/checkAuthCode', {
+    Auth: {
       authByUserId,
       code
     }

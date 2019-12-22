@@ -1,7 +1,7 @@
 <template>
   <el-form
-    ref="tableForm"
-    :model="tableForm"
+    ref="innerTableForm"
+    :model="innerTableForm"
     label-width="90px"
     :inline="true"
     size="small"
@@ -9,7 +9,7 @@
   >
     <el-form-item label="申请人" prop="createFor.value">
       <el-input
-        v-model="tableForm.createFor.value"
+        v-model="innerTableForm.createFor.value"
         placeholder
         class="mr10"
         maxlength="40"
@@ -18,7 +18,7 @@
     </el-form-item>
     <el-form-item label="创建人" prop="createBy.value">
       <el-input
-        v-model="tableForm.createBy.value"
+        v-model="innerTableForm.createBy.value"
         placeholder
         class="mr10"
         maxlength="40"
@@ -27,7 +27,7 @@
     </el-form-item>
     <el-form-item label="审核人" prop="auditBy.value">
       <el-input
-        v-model="tableForm.auditBy.value"
+        v-model="innerTableForm.auditBy.value"
         placeholder
         class="mr10"
         maxlength="40"
@@ -35,14 +35,20 @@
       />
     </el-form-item>
     <el-form-item label="审核单位" prop="auditByCompany.value">
-      <cascader-selector v-model="auditByCompany.value" :child-getter-method="companyChild" />
+      <cascader-selector
+        :code.sync="innerTableForm.auditByCompany.value"
+        :child-getter-method="companyChild"
+      />
     </el-form-item>
     <el-form-item label="来自单位" prop="createCompany.value">
-      <cascader-selector v-model="createCompany.value" :child-getter-method="companyChild" />
+      <cascader-selector
+        :code.sync="innerTableForm.createCompany.value"
+        :child-getter-method="companyChild"
+      />
     </el-form-item>
     <el-form-item label="审核状态" prop="status.arrays">
       <el-select
-        v-model="tableForm.status.arrays"
+        v-model="innerTableForm.status.arrays"
         class="full-width"
         placeholder="选择审核状态"
         multiple
@@ -58,7 +64,7 @@
     </el-form-item>
     <el-form-item label="创建时间" prop="addTime">
       <el-date-picker
-        v-model="tableForm.addTime"
+        v-model="innerTableForm.addTime"
         type="daterange"
         align="right"
         unlink-panels
@@ -73,7 +79,7 @@
     </el-form-item>
     <el-form-item label="休假开始时间" label-width="120" prop="stampLeaveTime">
       <el-date-picker
-        v-model="tableForm.stampLeaveTime"
+        v-model="innerTableForm.stampLeaveTime"
         type="daterange"
         align="right"
         unlink-panels
@@ -89,7 +95,7 @@
 
     <el-form-item label="休假结束时间" label-width="120" prop="stampReturnTime">
       <el-date-picker
-        v-model="tableForm.stampReturnTime"
+        v-model="innerTableForm.stampReturnTime"
         type="daterange"
         align="right"
         unlink-panels
@@ -133,25 +139,7 @@ export default {
     tableForm: {
       type: Object,
       default() {
-        return {
-          pages: {
-            pageIndex: 0,
-            pageSize: 20
-          },
-          code: '',
-          addTime: '',
-          stampLeaveTime: '',
-          stampReturnTime: '',
-          status: { status: '', end: '', arrays: [] },
-          create: { start: '', end: '' },
-          createFor: { value: '' },
-          createBy: { value: '' },
-          auditBy: { value: '' },
-          auditByCompany: { value: '' },
-          createCompany: { value: '' },
-          stampLeave: { start: '', end: '' },
-          stampReturn: { start: '', end: '' }
-        }
+        return this.innerTableForm
       }
     }
   },
@@ -187,6 +175,25 @@ export default {
             }
           }
         ]
+      },
+      innerTableForm: {
+        pages: {
+          pageIndex: 0,
+          pageSize: 20
+        },
+        code: '',
+        addTime: '',
+        stampLeaveTime: '',
+        stampReturnTime: '',
+        status: { status: '', end: '', arrays: [] },
+        create: { start: '', end: '' },
+        createFor: { value: '' },
+        createBy: { value: '' },
+        auditBy: { value: '' },
+        auditByCompany: { value: '' },
+        createCompany: { value: '' },
+        stampLeave: { start: '', end: '' },
+        stampReturn: { start: '', end: '' }
       }
     }
   },
@@ -195,7 +202,14 @@ export default {
       return this.$store.state.vocation.statusDic
     }
   },
-  created() {},
+  watch: {
+    innerTableForm: {
+      handler(val, oldVal) {
+        this.$emit('update:tableForm', val)
+      },
+      deep: true
+    }
+  },
   methods: {
     companyChild(id) {
       return companyChild(id)

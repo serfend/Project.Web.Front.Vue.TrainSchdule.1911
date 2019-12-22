@@ -68,13 +68,13 @@ export default {
   },
   methods: {
     checkCode() {
-      checkAuthCode(this.innerForm.authByUserId, this.innerForm.code)
+      checkAuthCode(this.innerForm.authByUserId, this.innerForm.code, true)
         .then(() => {
           this.invalid.code.status = false
         })
         .catch(err => {
           this.invalid.code.status = true
-          this.invalid.des = err.message
+          this.invalid.code.des = err.message
         })
     }
   }

@@ -2,6 +2,7 @@
   <el-cascader
     :props="props"
     :show-all-levels="true"
+    :placeholder="placeholder===null?'未选择':placeholder"
     style="width:100%"
     @change="handleItemChange"
   />
@@ -15,7 +16,7 @@ export default {
       type: Boolean,
       default: true
     },
-    label: {
+    placeholder: {
       type: String,
       default: ''
     },

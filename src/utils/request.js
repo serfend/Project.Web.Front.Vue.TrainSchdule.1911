@@ -7,57 +7,58 @@ import {
   setTimeout
 } from 'timers'
 
-// // 数据存储
-// export const cache = {
-//   data: {},
-//   set(key, data) {
-//     this.data[key] = data
-//   },
-//   get(key) {
-//     return this.data[key]
-//   },
-//   clear(key) {
-//     delete this.data[key]
-//   }
-// }
+// 数据存储
+export const cache = {
+  data: {},
+  set(key, data) {
+    this.data[key] = data
+  },
+  get(key) {
+    return this.data[key]
+  },
+  clear(key) {
+    delete this.data[key]
+  }
+}
 
-// // 建立唯一的key值
-// export const buildUniqueUrl = (url, method, params = {}, data = {}) => {
-//   const paramStr = (obj) => {
-//     if (toString.call(obj) === '[object Object]') {
-//       return JSON.stringify(Object.keys(obj).sort().reduce((result, key) => {
-//         result[key] = obj[key]
-//         return result
-//       }, {}))
-//     } else {
-//       return JSON.stringify(obj)
-//     }
-//   }
-//   url += `?${paramStr(params)}&${paramStr(data)}&${method}`
-//   return url
-// }
+// 建立唯一的key值
+export const buildUniqueUrl = (url, method, params = {}, data = {}) => {
+  const paramStr = (obj) => {
+    if (toString.call(obj) === '[object Object]') {
+      return JSON.stringify(Object.keys(obj).sort().reduce((result, key) => {
+        result[key] = obj[key]
+        return result
+      }, {}))
+    } else {
+      return JSON.stringify(obj)
+    }
+  }
+  url += `?${paramStr(params)}&${paramStr(data)}&${method}`
+  return url
+}
 
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASEURL, // api 的 base_url
   withCredentials: true, // 跨域请求时发送 cookies
-  timeout: 10 * 1000 // request timeout
+  timeout: 30 * 1000 // request timeout
 })
 
 // const getCache = (config) => {
 //   const defaultOptions = {
-//     time: 0, // 设置为0，不清除缓存
-//     ...options
+//     time: 600 * 1000 // 设置为0，不清除缓存
 //   }
 //   const index = buildUniqueUrl(config.url, config.method, config.params, config.data)
-//   let responsePromise = cache.get(index)
+//   var responsePromise = cache.get(index)
 //   if (!responsePromise) {
-//     cache.set(index, responsePromise)
 //     if (defaultOptions.time !== 0) {
 //       setTimeout(() => {
 //         cache.clear(index)
 //       }, defaultOptions.time)
 //     }
+//   }
+//   return {
+//     index, responsePromise
 //   }
 // }
 // TODO 增加缓存功能
@@ -67,8 +68,12 @@ service.interceptors.request.use(
     if (config.headers['Content-Type'] === 'application/urlencoded') {
       config.data = qs.stringify(config.data)
     }
-    // var responseCache = getCache(config)
-    // if(responseCache)return responseCache
+    // var cacher = getCache(config)
+    // if (cacher.responsePromise) {
+    //   console.log('检测到缓存')
+    //   console.log(service.interceptors.request)
+    // }
+    // config.cacheIndex = cacher.index
     return config
   },
   error => {
@@ -122,7 +127,7 @@ service.interceptors.response.use(
       })
     }
     const res = response.data
-
+    // cache.set(response.config.cacheIndex, res)
     if (res.status !== 0 && !response.config.respondErrorIngore) {
       Message({
         message: res.message,

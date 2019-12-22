@@ -69,10 +69,10 @@
               <el-input v-model="form.duties" disabled />
             </el-form-item>
 
-            <SettleFormItem v-model="form.Settle.self" label="本人所在地" />
-            <SettleFormItem v-model="form.Settle.lover" label="配偶所在地" />
-            <SettleFormItem v-model="form.Settle.parent" label="父母所在地" />
-            <SettleFormItem v-model="form.Settle.loversparent" label="配偶父母所在地" />
+            <SettleFormItem :form.sync="form.Settle.self" label="本人所在地" />
+            <SettleFormItem :form.sync="form.Settle.lover" label="配偶所在地" />
+            <SettleFormItem :form.sync="form.Settle.parent" label="父母所在地" />
+            <SettleFormItem :form.sync="form.Settle.loversParent" label="配偶父母所在地" />
 
             <el-form-item label="初始全年天数">
               <el-input v-model="form.Settle.prevYearlyLength" disabled />
@@ -83,22 +83,6 @@
             </el-form-item>
 
             <el-row class="divider" />
-            <!-- <el-form-item label="回执编号">
-              <el-input v-model="formFinal.baseInfoId" :style="{ width: '400px' }" disabled>
-                <div slot="prepend">
-                  <el-button type="primary" @click="submitBaseInfo">生成</el-button>
-                </div>
-                <el-button
-                  v-if="formFinal.baseInfoId"
-                  slot="append"
-                  :loading="onLoading"
-                  class="success"
-                  icon="el-icon-success"
-                  type="success"
-                />
-                <el-button v-else slot="append" :loading="onLoading" icon="el-icon-question" />
-              </el-input>
-            </el-form-item>-->
             <el-form-item v-show="showAll == false">
               <el-button type="success" style="width:100%" @click="goStepTwo">下一步</el-button>
             </el-form-item>
@@ -272,23 +256,6 @@
                 <el-option label="其他" value="-1" />
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="回执编号">
-              <el-input v-model="formFinal.RequestId" :style="{ width: '400px' }" disabled>
-                <div slot="prepend">
-                  <el-button type="primary" @click="submitRequestInfo">生成</el-button>
-                </div>
-                <el-button
-                  v-if="formFinal.RequestId"
-                  slot="append"
-                  :loading="onLoading"
-                  class="success"
-                  icon="el-icon-success"
-                  type="success"
-                />
-                <el-button v-else slot="append" :loading="onLoading" icon="el-icon-question" />
-              </el-input>
-            </el-form-item>-->
-
             <el-form-item v-show="showAll == false" style="width:100%">
               <el-button-group style="width:100%">
                 <el-button style="width:50%" type="info" @click="active = 0">上一步</el-button>
@@ -297,25 +264,6 @@
             </el-form-item>
           </el-form>
         </div>
-
-        <!-- <div v-show="showAll == true || active == 2" class="row layout">
-          <el-form ref="formFinal" :model="formFinal" class="full-width" label-width="180px">
-            <div class="subheading pa-3">最后一步、准备提交</div>
-            <el-form-item label="基础信息回执编号">
-              <el-input :value="formFinal.baseInfoId" disabled />
-            </el-form-item>
-            <el-form-item label="休假请求回执">
-              <el-input :value="formFinal.RequestId" disabled />
-            </el-form-item>
-            <el-form-item v-if="formFinal.RequestId && formFinal.baseInfoId">
-              <el-alert show-icon title="信息填写完备，可以准备提交" type="info" />
-            </el-form-item>
-            <el-form-item v-show="showAll == false">
-              <el-button type="primary" @click="active = 3">准备提交</el-button>
-              <el-button @click="active = 1">上一步</el-button>
-            </el-form-item>
-          </el-form>
-        </div>-->
         <div v-show="showAll == true || active == 3" class="row layout" />
         <div v-if="showAll" class="mask" />
         <div v-if="showAll" :style="{'backgroundColor': theme}" class="footer-nav">
@@ -695,13 +643,11 @@ export default {
               loversParent,
               prevYearlyLength
             } = social.settle
-            this.form.Settle = {
-              self,
-              lover,
-              parent,
-              loversParent,
-              prevYearlyLength
-            }
+            this.form.Settle.self = self
+            this.form.Settle.lover = lover
+            this.form.Settle.parent = parent
+            this.form.Settle.loversParent = loversParent
+            this.form.Settle.prevYearlyLength = prevYearlyLength
           } catch (error) {
             console.warn(error)
           }
@@ -714,7 +660,7 @@ export default {
           return Promise.reject()
         })
         .finally(() => {
-          this.OnloadingUserInfoes = true
+          this.OnloadingUserInfoes = false
         })
     },
 

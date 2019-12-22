@@ -108,7 +108,14 @@ export default {
       this.submitLoading = true
       this.registerForm.password = this.registerForm.Application.password
       this.registerForm.confirmPassword = this.registerForm.Application.confirmPassword
-      regnew(this.registerForm)
+      var submitForm = {
+        Data: this.registerForm,
+        verify: {
+          code: '201700816'
+        },
+        Auth: this.registerForm.Auth
+      }
+      regnew(submitForm)
         .then(data => {})
         .finally(() => {
           this.submitLoading = false

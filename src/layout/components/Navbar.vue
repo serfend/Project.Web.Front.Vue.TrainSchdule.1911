@@ -26,7 +26,9 @@
       </el-tooltip>
       <el-dropdown v-else class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <span class="caption">{{ name }}</span>
+          <el-tag>{{ companyName }}</el-tag>
+          <span class="caption">{{ realName }}</span>
+          <img class="user-avatar" :src="avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -180,13 +182,14 @@ export default {
     hasLogin() {
       return this.$store.state.user.userid
     },
-    name() {
-      var tmpName =
-        this.$store.state.user.data.companyName +
+    companyName() {
+      return this.$store.state.user.data.companyName
+    },
+    realName() {
+      return (
         this.$store.state.user.data.dutiesName +
         this.$store.state.user.data.realName
-
-      return tmpName
+      )
     }
   },
   created() {
