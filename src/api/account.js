@@ -67,7 +67,7 @@ export function removeAccount(params) {
  * }
  * } } params
  */
-export function register(params) {
+export function regnew(params) {
   // 注册接口暂时不使用加密
   // params.password = formatPsw(params.username, params.password)
   // params.confirmpassword = formatPsw(params.username, params.confirmpassword)
@@ -144,4 +144,21 @@ export function postAuthKey(params) {
  */
 export function getAuthKey() {
   return request.get('account/AuthKey', { responseType: 'arraybuffer' })
+}
+
+/**
+ * 检查授权码正确性
+ *
+ * @export
+ * @param {*} authByUserId
+ * @param {*} code
+ * @returns
+ */
+export function checkAuthCode(authByUserId, code) {
+  return request.get('account/checkAuthCode', {
+    params: {
+      authByUserId,
+      code
+    }
+  })
 }

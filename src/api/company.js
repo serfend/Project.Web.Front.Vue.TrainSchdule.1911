@@ -12,7 +12,7 @@ import request from '../utils/request'
  */
 export function companyChild(id) {
   return request({
-    url: '/company/child',
+    url: '/company/companyChild',
     method: 'get',
     params: {
       id: id
@@ -51,6 +51,40 @@ export function getMembers({
   return request.get('/company/members', {
     params: {
       code, page, pageSize
+    }
+  })
+}
+
+/**
+ * 获取职务详情
+ *
+ * @export
+ * @param {*} name 职务名称
+ * @returns
+ */
+export function dutiesDetail(name) {
+  return request({
+    url: '/company/dutiesDetail',
+    method: 'get',
+    params: {
+      name
+    }
+  })
+}
+
+/**
+ * 获取建议，通过职务名称的部分查询可能的职务
+ *
+ * @export
+ * @param {*} name
+ * @returns
+ */
+export function dutiesQuery(name) {
+  return request({
+    url: '/company/dutiesQuery',
+    method: 'get',
+    params: {
+      name
     }
   })
 }

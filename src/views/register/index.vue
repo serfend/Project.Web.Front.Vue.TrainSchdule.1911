@@ -17,13 +17,17 @@
             <i :class="opt.icon" />
           </template>
           <el-card :key="opt.index" shadow="hover">
-            <component :is="opt.component" />
+            <component :is="opt.component" :form.sync="registerForm[opt.component]" />
           </el-card>
         </el-collapse-item>
       </el-collapse>
     </el-form>
-    <el-button @click="nowStep-=1">上一步</el-button>
-    <el-button @click="nowStep+=1">下一步</el-button>
+    <el-button
+      type="success"
+      :loading="submitLoading"
+      :style="{ width: '100%' }"
+      @click="submitRegister"
+    >提交注册</el-button>
   </div>
 </template>
 
@@ -34,20 +38,15 @@ import Application from './components/Application'
 import Company from './components/Company'
 import Diy from './components/Diy'
 import Social from './components/Social'
+import Auth from '@/components/AuthCode'
+import { regnew } from '@/api/account'
 export default {
   name: 'Register',
-  components: { LangSelect, Base, Application, Social, Company, Diy },
+  components: { LangSelect, Base, Application, Social, Company, Diy, Auth },
   data() {
     return {
-      registerForm: {
-        base: {},
-        social: {},
-        company: {},
-        application: {},
-        diy: {},
-        password: '',
-        confirmPassword: ''
-      },
+      submitLoading: false,
+      registerForm: this.createForm(),
       nowStep: 1,
       stepOptions: [
         {
@@ -79,14 +78,41 @@ export default {
           index: 5,
           icon: 'el-icon-s-grid',
           component: 'Diy'
+        },
+        {
+          name: '注册授权',
+          index: 6,
+          icon: 'el-icon-s-check',
+          component: 'Auth'
         }
       ]
     }
   },
-  mounted() {},
   methods: {
+    createForm() {
+      return {
+        Base: {},
+        Social: {},
+        Company: {},
+        Application: {},
+        Diy: {},
+        Auth: {},
+        password: '',
+        confirmPassword: ''
+      }
+    },
     returnToLogin() {
       this.$router.push({ path: '/login' })
+    },
+    submitRegister() {
+      this.submitLoading = true
+      this.registerForm.password = this.registerForm.Application.password
+      this.registerForm.confirmPassword = this.registerForm.Application.confirmPassword
+      regnew(this.registerForm)
+        .then(data => {})
+        .finally(() => {
+          this.submitLoading = false
+        })
     }
   }
 }

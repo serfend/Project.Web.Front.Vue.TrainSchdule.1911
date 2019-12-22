@@ -61,7 +61,6 @@ const service = axios.create({
 //   }
 // }
 // TODO 增加缓存功能
-
 // request interceptor
 service.interceptors.request.use(
   config => {
@@ -124,7 +123,7 @@ service.interceptors.response.use(
     }
     const res = response.data
 
-    if (res.status !== 0) {
+    if (res.status !== 0 && !response.config.respondErrorIngore) {
       Message({
         message: res.message,
         type: 'error',

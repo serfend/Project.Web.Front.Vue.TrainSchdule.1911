@@ -1,9 +1,19 @@
 import request from '../utils/request'
-export function getUserSummary(id) {
+
+/**
+ * 获取用户摘要信息
+ *
+ * @export
+ * @param {*} id
+ * @param {*} ignoreErr 是否忽略错误
+ * @returns
+ */
+export function getUserSummary(id, ignoreErr) {
   return request.get('users/summary', {
     params: {
       id
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 /**
@@ -17,11 +27,12 @@ export function getUserSummary(id) {
   }
   ```
  */
-export function getUserBase(id) {
+export function getUserBase(id, ignoreErr) {
   return request.get('users/base', {
     params: {
       id
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 
@@ -98,13 +109,15 @@ export function getUserCompany(id) {
  *
  * @export
  * @param {*} cid
+ * @param {*} ignoreErr 是否忽略错误
  * @returns
  */
-export function getUserIdByCid(cid) {
+export function getUserIdByCid(cid, ignoreErr) {
   return request.get('/account/GetUserIdByCid', {
     params: {
       cid
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 

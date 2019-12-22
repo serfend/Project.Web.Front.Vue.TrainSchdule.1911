@@ -39,6 +39,7 @@ export default {
         lazy: true,
         checkStrictly: true,
         lazyLoad(node, resolve) {
+          if (node.root) node.value = 'root'
           this.getChild(node.value).then(data => {
             var list = data.list
             const nodes = Array.from(list).map(item => ({

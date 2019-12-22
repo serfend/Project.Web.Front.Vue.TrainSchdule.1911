@@ -67,9 +67,6 @@
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
       {{ $t('login.thirdpartyTips') }}
-      <br>
-      <br>
-      <br>
       <social-sign />
     </el-dialog>
   </div>
@@ -138,17 +135,16 @@ export default {
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
-    getUserBase()
-      .then(data => {
-        if (data) {
-          Message({
-            message: '欢迎您,' + data.base.realName,
-            type: 'success',
-            duration: 5000
-          })
-          this.$router.push(this.redirect)
-        }
-      })
+    getUserBase('', true).then(data => {
+      if (data) {
+        Message({
+          message: '欢迎您,' + data.base.realName,
+          type: 'success',
+          duration: 5000
+        })
+        this.$router.push(this.redirect)
+      }
+    })
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
