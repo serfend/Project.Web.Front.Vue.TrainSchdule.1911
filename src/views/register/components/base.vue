@@ -11,20 +11,18 @@
       <el-input v-model="innerForm.realName" :style="{ width: '400px' }" />
     </el-form-item>
     <el-form-item label="性别">
-      <el-button-group>
-        <el-button
-          v-for="btn in genderButton"
-          :key="btn.value"
-          :icon="btn.icon"
-          :style="`background-color:${btn.background};color:#ffffff;font-size:2em`"
-          plain
-          circle
-          @click="innerForm.gender=btn.value"
-        />
-      </el-button-group>
+      <el-radio-group v-model="innerForm.gender" size="small">
+        <el-radio-button v-for="btn in genderButton" :key="btn.value" :label="btn.value" disabled>
+          <i
+            :class="btn.icon"
+            :style="{'background-color':btn.background,color:'#ffffff','border-radius':'1em'}"
+          />
+          {{ btn.name }}
+        </el-radio-button>
+      </el-radio-group>
     </el-form-item>
     <el-form-item label="生日">
-      <el-date-picker v-model="innerForm.time_Birthday" />
+      <el-date-picker v-model="innerForm.time_Birthday" disabled />
     </el-form-item>
     <el-form-item label="工作时间">
       <el-date-picker v-model="innerForm.time_Work" />
@@ -37,7 +35,7 @@
 
 <script>
 import { cidValid } from '@/utils/validate'
-import { getUserIdByCid, getUserSummary } from '@/api/userinfo'
+import { getUserIdByCid } from '@/api/userinfo'
 export default {
   name: 'Base',
   props: {
@@ -67,16 +65,19 @@ export default {
       genderButton: [
         {
           value: 1,
+          name: '男',
           icon: 'el-icon-male',
           background: '#46B6ef'
         },
-        {
-          value: 0,
-          icon: 'el-icon-question',
-          background: '#777777'
-        },
+        // {
+        //   value: 0,
+        //   name: '未知',
+        //   icon: 'el-icon-question',
+        //   background: '#777777'
+        // },
         {
           value: 2,
+          name: '女',
           icon: 'el-icon-female',
           background: '#f37e7d'
         }
@@ -111,26 +112,20 @@ export default {
             })
             .catch(() => {
               this.invalid.cid.status = false
+              var dateStr =
+                id.substring(6, 10) +
+                '-' +
+                id.substring(10, 12) +
+                '-' +
+                id.substring(12, 14)
+              this.innerForm.time_Birthday = dateStr
+              this.innerForm.gender = parseInt(id[16]) % 2 === 0 ? 2 : 1
             })
         }
       } else {
         this.invalid.cid.status = true
         this.invalid.cid.des = '非正确身份号码,正确格式为18位法定身份证号码'
       }
-    },
-    fetchUserInfoesDerect() {
-      getUserSummary(this.innerForm.cid)
-        .then(data => {
-          if (data) {
-            this.invalid.cid.status = true
-            this.invalid.cid.des = '此身份号已被' + data.realName + '使用'
-          } else {
-            this.invalid.cid.status = false
-          }
-        })
-        .catch(() => {
-          this.invalid.cid.status = false
-        })
     }
   }
 }

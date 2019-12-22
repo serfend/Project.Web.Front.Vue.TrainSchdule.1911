@@ -1,19 +1,23 @@
 <template>
   <el-form-item :label="label">
+    <el-switch v-model="innerForm.valid" active-text="启用" inactive-text="禁用" />
     <el-row :gutter="8">
-      <el-col :lg="6">
-        <el-input v-model="form.addressDetail" :disabled="disabled" placeholder="无信息">
+      <el-col :span="12">
+        <el-input v-model="innerForm.addressDetail" :disabled="disabled" placeholder="无信息">
           <div slot="prepend">详细地址</div>
         </el-input>
       </el-col>
-      <el-col :lg="4">
+      <el-col :span="4">
         <el-tooltip content="生效时间，表示最后一次更换地点的时间">
-          <el-date-picker v-model="form.date" :disabled="disabled" placeholder="无信息" />
+          <el-date-picker v-model="innerForm.date" :disabled="disabled" placeholder="无信息" />
         </el-tooltip>
       </el-col>
-      <el-col :lg="4">
+      <el-col :span="6">
         <el-tooltip content="行政区划">
-          <cascader-selector :code="form.address.code" :child-getter-method="locationChildren" />
+          <cascader-selector
+            :code="innerForm.address.code"
+            :child-getter-method="locationChildren"
+          />
         </el-tooltip>
       </el-col>
     </el-row>
@@ -23,15 +27,6 @@
 <script>
 import CascaderSelector from '@/components/CascaderSelector'
 import { locationChildren } from '@/api/static'
-const VALUE_CONSTRUCT = {
-  date: '',
-  valid: '',
-  address: {
-    code: ''
-  },
-  addressDetail: ''
-}
-
 export default {
   name: 'SettleFormItem',
   components: { CascaderSelector },
@@ -44,26 +39,31 @@ export default {
       type: String,
       default: ''
     },
-    value: {
+    form: {
       type: Object,
       default() {
-        return VALUE_CONSTRUCT
+        return this.innerForm
       }
     }
   },
-  computed: {
-    form: {
-      set(val) {
-        const clonedValue = Object.assign(
-          { ...VALUE_CONSTRUCT },
-          this.value,
-          val
-        )
-        this.$emit('input', clonedValue)
-      },
-      get() {
-        return this.value
+  data() {
+    return {
+      innerForm: {
+        date: '',
+        valid: '',
+        address: {
+          code: ''
+        },
+        addressDetail: ''
       }
+    }
+  },
+  watch: {
+    innerForm: {
+      handler(val, oldVal) {
+        this.$emit('update:form', val)
+      },
+      deep: true
     }
   },
   methods: {
