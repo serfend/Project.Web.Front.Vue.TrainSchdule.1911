@@ -2,53 +2,45 @@
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('monthSolider')">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-monthSolider">
+          <svg-icon icon-class="user" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            本月战士休假情况
-          </div>
-          <count-to :start-val="0" :end-val="2755" :duration="2600" class="card-panel-num" />
+          <div class="card-panel-text">本月战士休假情况</div>
+          <count-to :start-val="0" :end-val="0" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('monthOfficer')">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-monthOfficer">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            本月干部休假情况
-          </div>
-          <count-to :start-val="0" :end-val="252" :duration="3000" class="card-panel-num" />
+          <div class="card-panel-text">本月干部休假情况</div>
+          <count-to :start-val="0" :end-val="0" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('annualSolider')">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-annualSolider">
+          <svg-icon icon-class="user" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            年度战士休假情况
-          </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <div class="card-panel-text">年度战士休假情况</div>
+          <count-to :start-val="0" :end-val="0" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('annualOfficer')">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-annualOfficer">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            年度干部休假情况
-          </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <div class="card-panel-text">年度干部休假情况</div>
+          <count-to :start-val="0" :end-val="0" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -73,7 +65,7 @@ export default {
 <style lang="scss" scoped>
 .panel-group {
   margin-top: 18px;
-  .card-panel-col{
+  .card-panel-col {
     margin-bottom: 32px;
   }
   .card-panel {
@@ -84,36 +76,36 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-    border-color: rgba(0, 0, 0, .05);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.05);
     &:hover {
       .card-panel-icon-wrapper {
         color: #fff;
       }
-      .icon-people {
-         background: #40c9c6;
+      .icon-monthSolider {
+        background: #40c9c6;
       }
-      .icon-message {
+      .icon-monthOfficer {
         background: #36a3f7;
       }
-      .icon-money {
+      .icon-annualSolider {
         background: #f4516c;
       }
-      .icon-shopping {
-        background: #34bfa3
+      .icon-annualOfficer {
+        background: #34bfa3;
       }
     }
-    .icon-people {
+    .icon-monthSolider {
       color: #40c9c6;
     }
-    .icon-message {
+    .icon-monthOfficer {
       color: #36a3f7;
     }
-    .icon-money {
+    .icon-annualSolider {
       color: #f4516c;
     }
-    .icon-shopping {
-      color: #34bfa3
+    .icon-annualOfficer {
+      color: #34bfa3;
     }
     .card-panel-icon-wrapper {
       float: left;
@@ -127,18 +119,10 @@ export default {
       font-size: 48px;
     }
     .card-panel-description {
-      float: right;
       font-weight: bold;
-      margin: 26px;
-      margin-left: 0px;
+      padding-top: 1em;
       .card-panel-text {
-        line-height: 18px;
         color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
-        margin-bottom: 12px;
-      }
-      .card-panel-num {
-        font-size: 20px;
       }
     }
   }
