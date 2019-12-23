@@ -44,9 +44,12 @@
           <el-dropdown-item divided>
             <span style="display:block;" @click="isToShowPasswordModefier = true">修改密码</span>
           </el-dropdown-item>
-          <router-link to="/register">
-            <el-dropdown-item>{{ $t("register.title") }}</el-dropdown-item>
-          </router-link>
+          <el-dropdown-item>
+            <span style="display:block;" @click="authRegisterUser(true)">{{ $t("register.title") }}</span>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <span style="display:block;" @click="authRegisterUser(false)">授权注册</span>
+          </el-dropdown-item>
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">{{ $t("navbar.logOut") }}</span>
           </el-dropdown-item>
@@ -213,6 +216,10 @@ export default {
     },
     login() {
       return this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    authRegisterUser(isToRegister) {
+      this.$store.state.user.isToRegister = isToRegister
+      return this.$router.push(`/register`)
     },
     savePwd() {
       this.$refs['editPwd'].validate(valid => {

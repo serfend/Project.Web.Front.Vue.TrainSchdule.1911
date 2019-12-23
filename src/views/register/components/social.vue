@@ -25,6 +25,14 @@ import SettleFormItem from '@/components/SettleFormItem'
 export default {
   name: 'Social',
   components: { SettleFormItem },
+  props: {
+    form: {
+      type: Object,
+      default() {
+        return this.innerForm
+      }
+    }
+  },
   data() {
     return {
       innerForm: {
@@ -40,6 +48,14 @@ export default {
     }
   },
   watch: {
+    form: {
+      handler(val) {
+        if (!val.settle) return
+        this.innerForm = val
+      },
+      deep: true,
+      immediate: true
+    },
     innerForm: {
       handler(val, oldVal) {
         this.$emit('update:form', this.innerForm)

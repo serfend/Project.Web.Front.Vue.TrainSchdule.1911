@@ -1,7 +1,11 @@
 <template>
   <div>
     <el-form-item prop="company" label="单位">
-      <cascader-selector :code.sync="innerForm.company.code" :child-getter-method="companyChild" />
+      <cascader-selector
+        :code.sync="innerForm.company.code"
+        :child-getter-method="companyChild"
+        :placeholder="innerForm.company.name"
+      />
     </el-form-item>
     <el-form-item prop="duties" label="职务">
       <el-autocomplete
@@ -23,6 +27,14 @@ export default {
   name: 'Company',
   components: {
     CascaderSelector
+  },
+  props: {
+    form: {
+      type: Object,
+      default() {
+        return this.innerForm
+      }
+    }
   },
   data() {
     return {
@@ -47,6 +59,14 @@ export default {
     }
   },
   watch: {
+    form: {
+      handler(val) {
+        if (!val.company) return
+        this.innerForm = val
+      },
+      deep: true,
+      immediate: true
+    },
     innerForm: {
       handler(val, oldVal) {
         this.$emit('update:form', val)

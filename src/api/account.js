@@ -163,3 +163,15 @@ export function checkAuthCode(authByUserId, code, ignoreErr) {
     }
   })
 }
+
+/**
+ * 授权未认证用户，需要登录
+ *
+ * @export
+ * @param {*} username
+ */
+export function authUserRegister(username) {
+  return request.post('/account/authUserRegister', {
+    username
+  })
+}

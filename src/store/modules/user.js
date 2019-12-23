@@ -24,7 +24,8 @@ const state = {
   vocationList: [], // 休假记录列表
   avatar: '',
   introduction: '',
-  roles: []
+  roles: [],
+  isToRegister: true
 }
 
 const mutations = {

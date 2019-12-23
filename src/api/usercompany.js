@@ -56,13 +56,14 @@ export function getUserAllInfo(id) {
       getUserSocial(id),
       getUserDiy(id)
     ]).then(([base, company, duties, social, diy]) => {
-      const UserInfoes = {
+      var UserInfoes = {
         base,
         company,
         duties,
         social,
         diy
       }
+      UserInfoes.base.base.time_Birthday = UserInfoes.base.base.time_BirthDay // bug prop name fix
       resolve(UserInfoes)
     }).catch(err => reject(err))
   })

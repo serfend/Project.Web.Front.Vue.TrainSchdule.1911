@@ -63,6 +63,11 @@
         type="primary"
         @click.native.prevent="handleReg"
       >{{ $t('register.title') }}</el-button>
+      <el-button
+        :disabled="currentUser?false:true"
+        style="width:100%;margin-bottom:5px;margin-left:0px"
+        type="primary"
+      >{{ '审核本单位新注册人员信息 ' + (currentUser?currentUser:'需要登录后访问') }}</el-button>
     </el-form>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
@@ -118,6 +123,11 @@ export default {
       redirect: undefined
     }
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.user.realName
+    }
+  },
   watch: {
     $route: {
       handler: function(route) {
@@ -146,9 +156,6 @@ export default {
       }
     })
   },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
-  },
   methods: {
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
@@ -176,6 +183,7 @@ export default {
       })
     },
     handleReg() {
+      this.$store.state.user.isToRegister = true
       this.$router.push({ path: '/register' })
     },
     handleLogin() {

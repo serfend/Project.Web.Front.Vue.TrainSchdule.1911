@@ -85,6 +85,13 @@ export default {
     }
   },
   watch: {
+    form: {
+      handler(val) {
+        this.innerForm = val
+      },
+      deep: true,
+      immediate: true
+    },
     innerForm: {
       handler(val, oldVal) {
         this.$emit('update:form', val)

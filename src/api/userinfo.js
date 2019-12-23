@@ -159,7 +159,7 @@ export function getUsersVocationLimit(id) {
 export function getUserAvatar(id, avatarId) {
   return request.get('/users/avatar', {
     params: {
-      id,
+      userId: id,
       avatarId
     }
   })

@@ -16,6 +16,14 @@
 <script>
 export default {
   name: 'Diy',
+  props: {
+    form: {
+      type: Object,
+      default() {
+        return this.innerForm
+      }
+    }
+  },
   data() {
     return {
       innerForm: {
@@ -31,8 +39,15 @@ export default {
     }
   },
   watch: {
+    form: {
+      handler(val) {
+        this.innerForm = val
+      },
+      deep: true,
+      immediate: true
+    },
     innerForm: {
-      handler(val, oldVal) {
+      handler(val) {
         this.$emit('update:form', val)
       },
       deep: true
