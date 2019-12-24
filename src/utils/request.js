@@ -128,15 +128,29 @@ service.interceptors.response.use(
     }
     const res = response.data
     // cache.set(response.config.cacheIndex, res)
-    if (res.status !== 0 && !response.config.respondErrorIngore) {
-      Message({
-        message: res.message,
-        type: 'error',
-        duration: 5 * 1000
-      })
-      return Promise.reject(res)
-    } else {
-      return Promise.resolve(res.data)
+    if (!response.config.respondErrorIngore) {
+      if (res.status === 0) {
+        return Promise.resolve(res.data)
+      } else {
+        Message({
+          message: res.message,
+          type: 'error',
+          duration: 5 * 1000
+        })
+        const list = res.data.list
+        if (list) {
+          for (var i = 0; i < list.length; i++) {
+            setTimeout((errItem) => {
+              Message({
+                message: errItem.key + ':' + errItem.message,
+                type: 'error',
+                duration: 5 * 1000
+              })
+            }, (i + 1) * 2000, list[i])
+          }
+        }
+        return Promise.reject(res)
+      }
     }
   },
   error => {

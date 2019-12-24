@@ -32,8 +32,15 @@
         type="success"
         :loading="submitLoading"
         :style="{ width: '100%' }"
-        @click="submitRegister"
+        @click="submitRegister(true)"
       >提交注册</el-button>
+      <el-button
+        v-if="!isToRegister"
+        type="warning"
+        :loading="submitLoading"
+        :style="{ width: '100%' }"
+        @click="submitRegister(false)"
+      >修改信息</el-button>
     </div>
     <div v-if="!isToRegister">
       <el-button-group
@@ -55,12 +62,17 @@
       </el-button-group>
 
       <el-card>
-        <div slot="header" class="clearfix">
+        <div slot="header">
           <el-button
             type="info"
             :loading="submitLoading"
             @click="loadWaitToAuthRegisterUsers"
           >刷新待认证人员</el-button>
+          <cascader-selector
+            :code.sync="nowSelectCompanyCode"
+            placeholder="选择需要检查的单位"
+            :child-getter-method="companyChild"
+          />
         </div>
 
         <el-table
@@ -91,6 +103,23 @@
         </el-table>
       </el-card>
     </div>
+    <el-card>
+      <el-button
+        v-if="isToRegister"
+        type="warning"
+        :loading="submitLoading"
+        :style="{ width: '20%' }"
+        @click="switchFormType"
+      >切换到审核认证</el-button>
+      <div v-else>
+        <el-button
+          type="warning"
+          :loading="submitLoading"
+          :style="{ width: '20%' }"
+          @click="switchFormType"
+        >切换到普通注册</el-button>
+      </div>
+    </el-card>
   </el-card>
 </template>
 
@@ -102,13 +131,23 @@ import Company from './components/Company'
 import Diy from './components/Diy'
 import Social from './components/Social'
 import Auth from '@/components/AuthCode'
-import { regnew, authUserRegister } from '@/api/account'
-import { getMembers } from '@/api/company'
+import CascaderSelector from '@/components/CascaderSelector'
+import { regnew, authUserRegister, modefyUser } from '@/api/account'
+import { getMembers, companyChild } from '@/api/company'
 import { getUsersVocationLimit, getUserAvatar } from '@/api/userinfo'
 import { getUserAllInfo } from '@/api/usercompany'
 export default {
   name: 'Register',
-  components: { LangSelect, Base, Application, Social, Company, Diy, Auth },
+  components: {
+    CascaderSelector,
+    LangSelect,
+    Base,
+    Application,
+    Social,
+    Company,
+    Diy,
+    Auth
+  },
   data() {
     return {
       submitLoading: false,
@@ -155,7 +194,8 @@ export default {
       ],
       waitToAuthRegisterUsers: [],
       waitToAuthRegisterUsersLoadId: '',
-      selectIsInvalidAccount: false
+      selectIsInvalidAccount: false,
+      nowSelectCompanyCode: ''
     }
   },
   computed: {
@@ -164,19 +204,29 @@ export default {
     },
     nowLoginUserName() {
       return this.$store.state.user.realName
-    },
-    nowLoginUserCompanyCode() {
-      return this.$store.state.user.companyid
+    }
+  },
+  watch: {
+    nowSelectCompanyCode: {
+      handler(val) {
+        if (this.isToRegister === false) this.loadWaitToAuthRegisterUsers()
+      },
+      immediate: true
     }
   },
   mounted() {
-    if (!this.isToRegister) {
-      this.loadWaitToAuthRegisterUsers()
-    } else {
-      this.waitToAuthRegisterUsersLoadId = '0'
-    }
+    this.refreshFormType()
   },
   methods: {
+    modefyUser(form) {
+      return modefyUser(form)
+    },
+    regnew(form) {
+      return regnew(form)
+    },
+    companyChild(id) {
+      return companyChild(id)
+    },
     createForm() {
       return {
         Base: {},
@@ -191,6 +241,16 @@ export default {
     },
     returnToLogin() {
       this.$router.push({ path: '/login' })
+    },
+    switchFormType() {
+      this.$store.state.user.isToRegister = !this.$store.state.user.isToRegister
+      this.refreshFormType()
+    },
+    refreshFormType() {
+      this.stepOptions[1].remove = this.stepOptions[5].remove = this.isToRegister
+      if (this.isToRegister) {
+        this.waitToAuthRegisterUsersLoadId = '0'
+      }
     },
     // 授权当前账号
     submitValidAccount(valid) {
@@ -233,7 +293,7 @@ export default {
     loadWaitToAuthRegisterUsers() {
       this.tableLoading = true
       this.submitLoading = true
-      getMembers(this.nowLoginUserCompanyCode)
+      getMembers({ code: this.nowSelectCompanyCode })
         .then(data => {
           const list = data.list.filter(item => item.inviteBy === null)
           if (list.length === 0) this.$message.success('当前无用户待审批')
@@ -252,7 +312,9 @@ export default {
           getUserAvatar(item.id).then(data => (item.avatar = data.url))
           getUsersVocationLimit(item.id).then(data => (item.vocation = data))
         }
-        fn()
+        fn().then(() => {
+          this.$message.success('成功执行')
+        })
       }
     },
     loadUserList(list) {
@@ -273,13 +335,13 @@ export default {
       if (val === null) return
       this.waitToAuthRegisterUsersLoadId = val.id
       this.submitLoading = true
-      this.stepOptions[1].remove = this.stepOptions[5].remove = true // 移除Application项
       this.selectIsInvalidAccount = !val.accountValid
       getUserAllInfo(this.waitToAuthRegisterUsersLoadId)
         .then(data => {
           this.registerForm.Social = data.social
           this.registerForm.Diy = data.diy
           this.registerForm.Base = data.base.base
+          this.registerForm.Application = data.application
           this.registerForm.Company = {
             company: {
               name: data.company.company.name,
@@ -290,7 +352,7 @@ export default {
         })
         .finally(() => (this.submitLoading = false))
     },
-    submitRegister() {
+    submitRegister(regOrModefy) {
       this.submitLoading = true
       this.registerForm.password = this.registerForm.Application.password
       this.registerForm.confirmPassword = this.registerForm.Application.confirmPassword
@@ -301,7 +363,15 @@ export default {
         },
         Auth: this.registerForm.Auth
       }
-      regnew(submitForm)
+      const submitMethod = regOrModefy ? regnew : modefyUser
+      // var confirmPassword = submitForm.Data.confirmPassword
+      // var password = submitForm.Data.password
+      // if (password !== confirmPassword || password === undefined) {
+      //   this.nowStep = 2
+      //   this.submitLoading = false
+      //   return this.$message.warning('密码填写有误')
+      // }
+      submitMethod(submitForm)
         .then(data => {})
         .finally(() => {
           this.submitLoading = false

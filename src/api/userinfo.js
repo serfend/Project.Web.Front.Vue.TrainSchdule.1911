@@ -83,6 +83,21 @@ export function getUserDuties(id) {
 }
 
 /**
+ * 获取用户系统信息
+ *
+ * @export
+ * @param {*} id
+ * @returns
+ */
+export function getUserApplication(id) {
+  return request.get('users/application', {
+    params: {
+      id
+    }
+  })
+}
+
+/**
  * 单位信息 Get /Users/company
  * @description
  ```

@@ -4,7 +4,8 @@ import {
   getUserCompany,
   getUserDuties,
   getUserSocial,
-  getUserDiy
+  getUserDiy,
+  getUserApplication
 } from '../api/userinfo'
 
 /**
@@ -54,9 +55,11 @@ export function getUserAllInfo(id) {
       getUserCompany(id),
       getUserDuties(id),
       getUserSocial(id),
-      getUserDiy(id)
-    ]).then(([base, company, duties, social, diy]) => {
+      getUserDiy(id),
+      getUserApplication(id)
+    ]).then(([base, company, duties, social, diy, application]) => {
       var UserInfoes = {
+        application,
         base,
         company,
         duties,

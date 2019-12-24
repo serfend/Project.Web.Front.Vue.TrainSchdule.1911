@@ -45,27 +45,10 @@ export function removeAccount(params) {
 
 /**
  * 注册
- * @param { {
- * Data: {
- *   id: String,
- *   realName: String,
- *   company: String,
- *   duties: String,
- *   phone: String,
- *   homeAddress: String,
- *   homeDetailAddress: String,
- *   email: String,
- *   password: String,
- *   confirmpassword: String
- * },
- * Auth: {
- *   Code: String,
- *   AuthByUserID: String
- * },
- * Verify: {
- *   Code: String
- * }
- * } } params
+ *
+ * @export
+ * @param {*} params
+ * @returns
  */
 export function regnew(params) {
   // 注册接口暂时不使用加密
@@ -168,10 +151,24 @@ export function checkAuthCode(authByUserId, code, ignoreErr) {
  * 授权未认证用户，需要登录
  *
  * @export
- * @param {*} username
+ * @param {*} data
  */
 export function authUserRegister(username) {
   return request.post('/account/authUserRegister', {
     username
   })
+}
+
+/**
+ * 注册
+ *
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function modefyUser(params) {
+  // 注册接口暂时不使用加密
+  // params.password = formatPsw(params.username, params.password)
+  // params.confirmpassword = formatPsw(params.username, params.confirmpassword)
+  return request.post('account/modefyUser', params)
 }

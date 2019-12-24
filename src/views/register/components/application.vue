@@ -1,16 +1,16 @@
 <template>
   <div>
-    <el-form-item prop="username" label="身份号">
+    <el-form-item prop="userName" label="身份号">
       <el-input
-        v-model="innerForm.username"
+        v-model="innerForm.userName"
         :style="{ width: '200px' }"
         placeholder="身份号通常为7位或11位证件号码"
         auto-complete="on"
         type="text"
-        @change="checkUsername"
+        @change="checkuserName"
       />
-      <el-tooltip :content="invalid.username.des">
-        <i v-if="invalid.username.status" class="el-icon-error" style="color:#F56C6C" />
+      <el-tooltip :content="invalid.userName.des">
+        <i v-if="invalid.userName.status" class="el-icon-error" style="color:#F56C6C" />
         <i v-else class="el-icon-success" style="color:#67C23A" />
       </el-tooltip>
     </el-form-item>
@@ -72,17 +72,24 @@
 import { getUserSummary } from '@/api/userinfo'
 export default {
   name: 'Application',
+  props: {
+    form: {
+      type: Object,
+      default() {
+        return this.innerForm
+      }
+    }
+  },
   data() {
     return {
       innerForm: {
-        username: '',
+        userName: '',
         password: '',
         confirmPassword: '',
-        about: '',
         email: ''
       },
       invalid: {
-        username: {
+        userName: {
           status: false,
           des: ''
         }
@@ -92,8 +99,19 @@ export default {
     }
   },
   watch: {
+    form: {
+      handler(val) {
+        if (val.userName !== null) {
+          this.innerForm = val
+        } else {
+          console.warn('Applicaiton接收到无效的Model')
+        }
+      },
+      deep: true,
+      immediate: true
+    },
     innerForm: {
-      handler(val, oldVal) {
+      handler(val) {
         this.$emit('update:form', val)
       },
       deep: true
@@ -125,22 +143,22 @@ export default {
         this.$refs.password.focus()
       })
     },
-    checkUsername() {
-      const username = this.innerForm.username
-      if (!username || username.length < 7) {
-        this.invalid.username.status = true
-        this.invalid.username.des = '账号长度过短'
+    checkuserName() {
+      const userName = this.innerForm.userName
+      if (!userName || userName.length < 7) {
+        this.invalid.userName.status = true
+        this.invalid.userName.des = '账号长度过短'
         return
       }
-      this.invalid.username.des = '验证成功'
-      getUserSummary(username, true)
+      this.invalid.userName.des = '验证成功'
+      getUserSummary(userName, true)
         .then(data => {
-          this.invalid.username.status = true
-          this.invalid.username.des =
+          this.invalid.userName.status = true
+          this.invalid.userName.des =
             '此账号已被' + data.companyName + data.realName + '使用'
         })
         .catch(() => {
-          this.invalid.username.status = false
+          this.invalid.userName.status = false
         })
     }
   }
