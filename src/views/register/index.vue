@@ -89,7 +89,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="name" label="姓名" width="100" />
-          <el-table-column prop="duties" label="职务" width="50" />
+          <el-table-column prop="duties" label="职务" width="150" />
           <el-table-column prop="vocation.yearlyLength" label="基础假" width="50" />
           <el-table-column prop="vocation.maxTripTimes" label="可休路途次数" width="50" />
           <el-table-column prop="accountValid" label="有效" width="80">
@@ -306,16 +306,27 @@ export default {
         })
     },
     loadSingleUser() {
+      var fn = []
       for (var i = 0; i < this.waitToAuthRegisterUsers.length; i++) {
-        var fn = () => {
-          var item = this.waitToAuthRegisterUsers[i]
-          getUserAvatar(item.id).then(data => (item.avatar = data.url))
-          getUsersVocationLimit(item.id).then(data => (item.vocation = data))
-        }
-        fn().then(() => {
-          this.$message.success('成功执行')
-        })
+        fn.push(
+          new Promise((resolve, reject) => {
+            var item = this.waitToAuthRegisterUsers[i]
+            return Promise.all([
+              getUserAvatar(item.id),
+              getUsersVocationLimit(item.id)
+            ])
+              .then(([avatar, vocation]) => {
+                item.avatar = avatar.url
+                item.vocation = vocation
+                resolve()
+              })
+              .catch(err => reject(err))
+          })
+        )
       }
+      Promise.all(fn).then(() => {
+        this.$message.success('加载完毕')
+      })
     },
     loadUserList(list) {
       var result = list.map(item => {
@@ -372,7 +383,9 @@ export default {
       //   return this.$message.warning('密码填写有误')
       // }
       submitMethod(submitForm)
-        .then(data => {})
+        .then(data => {
+          this.$message.success('成功执行')
+        })
         .finally(() => {
           this.submitLoading = false
         })
