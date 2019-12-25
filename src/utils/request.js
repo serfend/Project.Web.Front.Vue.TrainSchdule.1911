@@ -128,10 +128,11 @@ service.interceptors.response.use(
     }
     const res = response.data
     // cache.set(response.config.cacheIndex, res)
-    if (!response.config.respondErrorIngore) {
-      if (res.status === 0) {
-        return Promise.resolve(res.data)
-      } else {
+
+    if (res.status === 0) {
+      return Promise.resolve(res.data)
+    } else {
+      if (!response.config.respondErrorIngore) {
         Message({
           message: res.message,
           type: 'error',
@@ -149,8 +150,8 @@ service.interceptors.response.use(
             }, (i + 1) * 2000, list[i])
           }
         }
-        return Promise.reject(res)
       }
+      return Promise.reject(res)
     }
   },
   error => {

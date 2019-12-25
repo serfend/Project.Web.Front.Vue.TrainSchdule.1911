@@ -247,7 +247,7 @@ export default {
       this.refreshFormType()
     },
     refreshFormType() {
-      this.stepOptions[1].remove = this.stepOptions[5].remove = this.isToRegister
+      this.stepOptions[1].remove = !this.isToRegister
       if (this.isToRegister) {
         this.waitToAuthRegisterUsersLoadId = '0'
       }

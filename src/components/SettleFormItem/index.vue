@@ -66,6 +66,7 @@ export default {
       handler(val) {
         if (this.innerForm === this.form) return
         this.innerForm = this.form
+        if (!this.innerForm) this.innerForm = {}
         if (this.form.address) {
           this.innerForm.address = {
             code: this.form.address.code + '',

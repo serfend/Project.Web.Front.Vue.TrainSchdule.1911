@@ -7,7 +7,7 @@
     <el-form-item label="初始休假天数">
       <el-col :lg="8">
         <el-input-number v-model="innerForm.settle.prevYearlyLength" />
-        <el-tooltip content="如果无特殊情况，此项可不填，系统将自动计算" effect="dark" placement="bottom">
+        <el-tooltip content="填写今年1月1日时应休正休假天数，详细政策同《人力知会手册》" effect="dark" placement="bottom">
           <i class="el-icon-question" />
         </el-tooltip>
       </el-col>
