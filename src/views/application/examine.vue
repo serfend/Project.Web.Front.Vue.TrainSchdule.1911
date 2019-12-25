@@ -233,7 +233,6 @@ import ApplicationList from './components/ApplicationList'
 import ApplySearchCommon from './components/ApplySearchCommon'
 import Pagination from '../pagination'
 import { audit, postRecallOrder, getRecallOrder, queryList } from '@/api/apply'
-import { getOnMyManage } from '@/api/usercompany'
 // import { getMembers } from '@/api/company'
 import {
   exportUserApplies,
@@ -314,7 +313,6 @@ export default {
           end: ''
         }
       },
-      myManages: [],
       dataList: [],
       onLoading: false,
       membersOption: [],
@@ -343,7 +341,6 @@ export default {
   },
   created() {
     this.queryAppliesForm.auditByCompany.value = this.myAuditCompany
-    this.getOnMyManage()
     this.searchData()
   },
   methods: {
@@ -442,7 +439,6 @@ export default {
           this.clearAuditForm()
         })
     },
-
     SubmitRecall() {
       const model = {
         apply: this.auditForm.applyId,
@@ -498,22 +494,6 @@ export default {
     },
     handleCreate() {
       this.$router.push('/application/new')
-    },
-    getOnMyManage() {
-      this.membersOption = []
-      this.cacheMembers = []
-      this.queryForm = {
-        companycode: '',
-        userId: '',
-        isSearchUser: false
-      }
-      getOnMyManage()
-        .then(data => {
-          this.myManages = data.list || []
-        })
-        .catch(err => {
-          console.warn(err)
-        })
     },
     // 查询数据
     searchData(sForm) {

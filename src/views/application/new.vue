@@ -238,11 +238,10 @@
             </el-row>
 
             <el-form-item label="休假目的地">
-              <el-cascader
-                v-model="formApply.vocationPlaceArr"
-                :options="locationOptions"
-                :show-all-levels="true"
-                @active-item-change="handleItemChange"
+              <cascader-selector
+                placeholder="选择本次休假的目的地"
+                :code.sync="formApply.vocationPlace"
+                :child-getter-method="locationChildren"
               />
             </el-form-item>
             <el-form-item label="详细地址">
@@ -307,6 +306,7 @@
 <script>
 import { parseTime } from '@/utils'
 import SettleFormItem from '@/components/SettleFormItem'
+import CascaderSelector from '@/components/CascaderSelector'
 import { getUserAllInfo } from '@/api/usercompany'
 import {
   getUserIdByCid,
@@ -323,7 +323,8 @@ import { locationChildren } from '@/api/static'
 export default {
   name: 'NewApply',
   components: {
-    SettleFormItem
+    SettleFormItem,
+    CascaderSelector
   },
   data() {
     return {
@@ -331,8 +332,8 @@ export default {
       OnloadingUserInfoes: false,
       OnloadingUserStamp: false,
       onLoading: false,
-      form: this.createNewBase,
-      formApply: this.createNewRequest,
+      form: this.createNewBase(),
+      formApply: this.createNewRequest(),
       formFinal: {
         baseInfoId: '',
         RequestId: ''
@@ -344,17 +345,6 @@ export default {
         onTripTimes: 0,
         maxTripTimes: 0
       },
-      locationOptions: [
-        {
-          label: '选择地域',
-          value: 0,
-          children: []
-        },
-        {
-          label: '不选择',
-          value: -1
-        }
-      ],
       isAfterSubmit: false,
       caculaingDate: {},
       restaurants: [], // 福利假选择
@@ -395,12 +385,20 @@ export default {
     },
     currentUser() {
       return this.$store.state.user.data
-    },
+    }
+  },
+  created() {
+    this.createNew()
+  },
+  mounted() {
+    this.restaurants = this.loadAll()
+  },
+  methods: {
     createNewBase() {
       return {
-        id: this.currentUser.id === null ? '' : this.currentUser.id,
+        id: this.currentUser === undefined ? '' : this.currentUser.id,
         realName:
-          this.currentUser.realName === null ? '' : this.currentUser.realName,
+          this.currentUser === undefined ? '' : this.currentUser.realName,
         company: '',
         companyName: '',
         duties: '',
@@ -421,21 +419,12 @@ export default {
         VocationLength: 0,
         OnTripLength: 0,
         VocationType: '',
-        vocationPlace: 0,
+        vocationPlace: '0',
         vocationPlaceName: '',
-        vocationPlaceArr: [],
         reason: '',
         ByTransportation: '0'
       }
-    }
-  },
-  created() {
-    this.createNew()
-  },
-  mounted() {
-    this.restaurants = this.loadAll()
-  },
-  methods: {
+    },
     removeVacation(index) {
       console.log(index)
       this.SelectVacationList.splice(index, 1)
@@ -529,40 +518,8 @@ export default {
         }
       })
     },
-    getLocationChildrenIndexByValue(item, value) {
-      for (var i = 0; i < item.children.length; i++) {
-        if (item.children[i].value === value) return i
-      }
-      return 0
-    },
-    handleItemChange(val) {
-      if (val) {
-        const deep = val.length - 1
-        const id = val[deep]
-        this.formApply.vocationPlaceArr = val
-        locationChildren(id).then(data => {
-          const children = data.list.map(d => ({
-            label: d.name,
-            value: d.code,
-            children: []
-          }))
-          var item = this.locationOptions[0]
-          var nextIndex = 0
-          for (var i = 0; i < deep; i++) {
-            nextIndex = this.getLocationChildrenIndexByValue(item, val[i + 1])
-            item = item.children[nextIndex]
-          }
-          item.children = children
-          if (item.children.length === 0) {
-            item.children[0] = {
-              label: '无下一层级',
-              disabled: true
-            }
-          }
-        })
-      } else {
-        this.$message.error('无效的地址')
-      }
+    locationChildren(id) {
+      return locationChildren(id)
     },
     fetchUserInfoes(byIdOrRealname) {
       const realName = this.form.realName
@@ -643,6 +600,7 @@ export default {
               loversParent,
               prevYearlyLength
             } = social.settle
+            if (!this.form.Settle) this.form.Settle = {}
             this.form.Settle.self = self
             this.form.Settle.lover = lover
             this.form.Settle.parent = parent
@@ -717,11 +675,7 @@ export default {
       if (this.onLoading === true) {
         return this.$message.info('生成中，请等待')
       }
-      const { vocationPlaceArr, ...param } = this.formApply
-      if (vocationPlaceArr && vocationPlaceArr.length > 0) {
-        param.vocationPlace = vocationPlaceArr[vocationPlaceArr.length - 1]
-      }
-      const infoParam = Object.assign({}, param, {
+      const infoParam = Object.assign({}, this.formApply, {
         id: this.form.id
       })
       this.onLoading = true
@@ -806,8 +760,8 @@ export default {
      */
     createNew() {
       this.active = 0
-      this.form = this.createNewBase
-      this.formApply = this.createNewRequest
+      this.form = this.createNewBase()
+      this.formApply = this.createNewRequest()
       this.formFinal = {
         baseInfoId: '',
         RequestId: ''

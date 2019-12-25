@@ -83,7 +83,6 @@ import {
   exportApply,
   exportCompanyApplies
 } from '@/api/static'
-import { getOnMyManage } from '@/api/usercompany'
 import { deleteApply, publish, save, withdrew } from '@/api/apply'
 // import { getMembers } from '@/api/company'
 
@@ -164,7 +163,6 @@ export default {
       },
       dataList: [],
       onLoading: false,
-      myManages: [],
       membersOption: [],
       cacheMembers: [],
       userActionDic: [
@@ -212,28 +210,13 @@ export default {
   created() {
     this.queryAppliesForm.createCompany.value = this.myCreateCompany
     this.authForm.authByUserId = this.myUserid
-    this.getOnMyManage()
     this.searchData()
   },
   methods: {
     updatepage(newpage) {
-      this.pages = newpage
+      if (newpage) this.pages = newpage
       this.searchData()
     },
-    getOnMyManage() {
-      this.membersOption = []
-      this.cacheMembers = []
-      getOnMyManage()
-        .then(data => {
-          if (data.list) {
-            this.myManages = data.list || []
-          }
-        })
-        .catch(err => {
-          console.warn(err)
-        })
-    },
-
     hendleExecute(method, row, id, beenAudit) {
       if (this.onLoading === true) {
         return false
@@ -261,7 +244,7 @@ export default {
       this.onLoading = true
       fn(params)
         .then(data => {
-          this.$message.success(method.name + '成功')
+          this.$message.success(method.description + '成功')
         })
         .catch(err => {
           console.log(err)
