@@ -19,6 +19,7 @@ const state = {
   token: getToken(),
   name: '',
   companyid: '',
+  dutiesType: '',
   userid: '',
   vocation: {}, // 当前休假状态
   vocationList: [], // 休假记录列表
@@ -43,6 +44,9 @@ const mutations = {
   },
   SET_CMPID: (state, name) => {
     state.companyid = name
+  },
+  SET_DUTYTYPE: (state, type) => {
+    state.dutiesType = type
   },
   SET_DATA: (state, data) => {
     state.data = data
@@ -94,6 +98,7 @@ const actions = {
         if (state.userid !== data.id) this.dispatch('user/initVocationList')
         commit('SET_USERID', data.id)
         commit('SET_CMPID', data.companyCode)
+        commit('SET_DUTYTYPE', data.dutiesRawType)
         commit('SET_INTRODUCTION', data.about)
         commit('SET_DATA', data)
         return resolve()

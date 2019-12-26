@@ -65,13 +65,19 @@ const exportXSL = (data) => {
 }
 
 /**
- * 导出休假登记模版
- * @param {{
-    "templete":"干部休假登记卡.xlsx",
-      "user":"ADJC1AH121"
-  }} params
+ *导出休假登记模版
+ *
+ * @export
+ * @param {*} user
+ * @param {*} dutiesType
+ * @returns
  */
-export function exportUserApplies(user, templete = '干部休假登记卡.xlsx') {
+export function exportUserApplies(user, dutiesType) {
+  console.log('exportUserApplies' + dutiesType)
+  var templete = '干部休假登记卡.xlsx'
+  switch (dutiesType) {
+    case 1: templete = '人员休假登记卡.xlsx'
+  }
   return exportXSL({
     templete,
     user
@@ -79,15 +85,19 @@ export function exportUserApplies(user, templete = '干部休假登记卡.xlsx')
 }
 
 /**
- * 导出休假请求列表
- * @param {{
-    "templete":"休假人员统计表.xlsx",
-    "Model":{
-      "apply":"ADJC1AH121"
-    }
-  }} params
+ *导出休假请求列表
+ * this.$store.state.user.dutiesType
+ * @export
+ * @param {*} apply
+ * @param {*} dutiesType
+ * @returns
  */
-export function exportApply(apply, templete = '干部请假单.xlsx') {
+export function exportApply(apply, dutiesType) {
+  console.log('exportApply' + dutiesType)
+  var templete = '干部请假单.xlsx'
+  switch (dutiesType) {
+    case 1: templete = '人员请假单.xlsx'
+  }
   return exportXSL({
     templete,
     apply
@@ -95,16 +105,16 @@ export function exportApply(apply, templete = '干部请假单.xlsx') {
 }
 
 /**
- * 导出汇总状态
- * @param {{
-    "templete":"休假人员统计表.xlsx",
-    "Model":{
-      "company":"ADJC1AH121"
-    }
-  }} params
+ *导出汇总状态
+ *
+ * @export
+ * @param {*} company
+ * @param {string} dutiesType
+ * @returns
  */
-export function exportCompanyApplies(company, templete = '休假人员统计表.xlsx') {
-  alert(company)
+export function exportCompanyApplies(company, dutiesType) {
+  console.log('exportCompanyApplies' + dutiesType)
+  var templete = '休假人员统计表.xlsx'
   return exportXSL({
     templete,
     company

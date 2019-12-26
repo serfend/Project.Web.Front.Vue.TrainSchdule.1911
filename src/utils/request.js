@@ -138,8 +138,8 @@ service.interceptors.response.use(
           type: 'error',
           duration: 5 * 1000
         })
-        const list = res.data.list
-        if (list) {
+        if (res.data && res.data.list) {
+          const list = res.data.list
           for (var i = 0; i < list.length; i++) {
             setTimeout((errItem) => {
               Message({

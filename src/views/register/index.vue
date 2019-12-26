@@ -264,7 +264,8 @@ export default {
             '(' +
             this.waitToAuthRegisterUsersLoadId +
             ')的注册进行【' +
-            (valid ? '认证' : '退回' + '】操作，请确认')
+            (valid ? '认证' : '退回') +
+            '】操作，请确认'
         )
       ) {
         const username = this.waitToAuthRegisterUsersLoadId

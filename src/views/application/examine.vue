@@ -18,12 +18,12 @@
             <el-button
               icon="el-icon-download"
               type="primary"
-              @click="exportUserApplies(queryAppliesForm.createFor.value===''?myUserid:queryAppliesForm.createFor.value)"
+              @click="exportUserApplies(queryAppliesForm.createFor.value===''?myUserid:queryAppliesForm.createFor.value,$store.state.user.dutiesType)"
             >导出{{ queryAppliesForm.createFor.value===''?myUserid:queryAppliesForm.createFor.value }}申请</el-button>
             <el-button
               icon="el-icon-download"
               type="primary"
-              @click="exportCompanyApplies(queryAppliesForm.createCompany.value===''?myCreateCompany:queryAppliesForm.createCompany.value )"
+              @click="exportCompanyApplies(queryAppliesForm.createCompany.value===''?myCreateCompany:queryAppliesForm.createCompany.value ,$store.state.user.dutiesType)"
             >导出{{ queryAppliesForm.createCompany.value===''?myCreateCompany:queryAppliesForm.createCompany.value }}的申请</el-button>
           </el-form-item>
         </template>
@@ -38,7 +38,7 @@
       >
         <template slot="action" slot-scope="{row}">
           <el-button
-            v-if="row.status==100&&row.recallId===null"
+            v-if="CheckIfShowRecall(row)"
             size="mini"
             type="warning"
             @click="recallApply(row)"
@@ -54,7 +54,10 @@
               >驳回</el-button>
             </el-button-group>
           </div>
-          <el-button v-else-if="row.recallId!==null" @click="showRecallMsg(row)">召回信息</el-button>
+          <el-button v-else-if="row.recallId!==null" type="warning" @click="showRecallMsg(row)">召回信息</el-button>
+          <el-tag v-else-if="row.status===100" type="success">正常休假</el-tag>
+          <el-tag v-else-if="row.status>30" type="warning">审批中</el-tag>
+          <el-tag v-else type="info">未提交申请</el-tag>
         </template>
       </ApplicationList>
 
@@ -234,16 +237,11 @@ import ApplySearchCommon from './components/ApplySearchCommon'
 import Pagination from '../pagination'
 import { audit, postRecallOrder, getRecallOrder, queryList } from '@/api/apply'
 // import { getMembers } from '@/api/company'
-import {
-  exportUserApplies,
-  exportApply,
-  exportCompanyApplies
-} from '@/api/static'
+import { exportUserApplies, exportCompanyApplies } from '@/api/static'
 // 将导出的方法以mixins的方式注入到vm实例
 const mixins = {
   methods: {
     exportUserApplies,
-    exportApply,
     exportCompanyApplies,
     download(data) {
       if (!data) {
@@ -406,9 +404,6 @@ export default {
               this.searchData()
             })
           })
-          .catch(err => {
-            this.$message.error(err.message)
-          })
           .finally(() => {
             this.clearAuditForm()
             this.multiAuditForm.show = false
@@ -432,12 +427,16 @@ export default {
             this.searchData()
           })
         })
-        .catch(err => {
-          this.$message.error(err.message)
-        })
         .finally(() => {
           this.clearAuditForm()
         })
+    },
+    CheckIfShowRecall(row) {
+      return (
+        row.status === 100 &&
+        row.recallId === null &&
+        new Date(row.request.stampReturn) > new Date()
+      )
     },
     SubmitRecall() {
       const model = {

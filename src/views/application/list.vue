@@ -15,12 +15,12 @@
             <el-button
               icon="el-icon-download"
               type="primary"
-              @click="exportUserApplies(queryAppliesForm.createFor.value===''?myUserid:queryAppliesForm.createFor.value)"
+              @click="exportUserApplies(queryAppliesForm.createFor.value===''?myUserid:queryAppliesForm.createFor.value,$store.state.user.dutiesType)"
             >导出{{ queryAppliesForm.createFor.value===''?myUserid:queryAppliesForm.createFor.value }}申请</el-button>
             <el-button
               icon="el-icon-download"
               type="primary"
-              @click="exportCompanyApplies(queryAppliesForm.createCompany.value===''?myCreateCompany:queryAppliesForm.createCompany.value )"
+              @click="exportCompanyApplies(queryAppliesForm.createCompany.value===''?myCreateCompany:queryAppliesForm.createCompany.value ,$store.state.user.dutiesType)"
             >导出{{ queryAppliesForm.createCompany.value===''?myCreateCompany:queryAppliesForm.createCompany.value }}的申请</el-button>
           </el-form-item>
         </template>
@@ -31,7 +31,7 @@
             split-button
             szie="small"
             trigger="click"
-            @click="exportApply(applyid)"
+            @click="exportApply(applyid, $store.state.user.dutiesType)"
             @command="action => hendleExecute(action, row, applyid)"
           >
             <i class="el-icon-download" />
