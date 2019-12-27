@@ -21,6 +21,9 @@
         </el-radio-button>
       </el-radio-group>
     </el-form-item>
+    <el-form-item label="籍贯">
+      <el-input v-model="innerForm.hometown" :style="{ width: '400px' }" />
+    </el-form-item>
     <el-form-item label="生日">
       <el-date-picker v-model="innerForm.time_Birthday" disabled />
     </el-form-item>
@@ -52,6 +55,7 @@ export default {
         cid: '',
         realName: '',
         gender: 0,
+        hometown: '',
         time_Work: '',
         time_Birthday: '',
         time_Party: ''
