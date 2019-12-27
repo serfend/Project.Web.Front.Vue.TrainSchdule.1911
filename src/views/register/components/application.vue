@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-form-item prop="userName" label="身份号">
+    <el-form-item prop="userName" label="用户名">
       <el-input
         v-model="innerForm.userName"
         :style="{ width: '200px' }"
-        placeholder="身份号通常为7位或11位证件号码"
+        placeholder="请填写用户名"
         auto-complete="on"
         type="text"
         @change="checkuserName"

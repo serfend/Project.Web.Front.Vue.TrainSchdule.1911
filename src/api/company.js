@@ -88,3 +88,13 @@ export function dutiesQuery(name) {
     }
   })
 }
+export function companyTitleQuery(name) {
+  return request({
+    url: '/company/titleQuery',
+    method: 'get',
+    params: {
+      name
+    }
+  })
+}
+

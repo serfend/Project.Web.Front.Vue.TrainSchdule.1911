@@ -8,21 +8,37 @@
       />
     </el-form-item>
     <el-form-item prop="duties" label="职务">
-      <el-autocomplete
-        v-model="innerForm.duties.name"
-        class="inline-input"
-        :fetch-suggestions="dutiesQuery"
-        placeholder="请输入职务名称"
-        :trigger-on-focus="false"
-        @select="handleDutiesSelect"
-      />
+      <el-tooltip content="需选用下拉框中的建议">
+        <el-autocomplete
+          v-model="innerForm.duties.name"
+          class="inline-input"
+          :fetch-suggestions="dutiesQuery"
+          placeholder="请输入职务名称"
+          @select="handleDutiesSelect"
+        />
+      </el-tooltip>
+    </el-form-item>
+    <el-form-item prop="title" label="职务等级">
+      <el-tooltip content="需选用下拉框中的建议">
+        <el-autocomplete
+          v-model="innerForm.title.name"
+          class="inline-input"
+          :fetch-suggestions="companyTitleQuery"
+          placeholder="请输入职务等级"
+          @select="handleDutiesSelect"
+        />
+      </el-tooltip>
     </el-form-item>
   </div>
 </template>
 
 <script>
 import CascaderSelector from '@/components/CascaderSelector'
-import { companyChild, dutiesQuery, dutiesDetail } from '@/api/company'
+import {
+  companyChild,
+  dutiesQuery,
+  companyTitleQuery
+} from '@/api/company'
 export default {
   name: 'Company',
   components: {
@@ -43,6 +59,9 @@ export default {
           code: 'root'
         },
         duties: {
+          name: ''
+        },
+        title: {
           name: ''
         }
       },
@@ -75,11 +94,16 @@ export default {
     }
   },
   methods: {
-    companyChild(id) {
-      return companyChild(id)
-    },
+    companyChild,
     async dutiesQuery(queryString, cb) {
       var data = await dutiesQuery(queryString)
+      await this.queryItem(data, cb)
+    },
+    async companyTitleQuery(queryString, cb) {
+      var data = await companyTitleQuery(queryString)
+      await this.queryItem(data, cb)
+    },
+    async queryItem(data, cb) {
       var list = data.list
       var result = list.map(item => {
         return {
@@ -90,9 +114,7 @@ export default {
       cb(result)
     },
     handleDutiesSelect(item) {
-      dutiesDetail(item.value).then(data => {
-        console.log(data)
-      })
+      console.log(item)
     }
   }
 }

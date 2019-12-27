@@ -31,7 +31,7 @@
             split-button
             szie="small"
             trigger="click"
-            @click="exportApply(applyid, $store.state.user.dutiesType)"
+            @click="exportApply(row)"
             @command="action => hendleExecute(action, row, applyid)"
           >
             <i class="el-icon-download" />
@@ -90,7 +90,11 @@ import { deleteApply, publish, save, withdrew } from '@/api/apply'
 const mixins = {
   methods: {
     exportUserApplies,
-    exportApply,
+    exportApply(row) {
+      var dutiesRawType = row.userBase.dutiesRawType
+      var applyId = row.id
+      exportApply(applyId, dutiesRawType)
+    },
     exportCompanyApplies,
     download(data) {
       if (!data) {
