@@ -78,7 +78,7 @@
         <el-table
           v-loading="tableLoading"
           :data="waitToAuthRegisterUsers"
-          :default-sort="{prop: 'accountValid', order: 'descending'}"
+          :default-sort="{prop: 'accountAuthStatus', order: 'descending'}"
           highlight-current-row
           style="width: 100%"
           @current-change="handleCurrentChange"
@@ -92,11 +92,11 @@
           <el-table-column prop="duties" label="职务" width="150" />
           <el-table-column prop="vocation.yearlyLength" label="基础假" width="50" />
           <el-table-column prop="vocation.maxTripTimes" label="可休路途次数" width="50" />
-          <el-table-column prop="accountValid" label="有效" width="80">
+          <el-table-column prop="accountAuthStatus" label="状态" width="100">
             <template slot-scope="scope">
               <el-tag
-                :type="scope.row.accountValid?'success':'danger'"
-              >{{ scope.row.accountValid?'已认证':'未认证' }}</el-tag>
+                :type="scope.row.accountAuthStatus==1?'success':scope.row.accountAuthStatus==0?'info':'danger'"
+              >{{ scope.row.accountAuthStatus==1?'已认证':scope.row.accountAuthStatus==0?'待认证':'已退回' }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="vocation.description" label="休假详情描述" />
@@ -270,24 +270,17 @@ export default {
       ) {
         const username = this.waitToAuthRegisterUsersLoadId
         this.waitToAuthRegisterUsersLoadId = ''
-        if (valid) {
-          authUserRegister(username).then(() => {
-            this.$message.success('授权成功')
-            for (var i = 0; i < this.waitToAuthRegisterUsers.length; i++) {
-              if (this.waitToAuthRegisterUsers[i].id === username) {
-                this.waitToAuthRegisterUsers[i].accountValid = true
-                break
-              }
-            }
-          })
-        } else {
+        authUserRegister(username, valid).then(() => {
+          this.$message.success(
+            valid ? '授权成功，可通知登录' : '驳回成功，可通知重新注册'
+          )
           for (var i = 0; i < this.waitToAuthRegisterUsers.length; i++) {
             if (this.waitToAuthRegisterUsers[i].id === username) {
-              this.waitToAuthRegisterUsers.splice(i, 1)
+              this.waitToAuthRegisterUsers[i].accountAuthStatus = valid ? 1 : -1
               break
             }
           }
-        }
+        })
       }
     },
     // 刷新待认证人员列表
@@ -337,7 +330,8 @@ export default {
           duties: item.dutiesName,
           avatar: '',
           vocation: {},
-          accountValid: item.inviteBy !== null
+          accountAuthStatus:
+            item.inviteBy === null ? 0 : item.inviteBy === 'invalid' ? -1 : 0 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
         }
         return obj
       })
@@ -347,7 +341,7 @@ export default {
       if (val === null) return
       this.waitToAuthRegisterUsersLoadId = val.id
       this.submitLoading = true
-      this.selectIsInvalidAccount = !val.accountValid
+      this.selectIsInvalidAccount = val.accountAuthStatus !== 0
       getUserAllInfo(this.waitToAuthRegisterUsersLoadId)
         .then(data => {
           this.registerForm.Social = data.social
@@ -359,7 +353,10 @@ export default {
               name: data.company.company.name,
               code: data.company.company.code
             },
-            duties: data.duties
+            duties: data.duties,
+            title: {
+              name: '123'
+            }
           }
         })
         .finally(() => (this.submitLoading = false))
