@@ -215,7 +215,7 @@ export default {
       return companyChild(id)
     },
     clearForm() {
-      this.$refs.tableForm.resetFields()
+      this.$refs.innerTableForm.resetFields()
     },
     searchData() {
       this.$emit('searchData', this.tableForm)
