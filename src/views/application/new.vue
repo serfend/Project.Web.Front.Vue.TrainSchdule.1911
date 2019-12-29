@@ -266,12 +266,10 @@
         <div v-show="showAll == true || active == 3" class="row layout" />
         <div v-if="showAll" class="mask" />
         <div v-if="showAll" :style="{'backgroundColor': theme}" class="footer-nav">
-          <div v-if="isAfterSubmit" class="row layout justify-center fill-height">
-            <el-button @click="createNew">新建申请</el-button>
-          </div>
-          <div v-else class="row layout justify-center fill-height">
+          <div class="row layout justify-center fill-height">
             <el-button v-loading="onLoading" @click="submitApply">提交</el-button>
             <el-button @click="active = 0">重新填写</el-button>
+            <el-button @click="createNew">新建申请</el-button>
           </div>
         </div>
         <!-- card body -->
