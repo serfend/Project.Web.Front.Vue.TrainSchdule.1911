@@ -355,7 +355,7 @@ export default {
             },
             duties: data.duties,
             title: {
-              name: '123'
+              name: data.duties.title
             }
           }
         })

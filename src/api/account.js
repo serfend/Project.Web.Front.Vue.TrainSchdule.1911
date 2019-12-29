@@ -151,11 +151,13 @@ export function checkAuthCode(authByUserId, code, ignoreErr) {
  * 授权未认证用户，需要登录
  *
  * @export
- * @param {*} data
+ * @param {*} username
+ * @param {*} valid
  */
-export function authUserRegister(username) {
+export function authUserRegister(username,valid) {
   return request.post('/account/authUserRegister', {
-    username
+    username,
+    valid
   })
 }
 
