@@ -154,7 +154,7 @@ export function checkAuthCode(authByUserId, code, ignoreErr) {
  * @param {*} username
  * @param {*} valid
  */
-export function authUserRegister(username,valid) {
+export function authUserRegister(username, valid) {
   return request.post('/account/authUserRegister', {
     username,
     valid
