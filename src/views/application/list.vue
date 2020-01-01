@@ -197,7 +197,7 @@ export default {
   },
   computed: {
     myCreateCompany() {
-      return this.$store.state.user.data.companyCode
+      return this.$store.state.user.companyid
     },
     myUserid() {
       return this.$store.state.user.userid

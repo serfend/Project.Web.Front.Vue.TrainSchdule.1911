@@ -319,18 +319,15 @@ export default {
     }
   },
   computed: {
-    myAuditCompany() {
-      return this.$store.state.user.data.companycode
-    },
     myCreateCompany() {
-      return this.$store.state.user.data.companycode
+      return this.$store.state.user.companyid
     },
     myUserid() {
       return this.$store.state.user.userid
     }
   },
   created() {
-    this.queryAppliesForm.auditByCompany.value = this.myAuditCompany
+    this.queryAppliesForm.auditByCompany.value = this.myCreateCompany
     this.searchData()
   },
   methods: {
