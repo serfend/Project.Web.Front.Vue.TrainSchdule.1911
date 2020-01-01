@@ -3,7 +3,7 @@
     <el-card>
       <ApplySearchCommon
         ref="queryAppliesForm"
-        :table-form="queryAppliesForm"
+        :table-form.sync="queryAppliesForm"
         :on-loading="onLoading"
         @searchData="searchData"
       >
@@ -301,14 +301,6 @@ export default {
         },
         createCompany: {
           value: ''
-        },
-        stampLeave: {
-          start: '',
-          end: ''
-        },
-        stampReturn: {
-          start: '',
-          end: ''
         }
       },
       dataList: [],

@@ -191,9 +191,7 @@ export default {
         createBy: { value: '' },
         auditBy: { value: '' },
         auditByCompany: { value: '' },
-        createCompany: { value: '' },
-        stampLeave: { start: '', end: '' },
-        stampReturn: { start: '', end: '' }
+        createCompany: { value: '' }
       }
     }
   },

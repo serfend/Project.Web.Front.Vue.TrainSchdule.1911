@@ -155,14 +155,6 @@ export default {
         },
         createCompany: {
           value: ''
-        },
-        stampLeave: {
-          start: '',
-          end: ''
-        },
-        stampReturn: {
-          start: '',
-          end: ''
         }
       },
       dataList: [],
