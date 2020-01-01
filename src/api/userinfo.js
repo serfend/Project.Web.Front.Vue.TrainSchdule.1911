@@ -154,11 +154,13 @@ export function getUserIdByRealName(realName) {
 /**
  * 获取用户休假限制时长和次数
  * @param {*} id
+ * @param {int} yearIndex
  */
-export function getUsersVocationLimit(id) {
+export function getUsersVocationLimit(id, yearIndex) {
   return request.get('/users/vocation', {
     params: {
-      id
+      id,
+      yearIndex
     }
   })
 }

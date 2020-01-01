@@ -214,9 +214,6 @@ export default {
     }
   },
   async created() {},
-  // mounted() {
-  //   detailDrawer
-  // },
   methods: {
     LoadPage() {
       this.$emit('LoadPage')

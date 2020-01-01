@@ -11,11 +11,17 @@
       </el-col>
       <el-col :span="4">
         <el-tooltip content="生效时间，表示最后一次更换地点的时间">
-          <el-date-picker v-model="innerForm.date" :disabled="disabled" placeholder="无信息" />
+          <el-date-picker
+            v-model="innerForm.date"
+            :disabled="disabled"
+            placeholder="无信息"
+            format="yyyy年MM月dd"
+            value-format="yyyy-MM-dd"
+          />
         </el-tooltip>
       </el-col>
       <el-col :span="6">
-        <el-tooltip content="行政区划">
+        <el-tooltip content="行政区划,填到区/县一级">
           <cascader-selector
             :placeholder="innerForm.address.name"
             :code.sync="innerForm.address.code"

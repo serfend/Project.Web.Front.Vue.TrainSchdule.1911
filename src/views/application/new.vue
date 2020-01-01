@@ -84,7 +84,18 @@
 
             <el-row class="divider" />
             <el-form-item v-show="showAll == false">
-              <el-button type="success" style="width:100%" @click="goStepTwo">下一步</el-button>
+              <el-button-group>
+                <el-button
+                  type="success"
+                  style="width:50%"
+                  @click="goStepTwo(nowYear)"
+                >本年度休假({{ nowYear }}年)</el-button>
+                <el-button
+                  type="success"
+                  style="width:50%"
+                  @click="goStepTwo(nowYear+1)"
+                >下一年度休假({{ nowYear + 1 }}年)</el-button>
+              </el-button-group>
             </el-form-item>
           </el-form>
         </div>
@@ -146,6 +157,8 @@
                     v-model="formApply.StampLeave"
                     placeholder="选择日期"
                     type="date"
+                    format="yyyy年MM月dd"
+                    value-format="yyyy-MM-dd"
                     @change="handleChange"
                   />
                 </el-form-item>
@@ -168,6 +181,8 @@
                     disabled
                     placeholder="自动计算"
                     type="date"
+                    format="yyyy年MM月dd"
+                    value-format="yyyy-MM-dd"
                   />
                 </el-form-item>
               </el-col>
@@ -372,6 +387,11 @@ export default {
     }
   },
   computed: {
+    nowYear() {
+      var date = new Date()
+      console.log(date.getFullYear())
+      return date.getFullYear()
+    },
     showAll() {
       return this.active === 3
     },
@@ -420,7 +440,8 @@ export default {
         vocationPlace: '0',
         vocationPlaceName: '',
         reason: '',
-        ByTransportation: '0'
+        ByTransportation: '0',
+        yearIndex: 0
       }
     },
     removeVacation(index) {
@@ -507,8 +528,9 @@ export default {
       this.VacationModel.length = item.length
     },
 
-    goStepTwo() {
-      this.submitBaseInfo().then(() => {
+    goStepTwo(yearIndex) {
+      this.formApply.yearIndex = yearIndex
+      this.submitBaseInfo(yearIndex).then(() => {
         if (this.isAllowGoStepTow) {
           this.active = 1
         } else {
@@ -619,9 +641,11 @@ export default {
           this.OnloadingUserInfoes = false
         })
     },
-
-    getUsersVocationLimit(userid) {
-      getUsersVocationLimit(userid).then(data => {
+    // 提交基础信息
+    submitBaseInfo(yearIndex) {
+      const { id, realName, company, duties, Phone } = this.form
+      this.onLoading = true
+      getUsersVocationLimit(id, yearIndex).then(data => {
         this.usersVocation = {
           yearlyLength: 0,
           nowTimes: 0,
@@ -631,13 +655,6 @@ export default {
           ...data
         }
       })
-    },
-
-    // 提交基础信息
-    submitBaseInfo() {
-      const { id, realName, company, duties, Phone } = this.form
-      this.onLoading = true
-      this.getUsersVocationLimit(id)
       return postBaseInfo({
         id,
         realName,

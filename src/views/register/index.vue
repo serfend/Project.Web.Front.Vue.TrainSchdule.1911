@@ -118,6 +118,12 @@
           :style="{ width: '20%' }"
           @click="switchFormType"
         >切换到普通注册</el-button>
+        <Pagination
+          :pagesetting="MembersQuery"
+          @updatepage="updatepage"
+          @handleCurrentChange="loadWaitToAuthRegisterUsers"
+          @handleSizeChange="loadWaitToAuthRegisterUsers"
+        />
       </div>
     </el-card>
   </el-card>
@@ -136,11 +142,14 @@ import { regnew, authUserRegister, modefyUser } from '@/api/account'
 import { getMembers, companyChild } from '@/api/company'
 import { getUsersVocationLimit, getUserAvatar } from '@/api/userinfo'
 import { getUserAllInfo } from '@/api/usercompany'
+import Pagination from '../pagination'
+
 export default {
   name: 'Register',
   components: {
     CascaderSelector,
     LangSelect,
+    Pagination,
     Base,
     Application,
     Social,
@@ -192,6 +201,11 @@ export default {
           component: 'Auth'
         }
       ],
+      MembersQuery: {
+        pageIndex: 1,
+        pageSize: 10,
+        totalCount: 0
+      },
       waitToAuthRegisterUsers: [],
       waitToAuthRegisterUsersLoadId: '',
       selectIsInvalidAccount: false,
@@ -283,13 +297,22 @@ export default {
         })
       }
     },
+    updatepage(newpage) {
+      if (newpage) this.MembersQuery = newpage
+      this.loadWaitToAuthRegisterUsers()
+    },
     // 刷新待认证人员列表
     loadWaitToAuthRegisterUsers() {
       this.tableLoading = true
       this.submitLoading = true
-      getMembers({ code: this.nowSelectCompanyCode })
+      getMembers({
+        code: this.nowSelectCompanyCode,
+        page: this.MembersQuery.pageIndex - 1,
+        pageSize: this.MembersQuery.pageSize
+      })
         .then(data => {
           const list = data.list.filter(item => item.inviteBy === null)
+          this.MembersQuery.totalCount = data.totalCount
           if (list.length === 0) this.$message.success('当前无用户待审批')
           this.waitToAuthRegisterUsers = this.loadUserList(data.list)
           this.loadSingleUser()
@@ -331,7 +354,7 @@ export default {
           avatar: '',
           vocation: {},
           accountAuthStatus:
-            item.inviteBy === null ? 0 : item.inviteBy === 'invalid' ? -1 : 0 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
+            item.inviteBy === null ? 0 : item.inviteBy === 'invalid' ? -1 : 1 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
         }
         return obj
       })
@@ -341,7 +364,7 @@ export default {
       if (val === null) return
       this.waitToAuthRegisterUsersLoadId = val.id
       this.submitLoading = true
-      this.selectIsInvalidAccount = val.accountAuthStatus !== 0
+      this.selectIsInvalidAccount = val.accountAuthStatus === 0
       getUserAllInfo(this.waitToAuthRegisterUsersLoadId)
         .then(data => {
           this.registerForm.Social = data.social
@@ -356,7 +379,8 @@ export default {
             duties: data.duties,
             title: {
               name: data.duties.title
-            }
+            },
+            titleDate: data.duties.titleDate
           }
         })
         .finally(() => (this.submitLoading = false))

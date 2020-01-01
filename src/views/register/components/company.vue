@@ -29,16 +29,15 @@
         />
       </el-tooltip>
     </el-form-item>
+    <el-form-item prop="titleDate" label="职务等级时间">
+      <el-date-picker v-model="innerForm.titleDate" format="yyyy年MM月dd" value-format="yyyy-MM-dd" />
+    </el-form-item>
   </div>
 </template>
 
 <script>
 import CascaderSelector from '@/components/CascaderSelector'
-import {
-  companyChild,
-  dutiesQuery,
-  companyTitleQuery
-} from '@/api/company'
+import { companyChild, dutiesQuery, companyTitleQuery } from '@/api/company'
 export default {
   name: 'Company',
   components: {
@@ -63,7 +62,8 @@ export default {
         },
         title: {
           name: ''
-        }
+        },
+        titleDate: ''
       },
       invalid: {
         company: {

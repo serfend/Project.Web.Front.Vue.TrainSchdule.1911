@@ -24,7 +24,6 @@
         <div class="layout row justify-space-between">
           <el-tag type="info">{{ basic.statusDesc }}</el-tag>
           <el-tooltip content="点击下载用户的休假情况登记卡" effect="dark" placement="top">
-            <!-- content to trigger tooltip here -->
             <el-button
               icon="el-icon-download"
               size="mini"
@@ -210,7 +209,8 @@ export default {
     },
     downloadUserApplies(id) {
       exportUserApplies({
-        user: id
+        user: id,
+        dutiesType: this.$store.state.user.dutiesType
       })
     }
   }
