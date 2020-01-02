@@ -52,6 +52,8 @@ export default {
       handler(val) {
         if (!val.settle) return
         this.innerForm = val
+        var settle = this.innerForm.settle
+        if (settle.id) delete settle.id
       },
       deep: true,
       immediate: true

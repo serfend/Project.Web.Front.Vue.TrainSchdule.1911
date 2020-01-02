@@ -103,6 +103,7 @@ export default {
       handler(val) {
         if (val.userName !== null) {
           this.innerForm = val
+          if (this.innerForm.id) delete this.innerForm.id
         } else {
           console.warn('Applicaiton接收到无效的Model')
         }

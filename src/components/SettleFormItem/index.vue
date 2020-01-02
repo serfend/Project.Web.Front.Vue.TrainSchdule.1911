@@ -73,6 +73,7 @@ export default {
         if (this.innerForm === this.form) return
         this.innerForm = this.form
         if (!this.innerForm) this.innerForm = {}
+        if (this.innerForm.id) delete this.innerForm.id
         if (this.form.address) {
           this.innerForm.address = {
             code: this.form.address.code + '',

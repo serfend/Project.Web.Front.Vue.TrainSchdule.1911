@@ -1,9 +1,11 @@
 <template>
   <el-cascader
+    v-model="staticValue"
     :props="props"
     :show-all-levels="true"
     :placeholder="placeholder===null?'未选择':placeholder"
     style="width:100%"
+    clearable
     @change="handleItemChange"
   />
 </template>
@@ -33,6 +35,7 @@ export default {
   },
   data() {
     return {
+      staticValue: [],
       props: {
         getChild: id => {
           return this.childGetterMethod(id)
@@ -54,10 +57,19 @@ export default {
       }
     }
   },
+  watch: {
+    code: {
+      handler(v) {
+        if (this.staticValue[this.staticValue.length - 1] !== v) {
+          this.staticValue = []
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
     handleItemChange(val) {
       var v = val[val.length - 1]
-      this.props
       this.$emit('update:code', v)
     }
   }

@@ -82,6 +82,7 @@ export default {
       handler(val) {
         if (!val.company) return
         this.innerForm = val
+        if (this.innerForm.id) delete this.innerForm.id
       },
       deep: true,
       immediate: true
