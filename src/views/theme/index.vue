@@ -2,65 +2,47 @@
   <div class="app-container">
     <el-card class="box-card">
       <div slot="header">
-        <a class="link-type link-title" target="_blank" href="https://serfend.github.io/vue-element-admin-site/guide/advanced/theme.html">
-          {{ $t('theme.documentation') }}
-        </a>
+        <a
+          class="link-type link-title"
+          target="_blank"
+          href="https://serfend.github.io/vue-element-admin-site/guide/advanced/theme.html"
+        >文档</a>
       </div>
       <div class="box-item">
-        <span class="field-label">{{ $t('theme.change') }} : </span>
+        <span class="field-label">修改主题 :</span>
         <el-switch v-model="theme" />
-        <aside style="margin-top:15px;">{{ $t('theme.tips') }}</aside>
+        <aside style="margin-top:15px;">主题</aside>
       </div>
     </el-card>
 
     <div class="block">
-      <el-button type="primary">
-        Primary
-      </el-button>
-      <el-button type="success">
-        Success
-      </el-button>
-      <el-button type="info">
-        Info
-      </el-button>
-      <el-button type="warning">
-        Warning
-      </el-button>
-      <el-button type="danger">
-        Danger
-      </el-button>
+      <el-button type="primary">主按钮</el-button>
+      <el-button type="success">成功按钮</el-button>
+      <el-button type="info">信息按钮</el-button>
+      <el-button type="warning">警告按钮</el-button>
+      <el-button type="danger">错误按钮</el-button>
     </div>
 
     <div class="block">
       <el-button type="primary" icon="el-icon-edit" />
       <el-button type="primary" icon="el-icon-share" />
       <el-button type="primary" icon="el-icon-delete" />
-      <el-button type="primary" icon="el-icon-search">
-        Search
-      </el-button>
+      <el-button type="primary" icon="el-icon-search">搜索</el-button>
       <el-button type="primary">
-        Upload
+        上传
         <i class="el-icon-upload el-icon-right" />
       </el-button>
     </div>
 
     <div class="block">
-      <el-tag v-for="tag in tags" :key="tag.type" :type="tag.type" class="tag-item">
-        {{ tag.name }}
-      </el-tag>
+      <el-tag v-for="tag in tags" :key="tag.type" :type="tag.type" class="tag-item">{{ tag.name }}</el-tag>
     </div>
 
     <div class="block">
       <el-radio-group v-model="radio">
-        <el-radio :label="3">
-          Option A
-        </el-radio>
-        <el-radio :label="6">
-          Option B
-        </el-radio>
-        <el-radio :label="9">
-          Option C
-        </el-radio>
+        <el-radio :label="3">选项 A</el-radio>
+        <el-radio :label="6">选项 B</el-radio>
+        <el-radio :label="9">选项 C</el-radio>
       </el-radio-group>
     </div>
 
@@ -80,11 +62,11 @@ export default {
     return {
       theme: false,
       tags: [
-        { name: 'Tag One', type: '' },
-        { name: 'Tag Two', type: 'info' },
-        { name: 'Tag Three', type: 'success' },
-        { name: 'Tag Four', type: 'warning' },
-        { name: 'Tag Five', type: 'danger' }
+        { name: '标签 默认', type: '' },
+        { name: '标签 信息', type: 'info' },
+        { name: '标签 成功', type: 'success' },
+        { name: '标签 警告', type: 'warning' },
+        { name: '标签 危险', type: 'danger' }
       ],
       slideValue: 50,
       radio: 3
@@ -99,7 +81,7 @@ export default {
 </script>
 
 <style scoped>
-.field-label{
+.field-label {
   vertical-align: middle;
 }
 .box-card {

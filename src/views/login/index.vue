@@ -9,8 +9,8 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">{{ $t('login.title') }}</h3>
-        <lang-select class="set-language" />
+        <h3 class="title">登录到系统</h3>
+        <!-- <lang-select class="set-language" /> -->
       </div>
 
       <el-form-item prop="username">
@@ -20,7 +20,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          :placeholder="$t('login.username')"
+          placeholder="用户名或身份证号"
           auto-complete="on"
           name="username"
           tabindex="1"
@@ -28,7 +28,7 @@
         />
       </el-form-item>
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" manual placement="right">
+      <el-tooltip v-model="capsTooltip" content="大写已开启" manual placement="right">
         <el-form-item prop="password">
           <span class="svg-container">
             <svg-icon icon-class="password" />
@@ -37,7 +37,7 @@
             :key="passwordType"
             ref="password"
             v-model="loginForm.password"
-            :placeholder="$t('login.password')"
+            placeholder="密码"
             :type="passwordType"
             auto-complete="on"
             name="password"
@@ -57,12 +57,12 @@
         style="width:100%;margin-bottom:30px;"
         type="primary"
         @click.native.prevent="handleLogin"
-      >{{ $t('login.logIn') }}</el-button>
+      >登 录</el-button>
       <el-button
         style="width:100%;margin-bottom:5px;margin-left:0px"
         type="primary"
         @click.native.prevent="handleReg"
-      >{{ $t('register.title') }}</el-button>
+      >注 册</el-button>
       <el-button
         :disabled="currentUser?false:true"
         style="width:100%;margin-bottom:5px;margin-left:0px"
@@ -70,8 +70,8 @@
       >{{ '审核本单位新注册人员信息 ' + (currentUser?currentUser:'需要登录后访问') }}</el-button>
     </el-form>
 
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
-      {{ $t('login.thirdpartyTips') }}
+    <el-dialog title="第三方登录" :visible.sync="showDialog">
+      论坛登录功能暂未开放
       <social-sign />
     </el-dialog>
   </div>
@@ -79,13 +79,13 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import LangSelect from '@/components/LangSelect'
+// import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
 import { Message } from 'element-ui'
 import { getUserBase } from '@/api/userinfo'
 export default {
   name: 'Login',
-  components: { LangSelect, SocialSign },
+  components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
@@ -195,7 +195,7 @@ export default {
             .then(data => {
               this.loading = false
               Message({
-                message: this.$t('login.success'),
+                message: '登录成功',
                 type: 'success',
                 duration: 5 * 1000
               })

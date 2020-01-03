@@ -64,59 +64,24 @@ const exportXSL = (data) => {
   window.open(exportPath + str, '_black')
 }
 
-/**
- *导出休假登记模版
- *
- * @export
- * @param {*} user
- * @param {*} dutiesType
- * @returns
- */
-export function exportUserApplies(user, dutiesType) {
-  console.log('exportUserApplies' + dutiesType)
-  var templete = '干部休假登记卡.xlsx'
-  switch (dutiesType) {
-    case 1: templete = '人员休假登记卡.xlsx'
-  }
-  return exportXSL({
-    templete,
-    user
-  })
-}
 
 /**
- *导出休假请求列表
- * this.$store.state.user.dutiesType
- * @export
- * @param {*} apply
- * @param {*} dutiesType
- * @returns
- */
-export function exportApply(apply, dutiesType) {
-  console.log('exportApply' + dutiesType)
-  var templete = '干部请假单.xlsx'
-  switch (dutiesType) {
-    case 1: templete = '人员请假单.xlsx'
-  }
-  return exportXSL({
-    templete,
-    apply
-  })
-}
-
-/**
- *导出汇总状态
+ *导出单个申请
  *
  * @export
- * @param {*} company
- * @param {string} dutiesType
- * @returns
+ * @param {*} templete
+ * @param {*} query
  */
-export function exportCompanyApplies(company, dutiesType) {
-  console.log('exportCompanyApplies' + dutiesType)
-  var templete = '休假人员统计表.xlsx'
-  return exportXSL({
-    templete,
-    company
-  })
+export function exportSingleApply(templete, query) {
+
+}
+/**
+ *导出多个申请
+ *
+ * @export
+ * @param {*} templete
+ * @param {*} query
+ */
+export function exportMultiApplies(templete, query) {
+
 }

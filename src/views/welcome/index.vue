@@ -5,31 +5,34 @@
         <div>
           <img src="/favicon-32x32.png" style="width:40px;">
         </div>
-        <div class="menu-top-title">61035部队</div>
-        <div class="menu-top-title">休假登记和审核系统</div>
+        <div class="menu-top-title">{{ $t('default.system.company.name') }}</div>
+        <div class="menu-top-title">{{ $t('default.system.project.name') }}</div>
       </div>
-      <router-link to="application/new">
+      <router-link to="/application/newApply">
         <div class="menu">
           <div>
-            <svg-icon icon-class="menu-apply" />申请休假
+            <svg-icon icon-class="menu-apply" />
+            {{ $t('application.new') }}
           </div>
           <div class="menu-des">个人提交休假申请窗口</div>
         </div>
       </router-link>
-      <router-link to="login?redirect=application/list">
+      <router-link to="login?redirect=/application/queryAndAuditApplies">
         <div class="menu">
           <div>
-            <svg-icon icon-class="menu-search" />查询结果
+            <svg-icon icon-class="menu-search" />
+            {{ $t('application.query') }}
           </div>
-          <div class="menu-des">个人查询休假审批状态窗口</div>
+          <div class="menu-des">查询批假情况和审批单位休假窗口</div>
         </div>
       </router-link>
-      <router-link to="login?redirect=application/examine">
+      <router-link to="login?redirect=404">
         <div class="menu">
           <div>
-            <svg-icon icon-class="menu-approval" />审核申请
+            <svg-icon icon-class="menu-approval" />
+            {{ $t('application.my') }}
           </div>
-          <div class="menu-des">单位逐级报批休假窗口</div>
+          <div class="menu-des">个人休假情况概览窗口</div>
         </div>
       </router-link>
     </el-aside>
@@ -50,7 +53,7 @@ export default {
 
 <style lang="scss" scoped>
 .el-container {
-  background: url('../../assets/jpg/bg.jpg') no-repeat center center;
+  background: url("../../assets/jpg/bg.jpg") no-repeat center center;
   background-size: 100%;
   height: 100%;
   background-size: cover;

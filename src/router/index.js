@@ -19,8 +19,8 @@ const applicationRouter = {
   },
   children: [
     {
-      path: 'new',
-      component: () => import('@/views/application/new'),
+      path: 'newApply',
+      component: () => import('@/views/NewApply'),
       name: 'newApplication',
       meta: {
         title: 'application.new',
@@ -29,18 +29,8 @@ const applicationRouter = {
       }
     },
     {
-      path: 'examine',
-      component: () => import('@/views/application/examine'),
-      name: 'examineApplication',
-      meta: {
-        title: 'application.examine',
-        verify: 'on',
-        icon: '提案审批'
-      }
-    },
-    {
-      path: 'list',
-      component: () => import('@/views/application/list'),
+      path: 'queryAndAuditApplies',
+      component: () => import('@/views/QueryAndAuditApplies'),
       name: 'applicationList',
       meta: {
         title: 'application.query',
