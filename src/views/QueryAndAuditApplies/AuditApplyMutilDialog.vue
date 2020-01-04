@@ -191,7 +191,7 @@ export default {
             }
           })
           .finally(() => {
-            this.multiAuditForm.show = false
+            this.multiAuditFormShow = false
           })
       })
     },
