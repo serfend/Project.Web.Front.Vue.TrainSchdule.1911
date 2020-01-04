@@ -82,6 +82,7 @@ export default {
       checkAuthCode(this.innerForm.authByUserId, this.innerForm.code, true)
         .then(() => {
           this.invalid.code.status = false
+          this.invalid.code.des = '验证成功'
         })
         .catch(err => {
           this.invalid.code.status = true
