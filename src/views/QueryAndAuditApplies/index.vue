@@ -14,6 +14,7 @@
     >
       <template slot="action" slot-scope="{row}">
         <action-examine :row="row" />
+        <action-user :row="row" @modefied="$refs.queryAppliesForm.searchData()" />
       </template>
     </ApplicationList>
   </el-card>
@@ -23,9 +24,10 @@
 import ApplySearchCommon from './ApplySearchCommon'
 import ApplicationList from './ApplicationList'
 import ActionExamine from './ActionExamine'
+import ActionUser from './ActionUser'
 export default {
   name: 'QueryAndAuditApplies',
-  components: { ApplySearchCommon, ApplicationList, ActionExamine },
+  components: { ApplySearchCommon, ApplicationList, ActionExamine, ActionUser },
   data() {
     return {
       appliesList: [],

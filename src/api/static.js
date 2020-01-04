@@ -56,7 +56,7 @@ export function location(code) {
  * @param {*} query
  */
 export function exportSingleApply(templete, query) {
-  return request.post('static/exportSingleApply', {
+  return request.post('static/exportApply', {
     templete,
     query
   })
@@ -69,7 +69,7 @@ export function exportSingleApply(templete, query) {
  * @param {*} query
  */
 export function exportMultiApplies(templete, query) {
-  return request.post('static/exportMultiApplies', {
+  return request.post('static/exportApplies', {
     templete,
     query
   })
