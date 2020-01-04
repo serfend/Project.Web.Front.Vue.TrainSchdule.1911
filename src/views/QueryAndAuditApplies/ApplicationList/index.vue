@@ -124,6 +124,12 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <AuditApplyMutilDialog
+      :show.sync="multiAuditFormShow"
+      :responselist="multiAuditFormSelection"
+    />
+    <el-button v-show="!multiAuditFormShow" @click="showMutilAudit">批量审批</el-button>
     <Pagination :pagesetting.sync="pagesetting" :hidden="formatedList.length===0" />
   </div>
 </template>
@@ -132,6 +138,7 @@ import { format } from 'timeago.js'
 import moment from 'moment'
 import { detail } from '@/api/apply'
 import ApplicationDetail from './ApplicationDetail'
+import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
 import Pagination from '@/components/Pagination'
 moment.locale('zh-cn')
@@ -140,6 +147,7 @@ export default {
   name: 'ApplicationList',
   components: {
     ApplicationDetail,
+    AuditApplyMutilDialog,
     Pagination
   },
   props: {
@@ -165,7 +173,9 @@ export default {
     return {
       detailDrawer: {
         show: false
-      }
+      },
+      multiAuditFormShow: false,
+      multiAuditFormSelection: []
     }
   },
   computed: {
@@ -200,15 +210,17 @@ export default {
     }
   },
   methods: {
-    datedifference(date1, date2) {
-      return datedifference(date1, date2)
-    },
+    datedifference,
     countOtherTime(row) {
       return (
         datedifference(row.stampLeave, row.stampReturn) -
         row.onTripLength -
         row.vocationLength
       )
+    },
+    showMutilAudit() {
+      this.multiAuditFormSelection = this.getChecked()
+      this.multiAuditFormShow = true
     },
     getChecked() {
       return this.$refs['singleTable'].selection
