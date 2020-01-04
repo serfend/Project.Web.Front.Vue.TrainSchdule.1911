@@ -1,22 +1,35 @@
 <template>
   <el-card>
-    <ApplySearchCommon ref="queryAppliesForm" :list.sync="appliesList" :pages.sync="pages" />
-    <!-- <ApplicationList ref="applicationlist" :list="dataList" :pages="pages">
+    <ApplySearchCommon
+      ref="queryAppliesForm"
+      :loading.sync="appliesListIsLoading"
+      :list.sync="appliesList"
+      :pages.sync="pages"
+    />
+    <ApplicationList
+      ref="applicationlist"
+      :list="appliesList"
+      :pages.sync="pages"
+      :loading="appliesListIsLoading"
+    >
       <template slot="action" slot-scope="{row}">
         <action-examine :row="row" />
       </template>
-    </ApplicationList>-->
+    </ApplicationList>
   </el-card>
 </template>
 
 <script>
-import ApplySearchCommon from './components/ApplySearchCommon'
+import ApplySearchCommon from './ApplySearchCommon'
+import ApplicationList from './ApplicationList'
+import ActionExamine from './ActionExamine'
 export default {
   name: 'QueryAndAuditApplies',
-  components: { ApplySearchCommon },
+  components: { ApplySearchCommon, ApplicationList, ActionExamine },
   data() {
     return {
       appliesList: [],
+      appliesListIsLoading: false,
       pages: {}
     }
   },

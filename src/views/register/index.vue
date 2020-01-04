@@ -142,7 +142,7 @@ import { regnew, authUserRegister, modefyUser } from '@/api/account'
 import { getMembers, companyChild } from '@/api/company'
 import { getUsersVocationLimit, getUserAvatar } from '@/api/userinfo'
 import { getUserAllInfo } from '@/api/usercompany'
-import Pagination from '../pagination'
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'Register',

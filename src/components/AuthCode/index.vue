@@ -1,24 +1,35 @@
 <template>
   <div>
-    <el-form-item label="审核人">
-      <el-input
-        v-model="innerForm.authByUserId"
-        :style="{ width: '400px' }"
-        placeholder="请输入审核人的id"
-      />
-    </el-form-item>
-    <el-form-item label="安全码">
-      <el-input
-        v-model="innerForm.code"
-        :style="{ width: '400px' }"
-        placeholder="请输入安全码"
-        @change="checkCode"
-      />
-      <el-tooltip :content="invalid.code.des">
-        <i v-if="invalid.code.status" class="el-icon-error" style="color:#F56C6C" />
-        <i v-else class="el-icon-success" style="color:#67C23A" />
-      </el-tooltip>
-    </el-form-item>
+    <el-row>
+      <el-col :lg="12" :sm="24">
+        <el-form-item label="审核人">
+          <el-input
+            v-model="innerForm.authByUserId"
+            :style="{ width: '400px' }"
+            placeholder="请输入审核人的id"
+          />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :lg="8" :sm="24">
+        <el-form-item label="安全码">
+          <el-input
+            v-model="innerForm.code"
+            :style="{ width: '400px' }"
+            placeholder="请输入安全码"
+            @change="checkCode"
+          >
+            <template slot="suffix">
+              <el-tooltip :content="invalid.code.des">
+                <i v-if="invalid.code.status" class="el-icon-error" style="color:#F56C6C" />
+                <i v-else class="el-icon-success" style="color:#67C23A" />
+              </el-tooltip>
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -27,10 +38,6 @@ import { checkAuthCode } from '@/api/account'
 export default {
   name: 'AuthCode',
   props: {
-    label: {
-      type: String,
-      default: ''
-    },
     form: {
       type: Object,
       default() {

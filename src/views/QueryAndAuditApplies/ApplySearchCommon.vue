@@ -145,6 +145,12 @@ export default {
     }
   },
   watch: {
+    onLoading: {
+      handler(val) {
+        this.$emit('update:loading', val)
+      },
+      immediate: true
+    },
     innerList: {
       handler(val) {
         this.$emit('update:list', val)
@@ -180,14 +186,23 @@ export default {
       f.create = this.formatData_DateTime(this.queryForm.createTime)
       f.stampLeave = this.formatData_DateTime(this.queryForm.stampLeaveTime)
       f.stampReturn = this.formatData_DateTime(this.queryForm.stampReturnTime)
-      f.status = {
-        arrays:
-          this.queryForm.status && this.queryForm.status.length > 0
-            ? this.queryForm.status
-            : null
+      if (this.queryForm.status && this.queryForm.status.length > 0) {
+        f.status = {
+          arrays: this.queryForm.status
+        }
+      } else {
+        f.status = null
       }
-      f.auditByCompany = { value: this.auditByCompany } // 审核单位
-      f.createCompany = { value: this.createCompany } // 申请单位
+      if (this.auditByCompany) {
+        f.auditByCompany = { value: this.auditByCompany } // 审核单位
+      } else {
+        f.auditByCompany = null
+      }
+      if (this.createCompany) {
+        f.createCompany = { value: this.createCompany } // 申请单位
+      } else {
+        f.createCompany = null
+      }
       this.onLoading = true
       queryList(f)
         .then(data => {

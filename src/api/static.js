@@ -1,6 +1,5 @@
 import request from '../utils/request'
 
-const apiURL = process.env.VUE_APP_BASE_API
 /**
  * 刷新验证码
  *
@@ -49,22 +48,6 @@ export function location(code) {
   })
 }
 
-const exportPath = apiURL + '/static/xlsExport'
-
-/**
- * 下载
- * @param {*} data
- */
-const exportXSL = (data) => {
-  let str = '?'
-  const params = Object.keys(data).map(key => {
-    return key + '=' + data[key]
-  })
-  str += params.join('&')
-  window.open(exportPath + str, '_black')
-}
-
-
 /**
  *导出单个申请
  *
@@ -73,7 +56,10 @@ const exportXSL = (data) => {
  * @param {*} query
  */
 export function exportSingleApply(templete, query) {
-
+  return request.post('static/exportSingleApply', {
+    templete,
+    query
+  })
 }
 /**
  *导出多个申请
@@ -83,5 +69,25 @@ export function exportSingleApply(templete, query) {
  * @param {*} query
  */
 export function exportMultiApplies(templete, query) {
+  return request.post('static/exportMultiApplies', {
+    templete,
+    query
+  })
+}
 
+/**
+ *导出申请详情
+ *
+ * @export
+ * @param {*} dutiesType
+ * @param {*} id
+ */
+export function exportApplyDetail(dutiesType, id) {
+  var templete = '干部请假单.xlsx'
+  switch (dutiesType) {
+    case 1: templete = '人员请假单.xlsx'
+  }
+  return exportSingleApply(templete, {
+    id: [id]
+  })
 }

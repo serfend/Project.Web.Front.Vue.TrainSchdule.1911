@@ -1,13 +1,53 @@
 <template>
   <div>
-    <el-table
-      :key="tableKey"
-      ref="singleTable"
-      v-loading="onLoading"
-      :data="formatedList"
-      highlight-current-row
+    <el-dialog
+      :show-close="false"
+      :visible.sync="detailDrawer.show"
+      custom-class="p-fixed f-right apply-detail"
+      top="0"
+      width="408px"
     >
-      <el-table-column v-if="multi" type="selection" width="42px" />
+      <div slot="title" class="apply-detail-header">
+        <div class="layout row justify-space-between align-center">
+          详情
+          <div class="d-flex align-center">
+            <el-button-group>
+              <el-button
+                icon="el-icon-caret-left"
+                size="small"
+                type="primary"
+                @click="changeApply('prev')"
+              />
+              <el-button
+                icon="el-icon-caret-right"
+                size="small"
+                type="primary"
+                @click="changeApply('next')"
+              />
+            </el-button-group>
+            <el-tooltip content="关闭" effect="dark">
+              <i class="el-icon-remove red--text title ml-2" @click="detailDrawer.show = false" />
+              <!-- content to trigger tooltip here -->
+            </el-tooltip>
+          </div>
+        </div>
+      </div>
+      <ApplicationDetail
+        :apply-id="detailDrawer.id"
+        :basic="detailDrawer.basic"
+        :detail="detailDrawer.data"
+      >
+        <slot
+          slot="action"
+          slot-scope="{applyid, row}"
+          :applyid="applyid"
+          :row="row"
+          name="action"
+        />
+      </ApplicationDetail>
+    </el-dialog>
+    <el-table ref="singleTable" v-loading="loading" :data="formatedList" highlight-current-row>
+      <el-table-column type="selection" width="42px" />
       <el-table-column label="申请人" min-width="100px">
         <template slot-scope="{row}">
           <el-tooltip content="点击查看详情" effect="dark">
@@ -61,8 +101,8 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>正休假时长{{ scope.row.request.vocationLength }}天</el-dropdown-item>
-              <el-dropdown-item>路途时长{{ scope.row.request.onTripLength }}天</el-dropdown-item>
+              <el-dropdown-item>正休假{{ scope.row.request.vocationLength }}天</el-dropdown-item>
+              <el-dropdown-item>路途{{ scope.row.request.onTripLength }}天</el-dropdown-item>
               <el-dropdown-item
                 v-for="additial in scope.row.request.additialVocations"
                 v-show="scope.row.request.additialVocations.length>0"
@@ -80,24 +120,11 @@
       </el-table-column>
       <el-table-column align="center" label="操作" min-width="120">
         <template slot-scope="{row}">
-          <slot v-if="myUserid" :applyid="row.id" :row="row" name="action" />
-          <span v-else>
-            请先
-            <a href="login">登录</a>
-          </span>
+          <slot :applyid="row.id" :row="row" name="action" />
         </template>
       </el-table-column>
     </el-table>
-    
-
-    <el-card>
-      <Pagination
-        :pagesetting="pages"
-        @updatepage="updatepage"
-        @handleCurrentChange="searchData"
-        @handleSizeChange="searchData"
-      />
-    </el-card>
+    <Pagination :pagesetting.sync="pagesetting" :hidden="formatedList.length===0" />
   </div>
 </template>
 <script>
@@ -105,51 +132,54 @@ import { format } from 'timeago.js'
 import moment from 'moment'
 import { detail } from '@/api/apply'
 import ApplicationDetail from './ApplicationDetail'
-import waves from '@/directive/waves' // waves directive
-import { parseTime, datedifference } from '@/utils'
+import { datedifference } from '@/utils'
+import Pagination from '@/components/Pagination'
 moment.locale('zh-cn')
 
 export default {
   name: 'ApplicationList',
-  directives: { waves },
   components: {
-    ApplicationDetail
+    ApplicationDetail,
+    Pagination
   },
   props: {
-    dataList: {
+    list: {
       type: Array,
       default() {
         return []
       }
     },
-    onLoading: {
+    loading: {
       type: Boolean,
       default: false
     },
-    multi: {
-      type: Boolean,
-      default: false
+    pages: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
 
   data() {
     return {
-      tableKey: 0,
       detailDrawer: {
-        show: false,
-        data: null,
-        basic: null,
-        id: null
-      },
-      list: [],
-      listLoading: true,
-      downloadLoading: false
+        show: false
+      }
     }
   },
   computed: {
+    pagesetting: {
+      get() {
+        return this.pages
+      },
+      set(val) {
+        this.$emit('update:pages', val)
+      }
+    },
     formatedList() {
       var statusOptions = this.$store.state.vocation.statusDic
-      return this.dataList.map(li => {
+      return this.list.map(li => {
         const { ...item } = li
         const statusObj = statusOptions[item.status]
         item.statusDesc = statusObj ? statusObj.desc : '不明类型'
@@ -157,14 +187,11 @@ export default {
         item.acessable = statusObj ? statusObj.acessable : []
         var stampLeave = new Date(item.request.stampLeave)
         item.stampLeave =
-          stampLeave.getMonth() + 1 + '月' + stampLeave.getDate() + '日' // moment(item.request.stampLeave).format('LLLL')
+          stampLeave.getMonth() + 1 + '月' + stampLeave.getDate() + '日'
         var stampReturn = new Date(item.request.stampReturn)
         item.stampReturn =
-          stampReturn.getMonth() + 1 + '月' + stampReturn.getDate() + '日' // moment(item.request.stampReturn).format('LLLL')
+          stampReturn.getMonth() + 1 + '月' + stampReturn.getDate() + '日'
         item.create = format(item.create, 'zh_CN')
-        // item.stampLeave = parseTime(item.stampLeave, 'YYYY年MM月dd日')
-        // item.stampReturn = parseTime(item.stampReturn, 'YYYY年MM月dd日')
-        // item.create = parseTime(item.create, 'YYYY年MM月dd日')
         return item
       })
     },
@@ -172,16 +199,11 @@ export default {
       return this.$store.state.user.userid
     }
   },
-  async created() {},
   methods: {
-    LoadPage() {
-      this.$emit('LoadPage')
-    },
     datedifference(date1, date2) {
       return datedifference(date1, date2)
     },
     countOtherTime(row) {
-      // 休假其他时间
       return (
         datedifference(row.stampLeave, row.stampReturn) -
         row.onTripLength -
@@ -189,7 +211,6 @@ export default {
       )
     },
     getChecked() {
-      // 获取选中的
       return this.$refs['singleTable'].selection
     },
     changeApply(oper) {
@@ -199,7 +220,6 @@ export default {
       )
       const listLen = this.formatedList.length
       let nextIndex = 0
-      // 上一个
       if (oper === 'prev') {
         nextIndex =
           matchedItemIndex - 1 < 0 ? listLen - 1 : matchedItemIndex - 1
@@ -212,59 +232,16 @@ export default {
       this.$refs.singleTable.setCurrentRow(newRow)
       this.handleDetail(newRow, newId)
     },
-
-    /**
-     * 查询详情
-     */
     handleDetail(row, id) {
+      var info = `${row.base.realName}的休假申请详情`
+      this.$message.info(info)
       detail(id).then(data => {
-        if (data) {
-          this.detailDrawer.show = true
-          this.detailDrawer.data = data
-          this.detailDrawer.basic = row
-          this.detailDrawer.id = id
-        }
+        this.$message.success(info)
+        this.detailDrawer.show = true
+        this.detailDrawer.data = data
+        this.detailDrawer.basic = row
+        this.detailDrawer.id = id
       })
-    },
-
-    /**
-     * 执行导出
-     */
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-
-    /**
-     * 格式json数据
-     */
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        })
-      )
-    },
-
-    /**
-     * 请求刷新
-     */
-    emitRefresh() {
-      this.$emit('refresh')
     }
   }
 }

@@ -7,7 +7,8 @@
       </div>
       <div class="row layout justify-start px-2">
         <div class="applyinfo-avatar">
-          <i class="el-icon-user-solid" />
+          <el-avatar v-if="avatar" :src="avatar" :size="50" />
+          <i v-else class="el-icon-user-solid" />
         </div>
         <div class="applyinfo-content">
           <div class="applyinfo-content-title">
@@ -150,8 +151,9 @@
 
 <script>
 import moment from 'moment'
-import { exportUserApplies } from '@/api/static'
+import { exportApplyDetail } from '@/api/static'
 import { parseTime, datedifference } from '@/utils'
+import { getUserAvatar } from '@/api/userinfo'
 moment.locales('zh_CN')
 export default {
   name: 'ApplicationDetail',
@@ -182,7 +184,9 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      avatar: null
+    }
   },
   computed: {
     response() {
@@ -200,7 +204,20 @@ export default {
       return index + 1 < 1 ? -1 : index
     }
   },
+  watch: {
+    detail: {
+      handler(val) {
+        if (val && val.base) this.getUserAvatar(val.base.avatar)
+      },
+      deep: true
+    }
+  },
   methods: {
+    getUserAvatar(avatarid) {
+      getUserAvatar(null, avatarid).then(data => {
+        this.avatar = data.url
+      })
+    },
     datedifference(date1, date2) {
       return datedifference(date1, date2)
     },
@@ -208,10 +225,7 @@ export default {
       return parseTime(rawtime, format)
     },
     downloadUserApplies(id) {
-      exportUserApplies({
-        user: id,
-        dutiesType: this.$store.state.user.dutiesType
-      })
+      exportApplyDetail(this.$store.state.user.dutiesType, id)
     }
   }
 }
