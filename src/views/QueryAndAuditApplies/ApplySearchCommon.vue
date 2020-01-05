@@ -1,7 +1,7 @@
 <template>
   <el-form
-    ref="innerTableForm"
-    :model="innerTableForm"
+    ref="queryForm"
+    :model="queryForm"
     label-width="90px"
     :inline="true"
     size="small"
@@ -221,13 +221,13 @@ export default {
       } else {
         f.status = null
       }
-      if (this.auditByCompany) {
-        f.auditByCompany = { value: this.auditByCompany } // 审核单位
+      if (this.queryForm.auditByCompany) {
+        f.auditByCompany = { value: this.queryForm.auditByCompany } // 审核单位
       } else {
         f.auditByCompany = null
       }
-      if (this.createCompany) {
-        f.createCompany = { value: this.createCompany } // 申请单位
+      if (this.queryForm.createCompany) {
+        f.createCompany = { value: this.queryForm.createCompany } // 申请单位
       } else {
         f.createCompany = null
       }
