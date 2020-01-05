@@ -164,28 +164,39 @@ export default {
         audit({ list: this.multiAuditForm.responseList }, auth)
           .then(resultlist => {
             for (var i = 0; i < resultlist.length; i++) {
-              var item = resultlist[i]
-              var apply = this.multiAuditForm.responseList[i].apply
+              var item = {
+                message: resultlist[i].message,
+                status: resultlist[i].status
+              }
+              var applyraw = this.multiAuditForm.responseList[i]
+              var apply = applyraw.apply
               var from = apply.base.realName
               var vacationLen =
                 datedifference(
                   apply.request.stampLeave,
                   apply.request.stampReturn
                 ) + 1
-              item.msg = `${
-                apply.action === 1 ? '驳回' : '通过'
-              }${from}的${vacationLen}天申请${
-                item.status === 0 ? '成功' : '失败'
-              }:${item.message}`
+              if (applyraw.action === 2) {
+                item.msg = '驳回'
+              } else {
+                item.msg = '通过'
+              }
+              item.msg = `${item.msg}${from}的${vacationLen}天申请`
+              if (item.status === 0) {
+                item.msg += '成功'
+              } else {
+                item.msg += `失败:${item.message}`
+              }
+              this.$emit('updated')
               setTimeout(
                 result => {
                   if (result.status === 0) {
-                    this.$notify.success(item.msg)
+                    this.$notify.success(result.msg)
                   } else {
-                    this.$notify.error(item.msg)
+                    this.$notify.error(result.msg)
                   }
                 },
-                (i + 1) * 1000,
+                (i + 1) * 2000,
                 item
               )
             }
