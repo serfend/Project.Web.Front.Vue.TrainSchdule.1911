@@ -282,9 +282,28 @@
         <div v-if="showAll" class="mask" />
         <div v-if="showAll" :style="{'backgroundColor': theme}" class="footer-nav">
           <div class="row layout justify-center fill-height">
-            <el-button v-loading="onLoading" @click="submitApply">提交</el-button>
-            <el-button @click="active = 0">重新填写</el-button>
-            <el-button @click="createNew">新建申请</el-button>
+            <el-button-group style="width:100%">
+              <el-button
+                v-loading="onLoading"
+                type="success"
+                style="width:10%"
+                @click="submitApply(0)"
+              >仅提交</el-button>
+              <el-button
+                v-loading="onLoading"
+                type="success"
+                style="width:10%"
+                @click="submitApply(1)"
+              >提交并保存</el-button>
+              <el-button
+                v-loading="onLoading"
+                type="success"
+                style="width:10%"
+                @click="submitApply(2)"
+              >提交并发布</el-button>
+              <el-button style="width:10%" type="danger" @click="active = 0">重新填写</el-button>
+              <el-button style="width:10%" type="info" @click="createNew">新建申请</el-button>
+            </el-button-group>
           </div>
         </div>
         <!-- card body -->
@@ -330,6 +349,8 @@ import {
   postBaseInfo,
   postRequestInfo,
   submitApply,
+  save,
+  publish,
   getStampReturn
 } from '@/api/apply'
 import { locationChildren } from '@/api/static'
@@ -728,9 +749,9 @@ export default {
       return result
     },
     /**
-     * 提交申请
+     * 提交申请 0:仅提交，1:提交并保存，2:提交并发布
      */
-    submitApply() {
+    submitApply(actionStatus) {
       if (this.onLoading === true) {
         return this.$message.info('提交中，请等待')
       }
@@ -745,12 +766,19 @@ export default {
         }
       })
         .then(data => {
+          var applyId = data.id
           this.active = 3
           this.isAfterSubmit = true
-          return this.$message.success('保存成功')
-        })
-        .catch(() => {
-          return this.$message.error('保存失败')
+
+          var fn = actionStatus === 1 ? save : publish
+          this.$message.success('提交成功')
+          if (actionStatus > 0) {
+            fn(applyId).then(() => {
+              return this.$message.success(
+                `${actionStatus === 1 ? '提交并保存' : '提交并发布'}成功`
+              )
+            })
+          }
         })
         .finally(() => {
           return (this.onLoading = false)
@@ -882,8 +910,6 @@ hr.divider {
   bottom: 0;
   min-height: 48px;
   width: 100%;
-  left: 0;
-  right: 0;
   z-index: 1000;
   background: white;
   box-shadow: 0 -2px 10px -4px;
