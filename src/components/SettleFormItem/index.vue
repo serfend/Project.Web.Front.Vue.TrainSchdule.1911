@@ -1,7 +1,12 @@
 <template>
   <el-form-item :label="label">
     <el-tooltip content="无此项（例如未婚、离婚、去世）时则将此项禁用">
-      <el-switch v-model="innerForm.valid" active-text="启用" inactive-text="禁用" />
+      <el-switch
+        v-model="innerForm.valid"
+        active-text="启用"
+        inactive-text="禁用"
+        :disabled="disabled"
+      />
     </el-tooltip>
     <el-row :gutter="8">
       <el-col :span="12">
