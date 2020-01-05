@@ -1,9 +1,9 @@
 <template>
   <el-dialog :visible.sync="innerShow" title="召回">
-    <el-form ref="auditForm" :model="auditForm" label-width="80px">
+    <el-form ref="auditForm" :model="auditForm" label-width="80px" :rules="rules">
       <el-row>
         <el-col :span="6">
-          <el-form-item v-show="innerIsOnlyToShowRecallMsg" label="召回创建">
+          <el-form-item v-show="innerIsOnlyToShowRecallMsg" label="召回创建" prop="recallData.create">
             <el-date-picker
               v-model="auditForm.recallData.create"
               format="yyyy-MM-dd"
@@ -15,7 +15,7 @@
       </el-row>
       <el-row>
         <el-col :span="6">
-          <el-form-item label="原归队时">
+          <el-form-item label="原归队时" prop="recallData.rawStampReturn">
             <el-date-picker
               v-model="auditForm.recallData.rawStampReturn"
               format="yyyy-MM-dd"
@@ -27,7 +27,7 @@
       </el-row>
       <el-row>
         <el-col :span="6">
-          <el-form-item label="召回截止">
+          <el-form-item label="召回截止" prop="stampReturn">
             <el-date-picker
               v-model="auditForm.stampReturn"
               format="yyyy-MM-dd"
@@ -38,13 +38,17 @@
       </el-row>
       <el-row>
         <el-col :sm="24" :md="24" :lg="12">
-          <el-form-item label="备注">
+          <el-form-item label="备注" prop="remark">
             <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-collapse>
-        <el-collapse-item :title="recallByUser" :disabled="innerIsOnlyToShowRecallMsg">
+        <el-collapse-item title="授权人" :disabled="innerIsOnlyToShowRecallMsg">
+          <template slot="title">
+            {{ recallByUser?'召回命令下达':'默认为当前登录' }}
+            <el-tag>{{ recallByUser?recallByUser:$store.state.user.name }}</el-tag>
+          </template>
           <AuthCode :form.sync="auditForm.auth" :auth-check-method="checkAuthCode" />
         </el-collapse-item>
       </el-collapse>
@@ -74,6 +78,12 @@ export default {
     isOnlyToShowRecallMsg: {
       type: Boolean,
       default: false
+    },
+    row: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {
@@ -82,7 +92,17 @@ export default {
         auth: {},
         recallData: {}
       },
-      recallByUser: ''
+      stampReturn: '',
+      recallByUser: null,
+      rules: {
+        stampReturn: [
+          { require: true, message: '请选择召回截止时间', trigger: 'blur' },
+          {
+            validator: this.stampReturnValidator,
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
   computed: {
@@ -106,8 +126,28 @@ export default {
       }
     }
   },
+  watch: {
+    show: {
+      handler(val) {
+        if (val) {
+          if (this.isOnlyToShowRecallMsg) {
+            this.showRecallMsg()
+          } else {
+            this.recallApply()
+          }
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
     checkAuthCode,
+    stampReturnValidator(r, val, cb) {
+      if (new Date(val) <= new Date(this.auditForm.recallData.rawStampReturn)) {
+        return cb(new Error('召回时间不得早于原始时间'))
+      }
+      cb()
+    },
     SubmitRecall() {
       const model = {
         apply: this.auditForm.applyId,
@@ -115,48 +155,41 @@ export default {
         returnStamp: this.auditForm.stampReturn,
         recallBy: this.myUserid
       }
-      const Auth = {
-        code: this.auditForm.code,
-        authByUserId: this.auditForm.authByUserId
-      }
       postRecallOrder({
         data: model,
-        Auth: Auth
+        Auth: this.auditForm.auth
+      }).then(result => {
+        this.$notify.success('已召回' + result.id)
+        this.innerShow = false
+        this.$emit('updated')
       })
-        .then(result => {
-          this.$notify.success('已召回' + result.id)
-          this.searchData()
-        })
-        .catch(err => {
-          this.$message.error(err.message)
-        })
-        .finally(() => {
-          this.innerShow = false
-        })
     },
-    showRecallMsg(row) {
-      this.innerIsOnlyToShowRecallMsg = true
+    recallApply() {
+      console.log('准备进行召回')
+      var row = this.row
+      this.auditForm.applyId = row.id
+      this.auditForm.recallData = {
+        rawStampReturn: row.request.stampReturn
+      }
+      this.recallByUser = null
+    },
+    showRecallMsg() {
+      console.log('查看召回信息')
+      var row = this.row
       this.auditForm.recallData.rawStampReturn = row.request.stampReturn
       var auditForm = this.auditForm
       getRecallOrder(row.recallId).then(res => {
         auditForm.recallData.create = res.create
-        auditForm.recallData.stampReturn = res.returnStamp
+        auditForm.stampReturn = res.returnStamp
         auditForm.remark = res.reason
         auditForm.authByUserName = res.recallBy.realName
         auditForm.authByUserId = res.recallBy.id
         this.$notify.success(`${auditForm.authByUserName}召回的人员`)
         this.innerShow = true
         this.recallByUser = this.auditForm.authByUserName
-          ? `召回命令下达:${this.auditForm.authByUserName}`
+          ? this.auditForm.authByUserName
           : '授权召回'
       })
-    },
-    recallApply(row) {
-      // 打开召回弹框
-      this.innerShow = true
-      this.innerIsOnlyToShowRecallMsg = false
-      this.auditForm.applyId = row.id
-      this.auditForm.recallData.rawStampReturn = row.request.stampReturn
     }
   }
 }

@@ -2,17 +2,23 @@
   <div>
     <RecallApplyDialog
       v-if="showRecall"
-      ref="recallDialog"
       :show.sync="showRecall"
       :is-only-to-show-recall-msg.sync="showRecallIsOnlyShowMsg"
+      :row="row"
+      @updated="$emit('updated')"
     />
     <AuditApplyDialog
       v-if="showAudit"
-      ref="auditApplyDialog"
       :apply-id="row.id"
       :show.sync="showAudit"
+      @updated="$emit('updated')"
     />
-    <el-button v-if="CheckIfShowRecall(row)" size="mini" type="warning" @click="recallApply(row)">召回</el-button>
+    <el-button
+      v-if="CheckIfShowRecall(row)"
+      size="mini"
+      type="warning"
+      @click="recallApply(false)"
+    >召回</el-button>
     <div v-else-if="row.status>30&&row.status<100">
       <el-button v-show="!showAudit" size="mini" type="success" @click="showAudit=true">审批</el-button>
     </div>
@@ -20,7 +26,7 @@
       v-else-if="row.recallId!==null"
       type="primary"
       size="mini"
-      @click="$refs.recallDialog.showRecallMsg(row)"
+      @click="recallApply(true)"
     >召回信息</el-button>
     <el-tag v-else-if="row.status===100" type="success">正常休假</el-tag>
     <el-tag v-else-if="row.status>30" type="warning">审批中</el-tag>
@@ -51,6 +57,10 @@ export default {
     }
   },
   methods: {
+    recallApply(isOnlyShow) {
+      this.showRecallIsOnlyShowMsg = isOnlyShow
+      this.showRecall = true
+    },
     CheckIfShowRecall(row) {
       return (
         row.status === 100 &&
