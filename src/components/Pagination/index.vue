@@ -62,7 +62,6 @@ export default {
   watch: {
     pagesetting: {
       handler(val) {
-        console.log('1' + val)
         this.innerPages = val
       },
       deep: true
