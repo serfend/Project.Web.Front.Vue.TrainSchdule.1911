@@ -129,7 +129,11 @@
       </el-table-column>
     </el-table>
 
-    <AuditApplyMutilDialog :show.sync="multiAuditFormShow" :responselist="multiAuditFormSelection" />
+    <AuditApplyMutilDialog
+      :show.sync="multiAuditFormShow"
+      :responselist="multiAuditFormSelection"
+      @updated="$emit('updated')"
+    />
     <el-button v-show="!multiAuditFormShow" @click="showMutilAudit">批量审批</el-button>
     <Pagination :pagesetting.sync="pagesetting" :hidden="formatedList.length===0" />
   </div>

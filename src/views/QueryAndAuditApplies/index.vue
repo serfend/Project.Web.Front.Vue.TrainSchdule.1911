@@ -12,10 +12,11 @@
       :list="appliesList"
       :pages.sync="pages"
       :loading="appliesListIsLoading"
+      @updated="requestUpdate"
     >
       <template slot="action" slot-scope="{row}">
-        <action-examine :row="row" />
-        <action-user :row="row" @modefied="$refs.queryAppliesForm.searchData()" />
+        <action-examine :row="row" @updated="requestUpdate" />
+        <action-user :row="row" @updated="requestUpdate" />
       </template>
     </ApplicationList>
   </el-card>
@@ -37,6 +38,10 @@ export default {
       fullSearchUI: false
     }
   },
-  methods: {}
+  methods: {
+    requestUpdate() {
+      this.$refs.queryAppliesForm.searchData()
+    }
+  }
 }
 </script>

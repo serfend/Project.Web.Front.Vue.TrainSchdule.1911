@@ -90,7 +90,7 @@ export default {
             if (result.status === 0) {
               this.$notify.success('已审批' + result.id)
             } else this.$notify.error(result.message + ':' + result.id)
-            this.$emit('modefied')
+            this.$emit('updated')
           })
         })
         .finally(() => {})

@@ -128,7 +128,7 @@ export default {
         })
         .finally(() => {
           this.onLoading = false
-          this.$emit('modefied')
+          this.$emit('updated')
         })
     },
     exportApply(row) {
