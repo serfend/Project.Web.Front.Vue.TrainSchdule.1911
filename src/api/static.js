@@ -90,7 +90,7 @@ export function exportUserApplies(dutiesType, userid) {
   switch (dutiesType) {
     case 1: templete = '人员休假登记卡.xlsx'
   }
-  return exportSingleApply(templete, {
+  return exportMultiApplies(templete, {
     createFor: { value: userid },
     pages: {
       pageIndex: 0,
