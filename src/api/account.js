@@ -125,8 +125,8 @@ export function postAuthKey(params) {
 /**
  * 获取授权码
  */
-export function getAuthKey() {
-  return request.get('account/AuthKey', { responseType: 'arraybuffer' })
+export function getAuthKey(ignoreErr) {
+  return request.get('account/AuthKey', { responseType: 'arraybuffer', respondErrorIngore: ignoreErr })
 }
 
 /**

@@ -115,6 +115,10 @@ service.interceptors.response.use(
       return Promise.resolve(res.data)
     } else {
       if (!response.config.respondErrorIngore) {
+        if (res.status === 12120) {
+          console.log(response.config)
+          location.href = '/#/login'
+        }
         Message({
           message: res.message,
           type: 'error',

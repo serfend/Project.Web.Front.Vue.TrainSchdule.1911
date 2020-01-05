@@ -450,7 +450,7 @@ export default {
           prevYearlyLength: 0
         }
       }
-      if (f.id !== '') this.fetchUserInfoesDerect()
+      if (f.realName && f.realName !== '') this.fetchUserInfoes('realName')
       return f
     },
     createNewRequest() {

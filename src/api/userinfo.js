@@ -36,11 +36,12 @@ export function getUserBase(id, ignoreErr) {
   })
 }
 
-export function getUserDiy(id) {
+export function getUserDiy(id, ignoreErr) {
   return request.get('users/diyinfo', {
     params: {
       id
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 /**
@@ -56,11 +57,12 @@ export function getUserDiy(id) {
 }
 ```
  */
-export function getUserSocial(id) {
+export function getUserSocial(id, ignoreErr) {
   return request.get('users/social', {
     params: {
       id
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 
@@ -74,11 +76,12 @@ export function getUserSocial(id) {
  }
 ```
  */
-export function getUserDuties(id) {
+export function getUserDuties(id, ignoreErr) {
   return request.get('users/duties', {
     params: {
       id
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 
@@ -89,11 +92,12 @@ export function getUserDuties(id) {
  * @param {*} id
  * @returns
  */
-export function getUserApplication(id) {
+export function getUserApplication(id, ignoreErr) {
   return request.get('users/application', {
     params: {
       id
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 
@@ -111,11 +115,12 @@ export function getUserApplication(id) {
   }
  ```
  */
-export function getUserCompany(id) {
+export function getUserCompany(id, ignoreErr) {
   return request.get('users/company', {
     params: {
       id
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 
@@ -143,11 +148,12 @@ export function getUserIdByCid(cid, ignoreErr) {
  * @param {*} realName
  * @returns
  */
-export function getUserIdByRealName(realName) {
+export function getUserIdByRealName(realName, ignoreErr) {
   return request.get('/account/GetUserIdByRealName', {
     params: {
       realName
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 
@@ -156,12 +162,13 @@ export function getUserIdByRealName(realName) {
  * @param {*} id
  * @param {int} yearIndex
  */
-export function getUsersVocationLimit(id, yearIndex) {
+export function getUsersVocationLimit(id, yearIndex, ignoreErr) {
   return request.get('/users/vocation', {
     params: {
       id,
       yearIndex
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 
@@ -173,12 +180,13 @@ export function getUsersVocationLimit(id, yearIndex) {
  * @param {guid} avatarId 头像id，默认为null
  * @returns
  */
-export function getUserAvatar(id, avatarId) {
+export function getUserAvatar(id, avatarId, ignoreErr) {
   return request.get('/users/avatar', {
     params: {
       userId: id,
       avatarId
-    }
+    },
+    respondErrorIngore: ignoreErr
   })
 }
 /**
@@ -188,8 +196,8 @@ export function getUserAvatar(id, avatarId) {
  * @param {*} newAvatar
  * @returns
  */
-export function postUserAvatar(newAvatar) {
+export function postUserAvatar(newAvatar, ignoreErr) {
   return request.post('/users/avatar', {
     url: newAvatar
-  })
+  }, { respondErrorIngore: ignoreErr })
 }

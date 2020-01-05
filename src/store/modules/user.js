@@ -93,7 +93,7 @@ const actions = {
   },
   initBase({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getUserSummary().then(data => {
+      getUserSummary(null, true).then(data => {
         commit('SET_NAME', data.realName)
         if (state.userid !== data.id) this.dispatch('user/initVocationList')
         commit('SET_USERID', data.id)
@@ -109,7 +109,7 @@ const actions = {
   },
   initAvatar({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getUserAvatar().then(data => {
+      getUserAvatar(null, null, true).then(data => {
         commit('SET_AVATAR', data.url)
         return resolve()
       }).catch(() => {
@@ -119,7 +119,7 @@ const actions = {
   },
   initVocation({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getUsersVocationLimit().then(data => {
+      getUsersVocationLimit(null, null, true).then(data => {
         commit('SET_VOCA', data)
         return resolve()
       }).catch(() => {

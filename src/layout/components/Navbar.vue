@@ -200,7 +200,7 @@ export default {
   },
   methods: {
     getAuthKeyImg() {
-      getAuthKey().then(r => {
+      getAuthKey(false).then(r => {
         this.authKeyUrl = r.url
         if (!this.$store.state.user.data.isInitPassword) {
           this.isToShowPasswordModefier = true
