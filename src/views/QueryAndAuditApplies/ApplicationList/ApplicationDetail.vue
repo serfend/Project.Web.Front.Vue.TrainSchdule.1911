@@ -29,8 +29,8 @@
               icon="el-icon-download"
               size="mini"
               type="primary"
-              @click="downloadUserApplies(basic.userBase.id)"
-            >导出</el-button>
+              @click="downloadUserApplies(basic)"
+            >导出休假登记卡</el-button>
           </el-tooltip>
         </div>
       </div>
@@ -151,7 +151,7 @@
 
 <script>
 import moment from 'moment'
-import { exportApplyDetail } from '@/api/static'
+import { exportUserApplies } from '@/api/static'
 import { parseTime, datedifference } from '@/utils'
 import { getUserAvatar } from '@/api/userinfo'
 moment.locales('zh_CN')
@@ -224,8 +224,10 @@ export default {
     parseTime(rawtime, format) {
       return parseTime(rawtime, format)
     },
-    downloadUserApplies(id) {
-      exportApplyDetail(this.$store.state.user.dutiesType, id)
+    downloadUserApplies(basic) {
+      var dutiesRawType = basic.userBase.dutiesRawType
+      var userid = basic.userBase.id
+      exportUserApplies(dutiesRawType, userid)
     }
   }
 }

@@ -59,6 +59,8 @@ export function exportSingleApply(templete, query) {
   return request.post('static/exportApply', {
     templete,
     query
+  }).then(data => {
+    window.open(process.env.VUE_APP_BASEURL + data.requestUrl)
   })
 }
 /**
@@ -72,6 +74,28 @@ export function exportMultiApplies(templete, query) {
   return request.post('static/exportApplies', {
     templete,
     query
+  }).then(data => {
+    window.open(process.env.VUE_APP_BASEURL + data.requestUrl)
+  })
+}
+/**
+ *导出指定用户申请
+ *
+ * @export
+ * @param {*} dutiesType
+ * @param {*} userid
+ */
+export function exportUserApplies(dutiesType, userid) {
+  var templete = '干部休假登记卡.xlsx'
+  switch (dutiesType) {
+    case 1: templete = '人员休假登记卡.xlsx'
+  }
+  return exportSingleApply(templete, {
+    createFor: { value: userid },
+    pages: {
+      pageIndex: 0,
+      pageSize: 999
+    }
   })
 }
 
@@ -88,6 +112,8 @@ export function exportApplyDetail(dutiesType, id) {
     case 1: templete = '人员请假单.xlsx'
   }
   return exportSingleApply(templete, {
-    id: [id]
+    id: {
+      Arrays: [id]
+    }
   })
 }

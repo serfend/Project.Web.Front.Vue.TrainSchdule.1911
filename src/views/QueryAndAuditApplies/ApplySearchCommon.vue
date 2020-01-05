@@ -7,6 +7,7 @@
     size="small"
     @submit.native.prevent
   >
+    <el-switch v-model="innerfullui" />
     <el-form-item label="审核单位" prop="auditByCompany">
       <cascader-selector :code.sync="queryForm.auditByCompany" :child-getter-method="companyChild" />
     </el-form-item>
@@ -46,7 +47,7 @@
         clearable
       />
     </el-form-item>
-    <el-form-item label="休假开始时间" label-width="120" prop="stampLeaveTime">
+    <el-form-item label="离队时间" label-width="120" prop="stampLeaveTime">
       <el-date-picker
         v-model="queryForm.stampLeaveTime"
         type="daterange"
@@ -60,8 +61,7 @@
         clearable
       />
     </el-form-item>
-
-    <el-form-item v-show="fullui" label="休假结束时间" label-width="120" prop="stampReturnTime">
+    <el-form-item v-show="fullui" label="归队时间" label-width="120" prop="stampReturnTime">
       <el-date-picker
         v-model="queryForm.stampReturnTime"
         type="daterange"
@@ -75,20 +75,29 @@
         clearable
       />
     </el-form-item>
-    <el-row />
-    <el-col v-show="fullui" :lg="24">
-      <el-button-group style="width:100%">
-        <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          style="width:80%"
-          :loading="onLoading"
-          autofocus
-          @click="searchData"
-        >执行查询</el-button>
-      </el-button-group>
-    </el-col>
+
+    <el-row>
+      <el-col v-show="fullui" :lg="24">
+        <el-button-group style="width:100%">
+          <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            style="width:40%"
+            :loading="onLoading"
+            autofocus
+            @click="searchData"
+          >筛选</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-download"
+            style="width:40%"
+            :loading="onLoading"
+            @click="exportAppliesNowFilter"
+          >筛选并导出</el-button>
+        </el-button-group>
+      </el-col>
+    </el-row>
   </el-form>
 </template>
 
@@ -96,7 +105,7 @@
 import { companyChild } from '@/api/company'
 import CascaderSelector from '@/components/CascaderSelector'
 import { queryList } from '@/api/apply'
-
+import { exportMultiApplies } from '@/api/static'
 export default {
   Name: 'ApplySearchCommon',
   components: { CascaderSelector },
@@ -136,7 +145,8 @@ export default {
           pageSize: 20,
           totalCount: 0
         }
-      }
+      },
+      innerfullui: false
     }
   },
   computed: {
@@ -145,6 +155,16 @@ export default {
     }
   },
   watch: {
+    fullui: {
+      handler(val) {
+        this.innerfullui = val
+      }
+    },
+    innerfullui: {
+      handler(val) {
+        this.$emit('update:fullui', val)
+      }
+    },
     onLoading: {
       handler(val) {
         this.$emit('update:loading', val)
@@ -178,10 +198,18 @@ export default {
   },
   methods: {
     companyChild,
+    exportAppliesNowFilter() {
+      var f = this.createQueryPost()
+      f.pages = {
+        pageIndex: 0,
+        pageSize: 999
+      }
+      exportMultiApplies('休假人员统计表.xlsx', f)
+    },
     clearForm() {
       this.$refs.innerTableForm.resetFields()
     },
-    searchData() {
+    createQueryPost() {
       var f = this.innerTableForm
       f.create = this.formatData_DateTime(this.queryForm.createTime)
       f.stampLeave = this.formatData_DateTime(this.queryForm.stampLeaveTime)
@@ -203,6 +231,10 @@ export default {
       } else {
         f.createCompany = null
       }
+      return f
+    },
+    searchData() {
+      var f = this.createQueryPost()
       this.onLoading = true
       queryList(f)
         .then(data => {

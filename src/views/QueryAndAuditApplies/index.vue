@@ -5,6 +5,7 @@
       :loading.sync="appliesListIsLoading"
       :list.sync="appliesList"
       :pages.sync="pages"
+      :fullui.sync="fullSearchUI"
     />
     <ApplicationList
       ref="applicationlist"
@@ -32,7 +33,8 @@ export default {
     return {
       appliesList: [],
       appliesListIsLoading: false,
-      pages: {}
+      pages: {},
+      fullSearchUI: false
     }
   },
   methods: {}
