@@ -30,6 +30,15 @@ var dict = {
   register: {
     title: '注  册'
   },
+  comments: {
+    title: '社区',
+    notice: {
+      title: '公告'
+    },
+    bbs: {
+      title: '论坛'
+    }
+  },
   settings: {
     title: '设置选项',
     fixedHeader: '侧边栏标题',

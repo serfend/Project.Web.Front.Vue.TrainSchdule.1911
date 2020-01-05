@@ -40,6 +40,32 @@ const applicationRouter = {
     }
   ]
 }
+
+const CommentsRouter =
+{
+  path: '/Comments',
+  component: Layout,
+  name: 'comments',
+  meta: {
+    title: 'comments.title',
+    icon: 'wechat'
+  }, children: [
+    {
+      path: '/Comments/Notice',
+      component: () => import('@/views/Comments'),
+      meta: {
+        title: 'comments.notice.title',
+        icon: 'notice'
+      }
+    }, {
+      path: '/Comments/bbs',
+      component: () => import('@/views/Comments'),
+      meta: {
+        title: 'comments.bbs.title',
+        icon: 'bbs'
+      }
+    }]
+}
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://serfend.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -85,7 +111,13 @@ export const constantRoutes = [
   },
   {
     path: '/register',
-    component: () => import('@/views/register/index'),
+    component: Layout,
+    children: [
+      {
+        path: '/register/main',
+        component: () => import('@/views/register/index')
+      }
+    ],
     hidden: true
   },
   {
@@ -121,7 +153,7 @@ export const constantRoutes = [
       }
     ]
   },
-  applicationRouter,
+  applicationRouter, CommentsRouter,
   // {
   //   path: '/documentation',
   //   component: Layout,

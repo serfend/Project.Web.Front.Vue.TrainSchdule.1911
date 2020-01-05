@@ -219,7 +219,7 @@ export default {
     },
     authRegisterUser(isToRegister) {
       this.$store.state.user.isToRegister = isToRegister
-      return this.$router.push(`/register`)
+      return this.$router.push(`/register/main`)
     },
     savePwd() {
       this.$refs['editPwd'].validate(valid => {

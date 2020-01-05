@@ -184,7 +184,7 @@ export default {
     },
     handleReg() {
       this.$store.state.user.isToRegister = true
-      this.$router.push({ path: '/register' })
+      this.$router.push({ path: '/register/main' })
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
