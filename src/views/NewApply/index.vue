@@ -434,7 +434,7 @@ export default {
   },
   methods: {
     createNewBase() {
-      return {
+      var f = {
         id: this.currentUser === undefined ? '' : this.currentUser.id,
         realName:
           this.currentUser === undefined ? '' : this.currentUser.realName,
@@ -450,6 +450,8 @@ export default {
           prevYearlyLength: 0
         }
       }
+      if (f.id !== '') this.fetchUserInfoesDerect()
+      return f
     },
     createNewRequest() {
       return {
@@ -466,7 +468,6 @@ export default {
       }
     },
     removeVacation(index) {
-      console.log(index)
       this.SelectVacationList.splice(index, 1)
       this.handleChange()
     },
