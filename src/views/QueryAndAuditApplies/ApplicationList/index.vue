@@ -70,12 +70,12 @@
       </el-table-column>
       <el-table-column align="center" label="单位">
         <template slot-scope="{row}">
-          <span class="caption">{{ row.base.companyName }}</span>
+          <el-tag class="caption">{{ row.base.companyName }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="当前审批">
         <template slot-scope="{row}">
-          <span class="caption">{{ row.nowAuditCompany }}</span>
+          <el-tag class="caption">{{ row.nowAuditCompany }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="创建">
@@ -85,7 +85,8 @@
       </el-table-column>
       <el-table-column header-align="center" align="center" label="休假时间" width="160">
         <template slot-scope="scope">
-          <span>{{ scope.row.stampLeave+'-'+scope.row.stampReturn }}</span>
+          <el-tag>{{ scope.row.stampLeave }}</el-tag>
+          <el-tag>{{ scope.row.stampReturn }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假地点">
@@ -115,6 +116,9 @@
 
       <el-table-column align="center" label="状态">
         <template slot-scope="{row}">
+          <el-tooltip content="此申请可能为休假结束后创建">
+            <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
+          </el-tooltip>
           <el-tag :color="row.statusColor" class="white--text">{{ row.statusDesc }}</el-tag>
         </template>
       </el-table-column>
@@ -193,11 +197,19 @@ export default {
         item.statusColor = statusObj ? statusObj.color : 'gray'
         item.acessable = statusObj ? statusObj.acessable : []
         var stampLeave = new Date(item.request.stampLeave)
-        item.stampLeave =
-          stampLeave.getMonth() + 1 + '月' + stampLeave.getDate() + '日'
+        item.checkIfIsReplentApply = stampLeave <= new Date(item.create)
+        var nowYear = new Date().getFullYear()
+        item.stampLeave = `${
+          stampLeave.getFullYear() !== nowYear
+            ? stampLeave.getFullYear() + '年'
+            : ''
+        }${stampLeave.getMonth() + 1}月${stampLeave.getDate()}日`
         var stampReturn = new Date(item.request.stampReturn)
-        item.stampReturn =
-          stampReturn.getMonth() + 1 + '月' + stampReturn.getDate() + '日'
+        item.stampReturn = `${
+          stampReturn.getFullYear() !== nowYear
+            ? stampReturn.getFullYear() + '年'
+            : ''
+        }${stampReturn.getMonth() + 1}月${stampReturn.getDate()}日`
         item.create = format(item.create, 'zh_CN')
         return item
       })
