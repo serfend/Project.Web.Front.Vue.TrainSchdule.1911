@@ -73,6 +73,7 @@ export default {
       if (this.autoScroll) {
         scrollTo(0, 800)
       }
+      this.$emit('updated')
     }
   }
 }

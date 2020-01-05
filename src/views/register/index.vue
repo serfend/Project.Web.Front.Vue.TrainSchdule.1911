@@ -121,8 +121,7 @@
         <Pagination
           :pagesetting="MembersQuery"
           @updatepage="updatepage"
-          @handleCurrentChange="loadWaitToAuthRegisterUsers"
-          @handleSizeChange="loadWaitToAuthRegisterUsers"
+          @updated="loadWaitToAuthRegisterUsers"
         />
       </div>
     </el-card>
