@@ -24,6 +24,7 @@
         <el-tooltip content="行政区划,填到区/县一级">
           <cascader-selector
             :placeholder="innerForm.address.name"
+            :disabled="disabled"
             :code.sync="innerForm.address.code"
             :child-getter-method="locationChildren"
           />

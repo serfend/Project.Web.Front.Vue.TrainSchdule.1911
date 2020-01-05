@@ -6,6 +6,7 @@
     :placeholder="placeholder===null?'未选择':placeholder"
     style="width:100%"
     clearable
+    :disabled="disabled"
     @change="handleItemChange"
   />
 </template>
@@ -16,7 +17,7 @@ export default {
   props: {
     disabled: {
       type: Boolean,
-      default: true
+      default: false
     },
     placeholder: {
       type: String,
