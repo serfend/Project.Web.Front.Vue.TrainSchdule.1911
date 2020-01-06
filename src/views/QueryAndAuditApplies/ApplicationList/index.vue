@@ -51,31 +51,36 @@
       <el-table-column label="申请人" min-width="100px">
         <template slot-scope="{row}">
           <el-tooltip content="点击查看详情" effect="dark">
-            <!-- content to trigger tooltip here -->
             <el-button plain size="mini" type="info" @click="handleDetail(row, row.id)">
               <i class="el-icon-info blue--text" />
               {{ row.base.realName }}
             </el-button>
           </el-tooltip>
-          <el-button
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="休假类别">
+        <template slot-scope="{row}">
+          <el-tag
+            effect="dark"
+            :type="row.request.vocationType==='正休'?'':'danger'"
+          >{{ row.request.vocationType }}</el-tag>
+          <el-tag
             v-for="additialVocation in row.request.additialVocations"
             :key="additialVocation.name"
-            plain
-            size="mini"
-            type="info"
-          >
-            <span class="info--text">{{ additialVocation.name }}</span>
-          </el-button>
+            type="success"
+            class="info--text"
+          >{{ additialVocation.name }} {{ additialVocation.length }}天</el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="职务">
+        <template slot-scope="{row}">
+          <el-tag class="caption">{{ row.base.dutiesName }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="单位">
         <template slot-scope="{row}">
           <el-tag class="caption">{{ row.base.companyName }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="当前审批">
-        <template slot-scope="{row}">
-          <el-tag class="caption">{{ row.nowAuditCompany }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="创建">
