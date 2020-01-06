@@ -410,7 +410,6 @@ export default {
   computed: {
     nowYear() {
       var date = new Date()
-      console.log(date.getFullYear())
       return date.getFullYear()
     },
     showAll() {
@@ -450,7 +449,11 @@ export default {
           prevYearlyLength: 0
         }
       }
-      if (f.realName && f.realName !== '') this.fetchUserInfoes('realName')
+      if (f.realName && f.realName !== '') {
+        setTimeout(() => {
+          this.fetchUserInfoes('realName')
+        }, 1000)
+      }
       return f
     },
     createNewRequest() {
