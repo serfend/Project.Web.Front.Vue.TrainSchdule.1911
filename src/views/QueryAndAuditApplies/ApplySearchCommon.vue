@@ -8,8 +8,11 @@
     @submit.native.prevent
   >
     <el-switch v-model="innerfullui" />
-    <el-form-item label="审核单位" prop="auditByCompany">
-      <cascader-selector :code.sync="queryForm.auditByCompany" :child-getter-method="companyChild" />
+    <el-form-item label="审核单位" prop="nowAuditByCompany">
+      <cascader-selector
+        :code.sync="queryForm.nowAuditByCompany"
+        :child-getter-method="companyChild"
+      />
     </el-form-item>
     <el-form-item label="来自单位" prop="createCompany">
       <cascader-selector :code.sync="queryForm.createCompany" :child-getter-method="companyChild" />
@@ -75,7 +78,9 @@
         clearable
       />
     </el-form-item>
-
+    <el-form-item v-show="fullui" label="涉及单位" prop="auditByCompany">
+      <cascader-selector :code.sync="queryForm.auditByCompany" :child-getter-method="companyChild" />
+    </el-form-item>
     <el-row>
       <el-col v-show="fullui" :lg="24">
         <el-button-group style="width:100%">
@@ -136,7 +141,8 @@ export default {
         stampLeaveTime: null,
         stampReturnTime: null,
         status: [], // 状态
-        auditByCompany: '', // 审核单位
+        nowAuditByCompany: '', // 当前审核的单位
+        auditByCompany: '', // 可能需要审核的单位
         createCompany: '' // 申请单位
       },
       innerTableForm: {
@@ -220,6 +226,11 @@ export default {
         }
       } else {
         f.status = null
+      }
+      if (this.queryForm.nowAuditByCompany) {
+        f.nowAuditByCompany = { value: this.queryForm.nowAuditByCompany } // 审核单位
+      } else {
+        f.nowAuditByCompany = null
       }
       if (this.queryForm.auditByCompany) {
         f.auditByCompany = { value: this.queryForm.auditByCompany } // 审核单位
