@@ -1,71 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import applicationRouter from './modules/application'
+import commentRouter from './modules/comment'
 
 Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
 
-/* Router Modules */
-const applicationRouter = {
-  path: '/application',
-  component: Layout,
-  redirect: 'noRedirect',
-  alwaysShow: true, // will always show the root menu
-  name: 'application',
-  meta: {
-    title: 'application.title',
-    icon: 'clipboard'
-  },
-  children: [
-    {
-      path: 'newApply',
-      component: () => import('@/views/NewApply'),
-      name: 'newApplication',
-      meta: {
-        title: 'application.new',
-        // verify: 'on',
-        icon: '测试申请'
-      }
-    },
-    {
-      path: 'queryAndAuditApplies',
-      component: () => import('@/views/QueryAndAuditApplies'),
-      name: 'applicationList',
-      meta: {
-        title: 'application.query',
-        verify: 'on',
-        icon: '无序排列'
-      }
-    }
-  ]
-}
-
-const CommentsRouter =
-{
-  path: '/Comments',
-  component: Layout,
-  name: 'comments',
-  meta: {
-    title: 'comments.title',
-    icon: 'wechat'
-  }, children: [
-    {
-      path: '/Comments/Notice',
-      component: () => import('@/views/Comments'),
-      meta: {
-        title: 'comments.notice.title',
-        icon: 'notice'
-      }
-    }, {
-      path: '/Comments/bbs',
-      component: () => import('@/views/Comments'),
-      meta: {
-        title: 'comments.bbs.title',
-        icon: 'bbs'
-      }
-    }]
-}
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://serfend.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -86,13 +28,8 @@ const CommentsRouter =
     activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
  */
-
-/**
- * constantRoutes
- * a base page that does not have permission requirements
- * all roles can be accessed
- */
 export const constantRoutes = [
+  applicationRouter, commentRouter,
   {
     path: '/redirect',
     component: Layout,
@@ -153,19 +90,6 @@ export const constantRoutes = [
       }
     ]
   },
-  applicationRouter, CommentsRouter,
-  // {
-  //   path: '/documentation',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/documentation/index'),
-  //       name: 'Documentation',
-  //       meta: { title: 'documentation', icon: 'documentation', affix: true }
-  //     }
-  //   ]
-  // },
   {
     path: '/guide',
     component: Layout,
@@ -195,70 +119,11 @@ export const constantRoutes = [
   }
 ]
 
-// const premissionRouter = {
-//   path: '/permission',
-//   component: Layout,
-//   redirect: '/permission/page',
-//   alwaysShow: true, // will always show the root menu
-//   name: 'Permission',
-//   meta: {
-//     title: 'permission',
-//     icon: 'lock',
-//     roles: ['admin', 'editor'] // you can set roles in root nav
-//   },
-//   children: [
-//     {
-//       path: 'page',
-//       component: () => import('@/views/permission/page'),
-//       name: 'PagePermission',
-//       meta: {
-//         title: 'pagePermission',
-//         roles: ['admin'] // or you can only set roles in sub nav
-//       }
-//     },
-//     {
-//       path: 'directive',
-//       component: () => import('@/views/permission/directive'),
-//       name: 'DirectivePermission',
-//       meta: {
-//         title: 'directivePermission'
-//         // if do not set roles, means: this page does not require permission
-//       }
-//     }
-//     // {
-//     //   path: 'role',
-//     //   component: () => import('@/views/permission/role'),
-//     //   name: 'RolePermission',
-//     //   meta: {
-//     //     title: 'rolePermission',
-//     //     roles: ['admin']
-//     //   }
-//     // }
-//   ]
-// }
-
 /**
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  // {
-  //   path: '/icon',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/icons/index'),
-  //       name: 'Icons',
-  //       meta: { title: 'icons', icon: 'icon', noCache: true }
-  //     }
-  //   ]
-  // },
-
-  /** when your routing map is too long, you can split it into small modules **/
-  // componentsRouter,
-  // chartsRouter,
-  // nestedRouter,
   {
     path: '/error',
     component: Layout,
