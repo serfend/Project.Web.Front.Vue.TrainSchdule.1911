@@ -1,71 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import applicationRouter from './modules/application'
+import CommentsRouter from './modules/comments'
 Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
 
-/* Router Modules */
-const applicationRouter = {
-  path: '/application',
-  component: Layout,
-  redirect: 'noRedirect',
-  alwaysShow: true, // will always show the root menu
-  name: 'application',
-  meta: {
-    title: 'application.title',
-    icon: 'clipboard'
-  },
-  children: [
-    {
-      path: 'newApply',
-      component: () => import('@/views/NewApply'),
-      name: 'newApplication',
-      meta: {
-        title: 'application.new',
-        // verify: 'on',
-        icon: '测试申请'
-      }
-    },
-    {
-      path: 'queryAndAuditApplies',
-      component: () => import('@/views/QueryAndAuditApplies'),
-      name: 'applicationList',
-      meta: {
-        title: 'application.query',
-        verify: 'on',
-        icon: '无序排列'
-      }
-    }
-  ]
-}
-
-const CommentsRouter =
-{
-  path: '/Comments',
-  component: Layout,
-  name: 'comments',
-  meta: {
-    title: 'comments.title',
-    icon: 'wechat'
-  }, children: [
-    {
-      path: '/Comments/Notice',
-      component: () => import('@/views/Comments'),
-      meta: {
-        title: 'comments.notice.title',
-        icon: 'notice'
-      }
-    }, {
-      path: '/Comments/bbs',
-      component: () => import('@/views/Comments'),
-      meta: {
-        title: 'comments.bbs.title',
-        icon: 'bbs'
-      }
-    }]
-}
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://serfend.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -93,66 +34,7 @@ const CommentsRouter =
  * all roles can be accessed
  */
 export const constantRoutes = [
-  {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path*',
-        component: () => import('@/views/redirect/index')
-      }
-    ]
-  },
-  {
-    path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
-  },
-  {
-    path: '/register',
-    component: Layout,
-    children: [
-      {
-        path: '/register/main',
-        component: () => import('@/views/register/index')
-      }
-    ],
-    hidden: true
-  },
-  {
-    path: '/auth-redirect',
-    component: () => import('@/views/login/auth-redirect'),
-    hidden: true
-  },
-  {
-    path: '/404',
-    component: () => import('@/views/error-page/404'),
-    hidden: true
-  },
-  {
-    path: '/401',
-    component: () => import('@/views/error-page/401'),
-    hidden: true
-  },
-  {
-    path: '',
-    hidden: true,
-    component: () => import('@/views/welcome/index')
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    // redirect: '/dashboard',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
+  constantRoutes,
   applicationRouter, CommentsRouter,
   // {
   //   path: '/documentation',
