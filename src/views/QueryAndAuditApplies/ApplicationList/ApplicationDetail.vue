@@ -207,14 +207,14 @@ export default {
   watch: {
     detail: {
       handler(val) {
-        if (val && val.base) this.getUserAvatar(val.base.avatar)
+        if (val && val.base) this.getUserAvatar(val.base.id)
       },
       deep: true
     }
   },
   methods: {
-    getUserAvatar(avatarid) {
-      getUserAvatar(null, avatarid).then(data => {
+    getUserAvatar(id) {
+      getUserAvatar(id).then(data => {
         this.avatar = data.url
       })
     },
