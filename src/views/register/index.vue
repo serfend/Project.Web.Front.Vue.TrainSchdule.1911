@@ -353,7 +353,7 @@ export default {
           avatar: '',
           vocation: {},
           accountAuthStatus:
-            item.inviteBy === null ? 0 : item.inviteBy === 'invalid' ? -1 : 1 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
+            item.inviteBy === null ? 0 : item.inviteBy === '00Invalid' ? -1 : 1 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
         }
         return obj
       })
