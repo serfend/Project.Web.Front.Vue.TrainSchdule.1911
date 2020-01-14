@@ -452,7 +452,7 @@ export default {
       if (f.realName && f.realName !== '') {
         setTimeout(() => {
           this.fetchUserInfoes('realName')
-        }, 1000)
+        }, 200)
       }
       return f
     },
@@ -577,31 +577,25 @@ export default {
         })
       }
       if (byIdOrRealname === 'id') {
-        if (id && (id.length === 7 || id.length === 18)) {
-          this.OnloadingUserInfoes = true
-          if (id.length === 18) {
-            getUserIdByCid(id)
-              .then(data => {
-                this.OnloadingUserInfoes = false
-                this.form.id = data.id
-                this.$message.success({
-                  message: '身份证识别成功:' + data.id
-                })
-                this.fetchUserInfoesDerect()
+        this.OnloadingUserInfoes = true
+        if (id.length === 18) {
+          getUserIdByCid(id)
+            .then(data => {
+              this.OnloadingUserInfoes = false
+              this.form.id = data.id
+              this.$message.success({
+                message: '身份证识别成功:' + data.id
               })
-              .catch(err => {
-                this.OnloadingUserInfoes = false
-                return this.$message.error({
-                  message: err.message
-                })
+              this.fetchUserInfoesDerect()
+            })
+            .catch(err => {
+              this.OnloadingUserInfoes = false
+              return this.$message.error({
+                message: err.message
               })
-          } else if (id.length === 7) {
-            this.fetchUserInfoesDerect()
-          }
+            })
         } else {
-          this.$message.warning({
-            message: '非正确身份号码,正确格式为7位身份号或者18位法定身份证号码'
-          })
+          this.fetchUserInfoesDerect()
         }
       } else {
         this.OnloadingUserInfoes = true
@@ -617,7 +611,7 @@ export default {
             }
             this.form.id = list[0].id
             this.$message.success({
-              message: '成功获取' + list[0].base.realName + '的信息'
+              message: '成功获取' + list[0].realName + '的信息'
             })
             return this.fetchUserInfoesDerect()
           })

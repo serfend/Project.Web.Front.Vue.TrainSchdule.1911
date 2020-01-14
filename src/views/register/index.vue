@@ -63,16 +63,28 @@
 
       <el-card>
         <div slot="header">
-          <el-button
-            type="info"
-            :loading="submitLoading"
-            @click="loadWaitToAuthRegisterUsers"
-          >刷新待认证人员</el-button>
-          <cascader-selector
-            :code.sync="nowSelectCompanyCode"
-            placeholder="选择需要检查的单位"
-            :child-getter-method="companyChild"
-          />
+          <el-col :span="9">
+            <el-button
+              type="info"
+              :loading="submitLoading"
+              @click="loadWaitToAuthRegisterUsers"
+            >刷新待认证人员</el-button>
+          </el-col>
+          <el-col :span="9">
+            <cascader-selector
+              :code.sync="nowSelectCompanyCode"
+              placeholder="选择需要检查的单位"
+              :child-getter-method="companyChild"
+            />
+          </el-col>
+          <el-col :span="6">
+            <el-autocomplete
+              v-model="nowSelectRealName"
+              :fetch-suggestions="queryMember"
+              placeholder="搜索成员"
+              @select="handleCurrentChange"
+            />
+          </el-col>
         </div>
 
         <el-table
@@ -139,7 +151,11 @@ import Auth from '@/components/AuthCode'
 import CascaderSelector from '@/components/CascaderSelector'
 import { regnew, authUserRegister, modefyUser } from '@/api/account'
 import { getMembers, companyChild } from '@/api/company'
-import { getUsersVocationLimit, getUserAvatar } from '@/api/userinfo'
+import {
+  getUsersVocationLimit,
+  getUserAvatar,
+  getUserIdByRealName
+} from '@/api/userinfo'
 import { getUserAllInfo } from '@/api/usercompany'
 import Pagination from '@/components/Pagination'
 
@@ -207,6 +223,7 @@ export default {
       },
       waitToAuthRegisterUsers: [],
       waitToAuthRegisterUsersLoadId: '',
+      nowSelectRealName: '', // 通过姓名选择器选中的人员
       selectIsInvalidAccount: false,
       nowSelectCompanyCode: ''
     }
@@ -358,6 +375,19 @@ export default {
         return obj
       })
       return result
+    },
+    queryMember(realName, cb) {
+      if (realName === '') return cb([{}])
+      getUserIdByRealName(realName).then(data => {
+        cb(
+          data.list.map(li => {
+            return {
+              value: li.companyName + li.dutiesName + li.realName,
+              id: li.id
+            }
+          })
+        )
+      })
     },
     handleCurrentChange(val) {
       if (val === null) return

@@ -29,7 +29,12 @@ var dict = {
     errorLog: ''
   },
   register: {
-    title: '注册'
+    title: '注册',
+    checkemail: '认证邮箱'
+  },
+  login: {
+    username: '用户名',
+    password: '密码'
   },
   profile: {
     activity: '动态',

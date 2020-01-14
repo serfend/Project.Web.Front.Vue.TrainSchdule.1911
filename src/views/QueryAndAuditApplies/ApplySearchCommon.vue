@@ -254,6 +254,7 @@ export default {
           this.$emit('update:pages', f.pages)
         })
         .finally(() => {
+          this.$notify.info('双击表格可查看休假详情哦~')
           return (this.onLoading = false)
         })
     },
