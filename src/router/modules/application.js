@@ -33,6 +33,16 @@ const applicationRouter = {
         verify: 'on',
         icon: '无序排列'
       }
+    },
+    {
+      path: 'applyDetail',
+      component: () => import('@/views/ApplyDetail'),
+      name: 'ApplyDetail',
+      meta: {
+        title: 'application.detail',
+        verify: 'on',
+        icon: '提案审批'
+      }
     }
   ]
 }

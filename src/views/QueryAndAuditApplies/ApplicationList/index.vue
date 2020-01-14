@@ -1,61 +1,16 @@
 <template>
   <div>
-    <el-dialog
-      :show-close="false"
-      :visible.sync="detailDrawer.show"
-      custom-class="p-fixed f-right apply-detail"
-      top="0"
-      width="408px"
+    <el-table
+      ref="singleTable"
+      v-loading="loading"
+      :data="formatedList"
+      highlight-current-row
+      @row-dblclick="showDetail"
     >
-      <div slot="title" class="apply-detail-header">
-        <div class="layout row justify-space-between align-center">
-          详情
-          <div class="d-flex align-center">
-            <el-button-group>
-              <el-button
-                icon="el-icon-caret-left"
-                size="small"
-                type="primary"
-                @click="changeApply('prev')"
-              />
-              <el-button
-                icon="el-icon-caret-right"
-                size="small"
-                type="primary"
-                @click="changeApply('next')"
-              />
-            </el-button-group>
-            <el-tooltip content="关闭" effect="dark">
-              <i class="el-icon-remove red--text title ml-2" @click="detailDrawer.show = false" />
-              <!-- content to trigger tooltip here -->
-            </el-tooltip>
-          </div>
-        </div>
-      </div>
-      <ApplicationDetail
-        :apply-id="detailDrawer.id"
-        :basic="detailDrawer.basic"
-        :detail="detailDrawer.data"
-      >
-        <slot
-          slot="action"
-          slot-scope="{applyid, row}"
-          :applyid="applyid"
-          :row="row"
-          name="action"
-        />
-      </ApplicationDetail>
-    </el-dialog>
-    <el-table ref="singleTable" v-loading="loading" :data="formatedList" highlight-current-row>
       <el-table-column type="selection" width="42px" />
       <el-table-column label="申请人" min-width="100px">
         <template slot-scope="{row}">
-          <el-tooltip content="点击查看详情" effect="dark">
-            <el-button plain size="mini" type="info" @click="handleDetail(row, row.id)">
-              <i class="el-icon-info blue--text" />
-              {{ row.base.realName }}
-            </el-button>
-          </el-tooltip>
+          <el-tag>{{ row.base.realName }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假类别">
@@ -64,12 +19,6 @@
             effect="dark"
             :type="row.request.vocationType==='正休'?'':'danger'"
           >{{ row.request.vocationType }}</el-tag>
-          <el-tag
-            v-for="additialVocation in row.request.additialVocations"
-            :key="additialVocation.name"
-            type="success"
-            class="info--text"
-          >{{ additialVocation.name }} {{ additialVocation.length }}天</el-tag>
         </template>
       </el-table-column>
 
@@ -83,37 +32,46 @@
           <el-tag class="caption">{{ row.base.companyName }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="当前审批">
+        <template slot-scope="{row}">
+          <el-tag class="caption">{{ row.nowAuditCompanyName }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="创建">
-        <template slot-scope="scope">
-          <span>{{ scope.row.create }}</span>
+        <template slot-scope="{row}">
+          <span>{{ row.create }}</span>
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="休假时间" width="160">
-        <template slot-scope="scope">
-          <el-tag>{{ scope.row.stampLeave }}</el-tag>
-          <el-tag>{{ scope.row.stampReturn }}</el-tag>
+        <template slot-scope="{row}">
+          <el-tag>{{ row.stampLeave }}</el-tag>
+          <el-tag>{{ row.stampReturn }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假地点">
-        <template slot-scope="scope">
-          <span>{{ scope.row.request.vocationPlace? scope.row.request.vocationPlace.name :'' }}</span>
+        <template slot-scope="{row}">
+          <span>{{ row.request.vocationPlace? row.request.vocationPlace.name :'' }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假总天数">
-        <template slot-scope="scope">
+        <template slot-scope="{row}">
           <el-dropdown>
             <span class="el-dropdown-link">
-              <span>{{ datedifference(scope.row.request.stampLeave, scope.row.request.stampReturn) + 1 }}天</span>
+              <span>{{ datedifference(row.request.stampLeave, row.request.stampReturn) + 1 }}天</span>
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>正休假{{ scope.row.request.vocationLength }}天</el-dropdown-item>
-              <el-dropdown-item>路途{{ scope.row.request.onTripLength }}天</el-dropdown-item>
+              <el-dropdown-item>正休假{{ row.request.vocationLength }}天</el-dropdown-item>
+              <el-dropdown-item>路途{{ row.request.onTripLength }}天</el-dropdown-item>
               <el-dropdown-item
-                v-for="additial in scope.row.request.additialVocations"
-                v-show="scope.row.request.additialVocations.length>0"
+                v-for="additial in row.request.additialVocations"
+                v-show="row.request.additialVocations.length>0"
                 :key="additial.name"
-              >{{ additial.name }} {{ additial.length }}天</el-dropdown-item>
+              >
+                <el-tooltip :content="additial.description">
+                  <el-tag>{{ additial.name }} {{ additial.length }}天</el-tag>
+                </el-tooltip>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -129,11 +87,10 @@
       </el-table-column>
       <el-table-column align="center" label="操作" min-width="120">
         <template slot-scope="{row}">
-          <slot :applyid="row.id" :row="row" name="action" />
+          <slot :row="row" name="action" />
         </template>
       </el-table-column>
     </el-table>
-
     <AuditApplyMutilDialog
       :show.sync="multiAuditFormShow"
       :responselist="multiAuditFormSelection"
@@ -150,8 +107,6 @@
 <script>
 import { format } from 'timeago.js'
 import moment from 'moment'
-import { detail } from '@/api/apply'
-import ApplicationDetail from './ApplicationDetail'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
 import Pagination from '@/components/Pagination'
@@ -160,7 +115,6 @@ moment.locale('zh-cn')
 export default {
   name: 'ApplicationList',
   components: {
-    ApplicationDetail,
     AuditApplyMutilDialog,
     Pagination
   },
@@ -185,9 +139,6 @@ export default {
 
   data() {
     return {
-      detailDrawer: {
-        show: false
-      },
       multiAuditFormShow: false,
       multiAuditFormSelection: []
     }
@@ -203,35 +154,36 @@ export default {
     },
     formatedList() {
       var statusOptions = this.$store.state.vocation.statusDic
-      return this.list.map(li => {
-        const { ...item } = li
-        const statusObj = statusOptions[item.status]
-        item.statusDesc = statusObj ? statusObj.desc : '不明类型'
-        item.statusColor = statusObj ? statusObj.color : 'gray'
-        item.acessable = statusObj ? statusObj.acessable : []
-        var stampLeave = new Date(item.request.stampLeave)
-        item.checkIfIsReplentApply = stampLeave <= new Date(item.create)
-        var nowYear = new Date().getFullYear()
-        item.stampLeave = `${
-          stampLeave.getFullYear() !== nowYear
-            ? stampLeave.getFullYear() + '年'
-            : ''
-        }${stampLeave.getMonth() + 1}月${stampLeave.getDate()}日`
-        var stampReturn = new Date(item.request.stampReturn)
-        item.stampReturn = `${
-          stampReturn.getFullYear() !== nowYear
-            ? stampReturn.getFullYear() + '年'
-            : ''
-        }${stampReturn.getMonth() + 1}月${stampReturn.getDate()}日`
-        item.create = format(item.create, 'zh_CN')
-        return item
-      })
+      return this.list.map(li => this.formatApplyItem(li, statusOptions))
     },
     myUserid() {
       return this.$store.state.user.userid
     }
   },
   methods: {
+    formatApplyItem(li, statusOptions) {
+      const { ...item } = li
+      const statusObj = statusOptions[item.status]
+      item.statusDesc = statusObj ? statusObj.desc : '不明类型'
+      item.statusColor = statusObj ? statusObj.color : 'gray'
+      item.acessable = statusObj ? statusObj.acessable : []
+      var stampLeave = new Date(item.request.stampLeave)
+      item.checkIfIsReplentApply = stampLeave <= new Date(item.create)
+      var nowYear = new Date().getFullYear()
+      item.stampLeave = `${
+        stampLeave.getFullYear() !== nowYear
+          ? stampLeave.getFullYear() + '年'
+          : ''
+      }${stampLeave.getMonth() + 1}月${stampLeave.getDate()}日`
+      var stampReturn = new Date(item.request.stampReturn)
+      item.stampReturn = `${
+        stampReturn.getFullYear() !== nowYear
+          ? stampReturn.getFullYear() + '年'
+          : ''
+      }${stampReturn.getMonth() + 1}月${stampReturn.getDate()}日`
+      item.create = format(item.create, 'zh_CN')
+      return item
+    },
     datedifference,
     countOtherTime(row) {
       return (
@@ -247,35 +199,9 @@ export default {
     getChecked() {
       return this.$refs['singleTable'].selection
     },
-    changeApply(oper) {
-      const { id } = this.detailDrawer
-      const matchedItemIndex = this.formatedList.findIndex(
-        item => item.id === id
-      )
-      const listLen = this.formatedList.length
-      let nextIndex = 0
-      if (oper === 'prev') {
-        nextIndex =
-          matchedItemIndex - 1 < 0 ? listLen - 1 : matchedItemIndex - 1
-      } else if (oper === 'next') {
-        nextIndex =
-          matchedItemIndex + 1 > listLen - 1 ? 0 : matchedItemIndex + 1
-      }
-      const newRow = this.formatedList[nextIndex]
-      const newId = newRow.id
-      this.$refs.singleTable.setCurrentRow(newRow)
-      this.handleDetail(newRow, newId)
-    },
-    handleDetail(row, id) {
-      var info = `${row.base.realName}的休假申请详情`
-      this.$message.info(info)
-      detail(id).then(data => {
-        this.$message.success(info)
-        this.detailDrawer.show = true
-        this.detailDrawer.data = data
-        this.detailDrawer.basic = row
-        this.detailDrawer.id = id
-      })
+    showDetail(row, column, event) {
+      this.$store.state.vocation.vacationDetail = row
+      this.$router.push('/application/applyDetail')
     }
   }
 }

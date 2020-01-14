@@ -23,13 +23,13 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dropdown split-button szie="small" trigger="click" @click="exportApply(row)">
+    <el-dropdown split-button size="small" trigger="click" @click="exportApply(row)">
       <i class="el-icon-download" />
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item v-for="item in userActionDic" :key="item.name">
           <el-popconfirm :title="`确定要${item.description}吗？`" @onConfirm="hendleExecute(item,row)">
             <el-button
-              v-show="row.acessable.indexOf(item.name)>-1"
+              v-show="row.acessable&&row.acessable.indexOf(item.name)>-1"
               slot="reference"
               :type="item.type"
               size="mini"

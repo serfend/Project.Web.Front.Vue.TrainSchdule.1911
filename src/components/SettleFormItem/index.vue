@@ -57,26 +57,19 @@ export default {
     form: {
       type: Object,
       default() {
-        return this.innerForm
+        return this.createInnerForm()
       }
     }
   },
   data() {
     return {
-      innerForm: {
-        date: '2000-1-1',
-        valid: true,
-        address: {
-          code: '0'
-        },
-        addressDetail: '0'
-      }
+      innerForm: this.createInnerForm()
     }
   },
   watch: {
     form: {
       handler(val) {
-        if (this.innerForm === this.form) return
+        if (this.innerForm === val) return
         this.innerForm = this.form
         if (!this.innerForm) this.innerForm = {}
         if (this.innerForm.id) delete this.innerForm.id
@@ -92,7 +85,8 @@ export default {
           }
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
     },
     innerForm: {
       handler(val) {
@@ -102,12 +96,19 @@ export default {
     }
   },
   methods: {
-    locationChildren(id) {
-      return locationChildren(id)
+    locationChildren,
+    createInnerForm() {
+      return {
+        date: '2000-1-1',
+        valid: true,
+        address: {
+          code: '0'
+        },
+        addressDetail: '0'
+      }
     }
   }
 }
 </script>
 
-<style>
-</style>
+<style></style>

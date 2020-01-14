@@ -17,6 +17,7 @@ var dict = {
     title: '休假管理',
     new: '报送假条',
     query: '查询和审批',
+    detail: '休假申请详情',
     my: '我的休假'
   },
   navbar: {

@@ -15,8 +15,8 @@
       @updated="requestUpdate"
     >
       <template slot="action" slot-scope="{row}">
-        <action-examine :row="row" @updated="requestUpdate" />
-        <action-user :row="row" @updated="requestUpdate" />
+        <action-examine style="float:right" :row="row" @updated="requestUpdate" />
+        <action-user style="float:right" :row="row" @updated="requestUpdate" />
       </template>
     </ApplicationList>
   </el-card>
@@ -45,3 +45,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.alldivinline {
+  float: inline-end !important;
+}
+</style>

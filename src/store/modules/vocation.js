@@ -1,5 +1,6 @@
 import { getAllStatus } from '@/api/apply'
 const state = {
+  vacationDetail: {}, // 当前选中的休假详情
   statusDic: [] // 休假申请状态的描述
 }
 
