@@ -10,7 +10,15 @@
       <el-table-column type="selection" width="42px" />
       <el-table-column label="申请人" min-width="100px">
         <template slot-scope="{row}">
-          <el-tag>{{ row.base.realName }}</el-tag>
+          <div v-if="row.avatar" class="pull-left">
+            <img
+              class="avatar-32"
+              :src="row.avatar"
+              alt
+              @click="$router.push('/profile/index?id='+row.userBase.id)"
+            >
+          </div>
+          {{ row.base.realName }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假类别">
@@ -106,6 +114,7 @@
 </template>
 <script>
 import { format } from 'timeago.js'
+import { getUserAvatar } from '@/api/userinfo'
 import moment from 'moment'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
@@ -140,7 +149,8 @@ export default {
   data() {
     return {
       multiAuditFormShow: false,
-      multiAuditFormSelection: []
+      multiAuditFormSelection: [],
+      formatedList: [] // 经过格式化过的主列表
     }
   },
   computed: {
@@ -152,15 +162,31 @@ export default {
         this.$emit('update:pages', val)
       }
     },
-    formatedList() {
-      var statusOptions = this.$store.state.vocation.statusDic
-      return this.list.map(li => this.formatApplyItem(li, statusOptions))
-    },
     myUserid() {
       return this.$store.state.user.userid
     }
   },
+  watch: {
+    list: {
+      handler(val) {
+        var statusOptions = this.$store.state.vocation.statusDic
+        this.formatedList = this.list.map(li =>
+          this.formatApplyItem(li, statusOptions)
+        )
+        for (var i = 0; i < this.formatedList.length; i++) {
+          this.getUserAvatar(this.formatedList[i].userBase.id, this.formatedList[i])
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   methods: {
+    getUserAvatar(userid, targetItem) {
+      getUserAvatar(userid).then(data => {
+        targetItem.avatar = data.url
+      })
+    },
     formatApplyItem(li, statusOptions) {
       const { ...item } = li
       const statusObj = statusOptions[item.status]
@@ -228,6 +254,17 @@ export default {
 }
 .el-dialog.apply-detail .el-dialog__body {
   padding: 0;
+}
+.pull-left {
+  float: left !important;
+}
+.pull-right {
+  float: right !important;
+}
+.avatar-32 {
+  width: 32px;
+  height: 32px;
+  border-radius: 10%;
 }
 </style>
 
