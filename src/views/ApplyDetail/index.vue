@@ -140,7 +140,13 @@
             :show-close="false"
             shadow="hover"
           >
-            <h3 slot="header">申请人</h3>
+            <h3 slot="header">
+              申请人
+              <div class="pull-left">
+                <img v-if="avatar" class="avatar-32" :src="avatar" alt @click="handleClickAvatar">
+              </div>
+            </h3>
+
             <el-form-item label="单位">{{ detail.base.companyName }}</el-form-item>
             <el-form-item label="职务">{{ detail.base.dutiesName }}</el-form-item>
             <el-form-item>
@@ -169,6 +175,7 @@ import { getUserAvatar } from '@/api/userinfo'
 import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
 import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'
+
 moment.locales('zh_CN')
 export default {
   name: 'ApplyDetail',
@@ -263,6 +270,9 @@ export default {
         this.avatar = data.url
       })
     },
+    handleClickAvatar() {
+      this.$store.push('/profile/index?id=' + this.detail.base.id)
+    },
     parseTime(rawtime, format) {
       return parseTime(rawtime, format)
     },
@@ -276,6 +286,7 @@ export default {
       detail(id).then(data => {
         this.detail = data
         this.loading = false
+        this.getUserAvatar(data.base.id)
         for (var i = 0; i < this.detail.response.length; i++) {
           var item = this.detail.response[i]
           if (item.status === 4) {
@@ -310,5 +321,16 @@ export default {
   &companyName {
     padding: 4px 0 4px;
   }
+}
+.pull-left {
+  float: left !important;
+}
+.pull-right {
+  float: right !important;
+}
+.avatar-32 {
+  width: 32px;
+  height: 32px;
+  border-radius: 10%;
 }
 </style>

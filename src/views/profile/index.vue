@@ -55,7 +55,9 @@ export default {
       list.forEach(item => {
         var r = item.request
         var status =
-          item.recallId === null ? vocationStatus[item.status] : '已召回'
+          item.recallId === null
+            ? vocationStatus[item.status].desc
+            : '已召回'
         result.push({
           timestamp: r.stampLeave,
           title:
