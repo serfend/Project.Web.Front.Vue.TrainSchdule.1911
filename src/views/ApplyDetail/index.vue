@@ -1,6 +1,7 @@
 <template>
   <div style="padding:10px">
     <el-button icon="el-icon-back" @click="$router.push('/application/queryAndAuditApplies')">返回</el-button>
+    <el-button icon="el-icon-download" type="success" @click="downloadUserApplies">导出休假登记卡</el-button>
     <h2 style="padding-top:10px">
       {{ staticData.applyDetailName }}
       <el-tag
@@ -277,8 +278,8 @@ export default {
       return parseTime(rawtime, format)
     },
     downloadUserApplies() {
-      var dutiesRawType = this.form.asic.userBase.dutiesRawType
-      var userid = this.form.basic.userBase.id
+      var dutiesRawType = this.detail.base.dutiesRawType
+      var userid = this.detail.base.id
       exportUserApplies(dutiesRawType, userid)
     },
     loadDetail(id) {
