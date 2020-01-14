@@ -31,6 +31,11 @@ var dict = {
   register: {
     title: '注  册'
   },
+  profile: {
+    activity: '动态',
+    timeline: '时光轴',
+    account: '信息'
+  },
   comments: {
     title: '社区',
     notice: {
