@@ -15,7 +15,7 @@ var dict = {
   },
   application: {
     title: '休假管理',
-    new: '报送假条',
+    new: '我要休假',
     query: '查询和审批',
     detail: '休假申请详情',
     my: '我的休假'
@@ -29,7 +29,7 @@ var dict = {
     errorLog: ''
   },
   register: {
-    title: '注  册'
+    title: '注册'
   },
   profile: {
     activity: '动态',

@@ -143,8 +143,8 @@ export default {
   methods: {
     checkAuthCode,
     stampReturnValidator(r, val, cb) {
-      if (new Date(val) <= new Date(this.auditForm.recallData.rawStampReturn)) {
-        return cb(new Error('召回时间不得早于原始时间'))
+      if (new Date(val) >= new Date(this.auditForm.recallData.rawStampReturn)) {
+        return cb(new Error('召回时间不得晚于正常归队时间'))
       }
       cb()
     },
