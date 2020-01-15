@@ -78,6 +78,8 @@ export default {
             code: this.form.address.code + '',
             name: this.form.address.name
           }
+          // fix bug empty address
+          if (this.innerForm.address.code === '') this.innerForm.address.code = '0'
         } else {
           this.innerForm.address = {
             code: '',

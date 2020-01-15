@@ -60,7 +60,7 @@ export function exportSingleApply(templete, query) {
     templete,
     query
   }).then(data => {
-    window.open(process.env.VUE_APP_BASEURL + data.requestUrl)
+    downloadUrl(data.requestUrl)
   })
 }
 /**
@@ -75,8 +75,15 @@ export function exportMultiApplies(templete, query) {
     templete,
     query
   }).then(data => {
-    window.open(process.env.VUE_APP_BASEURL + data.requestUrl)
+    downloadUrl(data.requestUrl)
   })
+}
+
+export function downloadUrl(url) {
+  var requestUrl = process.env.VUE_APP_BASEURL + url
+  var a = document.createElement('a')
+  a.href = requestUrl
+  a.click()
 }
 /**
  *导出指定用户申请

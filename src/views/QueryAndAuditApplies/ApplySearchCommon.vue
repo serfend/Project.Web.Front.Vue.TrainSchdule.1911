@@ -297,6 +297,8 @@ export default {
       }
       if (this.onlySeeSelfApplies) {
         f.createFor = { value: this.currentUserId }
+      } else {
+        f.createFor = null
       }
       return f
     },
