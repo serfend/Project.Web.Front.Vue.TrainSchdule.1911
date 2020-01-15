@@ -91,6 +91,7 @@ export function exportUserApplies(dutiesType, userid) {
     case 1: templete = '人员休假登记卡.xlsx'
   }
   return exportMultiApplies(templete, {
+    stampLeave: { start: new Date(new Date().getFullYear(), 0, 1), end: new Date(new Date().getFullYear(), 11, 31) },
     createFor: { value: userid },
     pages: {
       pageIndex: 0,
