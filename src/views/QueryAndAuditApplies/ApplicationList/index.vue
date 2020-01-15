@@ -174,7 +174,10 @@ export default {
           this.formatApplyItem(li, statusOptions)
         )
         for (var i = 0; i < this.formatedList.length; i++) {
-          this.getUserAvatar(this.formatedList[i].userBase.id, this.formatedList[i])
+          this.getUserAvatar(
+            this.formatedList[i].userBase.id,
+            this.formatedList[i]
+          )
         }
       },
       immediate: true,
@@ -226,6 +229,7 @@ export default {
       return this.$refs['singleTable'].selection
     },
     showDetail(row, column, event) {
+      if (column.label === '操作') return
       this.$store.state.vocation.vacationDetail = row
       this.$router.push('/application/applyDetail')
     }

@@ -1,5 +1,6 @@
 <template>
   <el-cascader
+    ref="elcascader"
     v-model="staticValue"
     :props="props"
     :show-all-levels="true"
@@ -72,6 +73,9 @@ export default {
     handleItemChange(val) {
       var v = val[val.length - 1]
       this.$emit('update:code', v)
+      setTimeout(() => {
+        this.$emit('select-change', this.$refs.elcascader.inputValue)
+      }, 50)
     }
   }
 }

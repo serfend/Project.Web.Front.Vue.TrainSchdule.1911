@@ -38,6 +38,9 @@ export default {
       fullSearchUI: false
     }
   },
+  destroyed() {
+    console.log('i 22am destroyed')
+  },
   methods: {
     requestUpdate() {
       console.log('update require')

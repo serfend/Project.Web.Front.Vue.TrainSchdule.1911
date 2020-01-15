@@ -17,11 +17,18 @@
     <el-form-item label="审核单位" prop="nowAuditByCompany">
       <cascader-selector
         :code.sync="queryForm.nowAuditByCompany"
+        :placeholder="queryForm.nowAuditByCompanyName"
         :child-getter-method="companyChild"
+        @select-change="hdlNowAuditCompanyChange"
       />
     </el-form-item>
     <el-form-item label="来自单位" prop="createCompany">
-      <cascader-selector :code.sync="queryForm.createCompany" :child-getter-method="companyChild" />
+      <cascader-selector
+        :code.sync="queryForm.createCompany"
+        :placeholder="queryForm.createCompanyName"
+        :child-getter-method="companyChild"
+        @select-change="hdlCreateCompanyChange"
+      />
     </el-form-item>
     <el-form-item label="审核状态" prop="status">
       <el-select
@@ -85,7 +92,12 @@
       />
     </el-form-item>
     <el-form-item v-show="fullui" label="涉及单位" prop="auditByCompany">
-      <cascader-selector :code.sync="queryForm.auditByCompany" :child-getter-method="companyChild" />
+      <cascader-selector
+        :code.sync="queryForm.auditByCompany"
+        :placeholder="queryForm.auditByCompanyName"
+        :child-getter-method="companyChild"
+        @select-change="hdlAuditByCompanyChange"
+      />
     </el-form-item>
     <el-row>
       <el-col v-show="fullui" :lg="24">
@@ -148,9 +160,13 @@ export default {
         stampReturnTime: null,
         status: [], // 状态
         nowAuditByCompany: '', // 当前审核的单位
+        nowAuditByCompanyName: '',
         auditByCompany: '', // 可能需要审核的单位
-        createCompany: '' // 申请单位
+        auditByCompanyName: '',
+        createCompany: '', // 申请单位
+        createCompanyName: ''
       },
+      queryFormStartRecord: false,
       innerTableForm: {
         pages: {
           pageIndex: 0,
@@ -196,6 +212,7 @@ export default {
     },
     queryForm: {
       handler(val) {
+        this.setFormRecord()
         this.searchData()
       },
       immediate: true,
@@ -212,8 +229,34 @@ export default {
       deep: true
     }
   },
+  created() {
+    var tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
+    var tmp = JSON.parse(tmpItem)
+    if (tmp) this.queryForm = tmp
+    this.queryFormStartRecord = true
+  },
   methods: {
     companyChild,
+    setFormRecord() {
+      if (this.queryFormStartRecord) {
+        localStorage.setItem(
+          'applySearchCommon.lastQuery',
+          JSON.stringify(this.queryForm)
+        )
+      }
+    },
+    hdlNowAuditCompanyChange(val) {
+      this.queryForm.nowAuditByCompanyName = val
+      this.setFormRecord()
+    },
+    hdlAuditByCompanyChange(val) {
+      this.queryForm.auditByCompanyName = val
+      this.setFormRecord()
+    },
+    hdlCreateCompanyChange(val) {
+      this.queryForm.createCompanyName = val
+      this.setFormRecord()
+    },
     exportAppliesNowFilter() {
       var f = this.createQueryPost()
       f.pages = {
