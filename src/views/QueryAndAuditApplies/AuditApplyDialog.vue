@@ -83,15 +83,17 @@ export default {
     SubmitAuditForm() {
       const { action, remark, auth } = this.auditForm
       const list = [{ id: this.applyId, action, remark }]
-      this.auditShow = false
       audit({ list }, auth)
         .then(resultlist => {
           resultlist.forEach(result => {
             if (result.status === 0) {
               this.$notify.success('已审批' + result.id)
-            } else this.$notify.error(result.message + ':' + result.id)
-            this.$emit('updated')
+            } else {
+              this.$notify.error(result.message + ':' + result.id)
+            }
           })
+          this.$emit('updated')
+          this.auditShow = false
         })
         .finally(() => {})
     }

@@ -63,28 +63,31 @@
 
       <el-card>
         <div slot="header">
-          <el-col :span="9">
-            <el-button
-              type="info"
-              :loading="submitLoading"
-              @click="loadWaitToAuthRegisterUsers"
-            >刷新待认证人员</el-button>
-          </el-col>
-          <el-col :span="9">
-            <cascader-selector
-              :code.sync="nowSelectCompanyCode"
-              placeholder="选择需要检查的单位"
-              :child-getter-method="companyChild"
-            />
-          </el-col>
-          <el-col :span="6">
-            <el-autocomplete
-              v-model="nowSelectRealName"
-              :fetch-suggestions="queryMember"
-              placeholder="搜索成员"
-              @select="handleCurrentChange"
-            />
-          </el-col>
+          <el-row>
+            <el-col :span="6">
+              <el-button
+                type="info"
+                :loading="submitLoading"
+                @click="loadWaitToAuthRegisterUsers"
+              >刷新待认证人员</el-button>
+            </el-col>
+            <el-col :span="9">
+              <cascader-selector
+                :code.sync="nowSelectCompanyCode"
+                placeholder="选择需要检查的单位"
+                :child-getter-method="companyChild"
+              />
+            </el-col>
+            <el-col :span="9">
+              <el-autocomplete
+                v-model="nowSelectRealName"
+                :fetch-suggestions="queryMember"
+                style="width:100%"
+                placeholder="搜索成员"
+                @select="handleCurrentChange"
+              />
+            </el-col>
+          </el-row>
         </div>
 
         <el-table

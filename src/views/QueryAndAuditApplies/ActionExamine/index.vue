@@ -5,13 +5,13 @@
       :show.sync="showRecall"
       :is-only-to-show-recall-msg.sync="showRecallIsOnlyShowMsg"
       :row="row"
-      @updated="$emit('updated')"
+      @updated="requireUpdate"
     />
     <AuditApplyDialog
       v-if="showAudit"
       :apply-id="row.id"
       :show.sync="showAudit"
-      @updated="$emit('updated')"
+      @updated="requireUpdate"
     />
     <el-button
       v-if="CheckIfShowRecall(row)"
@@ -57,6 +57,9 @@ export default {
     }
   },
   methods: {
+    requireUpdate() {
+      this.$emit('updated')
+    },
     recallApply(isOnlyShow) {
       this.showRecallIsOnlyShowMsg = isOnlyShow
       this.showRecall = true

@@ -40,6 +40,7 @@ export default {
   },
   methods: {
     requestUpdate() {
+      console.log('update require')
       this.$refs.queryAppliesForm.searchData()
     }
   }
