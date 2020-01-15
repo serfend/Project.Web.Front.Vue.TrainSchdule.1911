@@ -7,7 +7,13 @@
     size="small"
     @submit.native.prevent
   >
-    <el-switch v-model="innerfullui" />
+    <el-switch v-model="innerfullui" active-text="高级查询" />
+    <el-switch
+      v-show="currentUserId"
+      v-model="onlySeeSelfApplies"
+      active-text="仅看我的"
+      @change="searchData"
+    />
     <el-form-item label="审核单位" prop="nowAuditByCompany">
       <cascader-selector
         :code.sync="queryForm.nowAuditByCompany"
@@ -152,12 +158,16 @@ export default {
           totalCount: 0
         }
       },
-      innerfullui: false
+      innerfullui: false,
+      onlySeeSelfApplies: false // 仅查询当前用户的申请
     }
   },
   computed: {
     statusOptions() {
       return this.$store.state.vocation.statusDic
+    },
+    currentUserId() {
+      return this.$store.state.user.userid
     }
   },
   watch: {
@@ -242,6 +252,9 @@ export default {
       } else {
         f.createCompany = null
       }
+      if (this.onlySeeSelfApplies) {
+        f.createFor = { value: this.currentUserId }
+      }
       return f
     },
     searchData() {
@@ -254,7 +267,14 @@ export default {
           this.$emit('update:pages', f.pages)
         })
         .finally(() => {
-          this.$notify.info('双击表格可查看休假详情哦~')
+          const showText = [
+            '双击表格可查看休假详情',
+            '点击操作栏下方的下载按钮可以直接下载休假单',
+            '只有当休假还没有被任何人审批的时候才能撤回',
+            '新申请的假默认是未保存状态，并且会在1天内被删除，注意及时保存'
+          ]
+          var rndIndex = Math.floor(Math.random() * showText.length)
+          this.$notify.info(showText[rndIndex])
           return (this.onLoading = false)
         })
     },
