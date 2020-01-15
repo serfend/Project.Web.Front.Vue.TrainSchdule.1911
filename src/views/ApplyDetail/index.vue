@@ -5,7 +5,7 @@
     <h2 style="padding-top:10px">
       {{ staticData.applyDetailName }}
       <el-tag
-        v-if="statusDic[row.status]"
+        v-if="statusDic[row.status] && staticData.vacationStart"
         :color="statusDic[row.status].color"
         class="white--text"
       >{{ statusDic[row.status].desc }}</el-tag>
@@ -49,7 +49,7 @@
                   label="休假日期"
                 >{{ detail.requestInfo.stampLeave }} - {{ detail.requestInfo.stampReturn }}</el-form-item>
               </el-row>
-              <el-form-item label="休假情况">
+              <el-form-item v-if="staticData.vacationStart" label="休假情况">
                 <el-col :lg="2" :md="3" :sm="4">
                   <el-tag>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</el-tag>
                 </el-col>
@@ -58,6 +58,13 @@
                     <el-progress :width="100" :percentage="staticData.vacationProgress" />
                   </el-col>
                 </el-row>
+              </el-form-item>
+              <el-form-item v-else label="状态">
+                <el-tag
+                  v-if="statusDic[row.status]"
+                  :color="statusDic[row.status].color"
+                  class="white--text"
+                >{{ statusDic[row.status].desc }}</el-tag>
               </el-form-item>
               <el-form-item label="休假地点">
                 <el-col
