@@ -79,10 +79,12 @@ export default {
             name: this.form.address.name
           }
           // fix bug empty address
-          if (this.innerForm.address.code === '') this.innerForm.address.code = '0'
+          if (this.innerForm.address.code === '') {
+            this.innerForm.address.code = '0'
+          }
         } else {
           this.innerForm.address = {
-            code: '',
+            code: '0',
             name: '未选择'
           }
         }
@@ -94,7 +96,8 @@ export default {
       handler(val) {
         this.$emit('update:form', val)
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
   },
   methods: {
