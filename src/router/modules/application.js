@@ -31,7 +31,6 @@ const applicationRouter = {
       meta: {
         title: 'application.query',
         verify: 'on',
-        keepAlive: true,
         icon: '无序排列'
       }
     },
