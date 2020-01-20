@@ -68,7 +68,6 @@ export default {
   watch: {
     innerForm: {
       handler(val, oldVal) {
-        if (!val.code || val.code === '') val.code = '0'
         this.$emit('update:form', val)
       },
       deep: true
