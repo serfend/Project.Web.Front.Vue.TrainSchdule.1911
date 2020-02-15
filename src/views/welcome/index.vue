@@ -5,7 +5,7 @@
         <div>
           <img src="/favicon-32x32.png" style="width:40px;">
         </div>
-        <div class="menu-top-title">{{ $t('default.system.company.name') }}</div>
+        <div class="menu-top-title" hidden="none">default.system.company.name</div>
         <div class="menu-top-title">{{ $t('default.system.project.name') }}</div>
       </div>
       <router-link to="/application/newApply">
@@ -26,13 +26,22 @@
           <div class="menu-des">查询批假情况和审批单位休假窗口</div>
         </div>
       </router-link>
+      <router-link to="welcome">
+        <div class="menu" @click.prevent="authRegisterUser(dutyType==='')">
+          <div>
+            <svg-icon :icon-class="dutyType===''?'menu-audit':'menu-register'" />
+            {{ dutyType===''?'注册':$t('register.audit') }}
+          </div>
+          <div class="menu-des">审批各单位注册新账号窗口</div>
+        </div>
+      </router-link>
       <router-link to="login?redirect=404">
         <div class="menu">
           <div>
             <svg-icon icon-class="menu-approval" />
             {{ $t('application.my') }}
           </div>
-          <div class="menu-des">个人休假情况概览窗口</div>
+          <div class="menu-des">个人休假情况概览窗口（暂未开放）</div>
         </div>
       </router-link>
     </el-aside>
@@ -46,6 +55,17 @@ export default {
   data() {
     return {
       show: false
+    }
+  },
+  computed: {
+    dutyType() {
+      return this.$store.state.user.dutiesType
+    }
+  },
+  methods: {
+    authRegisterUser(isToRegister) {
+      this.$store.state.user.isToRegister = isToRegister
+      return this.$router.push(`/register/main`)
     }
   }
 }

@@ -3,7 +3,7 @@
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+      <vacation-complete-chart :chart-data="lineChartData" />
     </el-row>
 
     <el-row :gutter="20">
@@ -31,7 +31,7 @@
 
 <script>
 import PanelGroup from './components/PanelGroup'
-import LineChart from './components/LineChart'
+import VacationCompleteChart from './components/VacationCompleteChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import TodoList from './components/TodoList'
@@ -41,7 +41,7 @@ export default {
   name: 'DashboardAdmin',
   components: {
     PanelGroup,
-    LineChart,
+    VacationCompleteChart,
     PieChart,
     BarChart,
     TodoList,
@@ -50,10 +50,10 @@ export default {
   data() {
     return {
       lineChartData: {
-        onApplyingData: [0, 1],
-        beenAuditData: [0, 1],
-        beenDeniedData: [0, 1],
-        titles: ['暂无数据']
+        onApplyingData: [0, 2000, 10000, 2000, 1000],
+        beenAuditData: [0, 3000, 1000, 2000, 1000],
+        beenDeniedData: [0, 4000, 1000, 2000, 1000],
+        titles: ['暂无数据', '暂无数据', '暂无数据']
       }
     }
   },

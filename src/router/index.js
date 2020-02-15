@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import applicationRouter from './modules/application'
 import commentRouter from './modules/comment'
-
+import gameRouter from './modules/Game'
 Vue.use(Router)
 
 /* Layout */
@@ -29,7 +29,7 @@ import Layout from '@/layout'
   }
  */
 export const constantRoutes = [
-  applicationRouter, commentRouter,
+  applicationRouter, commentRouter, gameRouter,
   {
     path: '/redirect',
     component: Layout,
@@ -75,6 +75,9 @@ export const constantRoutes = [
   {
     path: '',
     hidden: true,
+    meta: {
+      verify: 'on'
+    },
     component: () => import('@/views/welcome/index')
   },
   {

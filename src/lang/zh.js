@@ -30,7 +30,8 @@ var dict = {
   },
   register: {
     title: '注册',
-    checkemail: '认证邮箱'
+    checkemail: '认证邮箱',
+    audit: '审核注册'
   },
   login: {
     username: '用户名',

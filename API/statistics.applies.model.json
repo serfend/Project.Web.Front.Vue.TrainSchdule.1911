@@ -1,0 +1,12 @@
+{
+  "statistics.applies.model": {
+      "title": "单位休假情况",
+      "type": "model",
+      "request": {
+          "company":"#company.model#",
+          "":{
+
+          }
+      }
+  }
+}

@@ -54,8 +54,8 @@ export default {
   data() {
     return {
       innerForm: {
-        authByUserId: '',
-        code: ''
+        authByUserId: null,
+        code: null
       },
       invalid: {
         code: {
@@ -68,6 +68,8 @@ export default {
   watch: {
     innerForm: {
       handler(val, oldVal) {
+        if (val.authByUserId === '') val.authByUserId = null
+        if (val.code === '') val.code = null
         this.$emit('update:form', val)
       },
       deep: true
