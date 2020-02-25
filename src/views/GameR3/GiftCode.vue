@@ -36,6 +36,10 @@ export default {
       default: ''
     },
     gainDate: {
+      type: Number,
+      default: 0
+    },
+    gainUser: {
       type: String,
       default: ''
     }

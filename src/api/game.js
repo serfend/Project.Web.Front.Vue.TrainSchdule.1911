@@ -8,20 +8,42 @@ export function userinfo(userid) {
   })
 }
 
-export function gitftcodes(userid) {
+export function giftcodes(userid) {
   return request.get('/R3/giftcodes', {
-    userid
+    params: {
+      userid
+    }
   })
 }
 
 export function sharecode(userid, code) {
   return request.get('/R3/sharecode', {
-    userid, code
+    params: {
+      userid, code
+    }
   })
 }
 
 export function handlecode(userid, code) {
   return request.get('/R3/handlecode', {
-    userid, code
+    params: {
+      userid, code
+    }
+  })
+}
+
+export function members(pageIndex, pageSize) {
+  return request.get('/R3/members', {
+    params: {
+      pageIndex, pageSize
+    }
+  })
+}
+
+export function giftCodeHistory(userid, code, pageIndex, pageSize) {
+  return request.get('/R3/giftCodeHistory', {
+    params: {
+      userid, code, pageIndex, pageSize
+    }
   })
 }

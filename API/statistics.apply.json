@@ -1,0 +1,13 @@
+{
+  "child": {
+    "title": "获取单位的休假情况",
+    "type": "api",
+    "description": "",
+    "method": "get",
+    "url": "/statistics/applies",
+    "request": {
+      "companyid": "单位的id"
+    },
+    "response": "#statistics.applies#"
+  }
+}

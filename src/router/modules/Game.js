@@ -2,6 +2,7 @@
 const gameRouter =
 {
   path: '/r3',
+  hidden: true,
   component: () => import('@/views/GameR3/index'),
   name: 'GameR3',
   meta: {
