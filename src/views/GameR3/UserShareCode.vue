@@ -98,9 +98,9 @@ export default {
       return format(date, 'zh_CN')
     },
     parseTime,
-    refreshGiftCode() {
+    refreshGiftCode(pageIndex) {
       this.refreshingGiftCodeLoading = true
-      this.codeApi().then(d => {
+      this.codeApi(pageIndex).then(d => {
         this.refreshingGiftCodeLoading = false
         this.innerList = d.list.map(i => {
           var c = i.code

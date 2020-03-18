@@ -3,6 +3,9 @@ import Router from 'vue-router'
 import applicationRouter from './modules/application'
 import commentRouter from './modules/comment'
 import gameRouter from './modules/Game'
+import logRouter from './modules/log'
+import fileRouter from './modules/file'
+
 Vue.use(Router)
 
 /* Layout */
@@ -29,7 +32,7 @@ import Layout from '@/layout'
   }
  */
 export const constantRoutes = [
-  applicationRouter, commentRouter, gameRouter,
+  applicationRouter, commentRouter, gameRouter, logRouter, fileRouter,
   {
     path: '/redirect',
     component: Layout,

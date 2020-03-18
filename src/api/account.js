@@ -174,3 +174,67 @@ export function modefyUser(params) {
   // params.confirmpassword = formatPsw(params.username, params.confirmpassword)
   return request.post('account/modefyUser', params)
 }
+
+export function signIn(signInId) {
+  return request.get('signIn/signIn', {
+    params: {
+      signInId
+    }
+  })
+}
+
+/**
+ * 报告日志
+ *
+ * @export
+ * @param {*} username
+ * @param {*} msg
+ * @param {*} rank Debug = 32,
+		///Infomation = 16,
+		///Warning = 8,
+		///Danger = 4,
+		///Disaster = 0
+ * @returns
+ */
+export function report(username, msg, rank) {
+  return request.post('log/report', {
+    params: {
+      username,
+      message: msg,
+      rank
+    }
+  })
+}
+
+/**
+ * 查询时间范围内 日志
+ *
+ * @export
+ * @param {*} username
+ * @param {*} startDate
+ * @param {*} endDate
+ * @param {*} rankArr Debug = 32,
+		///Infomation = 16,
+		///Warning = 8,
+		///Danger = 4,
+		///Disaster = 0
+ * @returns
+ */
+export function getReport(username, startDate, endDate, rankArr) {
+  var date = startDate === null || endDate === null ? null : { start: startDate, end: endDate }
+  return request.post('log/query', {
+    userName: { value: username },
+    date,
+    rank: rankArr === null ? null : { arrays: rankArr }
+  })
+}
+
+/**
+ * 获取日志等级字典
+ *
+ * @export
+ * @returns
+ */
+export function getReportDic() {
+  return request.get('log/logRankDictionary')
+}

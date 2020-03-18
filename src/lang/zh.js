@@ -11,6 +11,12 @@ var dict = {
       project: {
         name: '休假登记和审核系统'
       }
+    },
+    log: {
+      title: '日志'
+    },
+    file: {
+      title: '文件'
     }
   },
   application: {

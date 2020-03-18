@@ -31,6 +31,7 @@ export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
     return null
   }
+  if (time === null) return null
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   let date
   if (typeof time === 'object') {
@@ -266,7 +267,7 @@ export function getTime(type) {
 export function debounce(func, wait, immediate) {
   let timeout, args, context, timestamp, result
 
-  const later = function() {
+  const later = () => {
     // 据上一次触发时间间隔
     const last = +new Date() - timestamp
 
@@ -283,7 +284,7 @@ export function debounce(func, wait, immediate) {
     }
   }
 
-  return function(...args) {
+  return (...args) => {
     context = this
     timestamp = +new Date()
     const callNow = immediate && !timeout

@@ -8,10 +8,10 @@ export function userinfo(userid) {
   })
 }
 
-export function giftcodes(userid) {
+export function giftcodes(userid, pageIndex, pageSize) {
   return request.get('/R3/giftcodes', {
     params: {
-      userid
+      userid, pageIndex, pageSize
     }
   })
 }
@@ -44,6 +44,14 @@ export function giftCodeHistory(userid, code, pageIndex, pageSize) {
   return request.get('/R3/giftCodeHistory', {
     params: {
       userid, code, pageIndex, pageSize
+    }
+  })
+}
+
+export function updateHandleInterval(userid) {
+  return request.get('/R3/updateHandleInterval', {
+    params: {
+      userid
     }
   })
 }

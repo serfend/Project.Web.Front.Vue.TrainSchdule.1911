@@ -69,8 +69,12 @@ export default {
     }
   },
   methods: {
-    giftcodes,
-    giftCodeHistory,
+    giftcodes(pageIndex) {
+      return giftcodes(null, pageIndex, 10)
+    },
+    giftCodeHistory(pageIndex) {
+      return giftCodeHistory(null, null, pageIndex, 10)
+    },
     contains(arr, val, cb) {
       for (var i in arr) {
         if (arr[i] === val) {
@@ -103,9 +107,7 @@ export default {
           if (code.shareTime !== code.invalidTime) {
             setTimeout(() => {
               this.$notify.error(
-                `礼品码:${code.code}于${code.shareTime}分享,于${
-                  code.invalidTime
-                }失效`
+                `礼品码:${code.code}于${code.shareTime}分享,于${code.invalidTime}失效`
               )
             }, 5000)
           }

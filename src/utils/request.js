@@ -7,6 +7,10 @@ import {
   setTimeout
 } from 'timers'
 
+var warningInfoLog = {
+
+}
+
 // 数据存储
 export const cache = {
   data: {},
@@ -110,20 +114,31 @@ service.interceptors.response.use(
     }
     const res = response.data
     // cache.set(response.config.cacheIndex, res)
-
+    // 如果不存在status，说明是直接文件，直接返回
+    if (res.status === undefined) return res
     if (res.status === 0) {
       return Promise.resolve(res.data)
     } else {
-      if (!response.config.respondErrorIngore) {
-        if (res.status === 12120) {
-          console.log(response.config)
-          location.href = '/#/login'
-        }
+      // 通过缓存方式解决频繁报同一个错误的问题
+      console.log(warningInfoLog)
+      if (!warningInfoLog[res.message]) {
         Message({
           message: res.message,
           type: 'error',
           duration: 5 * 1000
         })
+        warningInfoLog[res.message] = new Date()
+        setTimeout(() => {
+          delete warningInfoLog[res.message]
+        }, 10000)
+      }
+
+      if (!response.config.respondErrorIngore) {
+        if (res.status === 12120) {
+          console.log(response.config)
+          location.href = '/#/login'
+        }
+
         if (res.data && res.data.list) {
           const list = res.data.list
           for (var i = 0; i < list.length; i++) {
