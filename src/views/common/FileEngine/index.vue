@@ -9,6 +9,9 @@
           <el-form-item label="路径">
             <el-input v-model="file.filePath" />
           </el-form-item>
+          <el-form-item label="验证码">
+            <el-input v-model="file.clientKey" />
+          </el-form-item>
           <el-form-item label="文件">
             <el-upload
               drag
@@ -63,11 +66,9 @@
                 <el-tag>{{ i.fileInfo.path }}</el-tag>
                 {{ i.fileInfo.create }}
               </el-row>
+              <el-row>{{ i.current }} / {{ i.total }}</el-row>
               <el-row>
-                <el-col :span="4">{{ i.current }} / {{ i.total }}</el-col>
-                <el-col :span="20">
-                  <el-progress :percentage="i.total<=0?0:i.current/i.total" show-text />
-                </el-col>
+                <el-progress :percentage="i.total<=0?0:100*i.current/i.total" show-text />
               </el-row>
             </el-form-item>
           </div>
@@ -78,7 +79,8 @@
 </template>
 
 <script>
-import { download, upload, requestFile, status } from '@/api/file'
+// download,
+import { upload, requestFile, status } from '@/api/file'
 export default {
   name: 'FileEngine',
   data() {
@@ -86,7 +88,8 @@ export default {
       statusLoading: false,
       file: {
         fileName: '',
-        filePath: ''
+        filePath: '',
+        clientKey: ''
       },
       fileDownloading: false,
       fileInfo: {
@@ -125,16 +128,21 @@ export default {
   },
   methods: {
     download(fileid, fileName) {
-      this.fileDownloading = true
-      download(fileid).then(data => {
-        const blob = new Blob([data])
-        var link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = fileName
-        link.click()
-        window.URL.revokeObjectURL(link.href)
-        this.fileDownloading = false
-      })
+      var requestUrl =
+        process.env.VUE_APP_BASE_API + '/file/download?fileid=' + fileid
+      var a = document.createElement('a')
+      a.href = requestUrl
+      a.click()
+      // this.fileDownloading = true
+      // download(fileid).then(data => {
+      //   const blob = new Blob([data])
+      //   var link = document.createElement('a')
+      //   link.href = window.URL.createObjectURL(blob)
+      //   link.download = fileName
+      //   link.click()
+      //   window.URL.revokeObjectURL(link.href)
+      //   this.fileDownloading = false
+      // })
     },
     upload,
     requestFile,

@@ -44,6 +44,10 @@ export default {
   name: 'LogView',
   data() {
     return {
+      page: {
+        pageIndex: 0,
+        pageSize: 20
+      },
       logUpdateId: '',
       lastLogUpdate: '',
       refreshInterval: 5000,
@@ -56,14 +60,13 @@ export default {
   watch: {
     uid: {
       handler(val) {
-        this.lastLogUpdate = null
+        this.lastLogUpdate = localStorage.getItem(`log.lastupdate@${this.uid}`)
         this.tableData = []
       },
       immediate: true
     }
   },
   mounted() {
-    this.lastLogUpdate = localStorage.getItem('log.lastupdate')
     const method = this.updatenew
     this.getReportDic().then(data => {
       this.rankDic = data.list
@@ -92,15 +95,22 @@ export default {
         var thisUpdate = new Date()
         var lastUpdate = this.lastLogUpdate
         this.lastLogUpdate = thisUpdate
+        localStorage.setItem(`log.lastupdate@${this.uid}`, thisUpdate)
         this.isLoading = true
-        getReport(this.uid, parseTime(lastUpdate), parseTime(thisUpdate)).then(
-          data => {
-            if (data.list.length > 0) {
-              this.tableData = this.tableData.concat(data.list)
+        getReport(
+          this.uid,
+          parseTime(lastUpdate),
+          parseTime(thisUpdate),
+          this.page
+        ).then(data => {
+          if (data.list.length > 0) {
+            this.tableData = data.list.concat(this.tableData)
+            if (this.tableData.length > this.page.pageSize) {
+              this.tableData.splice(0, this.page.pageSize)
             }
-            this.isLoading = false
           }
-        )
+          this.isLoading = false
+        })
       }
     }
   }
