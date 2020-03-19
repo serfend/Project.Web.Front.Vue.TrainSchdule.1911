@@ -26,8 +26,8 @@ export function download(fileid) {
   return request.get('file/download', {
     params: {
       fileid
-    }, 
-    respondErrorIngore: true, 
+    },
+    respondErrorIngore: true,
     responseType: 'blob'
   })
 }

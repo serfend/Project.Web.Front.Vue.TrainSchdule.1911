@@ -60,7 +60,9 @@ export default {
   watch: {
     uid: {
       handler(val) {
-        this.lastLogUpdate = localStorage.getItem(`log.lastupdate@${this.uid}`)
+        this.lastLogUpdate = new Date(
+          localStorage.getItem(`log.lastupdate@${this.uid}`)
+        )
         this.tableData = []
       },
       immediate: true
@@ -87,11 +89,9 @@ export default {
       console.log(row)
     },
     updatenew() {
-      if (
-        this.uid !== '' &&
-        new Date() - this.lastLogUpdate > this.refreshInterval &&
-        !this.isLoading
-      ) {
+      var checkIntervalFit =
+        new Date() - this.lastLogUpdate - this.refreshInterval
+      if (this.uid !== '' && checkIntervalFit > 0 && !this.isLoading) {
         var thisUpdate = new Date()
         var lastUpdate = this.lastLogUpdate
         this.lastLogUpdate = thisUpdate
