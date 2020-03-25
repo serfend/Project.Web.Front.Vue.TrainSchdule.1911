@@ -10,11 +10,36 @@
       <el-form-item label="起始日期">
         <el-date-picker v-model="lastLogUpdate" type="datetime" />
       </el-form-item>
+      <el-form-item label="信息等级">
+        <el-select
+          v-model="rank"
+          class="full-width"
+          placeholder="选择"
+          multiple
+          clearable
+          @change="updatenew(true)"
+        >
+          <el-option
+            v-for="item in rankDicArray"
+            :key="item.value"
+            :label="item.name"
+            :value="item.value"
+          >
+            <span :style="{'float': 'left','color':item.foreColor}">{{ item.name }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-row>
         <el-button v-loading="isLoading" type="success" style="width:100%;" @click="updatenew">立即刷新</el-button>
       </el-row>
       <el-row>
-        <el-table v-loading="isLoading" :data="tableData" border style="width: 100%">
+        <el-table
+          v-loading="isLoading"
+          :data="rank.length>0?tableData.filter(i=>rank.indexOf(i.rank)>-1):tableData"
+          border
+          style="width: 100%"
+        >
           <el-table-column label="等级" width="120">
             <template slot-scope="scope">
               <el-tag :color="rankDic[scope.row.rank].foreColor">{{ rankDic[scope.row.rank].name }}</el-tag>
@@ -61,6 +86,8 @@ export default {
       refreshInterval: 5000,
       isLoading: false,
       uid: '',
+      rank: [],
+      rankDicArray: [],
       rankDic: {},
       tableData: []
     }
@@ -80,6 +107,9 @@ export default {
     const method = this.updatenew
     this.getReportDic().then(data => {
       this.rankDic = data.list
+      for (var i in this.rankDic) {
+        this.rankDicArray.push(this.rankDic[i])
+      }
       this.logUpdateId = setInterval(() => {
         method()
       }, 300)
@@ -100,11 +130,9 @@ export default {
       var checkIntervalFit = isUserAction
         ? 1
         : new Date() - this.lastLogUpdate - this.refreshInterval
-      console.log(checkIntervalFit)
       if (this.uid !== '' && checkIntervalFit > 0 && !this.isLoading) {
         var thisUpdate = new Date()
         var lastUpdate = this.lastLogUpdate
-        this.lastLogUpdate = thisUpdate
         // console.log(this.lastLogUpdate)
         localStorage.setItem(`log.lastupdate@${this.uid}`, thisUpdate)
         this.isLoading = true
@@ -112,14 +140,14 @@ export default {
           this.uid,
           parseTime(lastUpdate),
           parseTime(thisUpdate),
-          this.page
+          this.page,
+          this.rank.length === 0 ? null : this.rank
         ).then(data => {
-          if (data.list.length > 0) {
-            this.tableData = data.list.concat(this.tableData)
-            if (this.tableData.length > this.page.pageSize) {
-              this.tableData = this.tableData.splice(0, this.page.pageSize)
-            }
+          this.tableData = data.list.concat(this.tableData)
+          if (this.tableData.length > this.page.pageSize) {
+            this.tableData = this.tableData.splice(0, this.page.pageSize)
           }
+          this.lastLogUpdate = thisUpdate
           this.isLoading = false
         })
       }
