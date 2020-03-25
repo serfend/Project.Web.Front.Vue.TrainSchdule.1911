@@ -10,13 +10,17 @@ var dict = {
       },
       project: {
         name: '休假登记和审核系统'
+      },
+      title: '高级'
+    },
+    app: {
+      title: '应用',
+      log: {
+        title: '日志'
+      },
+      file: {
+        title: '文件'
       }
-    },
-    log: {
-      title: '日志'
-    },
-    file: {
-      title: '文件'
     }
   },
   application: {
@@ -31,8 +35,7 @@ var dict = {
     logOut: '退出登录',
     profile: '个人信息',
     welcome: '首页',
-    guide: '帮助',
-    errorLog: ''
+    guide: '帮助'
   },
   register: {
     title: '注册',
@@ -67,6 +70,9 @@ var dict = {
     closeAll: '关闭全部',
     closeOthers: '关闭其他',
     sidebarLogo: '侧边栏logo'
+  },
+  errorLog: {
+    title: '错误日志'
   }
 }
 dict.tagsView = dict.settings

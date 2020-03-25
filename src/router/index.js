@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import applicationRouter from './modules/application'
 import commentRouter from './modules/comment'
 import gameRouter from './modules/Game'
+
+import systemRouter from './modules/system'
 import logRouter from './modules/log'
 import fileRouter from './modules/file'
 
@@ -32,7 +34,27 @@ import Layout from '@/layout'
   }
  */
 export const constantRoutes = [
-  applicationRouter, commentRouter, gameRouter, logRouter, fileRouter,
+  {
+    path: '/dashboard',
+    component: Layout,
+    // redirect: '/dashboard',
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/dashboard/index'),
+        name: 'Dashboard',
+        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
+      }
+    ]
+  },
+  applicationRouter, commentRouter, gameRouter,
+  {
+    path: '/app',
+    component: Layout,
+    meta: { title: 'default.app.title', icon: 'component' },
+    children: [logRouter, fileRouter]
+  },
+  systemRouter,
   {
     path: '/redirect',
     component: Layout,
@@ -82,32 +104,6 @@ export const constantRoutes = [
       verify: 'on'
     },
     component: () => import('@/views/welcome/index')
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    // redirect: '/dashboard',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'guide', icon: 'guide', noCache: true }
-      }
-    ]
   },
   {
     path: '/profile',
@@ -163,9 +159,10 @@ export const asyncRoutes = [
     children: [
       {
         path: 'log',
+        hide: true,
         component: () => import('@/views/error-log/index'),
         name: 'ErrorLog',
-        meta: { title: 'errorLog', icon: 'bug' }
+        meta: { title: 'errorLog.title', icon: 'bug' }
       }
     ]
   },

@@ -29,7 +29,7 @@
       <router-link to="welcome">
         <div class="menu" @click.prevent="authRegisterUser(dutyType==='')">
           <div>
-            <svg-icon :icon-class="dutyType===''?'menu-audit':'menu-register'" />
+            <svg-icon :icon-class="dutyType===''?'注册':'menu-register'" />
             {{ dutyType===''?'注册':$t('register.audit') }}
           </div>
           <div class="menu-des">审批各单位注册新账号窗口</div>
