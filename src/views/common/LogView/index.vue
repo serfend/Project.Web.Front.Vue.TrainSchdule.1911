@@ -100,6 +100,13 @@
               <el-tag :color="rankDic[scope.row.rank].foreColor">{{ rankDic[scope.row.rank].name }}</el-tag>
             </template>
           </el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <el-tag
+                :color="operationDic[scope.row.operation].foreColor"
+              >{{ operationDic[scope.row.operation].name }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column label="日期" width="120">
             <template slot-scope="scope">{{ format(scope.row.date, 'zh_CN') }}</template>
           </el-table-column>
@@ -129,7 +136,12 @@
 
 <script>
 import { parseTime } from '@/utils'
-import { getReport, report, getReportDic } from '@/api/account'
+import {
+  getReport,
+  report,
+  getReportDic,
+  getUserActionOperationDic
+} from '@/api/account'
 import { format } from 'timeago.js'
 export default {
   name: 'LogView',
@@ -148,8 +160,10 @@ export default {
       ip: [], // 选中指定ip
       device: [], // 选中指定device
       message: null,
-      rankDicArray: [],
+      rankDicArray: [], // 日志等级设置
       rankDic: {},
+      operationDicArray: [], // 日志操作设置
+      operationDic: {},
       tableData: []
     }
   },
@@ -167,15 +181,42 @@ export default {
   },
   mounted() {
     const method = this.updatenew
-    this.getReportDic().then(data => {
-      this.rankDic = data.list
-      for (var i in this.rankDic) {
-        this.rankDicArray.push(this.rankDic[i])
-      }
-      this.logUpdateId = setInterval(() => {
-        method()
-      }, 300)
+    var opeationDic = new Promise((resolve, reject) => {
+      getUserActionOperationDic()
+        .then(data => {
+          this.operationDic = data.list
+          for (var i in this.operationDic) {
+            this.operationDicArray.push(this.operationDic[i])
+          }
+          return resolve()
+        })
+        .catch(e => {
+          return reject(e)
+        })
     })
+    var reportDic = new Promise((resolve, reject) => {
+      getReportDic()
+        .then(data => {
+          this.rankDic = data.list
+          for (var i in this.rankDic) {
+            this.rankDicArray.push(this.rankDic[i])
+          }
+          return resolve()
+        })
+        .catch(e => {
+          return reject(e)
+        })
+    })
+    Promise.all([opeationDic, reportDic])
+      .then(() => {
+        this.logUpdateId = setInterval(() => {
+          method()
+        }, 300)
+      })
+      .catch(e => {
+        console.log(e)
+        this.$message.error('初始化失败:' + e.message)
+      })
   },
   destroyed() {
     clearInterval(this.logUpdateId)
@@ -183,7 +224,6 @@ export default {
   methods: {
     report,
     getReport,
-    getReportDic,
     format,
     messageMap(keyName) {
       var l = this.tableData.map(i => {

@@ -242,3 +242,7 @@ export function getReport(username, startDate, endDate, page, rankArr, ip, devic
 export function getReportDic() {
   return request.get('log/logRankDictionary')
 }
+
+export function getUserActionOperationDic() {
+  return request.get('log/userActionOperationDictionary')
+}
