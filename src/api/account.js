@@ -220,12 +220,15 @@ export function report(username, msg, rank) {
 		///Disaster = 0
  * @returns
  */
-export function getReport(username, startDate, endDate, page, rankArr) {
+export function getReport(username, startDate, endDate, page, rankArr, ip, device, message) {
   var date = startDate === null || endDate === null ? null : { start: startDate, end: endDate }
   return request.post('log/query', {
     userName: { value: username },
     date,
     rank: rankArr === null ? null : { arrays: rankArr },
+    ip: ip === null ? null : { arrays: ip },
+    device: device === null ? null : { arrays: device },
+    message: message === null ? null : { value: message },
     page
   })
 }

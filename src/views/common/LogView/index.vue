@@ -1,35 +1,90 @@
 <template>
-  <el-form>
+  <el-form inline>
     <el-card style="margin:20px" shadow="hover">
-      <el-form-item label="uid">
-        <el-input v-model="uid" />
-      </el-form-item>
-      <el-form-item label="刷新间隔">
-        <el-input v-model="refreshInterval" />
-      </el-form-item>
-      <el-form-item label="起始日期">
-        <el-date-picker v-model="lastLogUpdate" type="datetime" />
-      </el-form-item>
-      <el-form-item label="信息等级">
-        <el-select
-          v-model="rank"
-          class="full-width"
-          placeholder="选择"
-          multiple
-          clearable
-          @change="updatenew(true)"
-        >
-          <el-option
-            v-for="item in rankDicArray"
-            :key="item.value"
-            :label="item.name"
-            :value="item.value"
-          >
-            <span :style="{'float': 'left','color':item.foreColor}">{{ item.name }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
+      <el-row>
+        <el-col :span="6">
+          <el-form-item label="uid">
+            <el-input v-model="uid" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="刷新间隔">
+            <el-input v-model="refreshInterval" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="起始日期">
+            <el-date-picker v-model="lastLogUpdate" type="datetime" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="信息等级">
+            <el-select
+              v-model="rank"
+              class="full-width"
+              placeholder="选择"
+              multiple
+              clearable
+              @change="updatenew(true)"
+            >
+              <el-option
+                v-for="item in rankDicArray"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"
+              >
+                <span :style="{'float': 'left','color':item.foreColor}">{{ item.name }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="设备">
+            <el-select
+              v-model="device"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              placeholder="选择或添加设备名称"
+            >
+              <el-option
+                v-for="item in messageMap('device')"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="ip">
+            <el-select
+              v-model="ip"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              placeholder="选择或添加来源ip"
+            >
+              <el-option
+                v-for="item in messageMap('ip')"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="包含信息">
+            <el-input v-model="message" />
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row>
         <el-button v-loading="isLoading" type="success" style="width:100%;" @click="updatenew">立即刷新</el-button>
       </el-row>
@@ -53,6 +108,9 @@
           </el-table-column>
           <el-table-column label="ip" width="120">
             <template slot-scope="scope">{{ scope.row.ip }}</template>
+          </el-table-column>
+          <el-table-column label="设备" width="120">
+            <template slot-scope="scope">{{ scope.row.device }}</template>
           </el-table-column>
           <el-table-column label="UserAgent">
             <template slot-scope="scope">{{ scope.row.ua }}</template>
@@ -86,12 +144,16 @@ export default {
       refreshInterval: 5000,
       isLoading: false,
       uid: '',
-      rank: [],
+      rank: [], // 选中指定rank
+      ip: [], // 选中指定ip
+      device: [], // 选中指定device
+      message: null,
       rankDicArray: [],
       rankDic: {},
       tableData: []
     }
   },
+  computed: {},
   watch: {
     uid: {
       handler(val) {
@@ -123,6 +185,24 @@ export default {
     getReport,
     getReportDic,
     format,
+    messageMap(keyName) {
+      var l = this.tableData.map(i => {
+        return {
+          value: i[keyName],
+          label: i[keyName]
+        }
+      })
+      var keys = {}
+      var result = []
+      for (var index in l) {
+        var i = l[index]
+        if (!keys[i.value]) {
+          keys[i.value] = true
+          result.push(i)
+        }
+      }
+      return result
+    },
     handleClick(row) {
       console.log(row)
     },
@@ -141,7 +221,10 @@ export default {
           parseTime(lastUpdate),
           parseTime(thisUpdate),
           this.page,
-          this.rank.length === 0 ? null : this.rank
+          this.rank.length === 0 ? null : this.rank,
+          this.ip.length === 0 ? null : this.ip,
+          this.device.length === 0 ? null : this.device,
+          this.message ? this.message : null
         ).then(data => {
           this.tableData = data.list.concat(this.tableData)
           if (this.tableData.length > this.page.pageSize) {
