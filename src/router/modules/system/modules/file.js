@@ -1,7 +1,7 @@
 
 const fileRouter =
 {
-  path: '/fileEngine',
+  path: '/app/fileEngine',
   component: () => import('@/views/common/FileEngine/index'),
   name: 'FileEngine',
   meta: {

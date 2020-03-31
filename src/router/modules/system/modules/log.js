@@ -1,7 +1,7 @@
 
 const logRouter =
 {
-  path: '/log',
+  path: '/app/log',
   component: () => import('@/views/common/LogView/index'),
   name: 'Log',
   meta: {

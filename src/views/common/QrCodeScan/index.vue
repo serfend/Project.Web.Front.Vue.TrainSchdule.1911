@@ -1,10 +1,12 @@
 <template>
-  <el-upload
-    :action="avatarSubmitUrl"
-    :before-upload="beforeAvatarUpload"
-    class="avatar-uploader"
-    :show-file-list="false"
-  ></el-upload>
+  <el-card header="二维码生成">
+    <el-upload
+      :action="avatarSubmitUrl"
+      :before-upload="beforeAvatarUpload"
+      class="avatar-uploader"
+      :show-file-list="false"
+    />
+  </el-card>
 </template>
 
 <script>
@@ -26,12 +28,9 @@ export default {
       }
       if (isLt2M) {
         var reader = new FileReader()
-        const fn = this.avatarRefresh
         reader.onload = function(evt) {
           var base64 = evt.target.result
-          postUserAvatar(base64).then(() => {
-            fn()
-          })
+          console.log(base64)
         }
         reader.readAsDataURL(file)
       }

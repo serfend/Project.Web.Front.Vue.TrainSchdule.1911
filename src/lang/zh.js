@@ -21,6 +21,18 @@ var dict = {
       file: {
         title: '文件'
       }
+    },
+    utils: {
+      title: '工具',
+      qrCode: {
+        title: '二维码',
+        Create: {
+          title: '生成'
+        },
+        Scan: {
+          title: '扫描'
+        }
+      }
     }
   },
   application: {

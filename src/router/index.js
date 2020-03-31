@@ -4,9 +4,7 @@ import applicationRouter from './modules/application'
 import commentRouter from './modules/comment'
 import gameRouter from './modules/Game'
 
-import systemRouter from './modules/system'
-import logRouter from './modules/log'
-import fileRouter from './modules/file'
+import systemRouter from './modules/system/index'
 
 Vue.use(Router)
 
@@ -48,12 +46,6 @@ export const constantRoutes = [
     ]
   },
   applicationRouter, commentRouter, gameRouter,
-  {
-    path: '/app',
-    component: Layout,
-    meta: { title: 'default.app.title', icon: 'component' },
-    children: [logRouter, fileRouter]
-  },
   systemRouter,
   {
     path: '/redirect',
