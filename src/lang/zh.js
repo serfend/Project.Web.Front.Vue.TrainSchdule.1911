@@ -40,6 +40,7 @@ var dict = {
     new: '我要休假',
     query: '查询和审批',
     detail: '休假申请详情',
+    auditStream: '审批流设置',
     my: '我的休假'
   },
   navbar: {

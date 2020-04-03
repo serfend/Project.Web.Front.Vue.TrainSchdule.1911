@@ -9,17 +9,7 @@
     >
       <el-table-column type="selection" width="42px" />
       <el-table-column label="申请人" min-width="100px">
-        <template slot-scope="{row}">
-          <div v-if="row.avatar" class="pull-left">
-            <img
-              class="avatar-32"
-              :src="row.avatar"
-              alt
-              @click="$router.push('/profile/index?id='+row.userBase.id)"
-            >
-          </div>
-          {{ row.base.realName }}
-        </template>
+        <template slot-scope="{row}">{{ row.base.realName }}</template>
       </el-table-column>
       <el-table-column align="center" label="休假类别">
         <template slot-scope="{row}">
@@ -42,7 +32,37 @@
       </el-table-column>
       <el-table-column align="center" label="当前审批">
         <template slot-scope="{row}">
-          <el-tag class="caption">{{ row.nowAuditCompanyName }}</el-tag>
+          <div v-if="row.nowStep">
+            <el-tooltip effect="light">
+              <div slot="content">
+                可审批的共有 {{ row.nowStep.membersFitToAudit.length }} 人，共需要 {{ row.nowStep.requireMembersAcceptCount }} 人
+                <el-card style="padding:10px">
+                  已审核
+                  <el-tag
+                    v-for="p in GetUserByArray(row.nowStep.membersAcceptToAudit)"
+                    :key="p.name"
+                  >
+                    <div v-if="p.duties">{{ p.duties }}({{ p.realName }})</div>
+                    <div v-else>{{ p.realName }}({{ p.name }})</div>
+                  </el-tag>
+                </el-card>
+                <el-card style="padding:10px">
+                  待审核
+                  <el-tag
+                    v-for="p in GetUserByArray(row.nowStep.membersFitToAudit.concat(row.nowStep.membersAcceptToAudit).filter(v=>!row.nowStep.membersFitToAudit.includes(v)||!row.nowStep.membersAcceptToAudit.includes(v)))"
+                    :key="p.name"
+                  >
+                    <div v-if="p.duties">{{ p.duties }}({{ p.realName }})</div>
+                    <div v-else>{{ p.realName }}({{ p.name }})</div>
+                  </el-tag>
+                </el-card>
+              </div>
+              <el-tag
+                class="caption"
+              >{{ row.nowStep.index+1 }}/{{ row.steps.length }}步 {{ row.nowStep.firstMemberCompanyName }}</el-tag>
+            </el-tooltip>
+          </div>
+          <el-tag v-else>{{ row.auditStreamSolution }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="创建">
@@ -114,7 +134,6 @@
 </template>
 <script>
 import { format } from 'timeago.js'
-import { getUserAvatar } from '@/api/userinfo'
 import moment from 'moment'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
@@ -173,22 +192,22 @@ export default {
         this.formatedList = this.list.map(li =>
           this.formatApplyItem(li, statusOptions)
         )
-        for (var i = 0; i < this.formatedList.length; i++) {
-          this.getUserAvatar(
-            this.formatedList[i].userBase.id,
-            this.formatedList[i]
-          )
-        }
       },
       immediate: true,
       deep: true
     }
   },
   methods: {
-    getUserAvatar(userid, targetItem) {
-      getUserAvatar(userid).then(data => {
-        targetItem.avatar = data.url
-      })
+    GetUserByArray(userIdArr) {
+      var result = []
+      for (var i = 0; i < userIdArr.length; i++) {
+        var item = {
+          name: userIdArr[i],
+          realName: ''
+        }
+        result.push(item)
+      }
+      return result
     },
     formatApplyItem(li, statusOptions) {
       const { ...item } = li
@@ -264,11 +283,6 @@ export default {
 }
 .pull-right {
   float: right !important;
-}
-.avatar-32 {
-  width: 32px;
-  height: 32px;
-  border-radius: 10%;
 }
 </style>
 

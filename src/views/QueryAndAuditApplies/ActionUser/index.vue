@@ -134,7 +134,7 @@ export default {
         })
     },
     exportApply(row) {
-      var dutiesRawType = row.userBase.dutiesRawType
+      var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
       var applyId = row.id
       exportApplyDetail(dutiesRawType, applyId)
     }

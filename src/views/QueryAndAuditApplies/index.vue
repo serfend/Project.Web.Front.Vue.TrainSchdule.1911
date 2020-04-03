@@ -38,12 +38,9 @@ export default {
       fullSearchUI: false
     }
   },
-  destroyed() {
-    console.log('i 22am destroyed')
-  },
+  destroyed() {},
   methods: {
     requestUpdate() {
-      console.log('update require')
       this.$refs.queryAppliesForm.searchData()
     }
   }
