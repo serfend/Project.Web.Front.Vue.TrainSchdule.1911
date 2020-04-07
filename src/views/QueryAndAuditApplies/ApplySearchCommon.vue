@@ -2,15 +2,15 @@
   <div>
     <el-card style="margin:0 0 20px 0">
       <el-switch
-        style="margin:0px 20px"
         v-model="innerfullui"
+        style="margin:0px 20px"
         active-text="高级查询"
         inactive-text="简要查询"
       />
       <el-switch
-        style="margin:0px 20px"
         v-show="currentUserId"
         v-model="onlySeeSelfApplies"
+        style="margin:0px 20px"
         active-text="仅自己"
         inactive-text="查看全部"
         @change="seeSelfChange"
@@ -237,8 +237,9 @@ export default {
     var tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
     var tmp = JSON.parse(tmpItem)
     if (tmp) this.queryForm = tmp
-    if (this.currentUserId && !tmp.auditBy)
+    if (this.currentUserId && !tmp.auditBy) {
       this.queryForm.auditBy = this.currentUserId
+    }
     this.queryFormStartRecord = true
   },
   methods: {
