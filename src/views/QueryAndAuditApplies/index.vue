@@ -38,7 +38,13 @@ export default {
       fullSearchUI: false
     }
   },
-  destroyed() {},
+  destroyed() {
+    document.body.style.zoom = 1
+  },
+  mounted() {
+    this.$message.success('已为您将页面放大到150%')
+    document.body.style.zoom = 1.5
+  },
   methods: {
     requestUpdate() {
       this.$refs.queryAppliesForm.searchData()
