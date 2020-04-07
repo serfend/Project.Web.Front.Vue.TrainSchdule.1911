@@ -45,7 +45,7 @@ export default {
           id: '2',
           label: '查询和审批',
           description: '查询批假情况和审批单位休假窗口',
-          //icon: '/favicon.png',
+          // icon: '/favicon.png',
           svg: 'menu-search',
           href: '/login?redirect=/application/queryAndAuditApplies'
         },
@@ -54,7 +54,7 @@ export default {
           label: '注册账号',
           description: '注册和审批新账号窗口',
           svg: '注册',
-          //icon: '/favicon.png',
+          // icon: '/favicon.png',
           href: '/register/main'
         },
         {
