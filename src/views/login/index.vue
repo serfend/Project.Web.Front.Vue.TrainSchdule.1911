@@ -63,11 +63,6 @@
         type="primary"
         @click.native.prevent="handleReg"
       >注 册</el-button>
-      <el-button
-        :disabled="currentUser?false:true"
-        style="width:100%;margin-bottom:5px;margin-left:0px"
-        type="primary"
-      >{{ '审核本单位新注册人员信息 ' + (currentUser?currentUser:'需要登录后访问') }}</el-button>
     </el-form>
 
     <el-dialog title="第三方登录" :visible.sync="showDialog">
@@ -160,8 +155,8 @@ export default {
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (
-          (shiftKey && (key >= 'a' && key <= 'z')) ||
-          (!shiftKey && (key >= 'A' && key <= 'Z'))
+          (shiftKey && key >= 'a' && key <= 'z') ||
+          (!shiftKey && key >= 'A' && key <= 'Z')
         ) {
           this.capsTooltip = true
         } else {
