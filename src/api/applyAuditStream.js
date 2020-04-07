@@ -50,6 +50,7 @@ export function getStreamSolutionRule(name) {
  *
  * @export
  * @param {Array} duties 职务列表
+ * @param {Array} dutyTags 职务类型列表
  * @param {int} dutyIsMajor 是否为主官 0:Both 1:仅非主官 2:仅主官
  * @param {Array} companies 单位
  * @param {String} companyRefer 单位跳转设置：Parent，Self
@@ -59,9 +60,9 @@ export function getStreamSolutionRule(name) {
  * @param {int} auditMembersCount 需要审核人数量 0表示全部
  * @returns
  */
-export function buildFilter(duties, dutyIsMajor, companies, companyRefer, companyTags, companyCodeLength, auditMembers, auditMembersCount) {
+export function buildFilter(duties, dutyTags, dutyIsMajor, companies, companyRefer, companyTags, companyCodeLength, auditMembers, auditMembersCount) {
   return {
-    duties, dutyIsMajor, companies, companyRefer, companyTags, companyCodeLength, auditMembers, auditMembersCount
+    duties, dutyTags, dutyIsMajor, companies, companyRefer, companyTags, companyCodeLength, auditMembers, auditMembersCount
   }
 }
 
@@ -77,6 +78,26 @@ export function buildFilter(duties, dutyIsMajor, companies, companyRefer, compan
  */
 export function addStreamNode(name, description, filter, auth) {
   return request.post('ApplyAuditStream/StreamNode', {
+    name, description,
+    filter,
+    auth
+  })
+}
+
+/**
+ * 新增一个审批节点
+ *
+ * @export
+ * @param {String} id id
+ * @param {String} name 名称
+ * @param {String} description 描述
+ * @param {Filter} filter 请调用`buildFilter进行构造`
+ * @param {Auth} auth 授权码
+ * @returns
+ */
+export function editStreamNode(id, name, description, filter, auth) {
+  return request.put('ApplyAuditStream/StreamNode', {
+    id,
     name, description,
     filter,
     auth
@@ -103,15 +124,16 @@ export function addStreamSolution(name, description, nodes, auth) {
  * 编辑一个审批流解决方案
  *
  * @export
+ * @param {String} id
  * @param {String} name 名称
  * @param {String} description 描述
  * @param {Array} nodes 节点名称
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamSolution(name, description, nodes, auth) {
+export function editStreamSolution(id, name, description, nodes, auth) {
   return request.put('ApplyAuditStream/StreamSolution', {
-    name, description, nodes, auth
+    id, name, description, nodes, auth
   })
 }
 
@@ -131,6 +153,26 @@ export function editStreamSolution(name, description, nodes, auth) {
 export function addStreamSolutionRule(name, description, solutionName, priority, enable, filter, auth) {
   return request.post('ApplyAuditStream/StreamSolutionRule', {
     name, description, solutionName, priority, enable, filter, auth
+  })
+}
+
+/**
+ * 创建一个匹配规则
+ *
+ * @export
+ * @param {String} id
+ * @param {String} name 名称
+ * @param {String} description 描述
+ * @param {String} solutionName 规则符合后使用的解决方案
+ * @param {Int} priority 优先级
+ * @param {Boolean} enable 启用
+ * @param {Filter} filter 请调用`buildFilter进行构造`
+ * @param {Auth} auth 授权码
+ * @returns
+ */
+export function editStreamSolutionRule(id, name, description, solutionName, priority, enable, filter, auth) {
+  return request.post('ApplyAuditStream/StreamSolutionRule', {
+    id, name, description, solutionName, priority, enable, filter, auth
   })
 }
 
