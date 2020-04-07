@@ -1,9 +1,18 @@
 <template>
-  <el-tooltip :content="description">
-    <div :style="{ width:size+'px'}">
+  <el-tooltip placement="top" :content="description">
+    <div :style="{ width:size+'px',height:size+'px'}">
       <img
+        v-if="icon"
         :class="isActive?'icon-buttonactive':'icon-button'"
         :src="icon"
+        @click="$emit('click')"
+        @mouseenter="activeMe"
+        @mouseleave="disactiveMe"
+      />
+      <svg-icon
+        v-if="svg"
+        :icon-class="svg"
+        :class="isActive?'icon-buttonactive':'icon-button'"
         @click="$emit('click')"
         @mouseenter="activeMe"
         @mouseleave="disactiveMe"
@@ -17,6 +26,10 @@
 export default {
   name: 'AppIcon',
   props: {
+    svg: {
+      type: String,
+      default: ''
+    },
     icon: {
       type: String,
       default: ''
@@ -55,15 +68,18 @@ export default {
 <style lang="scss" scoped>
 .icon-button {
   border-radius: 10%;
-  border-color: #000000;
+  color: #3f3fff;
+  background-color: #888fff;
+  opacity: 0.7;
   width: 100%;
   height: 100%;
   transition: all 0.5s;
 }
 .icon-buttonactive {
   border-radius: 10%;
-  border-color: #000000;
-
+  color: #ffffff;
+  background-color: #8f8fef;
+  opacity: 1;
   width: 100%;
   height: 100%;
   box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, 0.3);
@@ -77,6 +93,7 @@ export default {
   text-align: center;
   color: #ffffff;
   transition: all 0.5s;
+  margin: 20px 0;
 }
 
 .icon-labelactive {

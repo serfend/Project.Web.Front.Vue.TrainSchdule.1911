@@ -4,8 +4,9 @@
       <el-row style="width:100%">
         <el-col v-for="i in list" :key="i.id" :xs="12" :sm="8" :md="6" :lg="4">
           <AppIcon
-            style="margin:20px 20px"
+            style="margin:50px 20px"
             :icon="i.icon"
+            :svg="i.svg"
             :size="130"
             :label="i.label"
             :description="i.description"
@@ -37,28 +38,31 @@ export default {
           id: '1',
           label: '我要休假',
           description: '个人提交休假申请窗口',
-          icon: '/favicon.png',
+          svg: 'menu-apply',
           href: '/application/newApply'
         },
         {
           id: '2',
           label: '查询和审批',
           description: '查询批假情况和审批单位休假窗口',
-          icon: '/favicon.png',
+          //icon: '/favicon.png',
+          svg: 'menu-search',
           href: '/login?redirect=/application/queryAndAuditApplies'
         },
         {
           id: '3',
           label: '注册账号',
-          description: '审批各单位注册新账号窗口',
-          icon: '/favicon.png',
+          description: '注册和审批新账号窗口',
+          svg: '注册',
+          //icon: '/favicon.png',
           href: '/register/main'
         },
         {
           id: '4',
           label: '我的休假',
           description: '个人休假情况概览窗口（暂未开放）',
-          icon: '/favicon.png',
+          // icon: '/favicon.png',
+          svg: 'menu-approval',
           href: '/welcome'
         }
       ]
