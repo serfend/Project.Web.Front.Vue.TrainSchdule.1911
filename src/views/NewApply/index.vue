@@ -103,9 +103,11 @@
         <div v-show="showAll == true || active == 1" class="row layout">
           <el-form ref="formApply" :model="formApply" class="full-width" label-width="180px">
             <div class="subheading pa-3">二、填写休假请求</div>
-            <el-form-item label="申请理由">
-              <el-input v-model="formApply.reason" />
+
+            <el-form-item label="全年休假完成率">
+              <el-progress :percentage="caculateVocationPercentage()" />
             </el-form-item>
+
             <el-form-item label="休假类型">
               <el-select v-model="formApply.VocationType" placeholder="必填">
                 <el-option label="正休" value="正休" />
@@ -122,80 +124,12 @@
                 />
               </el-tooltip>
             </el-form-item>
-
-            <el-row v-if="formApply.VocationType=='正休'" class="sv-row">
-              <el-form-item label="休假详情" label-width="100px">
-                <el-button type="primary" @click="OpenOtherVacation('')">添加休假内容</el-button>
-              </el-form-item>
-              <el-collapse accordion>
-                <el-collapse-item
-                  v-for="(item,index) in SelectVacationList"
-                  :key="item.value"
-                  style="position:relative;"
-                >
-                  <template slot="title">
-                    {{ item.name }} {{ item.length }}天
-                    <i
-                      class="el-icon-edit group-edit"
-                      @click="OpenOtherVacation(index)"
-                    />
-                    <!-- .stop="doSomething($event) -->
-                    <i
-                      class="el-icon-delete group-remove"
-                      @click.stop="removeVacation(index,$event)"
-                    />
-                  </template>
-                  {{ item.description }}
-                </el-collapse-item>
-              </el-collapse>
-            </el-row>
+            <el-form-item label="申请理由">
+              <el-input v-model="formApply.reason" />
+            </el-form-item>
 
             <el-row>
-              <el-col :lg="6" :md="24">
-                <el-form-item label="离队时间">
-                  <el-date-picker
-                    v-model="formApply.StampLeave"
-                    placeholder="选择日期"
-                    type="date"
-                    format="yyyy年MM月dd"
-                    value-format="yyyy-MM-dd"
-                    @change="handleChange"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :lg="6" :md="24">
-                <el-form-item
-                  v-show="lawVocations.length>0&&formApply.VocationType=='正休'"
-                  label="法定节假日"
-                >
-                  <el-tag
-                    v-for="item in lawVocations"
-                    :key="item.start"
-                  >{{ item.start|parseTime("{mm}月{dd}日") }}{{ item.name }}{{ item.length }} 天</el-tag>
-                </el-form-item>
-              </el-col>
-              <el-col :lg="9" :md="24">
-                <el-form-item label="预计归队时间">
-                  <el-date-picker
-                    v-model="formApply.StampReturn"
-                    disabled
-                    placeholder="自动计算"
-                    type="date"
-                    format="yyyy年MM月dd"
-                    value-format="yyyy-MM-dd"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
               <el-col :lg="12" :md="24">
-                <el-form-item label="全年休假完成率">
-                  <el-progress :percentage="caculateVocationPercentage()" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :lg="9" :md="24">
                 <el-form-item label="休假天数">
                   <el-input
                     v-model="formApply.VocationLength"
@@ -239,7 +173,7 @@
                 </el-form-item>
               </el-col>
 
-              <el-col :lg="6" :md="24">
+              <el-col :lg="12" :md="24">
                 <el-form-item label="路途天数">
                   <el-input
                     v-model="formApply.OnTripLength"
@@ -251,7 +185,61 @@
                 </el-form-item>
               </el-col>
             </el-row>
-
+            <el-row v-if="formApply.VocationType=='正休'" class="sv-row">
+              <el-form-item label="福利假" label-width="100px">
+                <el-button type="primary" @click="OpenOtherVacation('')">添加福利假</el-button>
+              </el-form-item>
+              <el-collapse accordion>
+                <el-collapse-item
+                  v-for="(item,index) in SelectVacationList"
+                  :key="item.value"
+                  style="position:relative;"
+                >
+                  <template slot="title">
+                    {{ item.name }} {{ item.length }}天
+                    <i
+                      class="el-icon-edit group-edit"
+                      @click="OpenOtherVacation(index)"
+                    />
+                    <!-- .stop="doSomething($event) -->
+                    <i
+                      class="el-icon-delete group-remove"
+                      @click.stop="removeVacation(index,$event)"
+                    />
+                  </template>
+                  {{ item.description }}
+                </el-collapse-item>
+              </el-collapse>
+            </el-row>
+            <el-form-item label="离队时间">
+              <el-date-picker
+                v-model="formApply.StampLeave"
+                placeholder="选择日期"
+                type="date"
+                format="yyyy年MM月dd日"
+                value-format="yyyy-MM-dd"
+                @change="handleChange"
+              />
+            </el-form-item>
+            <el-form-item
+              v-show="lawVocations.length>0&&formApply.VocationType=='正休'"
+              label="法定节假日"
+            >
+              <el-tag
+                v-for="item in lawVocations"
+                :key="item.start"
+              >{{ item.start|parseTime("{mm}月{dd}日") }}{{ item.name }}{{ item.length }} 天</el-tag>
+            </el-form-item>
+            <el-form-item label="预计归队时间">
+              <el-date-picker
+                v-model="formApply.StampReturn"
+                disabled
+                placeholder="自动计算"
+                type="date"
+                format="yyyy年MM月dd日"
+                value-format="yyyy-MM-dd"
+              />
+            </el-form-item>
             <el-form-item label="休假目的地">
               <cascader-selector
                 placeholder="选择本次休假的目的地"
@@ -820,6 +808,7 @@ export default {
      * 用户计算预期归队日期
      */
     handleChange() {
+      if (!this.formApply.StampLeave) return
       var SelectVacationCount = 0
       this.SelectVacationList.forEach(v => {
         SelectVacationCount += v.length
