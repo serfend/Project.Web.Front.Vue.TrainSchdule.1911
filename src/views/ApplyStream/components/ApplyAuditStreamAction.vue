@@ -177,6 +177,18 @@
             <el-option v-for="item in 10" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
+
+        <el-form-item label="相对路径">
+          <el-select v-model="newNode.companyRefer" placeholder="相对查询何种">
+            <el-option
+              v-for="item in companyReferDic"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="单位类型">
           <el-select
             v-model="newNode.companyTags"
@@ -253,6 +265,11 @@ export default {
   },
   data() {
     return {
+      companyReferDic: [
+        { value: '', label: '不使用相对' },
+        { value: 'self', label: '本级审核' },
+        { value: 'parent', label: '上级审核' }
+      ],
       loading: false,
       tableData: [],
       newNodeDialogShow: false,
