@@ -38,7 +38,8 @@ var dict = {
   application: {
     title: '休假管理',
     new: '我要休假',
-    query: '查询和审批',
+    query: '查询申请',
+    audit: '审批申请',
     detail: '休假申请详情',
     auditStream: '审批流设置',
     my: '我的休假'
@@ -52,6 +53,7 @@ var dict = {
   },
   register: {
     title: '注册',
+    new: '注册新号',
     checkemail: '认证邮箱',
     audit: '审核注册'
   },
