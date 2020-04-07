@@ -6,6 +6,9 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  mounted() {
+    document.body.style.zoom = 1.25
+  }
 }
 </script>
