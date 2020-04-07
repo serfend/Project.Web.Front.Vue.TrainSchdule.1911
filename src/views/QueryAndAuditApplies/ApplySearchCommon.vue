@@ -153,6 +153,7 @@ export default {
   data() {
     return {
       onLoading: false,
+      loadingDate: '',
       innerList: [],
       queryForm: {
         createTime: null,
@@ -305,14 +306,18 @@ export default {
     searchData() {
       var f = this.createQueryPost()
       this.onLoading = true
+      var ld = new Date()
+      this.loadingDate = ld
       queryList(f)
         .then(data => {
+          if (this.loadingDate !== ld) return
           this.innerList = data.list || []
           f.pages.totalCount = data.totalCount
           this.$emit('update:pages', f.pages)
         })
         .finally(() => {
           const showText = [
+            '默认将查询近一个星期的申请',
             '双击表格可查看休假详情',
             '点击操作栏下方的下载按钮可以直接下载休假单',
             '只有当休假还没有被任何人审批的时候才能撤回',
@@ -320,7 +325,7 @@ export default {
           ]
           var rndIndex = Math.floor(Math.random() * showText.length)
           this.$notify.info(showText[rndIndex])
-          return (this.onLoading = false)
+          this.onLoading = false
         })
     },
     formatData_DateTime(datetime) {
