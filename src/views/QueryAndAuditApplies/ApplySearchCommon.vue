@@ -1,130 +1,136 @@
 <template>
-  <el-form
-    ref="queryForm"
-    :model="queryForm"
-    label-width="90px"
-    :inline="true"
-    size="small"
-    @submit.native.prevent
-  >
-    <el-switch v-model="innerfullui" active-text="高级查询" />
-    <el-switch
-      v-show="currentUserId"
-      v-model="onlySeeSelfApplies"
-      active-text="仅看我的"
-      @change="searchData"
-    />
-    <el-form-item label="审核单位" prop="nowAuditByCompany">
-      <cascader-selector
-        :code.sync="queryForm.nowAuditByCompany"
-        :placeholder="queryForm.nowAuditByCompanyName"
-        :child-getter-method="companyChild"
-        @select-change="hdlNowAuditCompanyChange"
+  <div>
+    <el-card style="margin:0 0 20px 0">
+      <el-switch
+        style="margin:0px 20px"
+        v-model="innerfullui"
+        active-text="高级查询"
+        inactive-text="简要查询"
       />
-    </el-form-item>
-    <el-form-item label="来自单位" prop="createCompany">
-      <cascader-selector
-        :code.sync="queryForm.createCompany"
-        :placeholder="queryForm.createCompanyName"
-        :child-getter-method="companyChild"
-        @select-change="hdlCreateCompanyChange"
+      <el-switch
+        style="margin:0px 20px"
+        v-show="currentUserId"
+        v-model="onlySeeSelfApplies"
+        active-text="仅自己"
+        inactive-text="查看全部"
+        @change="seeSelfChange"
       />
-    </el-form-item>
-    <el-form-item label="审核状态" prop="status">
-      <el-select
-        v-model="queryForm.status"
-        class="full-width"
-        placeholder="选择审核状态"
-        multiple
-        clearable
-      >
-        <el-option
-          v-for="item in statusOptions"
-          :key="item.code"
-          :label="item.desc"
-          :value="item.code"
+    </el-card>
+    <el-form
+      ref="queryForm"
+      :model="queryForm"
+      label-width="90px"
+      :inline="true"
+      size="small"
+      @submit.native.prevent
+    >
+      <el-form-item v-show="fullui" label="审核人">
+        <el-autocomplete
+          v-model="queryForm.auditBy"
+          :fetch-suggestions="queryMember"
+          style="width:100%"
+          placeholder="搜索成员"
+          @select="hdlAuditByChange"
+        />
+      </el-form-item>
+
+      <el-form-item label="来自单位">
+        <cascader-selector
+          :code.sync="queryForm.createCompany"
+          :placeholder="queryForm.createCompanyName"
+          :child-getter-method="companyChild"
+          @select-change="hdlCreateCompanyChange"
+        />
+      </el-form-item>
+      <el-form-item label="审核状态">
+        <el-select
+          v-model="queryForm.status"
+          class="full-width"
+          placeholder="选择审核状态"
+          multiple
+          clearable
         >
-          <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item v-show="fullui" label="创建时间" prop="createTime">
-      <el-date-picker
-        v-model="queryForm.createTime"
-        type="daterange"
-        align="right"
-        unlink-panels
-        range-separator="-"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        format="yyyy-MM-dd"
-        value-format="yyyy-MM-dd"
-        clearable
-      />
-    </el-form-item>
-    <el-form-item label="离队时间" label-width="120" prop="stampLeaveTime">
-      <el-date-picker
-        v-model="queryForm.stampLeaveTime"
-        type="daterange"
-        align="right"
-        unlink-panels
-        range-separator="-"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        format="yyyy-MM-dd"
-        value-format="yyyy-MM-dd"
-        clearable
-      />
-    </el-form-item>
-    <el-form-item v-show="fullui" label="归队时间" label-width="120" prop="stampReturnTime">
-      <el-date-picker
-        v-model="queryForm.stampReturnTime"
-        type="daterange"
-        align="right"
-        unlink-panels
-        range-separator="-"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        format="yyyy-MM-dd"
-        value-format="yyyy-MM-dd"
-        clearable
-      />
-    </el-form-item>
-    <el-form-item v-show="fullui" label="涉及单位" prop="auditByCompany">
-      <cascader-selector
-        :code.sync="queryForm.auditByCompany"
-        :placeholder="queryForm.auditByCompanyName"
-        :child-getter-method="companyChild"
-        @select-change="hdlAuditByCompanyChange"
-      />
-    </el-form-item>
-    <el-row>
-      <el-col v-show="fullui" :lg="24">
-        <el-button-group style="width:100%">
-          <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
-          <el-button
-            type="primary"
-            icon="el-icon-search"
-            style="width:40%"
-            :loading="onLoading"
-            autofocus
-            @click="searchData"
-          >筛选</el-button>
-          <el-button
-            type="primary"
-            icon="el-icon-download"
-            style="width:40%"
-            :loading="onLoading"
-            @click="exportAppliesNowFilter"
-          >筛选并导出</el-button>
-        </el-button-group>
-      </el-col>
-    </el-row>
-  </el-form>
+          <el-option
+            v-for="item in statusOptions"
+            :key="item.code"
+            :label="item.desc"
+            :value="item.code"
+          >
+            <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-show="fullui" label="创建时间">
+        <el-date-picker
+          v-model="queryForm.createTime"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item label="离队时间" label-width="120">
+        <el-date-picker
+          v-model="queryForm.stampLeaveTime"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item v-show="fullui" label="归队时间" label-width="120">
+        <el-date-picker
+          v-model="queryForm.stampReturnTime"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+          clearable
+        />
+      </el-form-item>
+      <el-row>
+        <el-col v-show="fullui" :lg="24">
+          <el-button-group style="width:100%">
+            <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              style="width:40%"
+              :loading="onLoading"
+              autofocus
+              @click="searchData"
+            >筛选</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-download"
+              style="width:40%"
+              :loading="onLoading"
+              @click="exportAppliesNowFilter"
+            >筛选并导出</el-button>
+          </el-button-group>
+        </el-col>
+      </el-row>
+    </el-form>
+  </div>
 </template>
 
 <script>
+import { getUserIdByRealName } from '@/api/userinfo'
 import { companyChild } from '@/api/company'
 import CascaderSelector from '@/components/CascaderSelector'
 import { queryList } from '@/api/apply'
@@ -160,10 +166,7 @@ export default {
         stampLeaveTime: null,
         stampReturnTime: null,
         status: [], // 状态
-        nowAuditByCompany: '', // 当前审核的单位
-        nowAuditByCompanyName: '',
-        auditByCompany: '', // 可能需要审核的单位
-        auditByCompanyName: '',
+        auditBy: '',
         createCompany: '', // 申请单位
         createCompanyName: ''
       },
@@ -230,14 +233,29 @@ export default {
       deep: true
     }
   },
-  created() {
+  mounted() {
     var tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
     var tmp = JSON.parse(tmpItem)
     if (tmp) this.queryForm = tmp
+    if (this.currentUserId && !tmp.auditBy)
+      this.queryForm.auditBy = this.currentUserId
     this.queryFormStartRecord = true
   },
   methods: {
     companyChild,
+    queryMember(realName, cb) {
+      if (!realName) return cb([{}])
+      getUserIdByRealName(realName).then(data => {
+        cb(
+          data.list.map(li => {
+            return {
+              value: li.companyName + li.dutiesName + li.realName,
+              id: li.id
+            }
+          })
+        )
+      })
+    },
     setFormRecord() {
       if (this.queryFormStartRecord) {
         localStorage.setItem(
@@ -246,12 +264,8 @@ export default {
         )
       }
     },
-    hdlNowAuditCompanyChange(val) {
-      this.queryForm.nowAuditByCompanyName = val
-      this.setFormRecord()
-    },
-    hdlAuditByCompanyChange(val) {
-      this.queryForm.auditByCompanyName = val
+    hdlAuditByChange(val) {
+      this.queryForm.auditBy = val.id
       this.setFormRecord()
     },
     hdlCreateCompanyChange(val) {
@@ -281,15 +295,10 @@ export default {
       } else {
         f.status = null
       }
-      if (this.queryForm.nowAuditByCompany) {
-        f.nowAuditByCompany = { value: this.queryForm.nowAuditByCompany } // 审核单位
+      if (this.queryForm.auditBy) {
+        f.auditBy = { value: this.queryForm.auditBy } // 审核人
       } else {
-        f.nowAuditByCompany = null
-      }
-      if (this.queryForm.auditByCompany) {
-        f.auditByCompany = { value: this.queryForm.auditByCompany } // 审核单位
-      } else {
-        f.auditByCompany = null
+        f.auditBy = null
       }
       if (this.queryForm.createCompany) {
         f.createCompany = { value: this.queryForm.createCompany } // 申请单位
@@ -302,6 +311,9 @@ export default {
         f.createFor = null
       }
       return f
+    },
+    seeSelfChange() {
+      if (this.onlySeeSelfApplies) this.queryForm.auditBy = ''
     },
     searchData() {
       var f = this.createQueryPost()

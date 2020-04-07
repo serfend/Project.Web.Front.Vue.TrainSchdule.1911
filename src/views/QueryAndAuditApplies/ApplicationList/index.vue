@@ -126,7 +126,12 @@
       :responselist="multiAuditFormSelection"
       @updated="$emit('updated')"
     />
-    <el-button v-show="!multiAuditFormShow" @click="showMutilAudit">批量审批</el-button>
+    <el-button
+      v-show="!multiAuditFormShow"
+      style="width:100%"
+      type="success"
+      @click="showMutilAudit"
+    >批量审批</el-button>
     <Pagination
       :pagesetting.sync="pagesetting"
       :hidden="formatedList.length===0"
