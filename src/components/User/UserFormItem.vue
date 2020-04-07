@@ -1,13 +1,11 @@
 <template>
-  <el-tooltip placement="right" effect="light">
-    <div slot="content">
-      <User :data="data" />
-    </div>
-    <el-tag>
+  <el-popover placement="right" width="200" trigger="hover" @show="isActive=true">
+    <User :data="data" :canLoadAvatar="isActive" />
+    <el-tag slot="reference">
       <i class="el-icon-user-solid" />
       {{ data.realName }}
     </el-tag>
-  </el-tooltip>
+  </el-popover>
 </template>
 
 <script>
@@ -25,7 +23,11 @@ export default {
       }
     }
   },
-  mounted() {}
+  data() {
+    return {
+      isActive: false
+    }
+  }
 }
 </script>
 

@@ -59,6 +59,11 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/markdown',
+    component: () => import('@/views/ApplyStream/components/ApplyStreamAbout'),
+    hidden: true,
+  },
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true

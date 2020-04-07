@@ -1,118 +1,163 @@
 <template>
-  <el-card>
-    <div slot="header">审批方案规则（筛选申请人审批方案）</div>
-    <el-table :data="tableData">
-      <el-table-column label="优先" width="80px" sortable :sort-method="(a,b)=>a-b">
-        <template slot-scope="scope">
-          <el-tooltip>
-            <div slot="content">数字越大，则优先级越高</div>
-            <div>{{ scope.row.priority }}</div>
-          </el-tooltip>
-        </template>
-      </el-table-column>
-      <el-table-column label="单位">
-        <template slot-scope="scope">
-          <div v-if="!scope.row.company||scope.row.company.length==0">
+  <div>
+    <el-card>
+      <div slot="header">审批方案规则（筛选申请人审批方案）</div>
+      <el-table :data="tableData">
+        <el-table-column label="优先" width="80px" sortable :sort-method="(a,b)=>a-b">
+          <template slot-scope="scope">
             <el-tooltip>
-              <div slot="content">所有单位都将默认使用此方案</div>
-              <el-tag>不限</el-tag>
+              <div slot="content">数字越大，则优先级越高</div>
+              <div>{{ scope.row.priority }}</div>
             </el-tooltip>
-          </div>
-          <el-dropdown v-else-if="scope.row.company.length>1">
-            <div>{{ scope.row.company[0].name }}等{{ scope.row.company.length }}个单位</div>
-            <el-dropdown-menu>
-              <el-dropdown-item v-for="cmp in scope.row.company" :key="cmp.id">
-                <CompanyFormItem :data="cmp" />
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          <CompanyFormItem v-else :data="scope.row.company[0]" />
-        </template>
-      </el-table-column>
-      <el-table-column label="职务">
-        <template slot-scope="scope">
-          <div v-if="!scope.row.duty||scope.row.duty.length==0">
+          </template>
+        </el-table-column>
+        <el-table-column label="单位">
+          <template slot-scope="scope">
+            <div v-if="!scope.row.company||scope.row.company.length==0">
+              <el-tooltip>
+                <div slot="content">所有单位都将默认使用此方案</div>
+                <el-tag>不限</el-tag>
+              </el-tooltip>
+            </div>
+            <el-dropdown v-else-if="scope.row.company.length>1">
+              <div>{{ scope.row.company[0].name }}等{{ scope.row.company.length }}个单位</div>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="cmp in scope.row.company" :key="cmp.id">
+                  <CompanyFormItem :data="cmp" />
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <CompanyFormItem v-else :data="scope.row.company[0]" />
+          </template>
+        </el-table-column>
+        <el-table-column label="职务">
+          <template slot-scope="scope">
+            <div v-if="!scope.row.duty||scope.row.duty.length==0">
+              <el-tooltip>
+                <div slot="content">所有职务都将默认使用此方案</div>
+                <el-tag>不限</el-tag>
+              </el-tooltip>
+            </div>
+            <el-dropdown v-else-if="scope.row.duty.length>1">
+              <div>{{ scope.row.duty[0].name }}等{{ scope.row.duty.length }}个职务</div>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="cmp in scope.row.duty" :key="cmp.id">
+                  <DutyFormItem :data="cmp" />
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <DutyFormItem v-else :data="scope.row.duty[0]" />
+          </template>
+        </el-table-column>
+        <el-table-column label="主官">
+          <template slot-scope="scope">
             <el-tooltip>
-              <div slot="content">所有职务都将默认使用此方案</div>
-              <el-tag>不限</el-tag>
+              <div
+                slot="content"
+              >{{ scope.row.dutyIsMajor==2?'仅职务类型为主官的生效':scope.row.dutyIsMajor==1?'仅职务类型非主官的生效':'不论职务类型是否为主官都将生效' }}</div>
+              <el-tag>{{ scope.row.dutyIsMajor==2?'仅主官':scope.row.dutyIsMajor==1?'仅非主官':'不限' }}</el-tag>
             </el-tooltip>
-          </div>
-          <el-dropdown v-else-if="scope.row.duty.length>1">
-            <div>{{ scope.row.duty[0].name }}等{{ scope.row.duty.length }}个职务</div>
-            <el-dropdown-menu>
-              <el-dropdown-item v-for="cmp in scope.row.duty" :key="cmp.id">
-                <DutyFormItem :data="cmp" />
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          <DutyFormItem v-else :data="scope.row.duty[0]" />
-        </template>
-      </el-table-column>
-      <el-table-column label="主官">
-        <template slot-scope="scope">
-          <el-tooltip>
-            <div
-              slot="content"
-            >{{ scope.row.dutyIsMajor==2?'仅职务类型为主官的生效':scope.row.dutyIsMajor==1?'仅职务类型非主官的生效':'不论职务类型是否为主官都将生效' }}</div>
-            <el-tag>{{ scope.row.dutyIsMajor==2?'仅主官':scope.row.dutyIsMajor==1?'仅非主官':'不限' }}</el-tag>
-          </el-tooltip>
-        </template>
-      </el-table-column>
-      <el-table-column label="成员">
-        <template slot-scope="scope">
-          <div v-if="!scope.row.members||scope.row.members.length==0">
-            <el-tooltip>
-              <div slot="content">所有成员都将默认使用此方案</div>
-              <el-tag>不限</el-tag>
-            </el-tooltip>
-          </div>
-          <el-dropdown v-else-if="scope.row.members.length>1">
-            <div>{{ scope.row.members[0].realName }}等{{ scope.row.members.length }}名成员</div>
-            <el-dropdown-menu>
-              <el-dropdown-item v-for="cmp in scope.row.members" :key="cmp.id">
-                <UserFormItem :data="cmp" />
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          <UserFormItem v-else :data="scope.row.members[0]" />
-        </template>
-      </el-table-column>
-      <el-table-column label="审批流方案">
-        <template slot-scope="scope">
-          <div @click="showSolution(scope.row.solution)">{{ scope.row.solution }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.enable"
-            style="display: block"
-            active-color="#13ce66"
-            inactive-color="#999999"
-            active-text="启用"
-            inactive-text="禁用"
+          </template>
+        </el-table-column>
+        <el-table-column label="成员">
+          <template slot-scope="scope">
+            <div v-if="!scope.row.members||scope.row.members.length==0">
+              <el-tooltip>
+                <div slot="content">所有成员都将默认使用此方案</div>
+                <el-tag>不限</el-tag>
+              </el-tooltip>
+            </div>
+            <el-dropdown v-else-if="scope.row.members.length>1">
+              <div>{{ scope.row.members[0].realName }}等{{ scope.row.members.length }}名成员</div>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="cmp in scope.row.members" :key="cmp.id">
+                  <UserFormItem :data="cmp" />
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <UserFormItem v-else :data="scope.row.members[0]" />
+          </template>
+        </el-table-column>
+        <el-table-column label="审批流方案">
+          <template slot-scope="scope">
+            <div @click="showSolution(scope.row.solution)">{{ scope.row.solution }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.enable"
+              style="display: block"
+              active-color="#13ce66"
+              inactive-color="#999999"
+              active-text="启用"
+              inactive-text="禁用"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200px">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="warning"
+              icon="el-icon-edit-outline"
+              @click="editSolution(scope.row)"
+            >编辑</el-button>
+            <el-button
+              size="mini"
+              type="info"
+              icon="el-icon-circle-close"
+              @click="deleteSolution(scope.row)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-button plain type="success" icon="el-icon-circle-plus-outline" style="width:100%">添加</el-button>
+    </el-card>
+    <el-dialog
+      :visible.sync="newSolutionDialogShow"
+      :title="newSolution.mode=='new'?'新增':newSolution.mode=='edit'?'编辑':'删除'"
+    >
+      <el-form v-loading="newSolution.loading">
+        <el-form-item label="名称">
+          <el-input
+            v-model="newSolution.name"
+            placeholder="填入独一无二的名称"
+            :disabled="newSolution.mode=='edit'||newSolution.mode=='delete'"
           />
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="200px">
-        <template slot-scope="scope">
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="newSolution.description" placeholder="方案规则的描述，可自定义" />
+        </el-form-item>
+        
+        <el-form-item label="授权人">
+          <el-collapse>
+            <el-collapse-item title="授权人">
+              <template slot="title">
+                默认为当前登录
+                <el-tag>{{ $store.state.user.name }}</el-tag>
+              </template>
+              <AuthCode :form.sync="newSolution.auth" :auth-check-method="checkAuthCode" />
+            </el-collapse-item>
+          </el-collapse>
+        </el-form-item>
+        <el-button-group style="width:100%">
           <el-button
-            size="mini"
-            type="warning"
-            icon="el-icon-edit-outline"
-            @click="editSolution(scope.row)"
-          >编辑</el-button>
+            v-loading="newSolution.loading"
+            type="success"
+            style="width:50%"
+            @click="submitSolution"
+          >保存</el-button>
           <el-button
-            size="mini"
-            type="info"
-            icon="el-icon-circle-close"
-            @click="deleteSolution(scope.row)"
+            v-loading="newSolution.loading"
+            type="danger"
+            style="width:50%"
+            @click="deleteSolution"
           >删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-button plain type="success" icon="el-icon-circle-plus-outline" style="width:100%">添加</el-button>
-  </el-card>
+        </el-button-group>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
 
 <script>

@@ -2,9 +2,19 @@
   <div>
     <el-card>
       <template slot="header">
-        <h2>{{ data.name }}职务的信息</h2>
+        <h2>
+          <el-tag v-if="data.isMajorManager">主官</el-tag>
+          <el-tag v-else type="info">非主官</el-tag>
+          {{ data.name }}
+        </h2>
       </template>
-      施工中...应显示职务的名称，类型，基本类型等
+      <el-form style="width:250px">
+        <el-form-item label="代码">{{ data.code }}</el-form-item>
+        <el-form-item label="类别">
+          <el-tag v-if="data.tags.length==0" type="info">无</el-tag>
+          <el-tag v-else v-for="i in data.tags" :key="i">{{ i }}</el-tag>
+        </el-form-item>
+      </el-form>
     </el-card>
   </div>
 </template>

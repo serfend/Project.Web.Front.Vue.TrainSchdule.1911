@@ -22,16 +22,20 @@
           <template slot-scope="scope">
             <el-tooltip>
               <div slot="content">
-                <el-steps>
-                  <el-step
-                    v-for="s in scope.row.nodes"
-                    :key="s.code"
-                    :title="s.name"
-                    :description="`${s.action.name}\n${s.description}`"
-                  />
+                <el-steps direction="vertical">
+                  <el-step v-for="s in scope.row.nodes" :key="s.id" style="width:300px">
+                    <div slot="title" style="color:#ffc300">{{ s.name }}</div>
+                    <div slot="description">
+                      创建于
+                      {{ format(s.create,'zh_CN') }}
+                      需要
+                      {{ s.auditMembersCount==0?'所有人':(s.auditMembersCount+'人') }}审核
+                      <div style="color:#ffffff;font-size:1em">{{ s.description }}</div>
+                    </div>
+                  </el-step>
                 </el-steps>
               </div>
-              <div>{{ scope.row.nodes.length }}</div>
+              <div>{{ scope.row.nodes.length }}条</div>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -76,24 +80,37 @@
           <el-input v-model="newSolution.description" placeholder="方案的描述，可自定义" />
         </el-form-item>
         <el-form-item label="审批节点">
-          <el-tag
-            v-for="tag in newSolution.nodes"
-            :key="tag.key"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)"
-          >{{ tag }}</el-tag>
-          <el-autocomplete
-            v-if="inputVisible"
-            ref="saveTagInput"
-            v-model="inputValue"
-            class="input-new-tag"
-            :fetch-suggestions="querySearchAsync"
-            placeholder="输出查询节点"
-            @select="handleInputConfirm"
-          />
-          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新节点</el-button>
+          <el-select v-model="newSolution.nodeSelect" @change="selectNodeChanged">
+            <el-option
+              v-for="item in allNode"
+              :key="item.name"
+              :label="item.name"
+              :value="item.name"
+            >
+              <el-tooltip :content="item.description">
+                <div>{{ item.name }}</div>
+              </el-tooltip>
+            </el-option>
+          </el-select>
         </el-form-item>
+        <el-tree
+          :data="newSolution.nodes"
+          node-key="id"
+          draggable
+          default-expand-all
+          :expand-on-click-node="false"
+        >
+          <div class="custom-tree-node" slot-scope="{node,data}">
+            <el-tag
+              size="mini"
+              closable
+              effect="plain"
+              @close="handleSelectNodeClose(node)"
+            >{{ node.label }}</el-tag>
+            <span>{{ data.description }}</span>
+          </div>
+        </el-tree>
+
         <el-form-item label="授权人">
           <el-collapse>
             <el-collapse-item title="授权人">
@@ -127,7 +144,7 @@
 <script>
 import AuthCode from '@/components/AuthCode'
 import { checkAuthCode } from '@/api/account'
-
+import { format } from 'timeago.js'
 import {
   queryStreamSolution,
   queryStreamNode,
@@ -144,15 +161,22 @@ export default {
       tableData: [],
       newSolutionDialogShow: false,
       newSolution: this.buildNewSolution(),
-      inputVisible: false,
-      inputValue: ''
+      allNode: [],
+      allNodeDic: {}
     }
   },
   mounted() {
     this.refresh()
+    queryStreamNode().then(data => {
+      this.allNode = data.list
+      for (var n in this.allNode) {
+        this.allNodeDic[this.allNode[n].name] = this.allNode[n]
+      }
+    })
   },
   methods: {
     checkAuthCode,
+    format,
     refresh() {
       if (this.loading) return
       this.loading = true
@@ -160,23 +184,8 @@ export default {
       this.newSolutionDialogShow = false
       queryStreamSolution()
         .then(data => {
-          this.tableData = data.list.map(i => {
-            return {
-              name: i.name,
-              description: i.description,
-              nodes: i.nodes.map(n => {
-                return {
-                  name: n,
-                  description: '加载中',
-                  action: {
-                    name: '加载中',
-                    description: '加载中'
-                  }
-                }
-              }),
-              code: Math.random() * 100
-            }
-          })
+          this.tableData = data.list
+          this.tableData.nodes.forEach(i => (i.id = Math.random()))
         })
         .then(() => {
           this.loading = false
@@ -195,7 +204,7 @@ export default {
       fn(
         this.newSolution.name,
         this.newSolution.description,
-        this.newSolution.nodes,
+        this.newSolution.nodes.map(i => i.label),
         this.newSolution.auth
       )
         .then(() => {
@@ -212,7 +221,9 @@ export default {
       if (target) {
         this.newSolution.name = target.name
         this.newSolution.description = target.description
-        this.newSolution.nodes = target.nodes.map(i => i.name)
+        this.newSolution.nodes = target.nodes.map(i =>
+          this.buildNodeSelect(i.name)
+        )
       }
     },
     deleteSolution() {
@@ -231,37 +242,21 @@ export default {
           this.newSolution.loading = false
         })
     },
-    handleClose(tag) {
-      this.newSolution.nodes.splice(this.newSolution.nodes.indexOf(tag), 1)
-    },
-
-    showInput() {
-      this.inputVisible = true
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus()
-      })
-    },
-
-    handleInputConfirm() {
-      const inputValue = this.inputValue
-      if (inputValue) {
-        this.newSolution.nodes.push(inputValue)
+    buildNodeSelect(val) {
+      return {
+        id: Math.random(),
+        label: val,
+        description: this.allNodeDic[val].description
       }
-      this.inputVisible = false
-      this.inputValue = ''
     },
-    querySearchAsync(queryName, cb) {
-      queryStreamNode().then(data => {
-        cb(
-          data.list.map(i => {
-            return {
-              value: i.name,
-              description: i.description,
-              key: Math.random() * 100
-            }
-          })
-        )
-      })
+    selectNodeChanged(val) {
+      this.newSolution.nodes.push(this.buildNodeSelect(val))
+      this.newSolution.nodeSelect = ''
+    },
+    handleSelectNodeClose(node) {
+      var id = node.data.id
+      var index = this.newSolution.nodes.findIndex(n => n.id === id)
+      this.newSolution.nodes.splice(index, 1)
     },
     buildNewSolution() {
       var lastAuth = this.newSolution ? this.newSolution.auth : null
@@ -269,6 +264,7 @@ export default {
         mode: 'new',
         name: '',
         description: '',
+        nodeSelect: '',
         nodes: [],
         auth: lastAuth ?? {
           authByUserId: '',
@@ -296,5 +292,13 @@ export default {
   width: 90px;
   margin-left: 10px;
   vertical-align: bottom;
+}
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  padding-right: 8px;
 }
 </style>
