@@ -425,10 +425,10 @@ export default {
       return this.$store.state.user.data
     }
   },
-  created() {
-    this.createNew()
-  },
   mounted() {
+    setTimeout(() => {
+      this.createNew()
+    }, 1000)
     this.restaurants = this.loadAll()
   },
   methods: {
@@ -449,7 +449,11 @@ export default {
           prevYearlyLength: 0
         }
       }
-      if (f.realName && f.realName !== '') {
+      if (f.id && f.id !== '') {
+        setTimeout(() => {
+          this.fetchUserInfoes('id')
+        }, 200)
+      } else if (f.realName && f.realName !== '') {
         setTimeout(() => {
           this.fetchUserInfoes('realName')
         }, 200)
