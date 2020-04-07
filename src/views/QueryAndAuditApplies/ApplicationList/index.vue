@@ -5,29 +5,26 @@
       v-loading="loading"
       :data="formatedList"
       highlight-current-row
+      stripe
+      header-align="center"
       @row-dblclick="showDetail"
     >
-      <el-table-column type="selection" width="42px" />
-      <el-table-column label="申请人" min-width="100px">
-        <template slot-scope="{row}">{{ row.base.realName }}</template>
-      </el-table-column>
-      <el-table-column align="center" label="休假类别">
+      <el-table-column type="selection" />
+      <el-table-column label="基本">
         <template slot-scope="{row}">
-          <el-tag
-            effect="dark"
-            :type="row.request.vocationType==='正休'?'':'danger'"
-          >{{ row.request.vocationType }}</el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="职务">
-        <template slot-scope="{row}">
-          <el-tag class="caption">{{ row.base.dutiesName }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="单位">
-        <template slot-scope="{row}">
-          <el-tag class="caption">{{ row.base.companyName }}</el-tag>
+          <el-row>
+            <el-tag
+              effect="dark"
+              size="mini"
+              :type="row.request.vocationType==='正休'?'':'danger'"
+            >{{ row.request.vocationType }}</el-tag>
+            <span
+              style="font-size:10px;margin:2px;color:#3f3f3f"
+            >{{ row.base.companyName }} {{ row.base.dutiesName }}</span>
+          </el-row>
+          <el-row>
+            <span>{{ row.base.realName }}</span>
+          </el-row>
         </template>
       </el-table-column>
       <el-table-column align="center" label="当前审批">
@@ -62,18 +59,23 @@
               >{{ row.nowStep.index+1 }}/{{ row.steps.length }}步 {{ row.nowStep.firstMemberCompanyName }}</el-tag>
             </el-tooltip>
           </div>
-          <el-tag v-else>{{ row.auditStreamSolution }}</el-tag>
+          <el-tooltip v-else content="未明确审批流程的休假。可能存在问题，请联系人力审查。">
+            <span>{{ row.auditStreamSolution }}</span>
+          </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建">
+      <el-table-column header-align="center" align="center" label="休假时间">
         <template slot-scope="{row}">
-          <span>{{ row.create }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column header-align="center" align="center" label="休假时间" width="160">
-        <template slot-scope="{row}">
-          <el-tag>{{ row.stampLeave }}</el-tag>
-          <el-tag>{{ row.stampReturn }}</el-tag>
+          <el-row>
+            <el-tooltip content="申请被创建的时间">
+              <span>{{ row.create }}</span>
+            </el-tooltip>
+          </el-row>
+          <el-row>
+            <el-tooltip content="休假起始和结束的时间">
+              <span>{{ row.stampLeave }}-{{ row.stampReturn }}</span>
+            </el-tooltip>
+          </el-row>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假地点">
@@ -113,7 +115,7 @@
           <el-tag :color="row.statusColor" class="white--text">{{ row.statusDesc }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" min-width="120">
+      <el-table-column align="center" label="操作">
         <template slot-scope="{row}">
           <slot :row="row" name="action" />
         </template>
