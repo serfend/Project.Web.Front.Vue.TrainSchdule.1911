@@ -134,11 +134,9 @@
 </template>
 <script>
 import { format } from 'timeago.js'
-import moment from 'moment'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
 import Pagination from '@/components/Pagination'
-moment.locale('zh-cn')
 
 export default {
   name: 'ApplicationList',
