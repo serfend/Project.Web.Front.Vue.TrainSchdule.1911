@@ -111,10 +111,11 @@ export function withdrew(id) {
  *按筛选查询申请列表
  *
  * @export
- * @param {json} data
+ * @param {QueryApplyModel} data
+ * @param {Boolean} ignoreErr
  * @returns
  */
-export function queryList(data) {
+export function queryList(data, ignoreErr) {
   return request.post('/apply/list', data, {
     respondErrorIngore: ignoreErr
   })
