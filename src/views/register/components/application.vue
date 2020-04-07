@@ -56,7 +56,7 @@
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item prop="email" label="认证邮箱">
+    <!--<el-form-item prop="email" label="认证邮箱">
       <el-input
         v-model="innerForm.email"
         :style="{ width: '400px' }"
@@ -64,7 +64,7 @@
         auto-complete="on"
         type="text"
       />
-    </el-form-item>
+    </el-form-item>-->
   </div>
 </template>
 
@@ -122,8 +122,8 @@ export default {
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (
-          (shiftKey && (key >= 'a' && key <= 'z')) ||
-          (!shiftKey && (key >= 'A' && key <= 'Z'))
+          (shiftKey && key >= 'a' && key <= 'z') ||
+          (!shiftKey && key >= 'A' && key <= 'Z')
         ) {
           this.capsTooltip = true
         } else {

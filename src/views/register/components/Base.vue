@@ -35,9 +35,9 @@
     <el-form-item label="工作时间">
       <el-date-picker v-model="innerForm.time_Work" format="yyyy年MM月dd" value-format="yyyy-MM-dd" />
     </el-form-item>
-    <el-form-item label="党团时间">
+    <!--<el-form-item label="党团时间">
       <el-date-picker v-model="innerForm.time_Party" format="yyyy年MM月dd" value-format="yyyy-MM-dd" />
-    </el-form-item>
+    </el-form-item>-->
   </div>
 </template>
 

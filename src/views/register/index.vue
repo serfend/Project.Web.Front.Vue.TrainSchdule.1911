@@ -148,7 +148,7 @@ import LangSelect from '@/components/LangSelect'
 import Base from './components/Base'
 import Application from './components/Application'
 import Company from './components/Company'
-import Diy from './components/Diy'
+// import Diy from './components/Diy'
 import Social from './components/Social'
 import Auth from '@/components/AuthCode'
 import CascaderSelector from '@/components/CascaderSelector'
@@ -172,7 +172,7 @@ export default {
     Application,
     Social,
     Company,
-    Diy,
+    // Diy,
     Auth
   },
   data() {
@@ -206,12 +206,12 @@ export default {
           icon: 'el-icon-s-home',
           component: 'Social'
         },
-        {
-          name: '其他',
-          index: 5,
-          icon: 'el-icon-s-grid',
-          component: 'Diy'
-        },
+        // {
+        //   name: '其他',
+        //   index: 5,
+        //   icon: 'el-icon-s-grid',
+        //   component: 'Diy'
+        // },
         {
           name: '授权',
           index: 6,
@@ -438,7 +438,7 @@ export default {
       // }
       submitMethod(submitForm)
         .then(data => {
-          this.$message.success('成功执行')
+          this.$message.success('注册成功')
         })
         .finally(() => {
           this.submitLoading = false
