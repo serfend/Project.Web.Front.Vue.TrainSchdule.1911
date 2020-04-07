@@ -119,7 +119,7 @@
                         </el-collapse-item>
                       </el-collapse>
                     </div>
-                    <div class="audit-process-status">
+                    <div v-if="detail.nowStep" class="audit-process-status">
                       <span v-if="step.index > detail.nowStep.index">
                         <i class="el-icon-more-outline title grey-text" />
                         未收到审批
