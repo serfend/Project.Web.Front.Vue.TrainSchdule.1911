@@ -5,10 +5,11 @@
         <el-col v-for="i in list" :key="i.id" :xs="12" :sm="8" :md="6" :lg="4">
           <AppIcon
             style="margin:20px 20px"
-            :href="i.href"
             :icon="i.icon"
             :size="130"
             :label="i.label"
+            :description="i.description"
+            @click="lintTo(i.href)"
           />
         </el-col>
       </el-row>
@@ -27,13 +28,43 @@ export default {
     }
   },
   mounted() {
-    for (var i = 0; i < 10; i++) {
-      this.list.push({
-        id: i,
-        label: `第${i}个App`,
-        icon: '/favicon.png',
-        href: '/#/log'
-      })
+    this.refresh()
+  },
+  methods: {
+    refresh() {
+      this.list = [
+        {
+          id: '1',
+          label: '我要休假',
+          description: '个人提交休假申请窗口',
+          icon: '/favicon.png',
+          href: '/application/newApply'
+        },
+        {
+          id: '2',
+          label: '查询和审批',
+          description: '查询批假情况和审批单位休假窗口',
+          icon: '/favicon.png',
+          href: '/login?redirect=/application/queryAndAuditApplies'
+        },
+        {
+          id: '3',
+          label: '注册账号',
+          description: '审批各单位注册新账号窗口',
+          icon: '/favicon.png',
+          href: '/register/main'
+        },
+        {
+          id: '4',
+          label: '我的休假',
+          description: '个人休假情况概览窗口（暂未开放）',
+          icon: '/favicon.png',
+          href: '/welcome'
+        }
+      ]
+    },
+    lintTo(url) {
+      this.$router.push(url)
     }
   }
 }
