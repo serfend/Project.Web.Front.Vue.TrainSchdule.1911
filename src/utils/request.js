@@ -121,24 +121,20 @@ service.interceptors.response.use(
     } else {
       // 通过缓存方式解决频繁报同一个错误的问题
       console.log(warningInfoLog)
-      if (!warningInfoLog[res.message]) {
+      if (!response.config.respondErrorIngore && !warningInfoLog[res.message]) {
+        warningInfoLog[res.message] = new Date()
+        setTimeout(() => {
+          delete warningInfoLog[res.message]
+        }, 10000)
+        if (res.status === 12120) {
+          console.log(response.config)
+          location.href = '/#/login'
+        }
         Message({
           message: res.message,
           type: 'error',
           duration: 5 * 1000
         })
-        warningInfoLog[res.message] = new Date()
-        setTimeout(() => {
-          delete warningInfoLog[res.message]
-        }, 10000)
-      }
-
-      if (!response.config.respondErrorIngore) {
-        if (res.status === 12120) {
-          console.log(response.config)
-          location.href = '/#/login'
-        }
-
         if (res.data && res.data.list) {
           const list = res.data.list
           for (var i = 0; i < list.length; i++) {

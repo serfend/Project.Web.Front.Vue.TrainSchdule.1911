@@ -129,7 +129,7 @@ const actions = {
   },
   initVocationList({ commit, state }) {
     return new Promise((resolve, reject) => {
-      queryList({ createFor: state.userid }).then((data) => {
+      queryList({ createFor: state.userid }, true).then((data) => {
         commit('SET_VOCAHIS', data.list)
         return resolve()
       }).catch(() => { return reject() })

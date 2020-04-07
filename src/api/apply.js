@@ -115,7 +115,9 @@ export function withdrew(id) {
  * @returns
  */
 export function queryList(data) {
-  return request.post('/apply/list', data)
+  return request.post('/apply/list', data, {
+    respondErrorIngore: ignoreErr
+  })
 }
 
 /**
