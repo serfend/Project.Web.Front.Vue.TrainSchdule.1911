@@ -107,7 +107,7 @@ service.interceptors.response.use(
       return Promise.resolve({
         msg: null,
         status: 0,
-        url: 'data:image/png;base64,' + btoa(
+        url: btoa(
           new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
         )
       })
