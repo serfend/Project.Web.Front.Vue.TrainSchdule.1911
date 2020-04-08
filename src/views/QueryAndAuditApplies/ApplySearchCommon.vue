@@ -30,7 +30,14 @@
           :fetch-suggestions="queryMember"
           style="width:100%"
           placeholder="搜索成员"
-          @select="hdlAuditByChange"
+        />
+      </el-form-item>
+      <el-form-item v-show="fullui" label="当前审核人">
+        <el-autocomplete
+          v-model="queryForm.nowAuditBy"
+          :fetch-suggestions="queryMember"
+          style="width:100%"
+          placeholder="搜索成员"
         />
       </el-form-item>
       <el-form-item v-show="fullui" label="创建人">
@@ -39,7 +46,6 @@
           :fetch-suggestions="queryMember"
           style="width:100%"
           placeholder="搜索成员"
-          @select="hdlCreateForChange"
         />
       </el-form-item>
       <el-form-item label="来自单位">
@@ -47,7 +53,6 @@
           :code.sync="queryForm.createCompany"
           :placeholder="queryForm.createCompanyName"
           :child-getter-method="companyChild"
-          @select-change="hdlCreateCompanyChange"
         />
       </el-form-item>
       <el-form-item label="审核状态">
@@ -175,6 +180,7 @@ export default {
         stampReturnTime: null,
         status: [], // 状态
         auditBy: '',
+        nowAuditBy: '',
         createFor: '',
         createCompany: '', // 申请单位
         createCompanyName: ''
@@ -245,7 +251,6 @@ export default {
   mounted() {
     var tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
     var tmp = JSON.parse(tmpItem)
-    console.log(tmp)
     if (tmp) {
       this.queryForm = tmp
       if (this.currentUserId && !tmp.auditBy) {
@@ -277,18 +282,6 @@ export default {
         )
       }
     },
-    hdlAuditByChange(val) {
-      this.queryForm.auditBy = val.id
-      this.setFormRecord()
-    },
-    hdlCreateForChange(val) {
-      this.queryForm.createFor = val.id
-      this.setFormRecord()
-    },
-    hdlCreateCompanyChange(val) {
-      this.queryForm.createCompanyName = val
-      this.setFormRecord()
-    },
     exportAppliesNowFilter() {
       var f = this.createQueryPost()
       f.pages = {
@@ -317,6 +310,13 @@ export default {
       } else {
         f.auditBy = null
       }
+
+      if (this.queryForm.nowAuditBy) {
+        f.nowAuditBy = { value: this.queryForm.nowAuditBy } // 审核人
+      } else {
+        f.nowAuditBy = null
+      }
+
       if (this.queryForm.createCompany) {
         f.createCompany = { value: this.queryForm.createCompany } // 申请单位
       } else {
