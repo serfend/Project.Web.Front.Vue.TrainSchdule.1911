@@ -119,7 +119,14 @@
                         </el-collapse-item>
                       </el-collapse>
                     </div>
-                    <div v-if="detail.nowStep" class="audit-process-status">
+                    <div class="audit-process-status">
+                      <span
+                        v-if="(!detail.nowStep&&statusDic[detail.status].desc=='已通过') ||
+                          step.index < detail.nowStep.index"
+                      >
+                        <i class="el-icon-success title green--text" />
+                        通过审核
+                      </span>
                       <span v-if="step.index > detail.nowStep.index">
                         <i class="el-icon-more-outline title grey-text" />
                         未收到审批
@@ -129,10 +136,6 @@
                       >
                         <i class="el-icon-loading title red--text" />
                         审批中
-                      </span>
-                      <span v-if="step.index < detail.nowStep.index">
-                        <i class="el-icon-success title green--text" />
-                        通过审核
                       </span>
                       <span
                         v-if="step.index === detail.nowStep.index&&statusDic[detail.status].desc==='已驳回'"
@@ -178,7 +181,7 @@
             <h3 slot="header">
               申请人
               <div class="pull-left">
-                <img v-if="avatar" class="avatar-32" :src="avatar" alt @click="handleClickAvatar" />
+                <img v-if="avatar" class="avatar-32" :src="avatar" alt @click="handleClickAvatar">
               </div>
             </h3>
 
@@ -202,7 +205,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { format } from 'timeago.js'
 import { detail } from '@/api/apply'
 import { exportUserApplies } from '@/api/static'
 import { parseTime, datedifference } from '@/utils'
@@ -211,21 +214,12 @@ import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
 import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'
 
-moment.locales('zh_CN')
 export default {
   name: 'ApplyDetail',
   components: {
     SettleFormItem,
     ActionExamine,
     ActionUser
-  },
-  filters: {
-    timeAgo(val) {
-      return moment(val).fromNow()
-    },
-    formatTime(val) {
-      return moment(val).format('LLL')
-    }
   },
   props: {
     show: {
@@ -278,7 +272,7 @@ export default {
         var item = arr.reduce((prev, cur) => {
           return prev.handleStamp > cur.handleStamp ? prev : cur
         })
-        return moment(item.handleStamp).fromNow()
+        return format(item.handleStamp, 'zh_CN')
       }
       return '无'
     },
