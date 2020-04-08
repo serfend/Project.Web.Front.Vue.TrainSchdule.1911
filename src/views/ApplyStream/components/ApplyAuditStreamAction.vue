@@ -16,8 +16,9 @@
           <template slot-scope="scope">
             <el-tooltip effect="light">
               <div slot="content">
-                <h3>创建于{{ format(scope.row.create,'zh_CN') }}</h3>
+                <h3>创建于{{ format(scope.row.create,'zh_CN') }}</h3>>
                 <div>{{ scope.row.description }}</div>
+                <div>{{ scope.row.auditMembersCount==0?'所有符合条件的成员均需要审批':`在所有符合条件的成员中，任选${scope.row.auditMembersCount}人审批` }}</div>
               </div>
               <div>{{ scope.row.name }}</div>
             </el-tooltip>
@@ -210,6 +211,9 @@
             :disable-transitions="false"
             @close="handleAuditMembersSelectClosed(tag)"
           >{{ newNode.auditMembersRealName[tag] }}</el-tag>
+        </el-form-item>
+        <el-form-item label="审批人数量">
+          <el-input-number v-model="newNode.auditMembersCount" placeholder="需要多少人审批" />
         </el-form-item>
         <el-form-item label="授权人">
           <el-collapse>
