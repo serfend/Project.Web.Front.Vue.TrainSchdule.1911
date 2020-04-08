@@ -82,23 +82,23 @@
         <el-form-item label="授权码">
           <el-input v-model="editPwd.authbyuserid" placeholder="授权人" style="width:215px" />
           <el-input v-model="editPwd.code" placeholder="授权码" style="width:215px" />
-          <el-tooltip>
+          <el-tooltip placement="top" effect="light">
             <div slot="content">
               授权码是用于敏感操作认证的密钥
               <el-row />请手机下载身份验证器
-              <el-tooltip>
+              <el-tooltip effect="light">
                 <div slot="content">
                   身份验证器下载:
                   <el-row />
                   <el-image :src="apkImage" style="width:200px" />
                 </div>
                 <i class="el-icon-info blue--text" />
-              </el-tooltip>后扫描此码以获取密钥
-              <el-row />妥善保管此码
+              </el-tooltip>
+              <el-row />后扫描此码以获取密钥
               <el-row />
               <el-image :src="authKeyUrl" style="width:200px" />
             </div>
-            <i class="el-icon-info blue--text" />授权码
+            <i class="el-icon-info blue--text" />
           </el-tooltip>
         </el-form-item>
       </el-form>
@@ -201,7 +201,7 @@ export default {
   methods: {
     getAuthKeyImg() {
       getAuthKey(false).then(r => {
-        this.authKeyUrl = r.url
+        this.authKeyUrl = 'data:image/png;base64,' + r.url
         if (
           !this.$store.state.user.data.isInitPassword &&
           this.$store.state.user.userid !== ''
