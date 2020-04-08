@@ -182,7 +182,7 @@ export function addStreamSolutionRule(id, name, description, solutionName, prior
  * @returns
  */
 export function editStreamSolutionRule(id, name, description, solutionName, priority, enable, filter, auth) {
-  return request.post('ApplyAuditStream/StreamSolutionRule', {
+  return request.put('ApplyAuditStream/StreamSolutionRule', {
     id, name, description, solutionName, priority, enable, filter, auth
   })
 }

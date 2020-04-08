@@ -11,7 +11,7 @@
           @click="refresh"
         />
       </div>
-      <el-table :data="tableData">
+      <el-table :data="data.allSolution">
         <el-table-column label="名称">
           <template slot-scope="scope">{{ scope.row.name }}</template>
         </el-table-column>
@@ -23,7 +23,7 @@
             <el-tooltip>
               <div slot="content">
                 <el-steps direction="vertical">
-                  <el-step v-for="s in scope.row.nodes" :key="s.id" style="width:300px">
+                  <el-step v-for="s in scope.row.nodes" :key="s.key" style="width:300px">
                     <div slot="title" style="color:#ffc300">{{ s.name }}</div>
                     <div slot="description">
                       创建于
@@ -78,7 +78,7 @@
         <el-form-item label="审批节点">
           <el-select v-model="newSolution.nodeSelect" @change="selectNodeChanged">
             <el-option
-              v-for="item in allNode"
+              v-for="item in data.allActionNode"
               :key="item.name"
               :label="item.name"
               :value="item.name"
@@ -96,14 +96,14 @@
           default-expand-all
           :expand-on-click-node="false"
         >
-          <div slot-scope="{node,data}" class="custom-tree-node">
+          <div slot-scope="{node}" class="custom-tree-node">
             <el-tag
               size="mini"
               closable
               effect="plain"
               @close="handleSelectNodeClose(node)"
             >{{ node.label }}</el-tag>
-            <span>{{ data.description }}</span>
+            <span>{{ node.data.description }}</span>
           </div>
         </el-tree>
 
@@ -142,8 +142,6 @@ import AuthCode from '@/components/AuthCode'
 import { checkAuthCode } from '@/api/account'
 import { format } from 'timeago.js'
 import {
-  queryStreamSolution,
-  queryStreamNode,
   addStreamSolution,
   editStreamSolution,
   deleteStreamSolution
@@ -151,41 +149,36 @@ import {
 export default {
   name: 'ApplyAuditStream',
   components: { AuthCode },
-  data() {
-    return {
-      loading: false,
-      tableData: [],
-      newSolutionDialogShow: false,
-      newSolution: this.buildNewSolution(),
-      allNode: [],
-      allNodeDic: {}
+  props: {
+    data: {
+      type: Object,
+      default() {
+        return {
+          allSolutionRule: [],
+          allSolutionRuleDic: {},
+          allSolution: [],
+          allSolutionDic: {},
+          allActionNode: [],
+          allActionNodeDic: {}
+        }
+      }
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
-  mounted() {
-    this.refresh()
-    queryStreamNode().then(data => {
-      this.allNode = data.list
-      for (var n in this.allNode) {
-        this.allNodeDic[this.allNode[n].name] = this.allNode[n]
-      }
-    })
+  data() {
+    return {
+      newSolutionDialogShow: false,
+      newSolution: this.buildNewSolution()
+    }
   },
   methods: {
     checkAuthCode,
     format,
     refresh() {
-      if (this.loading) return
-      this.loading = true
-      this.newSolution = this.buildNewSolution()
-      this.newSolutionDialogShow = false
-      queryStreamSolution()
-        .then(data => {
-          this.tableData = data.list
-          this.tableData.nodes.forEach(i => (i.id = Math.random()))
-        })
-        .catch(e => {
-          this.loading = false
-        })
+      this.$emit('refresh')
     },
     submitSolution() {
       if (this.newSolution.loading) return this.$message.info('加载中')
@@ -229,7 +222,8 @@ export default {
       }
       deleteStreamSolution(this.newSolution.name, auth.authByUserId, auth.code)
         .then(() => {
-          this.$message('已删除')
+          this.$message(`${this.newSolution.name}已删除`)
+          this.newSolutionDialogShow = false
           this.refresh()
         })
         .catch(e => {
@@ -240,7 +234,7 @@ export default {
       return {
         id: Math.random(),
         label: val,
-        description: this.allNodeDic[val].description
+        description: this.data.allActionNodeDic[val].description
       }
     },
     selectNodeChanged(val) {

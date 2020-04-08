@@ -11,7 +11,7 @@
           @click="refresh"
         />
       </div>
-      <el-table :data="tableData">
+      <el-table :data="data.allActionNode">
         <el-table-column label="名称">
           <template slot-scope="scope">
             <el-tooltip effect="light">
@@ -243,7 +243,6 @@
 
 <script>
 import {
-  queryStreamNode,
   addStreamNode,
   editStreamNode,
   deleteStreamNode,
@@ -267,6 +266,25 @@ export default {
     AuthCode,
     UserFormItem
   },
+  props: {
+    data: {
+      type: Object,
+      default() {
+        return {
+          allSolutionRule: [],
+          allSolutionRuleDic: {},
+          allSolution: [],
+          allSolutionDic: {},
+          allActionNode: [],
+          allActionNodeDic: {}
+        }
+      }
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       companyReferDic: [
@@ -274,16 +292,11 @@ export default {
         { value: 'self', label: '本级审核' },
         { value: 'parent', label: '上级审核' }
       ],
-      loading: false,
-      tableData: [],
       newNodeDialogShow: false,
       newNode: this.buildnewNode(),
       companySelect: {},
       userSelect: {}
     }
-  },
-  mounted() {
-    this.refresh()
   },
   methods: {
     format,
@@ -315,15 +328,7 @@ export default {
       )
     },
     refresh() {
-      if (this.loading) return
-      this.loading = true
-      queryStreamNode()
-        .then(data => {
-          this.tableData = data.list
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      this.$emit('refresh')
     },
     showNodeDialoag(mode, target) {
       this.newNodeDialogShow = true
@@ -335,6 +340,12 @@ export default {
           this.newNode.companiesName[i.code] = i.name
         })
         this.newNode.companies = this.newNode.companies.map(i => i.code)
+
+        this.newNode.dutiesName = {}
+        this.newNode.duties.forEach(i => {
+          this.newNode.dutiesName[i.code] = i.name
+        })
+        this.newNode.duties = this.newNode.duties.map(i => i.code)
 
         this.newNode.auditMembersRealName = {}
         this.newNode.auditMembers.forEach(i => {
@@ -364,11 +375,20 @@ export default {
     },
     deleteNode(row) {
       if (this.newNode.loading) return this.$message.info('加载中')
+      this.newNode.loading = true
       var auth = this.newNode.auth
       if (!auth) {
         auth = {}
       }
       deleteStreamNode(this.newNode.name, auth.authByUserId, auth.code)
+        .then(() => {
+          this.$message.success(`${this.newNode.name}已删除`)
+          this.newNodeDialogShow = false
+          this.refresh()
+        })
+        .finally(() => {
+          this.newNode.loading = false
+        })
     },
     queryMember(realName, cb) {
       if (realName === '') return cb([{}])
