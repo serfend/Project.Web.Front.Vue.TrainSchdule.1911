@@ -34,12 +34,7 @@
         <el-table-column label="单位">
           <template slot-scope="scope">
             <div v-if="!scope.row.companies||scope.row.companies.length==0">
-              <div
-                v-if="scope.row.companyRefer"
-              >{{ scope.row.companyRefer=='parent'?'上级审核':'本级审核' }}</div>
-              <div
-                v-else-if="scope.row.companyCodeLength.length>0 || scope.row.companyTags.length>0"
-              >
+              <div v-if="scope.row.companyCodeLength.length>0 || scope.row.companyTags.length>0">
                 <el-tooltip effect="light">
                   <div slot="content">
                     <el-form>
@@ -55,7 +50,8 @@
                 </el-tooltip>
               </div>
               <el-tooltip v-else>
-                <div slot="content">所有单位都将默认使用此方案</div>不限
+                <div slot="content">所有单位都将默认使用此方案</div>
+                <el-tag>不限</el-tag>
               </el-tooltip>
             </div>
             <el-dropdown v-else-if="scope.row.companies.length>1">
