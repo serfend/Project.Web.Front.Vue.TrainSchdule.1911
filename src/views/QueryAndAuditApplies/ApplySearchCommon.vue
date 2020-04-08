@@ -33,7 +33,15 @@
           @select="hdlAuditByChange"
         />
       </el-form-item>
-
+      <el-form-item v-show="fullui" label="创建人">
+        <el-autocomplete
+          v-model="queryForm.createFor"
+          :fetch-suggestions="queryMember"
+          style="width:100%"
+          placeholder="搜索成员"
+          @select="hdlCreateForChange"
+        />
+      </el-form-item>
       <el-form-item label="来自单位">
         <cascader-selector
           :code.sync="queryForm.createCompany"
@@ -167,6 +175,7 @@ export default {
         stampReturnTime: null,
         status: [], // 状态
         auditBy: '',
+        createFor: '',
         createCompany: '', // 申请单位
         createCompanyName: ''
       },
@@ -236,9 +245,12 @@ export default {
   mounted() {
     var tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
     var tmp = JSON.parse(tmpItem)
-    if (tmp) this.queryForm = tmp
-    if (this.currentUserId && !tmp.auditBy) {
-      this.queryForm.auditBy = this.currentUserId
+    console.log(tmp)
+    if (tmp) {
+      this.queryForm = tmp
+      if (this.currentUserId && !tmp.auditBy) {
+        this.queryForm.auditBy = this.currentUserId
+      }
     }
     this.queryFormStartRecord = true
   },
@@ -267,6 +279,10 @@ export default {
     },
     hdlAuditByChange(val) {
       this.queryForm.auditBy = val.id
+      this.setFormRecord()
+    },
+    hdlCreateForChange(val) {
+      this.queryForm.createFor = val.id
       this.setFormRecord()
     },
     hdlCreateCompanyChange(val) {
@@ -308,6 +324,8 @@ export default {
       }
       if (this.onlySeeSelfApplies) {
         f.createFor = { value: this.currentUserId }
+      } else if (this.queryForm.createFor) {
+        f.createFor = { value: this.queryForm.createFor }
       } else {
         f.createFor = null
       }
