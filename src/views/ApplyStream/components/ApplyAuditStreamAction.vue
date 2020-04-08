@@ -148,11 +148,7 @@
     >
       <el-form v-loading="newNode.loading">
         <el-form-item label="名称">
-          <el-input
-            v-model="newNode.name"
-            placeholder="填入独一无二的名称"
-            :disabled="newNode.mode=='edit'||newNode.mode=='delete'"
-          />
+          <el-input v-model="newNode.name" placeholder="填入独一无二的名称" />
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="newNode.description" placeholder="节点描述，可自定义" />
@@ -174,7 +170,7 @@
         </el-form-item>
         <el-form-item label="长度">
           <el-select v-model="newNode.companyCodeLength" multiple placeholder="单位代码的位数">
-            <el-option v-for="item in 10" :key="item" :label="item" :value="item"></el-option>
+            <el-option v-for="item in 10" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
 
@@ -185,7 +181,7 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
 
@@ -201,12 +197,19 @@
         </el-form-item>
         <el-form-item label="指定审核人">
           <el-autocomplete
-            v-model="nowSelectRealName"
+            v-model="userSelect.code"
             :fetch-suggestions="queryMember"
             style="width:100%"
-            placeholder="搜索成员"
+            :placeholder="userSelect.realName?userSelect.realName:'搜索成员'"
             @select="handleUserSelectChange"
           />
+          <el-tag
+            v-for="tag in newNode.auditMembers"
+            :key="tag"
+            closable
+            :disable-transitions="false"
+            @close="handleAuditMembersSelectClosed(tag)"
+          >{{ newNode.auditMembersRealName[tag] }}</el-tag>
         </el-form-item>
         <el-form-item label="授权人">
           <el-collapse>
@@ -242,8 +245,9 @@
 import {
   queryStreamNode,
   addStreamNode,
-  buildFilter,
-  getStreamNode
+  editStreamNode,
+  deleteStreamNode,
+  buildFilter
 } from '@/api/applyAuditStream'
 import { companyChild } from '@/api/company'
 import { getUserIdByRealName } from '@/api/userinfo'
@@ -275,7 +279,7 @@ export default {
       newNodeDialogShow: false,
       newNode: this.buildnewNode(),
       companySelect: {},
-      nowSelectRealName: ''
+      userSelect: {}
     }
   },
   mounted() {
@@ -293,13 +297,33 @@ export default {
       this.newNode.companies.push(this.companySelect.code)
       this.newNode.companiesName[this.companySelect.code] = val
     },
+    handleUserSelectChange(val) {
+      this.userSelect.realName = val.value
+      if (this.newNode.auditMembers.indexOf(val.id) > -1) {
+        return this.$message.error(`${val.value}已被选中`)
+      }
+      this.newNode.auditMembers.push(val.id)
+      this.newNode.auditMembersRealName[val.id] = val.value
+    },
     handleCompaniesSelectClose(tag) {
       this.newNode.companies.splice(this.newNode.companies.indexOf(tag), 1)
     },
+    handleAuditMembersSelectClosed(tag) {
+      this.newNode.auditMembers.splice(
+        this.newNode.auditMembers.indexOf(tag),
+        1
+      )
+    },
     refresh() {
-      queryStreamNode().then(data => {
-        this.tableData = data.list
-      })
+      if (this.loading) return
+      this.loading = true
+      queryStreamNode()
+        .then(data => {
+          this.tableData = data.list
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     showNodeDialoag(mode, target) {
       this.newNodeDialogShow = true
@@ -311,29 +335,40 @@ export default {
           this.newNode.companiesName[i.code] = i.name
         })
         this.newNode.companies = this.newNode.companies.map(i => i.code)
+
+        this.newNode.auditMembersRealName = {}
+        this.newNode.auditMembers.forEach(i => {
+          this.newNode.auditMembersRealName[i.id] = i.realName
+        })
+        this.newNode.auditMembers = this.newNode.auditMembers.map(i => i.id)
       }
     },
-    editNode(row) {},
     submitNode() {
       if (this.newNode.loading) return this.$message.info('加载中')
       this.newNode.loading = true
-      var fn = this.newNode.mode === 'edit' ? edit : addStreamSolution
+      var fn = this.newNode.mode === 'edit' ? editStreamNode : addStreamNode
       fn(
+        this.newNode.id,
         this.newNode.name,
         this.newNode.description,
-        this.newNode.nodes,
+        buildFilter(this.newNode),
         this.newNode.auth
       )
         .then(() => {
           this.$message.success(`方案${this.newNode.name}已提交`)
           this.refresh()
         })
-        .catch(e => {
+        .finally(() => {
           this.newNode.loading = false
         })
     },
     deleteNode(row) {
       if (this.newNode.loading) return this.$message.info('加载中')
+      var auth = this.newNode.auth
+      if (!auth) {
+        auth = {}
+      }
+      deleteStreamNode(this.newNode.name, auth.authByUserId, auth.code)
     },
     queryMember(realName, cb) {
       if (realName === '') return cb([{}])
@@ -348,11 +383,14 @@ export default {
         )
       })
     },
-    handleUserSelectChange(val) {
-      console.log(val)
-    },
     buildnewNode() {
       var lastAuth = this.newNode ? this.newNode.auth : null
+      if (lastAuth === null) {
+        lastAuth = {
+          authByUserId: '',
+          code: 0
+        }
+      }
       return {
         mode: 'new',
         name: '',
@@ -367,10 +405,8 @@ export default {
         companyCodeLength: [],
         auditMembersCount: 1,
         auditMembers: [],
-        auth: lastAuth ?? {
-          authByUserId: '',
-          code: 0
-        },
+        auditMembersRealName: {},
+        auth: lastAuth,
         loading: false
       }
     }

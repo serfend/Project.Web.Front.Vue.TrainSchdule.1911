@@ -70,11 +70,7 @@
     >
       <el-form v-loading="newSolution.loading">
         <el-form-item label="名称">
-          <el-input
-            v-model="newSolution.name"
-            placeholder="填入独一无二的名称"
-            :disabled="newSolution.mode=='edit'||newSolution.mode=='delete'"
-          />
+          <el-input v-model="newSolution.name" placeholder="填入独一无二的名称" />
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="newSolution.description" placeholder="方案的描述，可自定义" />
@@ -100,7 +96,7 @@
           default-expand-all
           :expand-on-click-node="false"
         >
-          <div class="custom-tree-node" slot-scope="{node,data}">
+          <div slot-scope="{node,data}" class="custom-tree-node">
             <el-tag
               size="mini"
               closable
@@ -187,9 +183,6 @@ export default {
           this.tableData = data.list
           this.tableData.nodes.forEach(i => (i.id = Math.random()))
         })
-        .then(() => {
-          this.loading = false
-        })
         .catch(e => {
           this.loading = false
         })
@@ -202,6 +195,7 @@ export default {
           ? editStreamSolution
           : addStreamSolution
       fn(
+        this.newSolution.id,
         this.newSolution.name,
         this.newSolution.description,
         this.newSolution.nodes.map(i => i.label),
@@ -211,7 +205,7 @@ export default {
           this.$message.success(`方案${this.newSolution.name}已提交`)
           this.refresh()
         })
-        .catch(e => {
+        .finally(() => {
           this.newSolution.loading = false
         })
     },
@@ -229,11 +223,11 @@ export default {
     deleteSolution() {
       if (this.newSolution.loading) return this.$message.info('加载中')
       this.newSolution.loading = true
-      deleteStreamSolution(
-        this.newSolution.name,
-        this.newSolution.auth.authByUserId,
-        this.newSolution.auth.code
-      )
+      var auth = this.newSolution.auth
+      if (!auth) {
+        auth = {}
+      }
+      deleteStreamSolution(this.newSolution.name, auth.authByUserId, auth.code)
         .then(() => {
           this.$message('已删除')
           this.refresh()
@@ -260,16 +254,19 @@ export default {
     },
     buildNewSolution() {
       var lastAuth = this.newSolution ? this.newSolution.auth : null
+      if (lastAuth === null) {
+        lastAuth = {
+          authByUserId: '',
+          code: 0
+        }
+      }
       return {
         mode: 'new',
         name: '',
         description: '',
         nodeSelect: '',
         nodes: [],
-        auth: lastAuth ?? {
-          authByUserId: '',
-          code: 0
-        },
+        auth: lastAuth,
         loading: false
       }
     }

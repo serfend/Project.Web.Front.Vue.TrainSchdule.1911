@@ -60,9 +60,17 @@ export function getStreamSolutionRule(name) {
  * @param {int} auditMembersCount 需要审核人数量 0表示全部
  * @returns
  */
-export function buildFilter(duties, dutyTags, dutyIsMajor, companies, companyRefer, companyTags, companyCodeLength, auditMembers, auditMembersCount) {
+export function buildFilter(data) {
   return {
-    duties, dutyTags, dutyIsMajor, companies, companyRefer, companyTags, companyCodeLength, auditMembers, auditMembersCount
+    duties: data.duties,
+    dutyTags: data.dutyTags,
+    dutyIsMajor: data.dutyIsMajor,
+    companies: data.companies,
+    companyRefer: data.companyRefer,
+    companyTags: data.companyTags,
+    companyCodeLength: data.companyCodeLength,
+    auditMembers: data.auditMembers,
+    auditMembersCount: data.auditMembersCount
   }
 }
 
@@ -76,7 +84,8 @@ export function buildFilter(duties, dutyTags, dutyIsMajor, companies, companyRef
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamNode(name, description, filter, auth) {
+export function addStreamNode(id, name, description, filter, auth) {
+  console.log(`${id} is to update ${name}`)
   return request.post('ApplyAuditStream/StreamNode', {
     name, description,
     filter,
@@ -114,7 +123,8 @@ export function editStreamNode(id, name, description, filter, auth) {
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamSolution(name, description, nodes, auth) {
+export function addStreamSolution(id, name, description, nodes, auth) {
+  console.log(`${id} is to update ${name}`)
   return request.post('ApplyAuditStream/StreamSolution', {
     name, description, nodes, auth
   })
@@ -150,7 +160,8 @@ export function editStreamSolution(id, name, description, nodes, auth) {
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamSolutionRule(name, description, solutionName, priority, enable, filter, auth) {
+export function addStreamSolutionRule(id, name, description, solutionName, priority, enable, filter, auth) {
+  console.log(`${id} is to update ${name}`)
   return request.post('ApplyAuditStream/StreamSolutionRule', {
     name, description, solutionName, priority, enable, filter, auth
   })
