@@ -1,7 +1,14 @@
 <template>
   <el-container>
     <div style="margin:40px;width:100%">
-      <el-row style="width:100%">
+      <el-row type="flex" justify="space-between">
+        <div>
+          <span style="color:#ffffff;font-size:2em">休假登记和审核系统</span>
+          <span style="color:#aaaaaa;font-size:0.8em">v1.0.0</span>
+        </div>
+      </el-row>
+      <el-divider />
+      <el-row style="width:100%;" type="flex" justify="space-between">
         <el-col v-for="i in list" :key="i.id" :xs="12" :sm="8" :md="6" :lg="4">
           <AppIcon
             style="margin:50px 20px"
@@ -14,24 +21,43 @@
           />
         </el-col>
       </el-row>
+      <el-row style="bottom:0px;position:fixed;" type="flex" justify="space-between">
+        <div style="color:#3f3f3f;font-size:0.5em;">power by serfend@2020</div>
+        <el-popover placement="top" trigger="hover" @show="loadContactMe">
+          <el-row>
+            <img :src="qrCodeUrl">
+          </el-row>
+          <el-row style="font-size:10px">使用微信扫一扫联系我们吧~</el-row>
+          <el-link slot="reference" style="margin:0 0 0 20px;font-size:0.5em">联系我们</el-link>
+        </el-popover>
+      </el-row>
     </div>
   </el-container>
 </template>
 
 <script>
 import AppIcon from '@/components/AppIcon'
+import { qrCodeEncode } from '@/api/qrCode'
 export default {
   name: 'Welcome',
   components: { AppIcon },
   data() {
     return {
-      list: []
+      list: [],
+      qrCodeUrl: ''
     }
   },
   mounted() {
     this.refresh()
   },
   methods: {
+    loadContactMe() {
+      qrCodeEncode('https://u.wechat.com/MPTgt41EIncEhLhBIGPovMo').then(
+        data => {
+          this.qrCodeUrl = 'data:image/jpg;base64,' + data.img
+        }
+      )
+    },
     refresh() {
       this.list = [
         {
