@@ -85,7 +85,6 @@ export function buildFilter(data) {
  * @returns
  */
 export function addStreamNode(id, name, description, filter, auth) {
-  console.log(`${id} is to update ${name}`)
   return request.post('ApplyAuditStream/StreamNode', {
     name, description,
     filter,
@@ -124,7 +123,6 @@ export function editStreamNode(id, name, description, filter, auth) {
  * @returns
  */
 export function addStreamSolution(id, name, description, nodes, auth) {
-  console.log(`${id} is to update ${name}`)
   return request.post('ApplyAuditStream/StreamSolution', {
     name, description, nodes, auth
   })
@@ -161,7 +159,6 @@ export function editStreamSolution(id, name, description, nodes, auth) {
  * @returns
  */
 export function addStreamSolutionRule(id, name, description, solutionName, priority, enable, filter, auth) {
-  console.log(`${id} is to update ${name}`)
   return request.post('ApplyAuditStream/StreamSolutionRule', {
     name, description, solutionName, priority, enable, filter, auth
   })

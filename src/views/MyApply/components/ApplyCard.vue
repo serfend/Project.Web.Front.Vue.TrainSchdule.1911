@@ -3,7 +3,7 @@
     <div v-if="innerData">
       <el-row class="row">
         <el-col :xl="5" :lg="7" :md="8" :sm="9" :xs="24">
-          <ActionUser style="width:100%" :row="data" />
+          <ActionUser style="width:100%" :row="innerData" />
         </el-col>
         <el-col :xl="19" :lg="17" :md="16" :sm="15" :xs="24">
           <el-progress
@@ -18,38 +18,66 @@
         <el-form>
           <el-form-item label="审批流">
             <div>
-              <el-tooltip v-if="data.steps&&data.steps.length>0">
+              <el-tooltip v-if="innerData.steps&&innerData.steps.length>0" effect="light">
                 <el-steps
                   slot="content"
-                  :space="200"
-                  :active="data.nowStep?data.nowStep.index:data.steps.length"
+                  :style="{ width:`${100*innerData.steps.length}px` }"
+                  :active="innerData.nowStep?(innerData.nowStep.index):(innerData.steps.length)"
                   finish-status="success"
                 >
                   <el-step
-                    v-for="s in data.steps"
+                    v-for="s in innerData.steps"
                     :key="s.index"
                     :title="`${s.firstMemberCompanyName}`"
-                    :description="`${s.name}   ${s.membersAcceptToAudit.length}/${s.membersFitToAudit.length}`"
-                  />
+                  >
+                    <div slot="description">
+                      <h3>{{ s.name }}</h3>
+                      <el-popover trigger="hover" @show="anyStepShow(s)">
+                        <span
+                          slot="reference"
+                        >{{ s.membersAcceptToAudit.length }}人 / {{ s.requireMembersAcceptCount==0?'所有':s.requireMembersAcceptCount }}人</span>
+                        <div v-if="s.memberShow">
+                          <el-card>
+                            可审批人
+                            <UserFormItem
+                              v-for="u in s.membersFitToAudit"
+                              :key="u"
+                              :userid="u"
+                              placement="top"
+                            />
+                          </el-card>
+                          <el-card>
+                            已审批人
+                            <UserFormItem
+                              v-for="u in s.membersAcceptToAudit"
+                              :key="u"
+                              :userid="u"
+                              placement="top"
+                            />
+                          </el-card>
+                        </div>
+                      </el-popover>
+                    </div>
+                  </el-step>
                 </el-steps>
-                <el-tag>{{ data.auditStreamSolution }}</el-tag>
+                <el-tag>{{ innerData.auditStreamSolution }}</el-tag>
               </el-tooltip>
             </div>
           </el-form-item>
           <el-form-item label="类别">
             <el-tag
-              :type="data.request.vocationType=='正休'?'success':(data.request.vocationType=='病休'?'danger':'warning')"
-            >{{ data.request.vocationType }}</el-tag>
+              :type="innerData.request.vocationType=='正休'?'success':(innerData.request.vocationType=='病休'?'danger':'warning')"
+            >{{ innerData.request.vocationType }}</el-tag>
             <svg-icon v-if="data.request.byTransportation==0" icon-class="huoche" />
-            <svg-icon v-else-if="data.request.byTransportation==1" icon-class="feiji" />
-            <svg-icon v-else-if="data.request.byTransportation==2" icon-class="qiche" />
-            <svg-icon v-else-if="data.request.byTransportation==-1" icon-class="feiji" />
+            <svg-icon v-else-if="innerData.request.byTransportation==1" icon-class="feiji" />
+            <svg-icon v-else-if="innerData.request.byTransportation==2" icon-class="qiche" />
+            <svg-icon v-else-if="innerData.request.byTransportation==-1" icon-class="feiji" />
           </el-form-item>
-          <el-form-item label="休假原因">{{ data.request.reason?data.request.reason:'未填写' }}</el-form-item>
+          <el-form-item label="休假原因">{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
           <el-form-item label="假期天数">
-            <span>{{ `净假期${data.request.vocationLength}天 在途${data.request.onTripLength}天` }}</span>
+            <span>{{ `净假期${innerData.request.vocationLength}天 在途${innerData.request.onTripLength}天` }}</span>
             <el-tooltip
-              v-for="a in data.request.additialVocations"
+              v-for="a in innerData.request.additialVocations"
               :key="a.id"
               :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`"
             >
@@ -58,9 +86,9 @@
           </el-form-item>
           <el-form-item
             label="休假地点"
-          >{{ `${data.request.vocationPlace.name} ${data.request.vocationPlaceName==null?'无详细地址':data.request.vocationPlaceName}` }}</el-form-item>
-          <el-form-item label="离队时间">{{ timeFormat(data.request.stampLeave) }}</el-form-item>
-          <el-form-item label="归队时间">{{ timeFormat(data.request.stampReturn) }}</el-form-item>
+          >{{ `${innerData.request.vocationPlace.name} ${innerData.request.vocationPlaceName==null?'无详细地址':innerData.request.vocationPlaceName}` }}</el-form-item>
+          <el-form-item label="离队时间">{{ timeFormat(innerData.request.stampLeave) }}</el-form-item>
+          <el-form-item label="归队时间">{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
         </el-form>
       </el-row>
     </div>
@@ -72,9 +100,10 @@
 import { parseTime, datedifference } from '@/utils'
 import { format } from 'timeago.js'
 import ActionUser from '@/views/QueryAndAuditApplies/ActionUser'
+import UserFormItem from '@/components/User/UserFormItem'
 export default {
   name: 'ApplyCard',
-  components: { ActionUser },
+  components: { ActionUser, UserFormItem },
   props: {
     data: {
       type: Object,
@@ -111,6 +140,11 @@ export default {
       handler(val) {
         if (val) {
           this.innerData = val
+          if (this.innerData.steps && this.innerData.steps.length > 0) {
+            for (var i = 0; i < this.innerData.steps.length; i++) {
+              this.innerData.steps[i].memberShow = false
+            }
+          }
         }
       },
       immediate: true,
@@ -119,6 +153,10 @@ export default {
   },
   methods: {
     datedifference,
+    anyStepShow(step) {
+      step.memberShow = true
+      this.$forceUpdate()
+    },
     timeFormat(val) {
       return `${parseTime(val, '{y}年{m}月{d}日')}(${format(val, 'zh_CN')})`
     },
