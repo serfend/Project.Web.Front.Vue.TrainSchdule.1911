@@ -37,8 +37,7 @@ var dict = {
   },
   application: {
     title: '休假管理',
-    new: '我要休假',
-    query: '查询申请',
+    new: '申报休假',
     audit: '审批申请',
     detail: '休假申请详情',
     auditStream: '审批流设置',

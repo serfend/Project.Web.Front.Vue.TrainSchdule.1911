@@ -83,83 +83,7 @@
           </el-card>
         </div>
         <div class="content-card">
-          <el-card v-loading="loading" :visible.sync="innerShow" :show-close="false" shadow="hover">
-            <h3 slot="header">当前审批</h3>
-            <el-steps
-              v-if="detail.steps"
-              :space="200"
-              :active="nowActiveAudit"
-              finish-status="success"
-            >
-              <el-step v-for="step in detail.steps" :key="step.id">
-                <div slot="description" class="audit-process-card">
-                  <el-tooltip effect="light">
-                    <div slot="content">
-                      <el-collapse v-model="step.activeName" accordion>
-                        <el-collapse-item
-                          v-for="rec in detail.response.filter(i=>i.index===step.index)"
-                          :key="rec.auditingUserRealName"
-                          :name="rec.auditingUserRealName"
-                        >
-                          <div slot="title">
-                            {{ rec.auditingUserRealName }}
-                            <el-tag
-                              :type="rec.status===4?'success':rec.status===8?'danger':'info'"
-                            >{{ rec.status===4?'通过':rec.status===8?'驳回':'未处理' }}</el-tag>
-                          </div>
-                          <div v-if="rec.remark" class="audit-process-remark">
-                            <el-input
-                              v-model="rec.remark"
-                              placeholder="审批备注"
-                              readonly
-                              type="textarea"
-                            />
-                          </div>
-                          <div v-else>无留言信息</div>
-                        </el-collapse-item>
-                      </el-collapse>
-                    </div>
-                    <div v-if="detail.nowStep" class="audit-process-status">
-                      <span v-if="step.index > detail.nowStep.index">
-                        <i class="el-icon-more-outline title grey-text" />
-                        未收到审批
-                      </span>
-                      <span
-                        v-if="step.index === detail.nowStep.index&&statusDic[detail.status].desc!=='已驳回'"
-                      >
-                        <i class="el-icon-loading title red--text" />
-                        审批中
-                      </span>
-                      <span v-if="step.index < detail.nowStep.index">
-                        <i class="el-icon-success title green--text" />
-                        通过审核
-                      </span>
-                      <span
-                        v-if="step.index === detail.nowStep.index&&statusDic[detail.status].desc==='已驳回'"
-                      >
-                        <i class="el-icon-circle-close title red--text" />
-                        驳回
-                      </span>
-                    </div>
-                  </el-tooltip>
-                  <div
-                    class="audit-process-companyName grey--text row layout justify-start align-center"
-                    title="审核单位"
-                  >
-                    <i class="el-icon-office-building black--text title mr-1" />
-                    <span>{{ step.firstMemberCompanyName }}</span>
-                  </div>
-                  <div class="row layout justify-space-between black--text">
-                    <span
-                      class="audit-process-person"
-                    >{{ step.membersAcceptToAudit.length }}/{{ step.requireMembersAcceptCount }}</span>
-                    <span class="audit-process-handleStamp">{{ step.timeStamp }}</span>
-                  </div>
-                </div>
-              </el-step>
-            </el-steps>
-            <div v-else>加载中</div>
-          </el-card>
+          <AuditStatus :data="detail" :loading="loading" />
         </div>
         <div class="content-card">
           <el-card v-loading="loading" :visible.sync="innerShow" :show-close="false" shadow="hover">
@@ -208,21 +132,21 @@
 </template>
 
 <script>
-import { format } from 'timeago.js'
 import { detail } from '@/api/apply'
 import { exportUserApplies } from '@/api/static'
-import { parseTime, datedifference } from '@/utils'
+import { datedifference } from '@/utils'
 import { getUserAvatar } from '@/api/userinfo'
 import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
 import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'
-
+import AuditStatus from './components/AuditStatus'
 export default {
   name: 'ApplyDetail',
   components: {
     SettleFormItem,
     ActionExamine,
-    ActionUser
+    ActionUser,
+    AuditStatus
   },
   props: {
     show: {
@@ -234,7 +158,6 @@ export default {
     return {
       avatar: null,
       detail: {},
-      nowActiveAudit: 0,
       innerShow: false,
       loading: false,
       staticData: {
@@ -269,16 +192,6 @@ export default {
   },
   methods: {
     datedifference,
-    GetHandleTimeAgo(step) {
-      var arr = this.detail.response.filter(r => r.index === step.index)
-      if (arr.length > 0) {
-        var item = arr.reduce((prev, cur) => {
-          return prev.handleStamp > cur.handleStamp ? prev : cur
-        })
-        return format(item.handleStamp, 'zh_CN')
-      }
-      return '无'
-    },
     requestUpdate() {
       this.loadDetail(this.row.id)
     },
@@ -293,7 +206,7 @@ export default {
       }的${datedifference(
         this.row.request.stampReturn,
         this.row.request.stampLeave
-      )}天${this.row.request.vocationType}休假`
+      ) + 1}天${this.row.request.vocationType}休假`
       this.staticData.vacationStart =
         this.detail.status &&
         this.statusDic[this.detail.status].desc === '已通过'
@@ -315,9 +228,6 @@ export default {
     handleClickAvatar() {
       this.$store.push('/profile/index?id=' + this.detail.base.id)
     },
-    parseTime(rawtime, format) {
-      return parseTime(rawtime, format)
-    },
     downloadUserApplies() {
       var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
       var userid = this.detail.base.id
@@ -329,19 +239,6 @@ export default {
         this.detail = data
         this.loading = false
         this.getUserAvatar(data.base.id)
-        var i = 0
-        for (i = 0; i < this.detail.steps.length; i++) {
-          this.detail.steps[i].timeStamp = this.GetHandleTimeAgo(
-            this.detail.steps[i]
-          )
-        }
-        for (i = 0; i < this.detail.response.length; i++) {
-          var item = this.detail.response[i]
-          if (item.status === 4) {
-            this.nowActiveAudit = i
-            break
-          }
-        }
         this.initstaticDataData()
       })
     }

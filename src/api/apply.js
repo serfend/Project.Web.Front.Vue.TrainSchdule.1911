@@ -130,14 +130,33 @@ export function getAllStatus() {
 }
 
 /**
- *查询需要指定单位审核的申请
+ * 查询需本人审批的申请
  *
  * @export
- * @param {*} companyCode
- * @returns
+ * @param {*} pages 分页
  */
-export function toCompany(param) {
-  return request.post('/apply/list', param)
+export function queryMyAudit(pages) {
+  return request.get('/apply/listOfMyAudit', {
+    params: {
+      pageIndex: pages.pageIndex,
+      pageSize: pages.pageSize
+    }
+  })
+}
+
+/**
+ * 查询本人申请
+ *
+ * @export
+ * @param {*} pages 分页
+ */
+export function querySelf(pages) {
+  return request.get('/apply/listOfSelf', {
+    params: {
+      pageIndex: pages.pageIndex,
+      pageSize: pages.pageSize
+    }
+  })
 }
 
 /**
