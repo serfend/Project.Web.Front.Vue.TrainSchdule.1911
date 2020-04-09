@@ -7,7 +7,7 @@
         </el-col>
         <el-col :xl="19" :lg="17" :md="16" :sm="15" :xs="24">
           <el-progress
-            :percentage="spent<0?0:spent/total"
+            :percentage="spent<0?0:(spent>total?100:((spent/total)*100))"
             :format="formatPercent"
             :stroke-width="24"
             text-inside
@@ -18,12 +18,11 @@
         <el-form>
           <el-form-item label="审批流">
             <div>
-              <el-tag>{{ data.solutionName }}</el-tag>
-              <el-tooltip v-if="data.steps">
+              <el-tooltip v-if="data.steps&&data.steps.length>0">
                 <el-steps
                   slot="content"
                   :space="200"
-                  :active="data.nowStep.index"
+                  :active="data.nowStep?data.nowStep.index:data.steps.length"
                   finish-status="success"
                 >
                   <el-step
@@ -33,7 +32,7 @@
                     :description="`${s.name}   ${s.membersAcceptToAudit.length}/${s.membersFitToAudit.length}`"
                   />
                 </el-steps>
-                <div>审批进度</div>
+                <el-tag>{{ data.auditStreamSolution }}</el-tag>
               </el-tooltip>
             </div>
           </el-form-item>
@@ -46,7 +45,7 @@
             <svg-icon v-else-if="data.request.byTransportation==2" icon-class="qiche" />
             <svg-icon v-else-if="data.request.byTransportation==-1" icon-class="feiji" />
           </el-form-item>
-          <el-form-item label="休假原因">{{ data.request.reason }}</el-form-item>
+          <el-form-item label="休假原因">{{ data.request.reason?data.request.reason:'未填写' }}</el-form-item>
           <el-form-item label="假期天数">
             <span>{{ `净假期${data.request.vocationLength}天 在途${data.request.onTripLength}天` }}</span>
             <el-tooltip
@@ -59,7 +58,7 @@
           </el-form-item>
           <el-form-item
             label="休假地点"
-          >{{ `${data.request.vocationPlace.name} ${data.request.vocationPlaceName}` }}</el-form-item>
+          >{{ `${data.request.vocationPlace.name} ${data.request.vocationPlaceName==null?'无详细地址':data.request.vocationPlaceName}` }}</el-form-item>
           <el-form-item label="离队时间">{{ timeFormat(data.request.stampLeave) }}</el-form-item>
           <el-form-item label="归队时间">{{ timeFormat(data.request.stampReturn) }}</el-form-item>
         </el-form>
@@ -125,6 +124,7 @@ export default {
     },
     formatPercent(val) {
       if (this.spent <= 0) return '未开始'
+      if (val >= 100) return '已结束'
       return `${this.spent}/${this.total}天`
     }
   }

@@ -46,7 +46,8 @@ export default {
     return {
       list: [
         {
-          label: ''
+          label: '',
+          id: 999
         }
       ],
       lastPage: -1,
@@ -68,8 +69,8 @@ export default {
     },
     load() {
       if (this.loading) return
-      this.loading = true
       if (this.haveNext) {
+        this.loading = true
         this.lastPage++
         querySelf({ pageIndex: this.lastPage, pageSize: 20 })
           .then(data => {
@@ -77,14 +78,17 @@ export default {
             for (var i = 0; i < data.list.length; i++) {
               this.list.push(data.list[i])
             }
-            this.list.push({ label: '' })
-            if (data.list.length < 20) this.haveNext = false
+            this.list.push({ label: '', id: 999 })
+            if (data.list.length < 20) {
+              setTimeout(() => {
+                this.$message.error('没有更多了')
+              }, 2000)
+              this.haveNext = false
+            }
           })
           .finally(() => {
             this.loading = false
           })
-      } else {
-        this.$message.error('没有更多了')
       }
     }
   }
