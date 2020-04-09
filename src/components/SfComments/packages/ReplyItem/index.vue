@@ -1,7 +1,7 @@
 <template>
   <div class="reply-item">
     <div class="pull-left">
-      <img v-if="avatar" class="avatar-32" :src="avatar" alt @click="handleClickAuthor">
+      <el-image v-if="avatar" class="avatar-32" :src="avatar" alt @click="handleClickAuthor" />
     </div>
     <div class="comments-box">
       <div class="comment-func inline-block">

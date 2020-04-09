@@ -28,7 +28,7 @@
         <div class="avatar-wrapper">
           <el-tag>{{ companyName }}</el-tag>
           <span class="caption">{{ realName }}</span>
-          <img class="user-avatar" :src="avatar">
+          <el-image class="user-avatar" :src="avatar" />
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">

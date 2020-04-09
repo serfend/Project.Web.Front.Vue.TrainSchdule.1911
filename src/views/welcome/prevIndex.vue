@@ -3,7 +3,7 @@
     <el-aside>
       <div class="menu-top">
         <div>
-          <img src="/favicon-32x32.png" style="width:40px;" />
+          <el- src="/favicon-32x32.png" style="width:40px;" />
         </div>
         <div class="menu-top-title" hidden="none">default.system.company.name</div>
         <div class="menu-top-title">{{ $t('default.system.project.name') }}</div>

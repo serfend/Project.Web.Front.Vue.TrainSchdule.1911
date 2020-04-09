@@ -1,7 +1,7 @@
 <template>
   <div class="comments-item">
     <div class="pull-left">
-      <img v-if="avatar" class="avatar-32" :src="avatar" alt @click="handleClickAvatar">
+      <el-image v-if="avatar" class="avatar-32" :src="avatar" alt @click="handleClickAvatar" />
     </div>
     <div class="comments-box">
       <div class="comments-trigger">
@@ -39,7 +39,13 @@
         <slot />
         <div class="reply-item reply-item--ops">
           <svg-icon icon-class="message" />
-          <el-button plain type="success" size="mini" class="reply-inner-btn" @click="handleAddReply">添加回复</el-button>
+          <el-button
+            plain
+            type="success"
+            size="mini"
+            class="reply-inner-btn"
+            @click="handleAddReply"
+          >添加回复</el-button>
         </div>
       </div>
     </div>

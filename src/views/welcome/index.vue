@@ -25,7 +25,7 @@
         <div style="color:#3f3f3f;font-size:0.5em;">power by serfend@2020</div>
         <el-popover placement="top" trigger="hover" @show="loadContactMe">
           <el-row>
-            <img :src="qrCodeUrl">
+            <el-image :src="qrCodeUrl" />
           </el-row>
           <el-row style="font-size:10px">使用微信扫一扫联系我们吧~</el-row>
           <el-link slot="reference" style="margin:0 0 0 20px;font-size:0.5em">联系我们</el-link>

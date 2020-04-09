@@ -1,14 +1,14 @@
 <template>
   <el-tooltip placement="top" effect="light" :content="description">
     <div :style="{ width:size+'px',height:size+'px'}">
-      <img
+      <el-image
         v-if="icon"
         :class="isActive?'icon-buttonactive':'icon-button'"
         :src="icon"
         @click="$emit('click')"
         @mouseenter="activeMe"
         @mouseleave="disactiveMe"
-      >
+      />
       <svg-icon
         v-if="svg"
         :icon-class="svg"

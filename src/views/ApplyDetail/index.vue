@@ -178,7 +178,7 @@
             <h3 slot="header">
               申请人
               <div class="pull-left">
-                <el-img
+                <el-image
                   v-if="avatar"
                   class="avatar-32"
                   :src="avatar"
