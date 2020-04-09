@@ -727,11 +727,12 @@ export default {
     caculateVocationPercentage() {
       if (this.usersVocation.yearlyLength === 0) return 100
       var fn = parseInt
+      var caculateVocationCount = this.formApply.VocationType === '正休'
       var result = Math.floor(
         100 *
           ((fn(this.usersVocation.yearlyLength) -
             fn(this.usersVocation.leftLength) +
-            fn(this.formApply.VocationLength)) /
+            fn(caculateVocationCount ? this.formApply.VocationLength : 0)) /
             fn(this.usersVocation.yearlyLength))
       )
       if (result < 0) result = 0
