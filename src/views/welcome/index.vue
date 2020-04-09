@@ -86,10 +86,10 @@ export default {
         {
           id: '4',
           label: '我的休假',
-          description: '个人休假情况概览窗口（暂未开放）',
+          description: '个人休假情况概览窗口',
           // icon: '/favicon.png',
           svg: 'menu-approval',
-          href: '/welcome'
+          href: '/application/myApply'
         }
       ]
     },
