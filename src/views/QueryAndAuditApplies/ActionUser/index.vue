@@ -30,7 +30,7 @@
           <el-dropdown-item v-for="item in userActionDic" :key="item.name">
             <el-popconfirm :title="`确定要${item.description}吗？`" @onConfirm="hendleExecute(item,row)">
               <el-button
-                v-show="row.acessable&&row.acessable.indexOf(item.name)>-1"
+                v-show="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.indexOf(item.name)>-1"
                 slot="reference"
                 :type="item.type"
                 size="mini"
@@ -97,6 +97,9 @@ export default {
   computed: {
     sensitiveAction() {
       return '敏感操作'
+    },
+    statusDic() {
+      return this.$store.state.vocation.statusDic
     }
   },
   methods: {

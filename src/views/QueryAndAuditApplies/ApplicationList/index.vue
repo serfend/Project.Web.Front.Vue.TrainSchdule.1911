@@ -127,7 +127,7 @@
       @updated="$emit('updated')"
     />
     <el-button
-      v-show="!multiAuditFormShow"
+      v-show="!multiAuditFormShow&&list.length>1"
       style="width:100%"
       type="success"
       @click="showMutilAudit"

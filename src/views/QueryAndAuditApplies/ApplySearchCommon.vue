@@ -1,22 +1,42 @@
 <template>
   <div>
     <el-card style="margin:0 0 20px 0">
+      <el-tooltip effect="light" content="仅单位的管理和数据分析人员需进行条件查询，其他人员默认将查询到本人可审批的申请">
+        <el-switch
+          v-model="adminQuery"
+          style="margin:0px 20px"
+          active-text="管理查询"
+          inactive-text="一般查询"
+          @change="searchData"
+        />
+      </el-tooltip>
+      <el-tooltip effect="light" content="使用更多的查询条件进行查询">
+        <el-switch
+          v-show="adminQuery"
+          v-model="innerfullui"
+          style="margin:0px 20px"
+          active-text="高级查询"
+          inactive-text="简要查询"
+        />
+      </el-tooltip>
       <el-switch
-        v-model="innerfullui"
-        style="margin:0px 20px"
-        active-text="高级查询"
-        inactive-text="简要查询"
-      />
-      <el-switch
-        v-show="currentUserId"
+        v-show="currentUserId&&adminQuery"
         v-model="onlySeeSelfApplies"
         style="margin:0px 20px"
         active-text="仅自己"
         inactive-text="查看全部"
         @change="seeSelfChange"
       />
+      <el-button
+        type="success"
+        :icon="onLoading?'el-icon-loading':'el-icon-refresh-right'"
+        circle
+        style="float:right"
+        @click="searchData"
+      />
     </el-card>
     <el-form
+      v-show="adminQuery"
       ref="queryForm"
       :model="queryForm"
       label-width="90px"
@@ -89,18 +109,20 @@
         />
       </el-form-item>
       <el-form-item label="离队时间" label-width="120">
-        <el-date-picker
-          v-model="queryForm.stampLeaveTime"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          format="yyyy-MM-dd"
-          value-format="yyyy-MM-dd"
-          clearable
-        />
+        <el-tooltip effect="light" content="注意需要选中一个时间范围，例如5月2日到5月12日">
+          <el-date-picker
+            v-model="queryForm.stampLeaveTime"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            clearable
+          />
+        </el-tooltip>
       </el-form-item>
       <el-form-item v-show="fullui" label="归队时间" label-width="120">
         <el-date-picker
@@ -146,7 +168,7 @@
 import { getUserIdByRealName } from '@/api/userinfo'
 import { companyChild } from '@/api/company'
 import CascaderSelector from '@/components/CascaderSelector'
-import { queryList } from '@/api/apply'
+import { queryList, queryMyAudit } from '@/api/apply'
 import { exportMultiApplies } from '@/api/static'
 export default {
   Name: 'ApplySearchCommon',
@@ -193,6 +215,7 @@ export default {
           totalCount: 0
         }
       },
+      adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
       innerfullui: false,
       onlySeeSelfApplies: false // 仅查询当前用户的申请
     }
@@ -206,6 +229,12 @@ export default {
     }
   },
   watch: {
+    adminQuery: {
+      handler(val) {
+        if (!val) this.innerfullui = false
+      },
+      immediate: true
+    },
     fullui: {
       handler(val) {
         this.innerfullui = val
@@ -253,9 +282,9 @@ export default {
     var tmp = JSON.parse(tmpItem)
     if (tmp) {
       this.queryForm = tmp
-      if (this.currentUserId && !tmp.auditBy) {
-        this.queryForm.auditBy = this.currentUserId
-      }
+      // if (this.currentUserId && !tmp.auditBy) {
+      //   this.queryForm.auditBy = this.currentUserId
+      // }
     }
     this.queryFormStartRecord = true
   },
@@ -339,7 +368,10 @@ export default {
       this.onLoading = true
       var ld = new Date()
       this.loadingDate = ld
-      queryList(f)
+
+      // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人员
+      const action = this.adminQuery ? queryList(f) : queryMyAudit(f.pages)
+      action
         .then(data => {
           if (this.loadingDate !== ld) return
           this.innerList = data.list || []
