@@ -206,6 +206,7 @@ export default {
       this.newSolutionDialogShow = true
       this.newSolution.mode = mode
       if (target) {
+        this.newSolution.id = target.id
         this.newSolution.name = target.name
         this.newSolution.description = target.description
         this.newSolution.nodes = target.nodes.map(i =>

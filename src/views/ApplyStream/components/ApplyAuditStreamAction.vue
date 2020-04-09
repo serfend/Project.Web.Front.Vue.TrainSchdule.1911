@@ -370,7 +370,7 @@ export default {
         this.newNode.auth
       )
         .then(() => {
-          this.$message.success(`方案${this.newNode.name}已提交`)
+          this.$message.success(`节点${this.newNode.name}已提交`)
           this.refresh()
         })
         .finally(() => {
