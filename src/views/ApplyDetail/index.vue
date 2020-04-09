@@ -119,14 +119,7 @@
                         </el-collapse-item>
                       </el-collapse>
                     </div>
-                    <div class="audit-process-status">
-                      <span
-                        v-if="(!detail.nowStep&&statusDic[detail.status].desc=='已通过') ||
-                          step.index < detail.nowStep.index"
-                      >
-                        <i class="el-icon-success title green--text" />
-                        通过审核
-                      </span>
+                    <div v-if="detail.nowStep" class="audit-process-status">
                       <span v-if="step.index > detail.nowStep.index">
                         <i class="el-icon-more-outline title grey-text" />
                         未收到审批
@@ -136,6 +129,10 @@
                       >
                         <i class="el-icon-loading title red--text" />
                         审批中
+                      </span>
+                      <span v-if="step.index < detail.nowStep.index">
+                        <i class="el-icon-success title green--text" />
+                        通过审核
                       </span>
                       <span
                         v-if="step.index === detail.nowStep.index&&statusDic[detail.status].desc==='已驳回'"
@@ -181,7 +178,13 @@
             <h3 slot="header">
               申请人
               <div class="pull-left">
-                <img v-if="avatar" class="avatar-32" :src="avatar" alt @click="handleClickAvatar">
+                <el-img
+                  v-if="avatar"
+                  class="avatar-32"
+                  :src="avatar"
+                  alt
+                  @click="handleClickAvatar"
+                />
               </div>
             </h3>
 
