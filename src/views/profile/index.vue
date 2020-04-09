@@ -11,9 +11,7 @@
               <el-tab-pane :label="$t('profile.activity')" name="activity">
                 <activity :data="useractions" />
               </el-tab-pane>
-              <el-tab-pane :label="$t('profile.timeline')" name="timeline">
-                <timeline :data="vocations" />
-              </el-tab-pane>
+              <el-tab-pane :label="$t('profile.timeline')" name="timeline">施工中</el-tab-pane>
               <el-tab-pane :label="$t('profile.account')" name="account">
                 <account :user="user" />
               </el-tab-pane>
@@ -28,11 +26,11 @@
 <script>
 import UserCard from './components/UserCard'
 import Activity from './components/Activity'
-import Timeline from './components/Timeline'
+// import Timeline from './components/Timeline'
 import Account from './components/Account'
 export default {
   name: 'Profile',
-  components: { UserCard, Activity, Timeline, Account },
+  components: { UserCard, Activity, Account },
   data() {
     return {
       activeTab: 'activity',
@@ -47,30 +45,6 @@ export default {
     },
     useractions() {
       return {}
-    },
-    vocations() {
-      var list = this.$store.state.user.vocationList
-      var result = []
-      var vocationStatus = this.$store.state.vocation.statusDic
-      list.forEach(item => {
-        var r = item.request
-        var status =
-          item.recallId === null
-            ? vocationStatus[item.status].desc
-            : '已召回'
-        result.push({
-          timestamp: r.stampLeave,
-          title:
-            '去往' +
-            r.vocationPlace.name +
-            '的' +
-            r.vocationLength +
-            '天的' +
-            r.vocationType,
-          content: '(' + status + ') 创建于' + item.create + ',因' + r.reason
-        })
-      })
-      return result
     }
   },
   methods: {

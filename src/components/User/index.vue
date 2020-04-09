@@ -1,21 +1,22 @@
 <template>
   <el-card style="width:250px">
-    <el-row>
+    <el-row v-if="innerData">
       <el-col :span="8">
         <el-avatar :size="60" :src="avatar" />
       </el-col>
       <el-col :span="16">
-        <h2>{{ data.realName }}</h2>
-        <div style="color:#cccccc">{{ data.id }}</div>
-        <div style="color:#8f8f8f">{{ data.about }}</div>
+        <h2>{{ innerData.realName }}</h2>
+        <div style="color:#cccccc">{{ innerData.id }}</div>
+        <div style="color:#8f8f8f">{{ innerData.about }}</div>
         <el-tag
-          :style="{  'background-color':data.gender==2?'#ee6666':'#60c3e9',color:'#ffffff' }"
+          :style="{ 'background-color':innerData.gender==2?'#ee6666':'#60c3e9',color:'#ffffff' }"
           size="mini"
         >
-          <div>{{ data.companyName }}{{ data.dutiesName }}</div>
+          <div>{{ innerData.companyName }}{{ innerData.dutiesName }}</div>
         </el-tag>
       </el-col>
     </el-row>
+    <el-row v-else style="color:#888888;font-size:0.5em">加载中...</el-row>
   </el-card>
 </template>
 
@@ -40,16 +41,20 @@ export default {
   data() {
     return {
       avatar: '',
-      userid: ''
+      userid: '',
+      innerData: {}
     }
-  },
-  mounted() {
-    this.refreshAvatar()
   },
   watch: {
     canLoadAvatar: {
       handler(val) {
         if (val) this.refreshAvatar()
+      },
+      immediate: true
+    },
+    data: {
+      handler(val) {
+        this.innerData = val
       },
       immediate: true
     },
@@ -61,6 +66,9 @@ export default {
       },
       immediate: true
     }
+  },
+  mounted() {
+    this.refreshAvatar()
   },
   methods: {
     refreshAvatar() {

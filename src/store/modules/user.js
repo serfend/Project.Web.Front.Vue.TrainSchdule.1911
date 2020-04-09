@@ -13,7 +13,6 @@ import {
 import router, {
   resetRouter
 } from '@/router'
-import { queryList } from '@/api/apply'
 const state = {
   data: {},
   token: getToken(),
@@ -22,7 +21,6 @@ const state = {
   dutiesType: '',
   userid: '',
   vocation: {}, // 当前休假状态
-  vocationList: [], // 休假记录列表
   avatar: '',
   introduction: '',
   roles: [],
@@ -59,9 +57,6 @@ const mutations = {
   },
   SET_VOCA: (state, vocation) => {
     state.vocation = vocation
-  },
-  SET_VOCAHIS: (state, vocationList) => {
-    state.vocationList = vocationList
   }
 }
 
@@ -95,7 +90,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       getUserSummary(null, true).then(data => {
         commit('SET_NAME', data.realName)
-        if (state.userid !== data.id) this.dispatch('user/initVocationList')
         commit('SET_USERID', data.id)
         commit('SET_CMPID', data.companyCode)
         commit('SET_DUTYTYPE', data.dutiesRawType)
@@ -125,14 +119,6 @@ const actions = {
       }).catch(() => {
         return reject()
       })
-    })
-  },
-  initVocationList({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      queryList({ createFor: state.userid }, true).then((data) => {
-        commit('SET_VOCAHIS', data.list)
-        return resolve()
-      }).catch(() => { return reject() })
     })
   },
   // user logout
