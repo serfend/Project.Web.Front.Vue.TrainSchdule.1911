@@ -36,7 +36,6 @@
       />
     </el-card>
     <el-form
-      v-show="adminQuery"
       ref="queryForm"
       :model="queryForm"
       label-width="90px"
@@ -44,7 +43,7 @@
       size="small"
       @submit.native.prevent
     >
-      <el-form-item v-show="fullui" label="审核人">
+      <el-form-item v-show="fullui&&adminQuery" label="审核人">
         <el-autocomplete
           v-model="queryForm.auditBy"
           :fetch-suggestions="queryMember"
@@ -52,7 +51,7 @@
           placeholder="搜索成员"
         />
       </el-form-item>
-      <el-form-item v-show="fullui" label="当前审核人">
+      <el-form-item v-show="fullui&&adminQuery" label="当前审核人">
         <el-autocomplete
           v-model="queryForm.nowAuditBy"
           :fetch-suggestions="queryMember"
@@ -60,7 +59,7 @@
           placeholder="搜索成员"
         />
       </el-form-item>
-      <el-form-item v-show="fullui" label="创建人">
+      <el-form-item v-show="fullui&&adminQuery" label="创建人">
         <el-autocomplete
           v-model="queryForm.createFor"
           :fetch-suggestions="queryMember"
@@ -68,7 +67,7 @@
           placeholder="搜索成员"
         />
       </el-form-item>
-      <el-form-item label="来自单位">
+      <el-form-item v-show="adminQuery" label="来自单位">
         <cascader-selector
           :code.sync="queryForm.createCompany"
           :placeholder="queryForm.createCompanyName"
@@ -94,7 +93,26 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-show="fullui" label="创建时间">
+      <el-form-item v-show="!adminQuery" label="我的状态">
+        <el-select
+          v-model="queryForm.actionStatus"
+          class="full-width"
+          placeholder="选择审核状态"
+          multiple
+          clearable
+        >
+          <el-option
+            v-for="item in myAuditActionDic"
+            :key="item.code"
+            :label="item.desc"
+            :value="item.code"
+          >
+            <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-show="fullui&&adminQuery" label="创建时间">
         <el-date-picker
           v-model="queryForm.createTime"
           type="daterange"
@@ -108,7 +126,7 @@
           clearable
         />
       </el-form-item>
-      <el-form-item label="离队时间" label-width="120">
+      <el-form-item v-show="adminQuery" label="离队时间" label-width="120">
         <el-tooltip effect="light" content="注意需要选中一个时间范围，例如5月2日到5月12日">
           <el-date-picker
             v-model="queryForm.stampLeaveTime"
@@ -124,7 +142,7 @@
           />
         </el-tooltip>
       </el-form-item>
-      <el-form-item v-show="fullui" label="归队时间" label-width="120">
+      <el-form-item v-show="fullui&&adminQuery" label="归队时间" label-width="120">
         <el-date-picker
           v-model="queryForm.stampReturnTime"
           type="daterange"
@@ -139,7 +157,7 @@
         />
       </el-form-item>
       <el-row>
-        <el-col v-show="fullui" :lg="24">
+        <el-col v-show="fullui&&adminQuery" :lg="24">
           <el-button-group style="width:100%">
             <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
             <el-button
@@ -193,6 +211,24 @@ export default {
   },
   data() {
     return {
+      myAuditActionDic: [
+        {
+          code: 'Accept',
+          desc: '同意的'
+        },
+        {
+          code: 'Deny',
+          desc: '驳回的'
+        },
+        {
+          code: 'UnReceive',
+          desc: '未轮到我审核的'
+        },
+        {
+          code: 'Received',
+          desc: '等待我审核的'
+        }
+      ],
       onLoading: false,
       loadingDate: '',
       innerList: [],
@@ -201,6 +237,7 @@ export default {
         stampLeaveTime: null,
         stampReturnTime: null,
         status: [], // 状态
+        actionStatus: ['Received'], // 我的状态
         auditBy: '',
         nowAuditBy: '',
         createFor: '',
@@ -369,8 +406,12 @@ export default {
       var ld = new Date()
       this.loadingDate = ld
 
-      // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人员
-      const action = this.adminQuery ? queryList(f) : queryMyAudit(f.pages)
+      // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
+      var status = this.queryForm.status
+      var actionStatus = this.queryForm.actionStatus
+      const action = this.adminQuery
+        ? queryList(f)
+        : queryMyAudit(f.pages, status, actionStatus)
       action
         .then(data => {
           if (this.loadingDate !== ld) return

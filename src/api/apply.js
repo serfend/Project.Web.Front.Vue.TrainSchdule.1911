@@ -133,13 +133,15 @@ export function getAllStatus() {
  * 查询需本人审批的申请
  *
  * @export
- * @param {*} pages 分页
+ * @param {Object} pages 分页
+ * @param {Array} status 状态
+ * @param {String} myAuditStatus 我的状态：accept,deny,unreceive,received,null
  */
-export function queryMyAudit(pages) {
+export function queryMyAudit(pages, status, myAuditStatus) {
   return request.get('/apply/listOfMyAudit', {
     params: {
       pageIndex: pages.pageIndex,
-      pageSize: pages.pageSize
+      pageSize: pages.pageSize, status, actionStatus: myAuditStatus
     }
   })
 }
