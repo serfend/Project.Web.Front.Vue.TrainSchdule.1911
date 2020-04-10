@@ -397,7 +397,10 @@ export default {
       return f
     },
     seeSelfChange() {
-      if (this.onlySeeSelfApplies) this.queryForm.auditBy = ''
+      if (this.onlySeeSelfApplies) {
+        this.queryForm.auditBy = ''
+      }
+      this.searchData()
     },
     searchData() {
       var f = this.createQueryPost()
