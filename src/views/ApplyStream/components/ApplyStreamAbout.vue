@@ -35,6 +35,10 @@ export default {
       var self = this
       requestFile(this.path, this.fileName)
         .then(data => {
+          if (!data.file.exist) {
+            self.value = `文件:${this.path}/${this.fileName} 已不存在`
+            return
+          }
           download(data.file.id).then(data => {
             var reader = new FileReader()
             reader.onload = function(event) {

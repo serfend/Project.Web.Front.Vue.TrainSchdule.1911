@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { detail } from '@/api/apply'
+import { detail, querySelf } from '@/api/apply'
 import { exportUserApplies } from '@/api/static'
 import { datedifference } from '@/utils'
 import { getUserAvatar } from '@/api/userinfo'
@@ -230,8 +230,12 @@ export default {
     },
     downloadUserApplies() {
       var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
-      var userid = this.detail.base.id
-      exportUserApplies(dutiesRawType, userid)
+      querySelf().then(data => {
+        exportUserApplies(
+          dutiesRawType,
+          data.list.map(i => i.id)
+        )
+      })
     },
     loadDetail(id) {
       this.loading = true

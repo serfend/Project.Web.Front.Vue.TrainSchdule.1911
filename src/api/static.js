@@ -90,19 +90,16 @@ export function downloadUrl(url) {
  *
  * @export
  * @param {*} dutiesType
- * @param {*} userid
+ * @param {*} applies
  */
-export function exportUserApplies(dutiesType, userid) {
+export function exportUserApplies(dutiesType, applies) {
   var templete = '干部休假登记卡.xlsx'
   switch (dutiesType) {
     case 1: templete = '人员休假登记卡.xlsx'
   }
   return exportMultiApplies(templete, {
-    stampLeave: { start: new Date(new Date().getFullYear(), 0, 1), end: new Date(new Date().getFullYear(), 11, 31) },
-    createFor: { value: userid },
-    pages: {
-      pageIndex: 0,
-      pageSize: 999
+    id: {
+      Arrays: applies
     }
   })
 }
@@ -120,8 +117,6 @@ export function exportApplyDetail(dutiesType, id) {
     case 1: templete = '人员请假单.xlsx'
   }
   return exportSingleApply(templete, {
-    id: {
-      Arrays: [id]
-    }
+    Value: id
   })
 }
