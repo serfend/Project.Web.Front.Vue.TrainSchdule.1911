@@ -98,7 +98,6 @@
           v-model="queryForm.actionStatus"
           class="full-width"
           placeholder="选择审核状态"
-          multiple
           clearable
         >
           <el-option
@@ -237,7 +236,7 @@ export default {
         stampLeaveTime: null,
         stampReturnTime: null,
         status: [], // 状态
-        actionStatus: ['Received'], // 我的状态
+        actionStatus: 'Received', // 我的状态
         auditBy: '',
         nowAuditBy: '',
         createFor: '',

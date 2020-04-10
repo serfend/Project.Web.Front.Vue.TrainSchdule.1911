@@ -141,7 +141,9 @@ export function queryMyAudit(pages, status, myAuditStatus) {
   return request.get('/apply/listOfMyAudit', {
     params: {
       pageIndex: pages.pageIndex,
-      pageSize: pages.pageSize, status, actionStatus: myAuditStatus
+      pageSize: pages.pageSize,
+      status: status.join('##'),
+      actionStatus: myAuditStatus
     }
   })
 }
