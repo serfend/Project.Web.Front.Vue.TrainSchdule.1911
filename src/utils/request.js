@@ -127,7 +127,6 @@ service.interceptors.response.use(
           delete warningInfoLog[res.message]
         }, 10000)
         if (res.status === 12120) {
-          console.log(response.config)
           location.href = '/#/login'
         }
         Message({
