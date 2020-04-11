@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import applicationRouter from './modules/application'
+import applicationSettingRouter from './modules/applicationSetting'
+
 import commentRouter from './modules/comment'
 import gameRouter from './modules/Game'
 
@@ -45,7 +47,7 @@ export const constantRoutes = [
       }
     ]
   },
-  applicationRouter, commentRouter, gameRouter,
+  applicationRouter, applicationSettingRouter, commentRouter, gameRouter,
   systemRouter,
   {
     path: '/redirect',
@@ -61,7 +63,7 @@ export const constantRoutes = [
   {
     path: '/markdown',
     component: () => import('@/views/ApplyStream/components/ApplyStreamAbout'),
-    hidden: true,
+    hidden: true
   },
   {
     path: '/login',

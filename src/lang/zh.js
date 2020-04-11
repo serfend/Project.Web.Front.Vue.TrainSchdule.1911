@@ -40,8 +40,12 @@ var dict = {
     new: '申报休假',
     audit: '审批申请',
     detail: '休假申请详情',
-    auditStream: '审批流设置',
-    my: '我的休假'
+    my: '我的休假',
+    setting: {
+      title: '设置选项',
+      auditStream: '审批流',
+      exportXls: '导出Excel'
+    }
   },
   navbar: {
     dashboard: '统计',

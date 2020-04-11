@@ -54,16 +54,6 @@ const applicationRouter = {
         icon: '提案审批'
       },
       hidden: true
-    },
-    {
-      path: 'applyAuditStream',
-      component: () => import('@/views/ApplyStream'),
-      name: 'ApplyAuditStream',
-      meta: {
-        title: 'application.auditStream',
-        verify: 'on',
-        icon: 'component'
-      }
     }
   ]
 }
