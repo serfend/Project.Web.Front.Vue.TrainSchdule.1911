@@ -5,12 +5,6 @@ var dict = {
       ch: '中文'
     },
     system: {
-      company: {
-        name: '61035部队'
-      },
-      project: {
-        name: '休假登记和审核系统'
-      },
       title: '高级'
     },
     app: {
@@ -65,14 +59,14 @@ var dict = {
     password: '密码'
   },
   profile: {
-    activity: '动态',
-    timeline: '时光轴',
-    account: '信息'
+    activity: '@',
+    timeline: '动态',
+    account: '我的'
   },
   comments: {
-    title: '社区',
+    title: '资讯',
     notice: {
-      title: '公告'
+      title: '通知'
     },
     bbs: {
       title: '论坛'

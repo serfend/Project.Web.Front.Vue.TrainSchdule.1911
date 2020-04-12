@@ -3,6 +3,9 @@ import Layout from '@/layout'
 import logRouter from './modules/log'
 import fileRouter from './modules/file'
 import qrCodeRouter from './modules/qrCode'
+
+import applicationSettingRouter from '../applicationSetting'
+
 const systemRouter =
 {
   path: '/system',
@@ -10,7 +13,7 @@ const systemRouter =
   name: 'System',
   meta: {
     title: 'default.system.title',
-    icon: 'component'
+    icon: 'setting'
   },
   children: [
     {
@@ -20,11 +23,12 @@ const systemRouter =
       children: [logRouter, fileRouter]
     }, {
       path: '/utils',
-      hidden: true,
+      alwaysShow: true,
       component: () => import('@/views/blank'),
       meta: { title: 'default.utils.title', icon: 'tree-table' },
       children: [qrCodeRouter]
-    }
+    },
+    applicationSettingRouter
   ]
 }
 

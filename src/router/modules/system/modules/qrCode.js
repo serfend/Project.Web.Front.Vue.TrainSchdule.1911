@@ -6,7 +6,7 @@ const qrCodeRouter =
   name: 'QrCode',
   meta: {
     title: 'default.utils.qrCode.title',
-    icon: 'component'
+    icon: 'QRcode'
   }
 }
 

@@ -6,7 +6,7 @@ const logRouter =
   name: 'Log',
   meta: {
     title: 'default.app.log.title',
-    icon: 'component'
+    icon: 'journal_fill'
   }
 }
 

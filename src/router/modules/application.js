@@ -25,23 +25,23 @@ const applicationRouter = {
       }
     },
     {
-      path: 'myApply',
-      component: () => import('@/views/MyApply'),
-      name: 'MyApply',
-      meta: {
-        title: 'application.my',
-        verify: 'on',
-        icon: '提案审批'
-      }
-    },
-    {
       path: 'queryAndAuditApplies',
       component: () => import('@/views/QueryAndAuditApplies'),
       name: 'applicationList',
       meta: {
         title: 'application.audit',
         verify: 'on',
-        icon: '无序排列'
+        icon: '提案审批'
+      }
+    },
+    {
+      path: 'myApply',
+      component: () => import('@/views/MyApply'),
+      name: 'MyApply',
+      meta: {
+        title: 'application.my',
+        verify: 'on',
+        icon: 'people_fill'
       }
     },
     {

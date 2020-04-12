@@ -1,6 +1,5 @@
 <template>
   <el-card class="content-card">
-    <h3 slot="header">{{ $t('application.auditStream') }}</h3>
     <el-tabs v-model="activeName">
       <el-tab-pane label="说明" name="ApplyStreamAbout">
         <ApplyStreamAbout />

@@ -6,7 +6,7 @@ const fileRouter =
   name: 'FileEngine',
   meta: {
     title: 'default.app.file.title',
-    icon: 'component'
+    icon: 'doc'
   }
 }
 

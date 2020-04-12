@@ -1,15 +1,13 @@
 
-import Layout from '@/layout'
-
 const applicationSettingRouter = {
   path: '/applicationSetting',
-  component: Layout,
+  component: () => import('@/views/blank'),
   redirect: 'noRedirect',
   alwaysShow: true, // will always show the root menu
   name: 'applicationSetting',
   meta: {
     title: 'application.setting.title',
-    icon: 'clipboard'
+    icon: 'workset'
   },
   children: [
     {
@@ -19,7 +17,7 @@ const applicationSettingRouter = {
       meta: {
         title: 'application.setting.auditStream',
         verify: 'on',
-        icon: 'component'
+        icon: 'memo'
       }
     }, {
       path: 'applyExportXls',
@@ -28,7 +26,7 @@ const applicationSettingRouter = {
       meta: {
         title: 'application.setting.exportXls',
         verify: 'on',
-        icon: 'component'
+        icon: 'file'
       }
     }
   ]
