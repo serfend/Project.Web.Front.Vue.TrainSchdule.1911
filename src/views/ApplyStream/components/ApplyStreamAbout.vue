@@ -35,8 +35,8 @@ export default {
       var self = this
       requestFile(this.path, this.fileName)
         .then(data => {
-          if (!data.file.exist) {
-            self.value = `文件:${this.path}/${this.fileName} 已不存在`
+          if (data.file.isRemoved) {
+            self.value = `文件:${this.path}/${this.fileName} 已于${data.file.removeDate}被移除`
             return
           }
           download(data.file.id).then(data => {
