@@ -64,7 +64,7 @@ export default {
           id: '1',
           label: '我要休假',
           description: '个人提交休假申请窗口',
-          svg: 'menu-apply',
+          svg: '测试申请',
           href: '/application/newApply'
         },
         {
@@ -72,7 +72,7 @@ export default {
           label: '查询和审批',
           description: '查询批假情况和审批单位休假窗口',
           // icon: '/favicon.png',
-          svg: 'menu-search',
+          svg: '提案审批',
           href: '/login?redirect=/application/queryAndAuditApplies'
         },
         {
@@ -88,7 +88,7 @@ export default {
           label: '我的休假',
           description: '个人休假情况概览窗口',
           // icon: '/favicon.png',
-          svg: 'menu-approval',
+          svg: 'people_fill',
           href: '/application/myApply'
         }
       ]
