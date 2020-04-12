@@ -75,7 +75,7 @@
             <SettleFormItem :form.sync="form.Settle.loversParent" disabled label="配偶父母所在地" />
 
             <el-form-item label="初始全年天数">
-              <el-input v-model="form.Settle.prevYearlyLength" disabled />
+              <el-input-number v-model="form.Settle.prevYearlyLength" disabled />
             </el-form-item>
 
             <el-form-item label="联系方式">
@@ -103,9 +103,11 @@
         <div v-show="showAll == true || active == 1" class="row layout">
           <el-form ref="formApply" :model="formApply" class="full-width" label-width="180px">
             <div class="subheading pa-3">二、填写休假请求</div>
-
             <el-form-item label="全年休假完成率">
-              <el-progress :percentage="caculateVocationPercentage()" />
+              <VacationDescription
+                :users-vocation="usersVocation"
+                :this-time-vacation-length="formApply.VocationType=='正休'?formApply.VocationLength:0"
+              />
             </el-form-item>
 
             <el-form-item label="休假类型">
@@ -124,72 +126,40 @@
                 />
               </el-tooltip>
             </el-form-item>
-            <el-form-item label="申请理由">
-              <el-input v-model="formApply.reason" />
+            <el-form-item label="休假原因">
+              <el-input
+                v-model="formApply.reason"
+                type="textarea"
+                maxlength="30"
+                show-word-limit
+                style="width:300px"
+              />
             </el-form-item>
-
             <el-row>
-              <el-col :lg="12" :md="24">
+              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
                 <el-form-item label="休假天数">
-                  <el-input
+                  <el-input-number
                     v-model="formApply.VocationLength"
                     :max="usersVocation.leftLength"
                     :min="1"
-                    type="number"
                     @change="handleChange"
-                  >
-                    <el-tooltip slot="append" effect="dark">
-                      <div slot="content" class="tooltip-vocation">
-                        <ul>
-                          <li>
-                            <b class="bolder">全年假期长度：</b>
-                            <span class="text-orange">{{ usersVocation.yearlyLength }}</span>天
-                          </li>
-                          <li>
-                            <b class="bolder">当前已休次数：</b>
-                            <span class="text-orange">{{ usersVocation.nowTimes }}</span>次
-                          </li>
-                          <li>
-                            <b class="bolder">剩余假期长度：</b>
-                            <span class="text-orange">{{ usersVocation.leftLength }}</span>天
-                          </li>
-                          <li>
-                            <b class="bolder">全年最多可休路途次数：</b>
-                            <span class="text-orange">{{ usersVocation.maxTripTimes }}</span>次
-                          </li>
-                          <li>
-                            <b class="bolder">当前已休路途次数:</b>
-                            <span class="text-orange">{{ usersVocation.onTripTimes }}</span>次
-                          </li>
-                          <li>
-                            <b class="bolder">休假描述:</b>
-                            <span>{{ usersVocation.description || `暂无说明` }}</span>
-                          </li>
-                        </ul>
-                      </div>
-                      <i class="el-icon-s-order" style="color: #ff9800; font-size: 20px;" />
-                    </el-tooltip>
-                  </el-input>
+                  />
                 </el-form-item>
               </el-col>
-
-              <el-col :lg="12" :md="24">
+              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
                 <el-form-item label="路途天数">
-                  <el-input
+                  <el-input-number
                     v-model="formApply.OnTripLength"
-                    :max="7"
-                    :min="1"
-                    type="number"
+                    :max="14"
+                    :min="0"
                     @change="handleChange"
                   />
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row v-if="formApply.VocationType=='正休'" class="sv-row">
-              <el-form-item label="福利假" label-width="100px">
-                <el-button type="primary" @click="OpenOtherVacation('')">添加福利假</el-button>
-              </el-form-item>
-              <el-collapse accordion>
+            <el-form-item v-if="formApply.VocationType=='正休'" label="福利假">
+              <el-button icon="el-icon-plus" @click="OpenOtherVacation('')">添加</el-button>
+              <el-collapse accordion style="width:400px">
                 <el-collapse-item
                   v-for="(item,index) in SelectVacationList"
                   :key="item.value"
@@ -210,17 +180,33 @@
                   {{ item.description }}
                 </el-collapse-item>
               </el-collapse>
-            </el-row>
-            <el-form-item label="离队时间">
-              <el-date-picker
-                v-model="formApply.StampLeave"
-                placeholder="选择日期"
-                type="date"
-                format="yyyy年MM月dd日"
-                value-format="yyyy-MM-dd"
-                @change="handleChange"
-              />
             </el-form-item>
+            <el-row>
+              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+                <el-form-item label="离队时间">
+                  <el-date-picker
+                    v-model="formApply.StampLeave"
+                    placeholder="选择日期"
+                    type="date"
+                    format="yyyy年MM月dd日"
+                    value-format="yyyy-MM-dd"
+                    @change="handleChange"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+                <el-form-item label="预计归队">
+                  <el-date-picker
+                    v-model="formApply.StampReturn"
+                    disabled
+                    placeholder="自动计算"
+                    type="date"
+                    format="yyyy年MM月dd日"
+                    value-format="yyyy-MM-dd"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
             <el-form-item
               v-show="lawVocations.length>0&&formApply.VocationType=='正休'"
               label="法定节假日"
@@ -228,27 +214,19 @@
               <el-tag
                 v-for="item in lawVocations"
                 :key="item.start"
-              >{{ item.start|parseTime("{mm}月{dd}日") }}{{ item.name }}{{ item.length }} 天</el-tag>
-            </el-form-item>
-            <el-form-item label="预计归队时间">
-              <el-date-picker
-                v-model="formApply.StampReturn"
-                disabled
-                placeholder="自动计算"
-                type="date"
-                format="yyyy年MM月dd日"
-                value-format="yyyy-MM-dd"
-              />
+                style="margin:10px"
+              >{{ item.start|parseTime("{mm}月{dd}日") }} {{ item.name }}{{ item.length }} 天</el-tag>
             </el-form-item>
             <el-form-item label="休假目的地">
               <cascader-selector
                 placeholder="选择本次休假的目的地"
                 :code.sync="formApply.vocationPlace"
                 :child-getter-method="locationChildren"
+                style="width:300px"
               />
             </el-form-item>
             <el-form-item label="详细地址">
-              <el-input v-model="formApply.vocationPlaceName" />
+              <el-input v-model="formApply.vocationPlaceName" style="width:300px" />
             </el-form-item>
             <el-form-item label="所乘交通工具">
               <el-select v-model="formApply.ByTransportation" placeholder="火车">
@@ -298,7 +276,7 @@
       </el-card>
     </el-card>
 
-    <el-dialog title="添加" :close-on-click-modal="false" :visible.sync="dialogVisible" width="600px">
+    <el-dialog title="添加" :visible.sync="dialogVisible" width="600px">
       <el-form ref="VacationModel" :rules="VacationModelRules" :model="VacationModel">
         <el-form-item label="福利假" prop="name">
           <el-autocomplete
@@ -309,10 +287,15 @@
           />
         </el-form-item>
         <el-form-item label="休假天数" prop="length">
-          <el-input v-model.number="VacationModel.length" />
+          <el-input-number v-model.number="VacationModel.length" />
         </el-form-item>
-        <el-form-item label="休假理由" prop="description">
-          <el-input v-model.trim="VacationModel.description" />
+        <el-form-item label="福利假理由" prop="description">
+          <el-input
+            v-model.trim="VacationModel.description"
+            type="textarea"
+            maxlength="30"
+            show-word-limit
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -327,6 +310,7 @@
 import { parseTime } from '@/utils'
 import SettleFormItem from '@/components/SettleFormItem'
 import CascaderSelector from '@/components/CascaderSelector'
+import VacationDescription from './VacationDescription'
 import { getUserAllInfo } from '@/api/usercompany'
 import {
   getUserIdByCid,
@@ -346,7 +330,8 @@ export default {
   name: 'NewApply',
   components: {
     SettleFormItem,
-    CascaderSelector
+    CascaderSelector,
+    VacationDescription
   },
   data() {
     return {
@@ -536,13 +521,18 @@ export default {
     },
     loadAll() {
       return [
-        { value: '婚假', length: 10 },
-        { value: '护理假', length: 30 },
-        { value: '产假', length: 188 }
+        {
+          value: '婚假',
+          length: 10,
+          description: '于今年x月结婚，已提交相关证明材料'
+        },
+        { value: '护理假', length: 30, description: '于今年x月结婚,...' },
+        { value: '产假', length: 188, description: '于今年x月结婚,...' }
       ]
     },
     handleSelect(item) {
       this.VacationModel.length = item.length
+      this.VacationModel.description = item.description
     },
 
     goStepTwo(yearIndex) {
@@ -724,21 +714,6 @@ export default {
           this.onLoading = false
         })
     },
-    caculateVocationPercentage() {
-      if (this.usersVocation.yearlyLength === 0) return 100
-      var fn = parseInt
-      var caculateVocationCount = this.formApply.VocationType === '正休'
-      var result = Math.floor(
-        100 *
-          ((fn(this.usersVocation.yearlyLength) -
-            fn(this.usersVocation.leftLength) +
-            fn(caculateVocationCount ? this.formApply.VocationLength : 0)) /
-            fn(this.usersVocation.yearlyLength))
-      )
-      if (result < 0) result = 0
-      if (result > 100) result = 100
-      return result
-    },
     /**
      * 提交申请 0:仅提交，1:提交并保存，2:提交并发布
      */
@@ -853,23 +828,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.tooltip-vocation {
-  width: 260px;
-
-  ul,
-  li {
-    list-style: none;
-    padding: 8px;
-    letter-spacing: 1px;
-
-    .text-orange {
-      color: orange;
-    }
-  }
-}
-</style>
-
 <style lang="scss" scoped>
 .application-new {
   background: #f5f5f5;
@@ -907,14 +865,6 @@ hr.divider {
   box-shadow: 0 -2px 10px -4px;
   border-radius: 4px 4px 0 0;
   padding: 8px;
-}
-.sv-row {
-  background-color: #fff;
-  padding: 10px;
-  border: 1px solid #e5e5e5;
-  margin-bottom: 10px;
-  margin-left: 160px;
-  max-width: 80%;
 }
 .group-remove {
   color: #999;
