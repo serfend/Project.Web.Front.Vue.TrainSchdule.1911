@@ -207,6 +207,10 @@ export default {
           this.$store.state.user.userid !== ''
         ) {
           this.isToShowPasswordModefier = true
+          this.$message.error('您的密码自从注册以来就没有修改过')
+          setTimeout(() => {
+            this.$message.error('为了您账号安全，建议您尽快修改')
+          }, 1000)
         }
       })
     },
@@ -246,7 +250,7 @@ export default {
           }
           accountPassword(submitPwd).then(() => {
             this.$message.success('修改密码成功')
-            this.isToShowPasswordModefier = true
+            this.isToShowPasswordModefier = false
           })
         }
       })
