@@ -1,7 +1,7 @@
-
+import Layout from '@/layout'
 const applicationSettingRouter = {
   path: '/applicationSetting',
-  component: () => import('@/views/blank'),
+  component: Layout,
   redirect: 'noRedirect',
   alwaysShow: true, // will always show the root menu
   name: 'applicationSetting',

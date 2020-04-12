@@ -39,7 +39,7 @@
       ref="queryForm"
       :model="queryForm"
       label-width="90px"
-      :inline="true"
+      inline
       size="small"
       @submit.native.prevent
     >
@@ -74,6 +74,24 @@
           :child-getter-method="companyChild"
         />
       </el-form-item>
+      <el-form-item v-show="!adminQuery" label="我的审核">
+        <el-select
+          v-model="queryForm.actionStatus"
+          class="full-width"
+          placeholder="选择审核状态"
+          clearable
+        >
+          <el-option
+            v-for="item in myAuditActionDic"
+            :key="item.code"
+            :label="item.desc"
+            :value="item.code"
+          >
+            <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
+            <span style="float: right; color: #f0f0f0; font-size: 10px">{{ item.code }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="审核状态">
         <el-select
           v-model="queryForm.status"
@@ -89,25 +107,7 @@
             :value="item.code"
           >
             <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item v-show="!adminQuery" label="我的状态">
-        <el-select
-          v-model="queryForm.actionStatus"
-          class="full-width"
-          placeholder="选择审核状态"
-          clearable
-        >
-          <el-option
-            v-for="item in myAuditActionDic"
-            :key="item.code"
-            :label="item.desc"
-            :value="item.code"
-          >
-            <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+            <span style="float: right; color: #f0f0f0; font-size: 10px">{{ item.code }}</span>
           </el-option>
         </el-select>
       </el-form-item>

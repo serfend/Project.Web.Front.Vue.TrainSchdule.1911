@@ -31,10 +31,10 @@ var dict = {
   },
   application: {
     title: '休假管理',
-    new: '申报休假',
-    audit: '审批申请',
+    new: '我要休假',
+    audit: '休假审批',
     detail: '休假申请详情',
-    my: '我的休假',
+    my: '我的假期',
     setting: {
       title: '设置选项',
       auditStream: '审批流',

@@ -8,7 +8,7 @@
 export default {
   name: 'App',
   mounted() {
-    document.body.style.zoom = 1.25
+    this.$notify.info('按住Ctrl+鼠标滚轮可以缩放哦~')
   }
 }
 </script>

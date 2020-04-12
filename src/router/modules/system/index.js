@@ -4,7 +4,7 @@ import logRouter from './modules/log'
 import fileRouter from './modules/file'
 import qrCodeRouter from './modules/qrCode'
 
-import applicationSettingRouter from '../applicationSetting'
+import commentRouter from '../comment'
 
 const systemRouter =
 {
@@ -28,7 +28,7 @@ const systemRouter =
       meta: { title: 'default.utils.title', icon: 'tree-table' },
       children: [qrCodeRouter]
     },
-    applicationSettingRouter
+    commentRouter
   ]
 }
 

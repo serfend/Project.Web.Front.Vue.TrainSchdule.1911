@@ -1,8 +1,7 @@
-import Layout from '@/layout'
 const commentsRouter =
 {
   path: '/Comments',
-  component: Layout,
+  component: () => import('@/views/blank'),
   name: 'comments',
   meta: {
     title: 'comments.title',

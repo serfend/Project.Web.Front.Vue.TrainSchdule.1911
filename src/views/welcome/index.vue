@@ -61,21 +61,6 @@ export default {
     refresh() {
       this.list = [
         {
-          id: '1',
-          label: '我要休假',
-          description: '个人提交休假申请窗口',
-          svg: '测试申请',
-          href: '/application/newApply'
-        },
-        {
-          id: '2',
-          label: '查询和审批',
-          description: '查询批假情况和审批单位休假窗口',
-          // icon: '/favicon.png',
-          svg: '提案审批',
-          href: '/login?redirect=/application/queryAndAuditApplies'
-        },
-        {
           id: '3',
           label: '注册账号',
           description: '注册和审批新账号窗口',
@@ -84,12 +69,27 @@ export default {
           href: '/register/main'
         },
         {
+          id: '1',
+          label: '我要休假',
+          description: '个人提交休假申请窗口',
+          svg: '测试申请',
+          href: '/application/newApply'
+        },
+        {
           id: '4',
-          label: '我的休假',
+          label: '我的假期',
           description: '个人休假情况概览窗口',
           // icon: '/favicon.png',
           svg: 'people_fill',
           href: '/application/myApply'
+        },
+        {
+          id: '2',
+          label: '休假审批',
+          description: '查询批假情况和审批单位休假窗口',
+          // icon: '/favicon.png',
+          svg: '提案审批',
+          href: '/login?redirect=/application/queryAndAuditApplies'
         }
       ]
     },

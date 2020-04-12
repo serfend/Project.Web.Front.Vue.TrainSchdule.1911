@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import applicationRouter from './modules/application'
+import applicationSettingRouter from './modules/applicationSetting'
 
-import commentRouter from './modules/comment'
 import gameRouter from './modules/Game'
 
 import systemRouter from './modules/system/index'
@@ -46,7 +46,9 @@ export const constantRoutes = [
       }
     ]
   },
-  applicationRouter, commentRouter, gameRouter,
+  applicationRouter,
+  applicationSettingRouter,
+  gameRouter,
   systemRouter,
   {
     path: '/redirect',
