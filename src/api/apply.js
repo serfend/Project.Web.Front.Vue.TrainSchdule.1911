@@ -138,6 +138,8 @@ export function getAllStatus() {
  * @param {String} myAuditStatus 我的状态：accept,deny,unreceive,received,null
  */
 export function queryMyAudit(pages, status, myAuditStatus) {
+  pages = (!pages) ? { pageIndex: 0, pageSize: 20 } : pages
+
   return request.get('/apply/listOfMyAudit', {
     params: {
       pageIndex: pages.pageIndex,
@@ -153,10 +155,13 @@ export function queryMyAudit(pages, status, myAuditStatus) {
  *
  * @export
  * @param {*} pages 分页
+ * @param {String} id 查询用户的id，默认为当前登录用户
  */
-export function querySelf(pages) {
+export function querySelf(pages, id) {
+  pages = (!pages) ? { pageIndex: 0, pageSize: 20 } : pages
   return request.get('/apply/listOfSelf', {
     params: {
+      id,
       pageIndex: pages.pageIndex,
       pageSize: pages.pageSize
     }

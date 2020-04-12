@@ -230,7 +230,10 @@ export default {
     },
     downloadUserApplies() {
       var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
-      querySelf().then(data => {
+      querySelf(null, this.row.userBase.id).then(data => {
+        if (data.list.length === 0) {
+          return this.$message.error('当前用户无申请可导出')
+        }
         exportUserApplies(
           dutiesRawType,
           data.list.map(i => i.id)
