@@ -14,6 +14,12 @@ var dict = {
       },
       file: {
         title: '文件'
+      },
+      manager: {
+        title: '后台管理'
+      },
+      iframepage: {
+        title: '页面'
       }
     },
     utils: {

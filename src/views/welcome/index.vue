@@ -1,15 +1,21 @@
 <template>
   <el-container>
     <div style="margin:40px;width:100%">
-      <el-row type="flex" justify="space-between">
+      <el-row v-if="showTitle" type="flex" justify="space-between">
         <div>
           <span style="color:#ffffff;font-size:2em">休假登记和审核系统</span>
           <span style="color:#aaaaaa;font-size:0.8em">v1.0.0</span>
         </div>
       </el-row>
-      <el-divider />
-      <el-row style="width:100%;" type="flex" justify="space-between">
-        <el-col v-for="i in list" :key="i.id" :xs="12" :sm="8" :md="6" :lg="4">
+      <el-divider v-if="showTitle" />
+      <el-row
+        v-for="rowlist in innerList"
+        :key="rowlist.key"
+        style="width:100%;"
+        type="flex"
+        justify="space-between"
+      >
+        <el-col v-for="i in rowlist.value" :key="i.id" :xs="12" :sm="8" :md="6" :lg="4">
           <AppIcon
             style="margin:50px 20px"
             :icon="i.icon"
@@ -41,14 +47,81 @@ import { qrCodeEncode } from '@/api/qrCode'
 export default {
   name: 'Welcome',
   components: { AppIcon },
-  data() {
-    return {
-      list: [],
-      qrCodeUrl: ''
+  props: {
+    showTitle: {
+      type: Boolean,
+      default: true
+    },
+    list: {
+      type: Array,
+      default() {
+        return [
+          {
+            id: '3',
+            label: '注册账号',
+            description: '注册和审批新账号窗口',
+            svg: '注册',
+            // icon: '/favicon.png',
+            href: '/register/main'
+          },
+          {
+            id: '1',
+            label: '我要休假',
+            description: '个人提交休假申请窗口',
+            svg: '测试申请',
+            href: '/application/newApply'
+          },
+          {
+            id: '4',
+            label: '我的假期',
+            description: '个人休假情况概览窗口',
+            // icon: '/favicon.png',
+            svg: 'people_fill',
+            href: '/application/myApply'
+          },
+          {
+            id: '2',
+            label: '休假审批',
+            description: '查询批假情况和审批单位休假窗口',
+            // icon: '/favicon.png',
+            svg: '提案审批',
+            href: '/login?redirect=/application/queryAndAuditApplies'
+          }
+        ]
+      }
     }
   },
-  mounted() {
-    this.refresh()
+  data() {
+    return {
+      qrCodeUrl: '',
+      innerList: []
+    }
+  },
+  watch: {
+    list: {
+      handler(val) {
+        if (!val) return
+        var result = []
+        const rowItemCount = 4
+        const totalRowCount = Math.ceil(val.length / rowItemCount)
+        for (var i = 0; i < totalRowCount; i++) {
+          var tmpList = []
+          for (
+            var j = 0;
+            j + i * rowItemCount < val.length && j < rowItemCount;
+            j++
+          ) {
+            tmpList.push(val[j + i * rowItemCount])
+          }
+          result.push({
+            key: Math.random(),
+            value: tmpList
+          })
+        }
+        this.innerList = result
+      },
+      immediate: true
+    }
   },
   methods: {
     loadContactMe() {
@@ -57,41 +130,6 @@ export default {
           this.qrCodeUrl = 'data:image/jpg;base64,' + data.img
         }
       )
-    },
-    refresh() {
-      this.list = [
-        {
-          id: '3',
-          label: '注册账号',
-          description: '注册和审批新账号窗口',
-          svg: '注册',
-          // icon: '/favicon.png',
-          href: '/register/main'
-        },
-        {
-          id: '1',
-          label: '我要休假',
-          description: '个人提交休假申请窗口',
-          svg: '测试申请',
-          href: '/application/newApply'
-        },
-        {
-          id: '4',
-          label: '我的假期',
-          description: '个人休假情况概览窗口',
-          // icon: '/favicon.png',
-          svg: 'people_fill',
-          href: '/application/myApply'
-        },
-        {
-          id: '2',
-          label: '休假审批',
-          description: '查询批假情况和审批单位休假窗口',
-          // icon: '/favicon.png',
-          svg: '提案审批',
-          href: '/login?redirect=/application/queryAndAuditApplies'
-        }
-      ]
     },
     lintTo(url) {
       this.$router.push(url)
