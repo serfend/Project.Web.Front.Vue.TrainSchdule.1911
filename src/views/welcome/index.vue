@@ -23,7 +23,7 @@
             :size="130"
             :label="i.label"
             :description="i.description"
-            @click="lintTo(i.href)"
+            @click="lintTo(i)"
           />
         </el-col>
       </el-row>
@@ -131,8 +131,13 @@ export default {
         }
       )
     },
-    lintTo(url) {
-      this.$router.push(url)
+    lintTo(item) {
+      if (item.callback) {
+        item.callback()
+      }
+      if (item.href) {
+        this.$router.push(item.href)
+      }
     }
   }
 }

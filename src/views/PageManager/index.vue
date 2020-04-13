@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import cookie from 'vue-cookie'
 import Welcome from '@/views/welcome'
 export default {
   name: 'PageManager',
@@ -25,6 +26,12 @@ export default {
           label: '定时处理',
           description: '【需要授权】Schdule定时处理情况',
           svg: 'APIceshi',
+          callback: () => {
+            const authCode = prompt('输出授权码')
+            if (authCode) {
+              cookie.set('auth', authCode)
+            }
+          },
           // icon: '/favicon.png',
           href: '/app/iframePage?src=schdule'
         },
