@@ -98,9 +98,7 @@ export function exportUserApplies(dutiesType, applies) {
     case 1: templete = '人员休假登记卡.xlsx'
   }
   return exportMultiApplies(templete, {
-    id: {
-      Arrays: applies
-    }
+    Arrays: applies
   })
 }
 

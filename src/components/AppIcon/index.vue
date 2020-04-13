@@ -75,6 +75,7 @@ export default {
   height: 100%;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 1);
   transition: all 0.5s;
+  user-select: none;
 }
 .icon-buttonactive {
   border-radius: 10%;
@@ -87,6 +88,7 @@ export default {
   transform: translateY(4px);
   transition: all 0.2s;
   cursor: pointer;
+  user-select: none;
 }
 .icon-label {
   border-radius: 5px;
@@ -98,6 +100,7 @@ export default {
   transition: all 0.5s;
   box-shadow: 2px 2px 1px 1px rgba(0, 0, 0, 0.7);
   margin: 20px 0;
+  user-select: none;
 }
 
 .icon-labelactive {
@@ -110,5 +113,6 @@ export default {
   transform: translateY(4px);
   transform: scale(1.5);
   transition: all 0.5s;
+  user-select: none;
 }
 </style>
