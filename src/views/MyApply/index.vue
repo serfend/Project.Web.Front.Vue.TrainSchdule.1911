@@ -10,7 +10,7 @@
     </el-row>
     <el-row class="row">
       <el-card v-loading="loading">
-        <el-steps v-infinite-scroll="load" class="infinite-list" direction="vertical">
+        <el-steps direction="vertical">
           <el-step v-for="i in list" :key="i.id">
             <div slot="title">
               <div v-if="i.create">
@@ -22,7 +22,8 @@
                 >{{ statusDic[i.status].desc }}</el-tag>
                 <el-switch v-model="i.show" />
               </div>
-              <div v-else>没有更多了</div>
+              <div v-else-if="!haveNext">没有更多了</div>
+              <el-button v-else @click="load">加载更多...</el-button>
             </div>
             <div slot="description">
               <ApplyCard v-if="i.create" :data="i" :show="i.show" />
@@ -63,6 +64,9 @@ export default {
     statusDic() {
       return this.$store.state.vocation.statusDic
     }
+  },
+  mounted() {
+    this.load()
   },
   methods: {
     format(val) {

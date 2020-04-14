@@ -164,9 +164,6 @@ export default {
       authKeyUrl: '',
       rulePwd: {
         username: [{ required: true, message: '请输入账号' }],
-        oldPassword: [
-          { required: true, message: '请输入旧密码', trigger: 'blur' }
-        ],
         newPassword: [
           { required: true, validator: validatenewPassword, trigger: 'blur' }
         ],
@@ -207,9 +204,9 @@ export default {
           this.$store.state.user.userid !== ''
         ) {
           this.isToShowPasswordModefier = true
-          this.$message.error('您的密码自从注册以来就没有修改过')
+          this.$message.error('注册以来密码从未被修改')
           setTimeout(() => {
-            this.$message.error('为了您账号安全，建议您尽快修改')
+            this.$message.error('为了您账号安全，建议尽快更换')
           }, 1000)
         }
       })
