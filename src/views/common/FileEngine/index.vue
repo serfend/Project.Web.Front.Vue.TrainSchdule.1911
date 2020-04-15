@@ -9,9 +9,7 @@
           <el-form-item label="路径">
             <el-input v-model="file.filePath" />
           </el-form-item>
-          <el-form-item label="验证码">
-            <el-input v-model="file.clientKey" />
-          </el-form-item>
+          <AuthCode :form.sync="file.auth" />
           <el-form-item label="文件">
             <el-upload
               drag
@@ -37,6 +35,7 @@
           <el-form-item label="名称">{{ fileInfo.name }}</el-form-item>
           <el-form-item label="大小">{{ fileInfo.length }}</el-form-item>
           <el-form-item label="创建时间">{{ fileInfo.create }}</el-form-item>
+          <el-form-item label="验证码">{{ fileInfo.clientKey }}</el-form-item>
           <el-button
             :disabled="!fileInfo.id"
             :loading="fileDownloading"
@@ -80,16 +79,21 @@
 
 <script>
 // download,
-import { upload, requestFile, status } from '@/api/file'
+import AuthCode from '@/components/AuthCode'
+import { upload, requestFile, status, getClientKey } from '@/api/file'
 export default {
   name: 'FileEngine',
+  components: { AuthCode },
   data() {
     return {
       statusLoading: false,
       file: {
         fileName: '',
         filePath: '',
-        clientKey: ''
+        auth: {
+          authByUserId: '',
+          code: ''
+        }
       },
       fileDownloading: false,
       fileInfo: {
@@ -97,10 +101,13 @@ export default {
         path: '',
         length: '',
         create: '',
-        id: ''
+        id: '',
+        clientKey: ''
       },
       uploadurl: '',
-      statusList: []
+      statusList: [],
+      lastQueryDate: new Date(),
+      lastLfpn: ''
     }
   },
   computed: {
@@ -112,10 +119,32 @@ export default {
     file: {
       handler(val) {
         if (val && val.filePath && val.fileName) {
-          requestFile(val.filePath, val.fileName).then(data => {
-            console.log(data)
-            this.fileInfo = data.file
-          })
+          var lastQueryDate = new Date()
+          this.lastQueryDate = lastQueryDate
+          setTimeout(() => {
+            if (this.lastQueryDate === lastQueryDate) {
+              var lastLfpn = `${this.file.filePath}/${this.file.fileName}`
+              if (lastLfpn === this.lastLfpn) return
+              requestFile(val.filePath, val.fileName).then(data => {
+                var id = data.file.id
+                data.file.clientKey = '加载中...'
+                this.$forceUpdate()
+                getClientKey(id, this.file.auth)
+                  .then(ck => {
+                    this.fileInfo.clientKey = ck
+                    this.file.clientKey = ck
+                    this.$forceUpdate()
+                  })
+                  .catch(e => {
+                    this.fileInfo.clientKey = `无法加载(${e.message})`
+                  })
+                  .finally(() => {
+                    this.lastLfpn = ''
+                  })
+                this.fileInfo = data.file
+              })
+            }
+          }, 1000)
         }
       },
       deep: true,
@@ -159,6 +188,7 @@ export default {
     beforeAvatarUpload(file) {
       if (!this.file.filePath) this.file.filePath = 'client-sfvue'
       this.file.fileName = file.name
+
       return true
     },
     refreshStatus() {

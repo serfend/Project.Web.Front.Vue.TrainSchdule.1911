@@ -1,36 +1,19 @@
 <template>
-  <div>
-    <el-row>
-      <el-col :lg="12" :sm="24">
-        <el-form-item label="审核人">
-          <el-input
-            v-model="innerForm.authByUserId"
-            :style="{ width: '400px' }"
-            placeholder="请输入审核人的id"
-          />
-        </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :lg="8" :sm="24">
-        <el-form-item label="安全码">
-          <el-input
-            v-model="innerForm.code"
-            :style="{ width: '400px' }"
-            placeholder="请输入安全码"
-            @change="checkCode"
-          >
-            <template slot="suffix">
-              <el-tooltip :content="invalid.code.des">
-                <i v-if="invalid.code.status" class="el-icon-error" style="color:#F56C6C" />
-                <i v-else class="el-icon-success" style="color:#67C23A" />
-              </el-tooltip>
-            </template>
-          </el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
-  </div>
+  <el-form>
+    <el-form-item label="授权人">
+      <el-input v-model="innerForm.authByUserId" placeholder="请输入授权人的id" />
+    </el-form-item>
+    <el-form-item label="安全码">
+      <el-input v-model="innerForm.code" placeholder="请输入安全码" @change="checkCode">
+        <template slot="suffix">
+          <el-tooltip :content="invalid.code.des">
+            <i v-if="invalid.code.status" class="el-icon-error" style="color:#F56C6C" />
+            <i v-else class="el-icon-success" style="color:#67C23A" />
+          </el-tooltip>
+        </template>
+      </el-input>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script>
@@ -47,7 +30,7 @@ export default {
     authCheckMethod: {
       type: Function,
       default() {
-        return () => {}
+        return checkAuthCode
       }
     }
   },
@@ -80,12 +63,16 @@ export default {
   },
   methods: {
     checkCode() {
-      checkAuthCode(this.innerForm.authByUserId, this.innerForm.code, true)
+      var fn = this.authCheckMethod
+      var p = fn(this.innerForm.authByUserId, this.innerForm.code, true)
+      p(this.innerForm.authByUserId, this.innerForm.code, true)
         .then(() => {
+          this.$emit('update:status', true)
           this.invalid.code.status = false
           this.invalid.code.des = '验证成功'
         })
         .catch(err => {
+          this.$emit('update:status', false)
           this.invalid.code.status = true
           this.invalid.code.des = err.message
         })

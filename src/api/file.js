@@ -58,3 +58,17 @@ export function requestFile(filepath, filename) {
 export function status() {
   return request.get('file/status')
 }
+
+/**
+ * 获取上传码
+ *
+ * @export
+ * @param {*} id 文件id
+ * @param {*} auth 授权码
+ */
+export function getClientKey(id, auth) {
+  return request.post('/file/clientKey', {
+    id,
+    auth
+  })
+}
