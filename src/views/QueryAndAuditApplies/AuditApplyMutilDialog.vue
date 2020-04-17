@@ -115,7 +115,10 @@ export default {
         responseList: []
       },
       multiAuditFormShow: false,
-      auditForm: {},
+      auditForm: {
+        action: 1,
+        remark: null
+      },
       activeApply: ''
     }
   },
@@ -129,7 +132,7 @@ export default {
             this.multiAuditForm.responseList.push({
               apply: item,
               id: item.id,
-              action: '1',
+              action: 1,
               remark: '',
               modefiedByUser: false
             })
