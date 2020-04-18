@@ -2,19 +2,20 @@
   <div>
     <div v-if="innerUrl">
       <el-row>
-        <el-image v-show="qrCodeUrl" :src="qrCodeUrl" />
-        <div v-show="!qrCodeUrl" style="width:200px;height:200px">加载中</div>
+        <QrCodeGenerate :url="innerUrl" />
       </el-row>
-      <el-row style="font-size:10px">使用微信扫一扫联系我们吧~</el-row>
+      <el-row style="font-size:12px;margin:10px 20px">使用微信扫一扫联系我们吧~</el-row>
     </div>
-    <div v-else>加载中</div>
+    <div v-else style="width:200px;height:200px;text-align:center;line-height:200px">加载中</div>
   </div>
 </template>
 
 <script>
-import { qrCodeEncode } from '@/api/qrCode'
+import { download } from '@/api/file'
+import QrCodeGenerate from './QrCodeGenerate'
 export default {
   name: 'ContactMe',
+  components: { QrCodeGenerate },
   props: {
     url: {
       type: String,
@@ -31,8 +32,7 @@ export default {
     url: {
       handler(val) {
         if (val) {
-          this.innerUrl = val
-          this.refresh()
+          this.refresh(val)
         }
       },
       immediate: true
@@ -40,15 +40,20 @@ export default {
   },
   mounted() {
     var temp = this.$route.query.url
-    if (temp) {
-      this.innerUrl = temp
-      this.refresh()
+    if (temp && !this.innerUrl) {
+      this.refresh(temp)
     }
   },
   methods: {
-    refresh() {
-      qrCodeEncode(this.innerUrl).then(data => {
-        this.qrCodeUrl = 'data:image/jpg;base64,' + data.img
+    refresh(url) {
+      var self = this
+      download(url).then(data => {
+        var reader = new FileReader()
+        reader.onload = function(event) {
+          var content = reader.result // 内容就在这里
+          self.innerUrl = content
+        }
+        reader.readAsText(data)
       })
     }
   }

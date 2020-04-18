@@ -67,6 +67,16 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/contactme',
+    component: () => import('@/components/ContactMe'),
+    hidden: true
+  },
+  {
+    path: '/qrCodeGenerate',
+    component: () => import('@/components/ContactMe/QrCodeGenerate'),
+    hidden: true
+  },
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true

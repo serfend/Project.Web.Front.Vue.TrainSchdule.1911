@@ -93,7 +93,7 @@ export default {
       qrCodeUrl: '',
       innerList: [],
       contactMeHasShow: false,
-      wechatUrl: 'https://u.wechat.com/MPTgt41EIncEhLhBIGPovMo'
+      wechatUrl: 'ae7d0f7f-23e6-48d5-6777-08d7e2db9acb'
     }
   },
   watch: {
