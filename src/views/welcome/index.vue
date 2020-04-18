@@ -30,10 +30,7 @@
       <el-row style="bottom:0px;position:fixed;" type="flex" justify="space-between">
         <div style="color:#3f3f3f;font-size:0.5em;">power by serfend@2020</div>
         <el-popover placement="top" trigger="hover" @show="loadContactMe">
-          <el-row>
-            <el-image :src="qrCodeUrl" />
-          </el-row>
-          <el-row style="font-size:10px">使用微信扫一扫联系我们吧~</el-row>
+          <ContactMe v-if="contactMeHasShow" :url="wechatUrl" />
           <el-link slot="reference" style="margin:0 0 0 20px;font-size:0.5em">联系我们</el-link>
         </el-popover>
       </el-row>
@@ -43,10 +40,10 @@
 
 <script>
 import AppIcon from '@/components/AppIcon'
-import { qrCodeEncode } from '@/api/qrCode'
+import ContactMe from '@/components/ContactMe'
 export default {
   name: 'Welcome',
-  components: { AppIcon },
+  components: { AppIcon, ContactMe },
   props: {
     showTitle: {
       type: Boolean,
@@ -94,7 +91,9 @@ export default {
   data() {
     return {
       qrCodeUrl: '',
-      innerList: []
+      innerList: [],
+      contactMeHasShow: false,
+      wechatUrl: 'https://u.wechat.com/MPTgt41EIncEhLhBIGPovMo'
     }
   },
   watch: {
@@ -125,11 +124,8 @@ export default {
   },
   methods: {
     loadContactMe() {
-      qrCodeEncode('https://u.wechat.com/MPTgt41EIncEhLhBIGPovMo').then(
-        data => {
-          this.qrCodeUrl = 'data:image/jpg;base64,' + data.img
-        }
-      )
+      if (this.contactMeHasShow) return
+      this.contactMeHasShow = true
     },
     lintTo(item) {
       if (item.callback) {
