@@ -28,8 +28,8 @@
       </div>
       <p class="comments-ops">
         <span class="comments-reply-btn ml15" @click="handleLike">
-          <svg-icon icon-class="like" />
-          {{ innerLiked ? '取消':'赞' }}
+          <svg-icon :icon-class="liked?'like_filled':'like'" />
+          <span v-if="likes>0">{{ likes }}</span>
         </span>
         <span class="comments-reply-btn ml15" @click="handleAddReply">
           <svg-icon icon-class="message" />评论
@@ -37,16 +37,11 @@
       </p>
       <div v-show="hasReply" class="reply-list">
         <slot />
-        <div class="reply-item reply-item--ops">
+      </div>
+      <div class="reply-item reply-item--ops">
+        <el-input>
           <svg-icon icon-class="message" />
-          <el-button
-            plain
-            type="success"
-            size="mini"
-            class="reply-inner-btn"
-            @click="handleAddReply"
-          >添加回复</el-button>
-        </div>
+        </el-input>
       </div>
     </div>
   </div>
@@ -63,6 +58,7 @@ export default {
     author: { type: String, default: '' },
     content: { type: String, default: '' },
     liked: { type: Boolean, default: false },
+    likes: { type: Number, default: 0 },
     tools: {
       type: Array,
       default() {
