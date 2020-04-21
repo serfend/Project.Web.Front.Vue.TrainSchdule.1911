@@ -11,19 +11,19 @@
         <el-progress :percentage="100" status="success" />
       </div>
       <div class="progress-item">
-        <span>机动通信一组</span>
+        <span>机动一</span>
         <el-progress :percentage="78" />
       </div>
       <div class="progress-item">
-        <span>一组</span>
+        <span>一</span>
         <el-progress :percentage="65" />
       </div>
       <div class="progress-item">
-        <span>六组</span>
+        <span>六</span>
         <el-progress :percentage="12" status="exception" />
       </div>
       <div class="progress-item">
-        <span>四组</span>
+        <span>四</span>
         <el-progress :percentage="42" />
       </div>
     </div>

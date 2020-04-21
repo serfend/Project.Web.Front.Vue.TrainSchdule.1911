@@ -5,7 +5,6 @@
 <script>
 import echarts from 'echarts'
 import { debounce } from '@/utils'
-import { details } from '@/api/statistics'
 require('echarts/theme/macarons') // echarts theme
 export default {
   name: 'VacationCompleteChart',
@@ -142,7 +141,6 @@ export default {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption(this.option)
-      details(['AAA'], ['2020_week1'])
     }
   }
 }

@@ -9,7 +9,7 @@
     <el-row :gutter="20">
       <el-col :lg="32" :md="32">
         <div class="chart-wrapper">
-          <bar-chart />
+          <bar-chart ref="barchart" :data="data_week" :company-dic="companyDic" />
         </div>
       </el-col>
     </el-row>
@@ -37,6 +37,8 @@ import BarChart from './components/BarChart'
 import TodoList from './components/TodoList'
 import BoxCard from './components/BoxCard'
 
+import { details, summary } from '@/api/statistics'
+import { companyChild } from '@/api/company'
 export default {
   name: 'DashboardAdmin',
   components: {
@@ -54,10 +56,71 @@ export default {
         beenAuditData: [0, 3000, 1000, 2000, 1000],
         beenDeniedData: [0, 4000, 1000, 2000, 1000],
         titles: ['暂无数据', '暂无数据', '暂无数据']
-      }
+      },
+      data_week: {}, // 周数据
+      data_month: {}, // 月数据
+      data_season: {}, // 季度数据
+      data_year: {}, // 年度数据
+      statisticsDic: {},
+      companyDic: {}
     }
   },
+  created() {
+    document.body.style.zoom = 1
+  },
+  mounted() {
+    companyChild().then(data => {
+      if (data.list.length === 0) data.list = ['root']
+      var actions = []
+      for (var c in data.list) {
+        actions.push(this.init(data.list[c].code))
+      }
+      Promise.all(actions).then(() => {
+        this.$refs.barchart.refresh()
+      })
+    })
+  },
   methods: {
+    init(companyCode) {
+      return companyChild(companyCode).then(data => {
+        if (data.list.length === 0) {
+          return this.initCompaines([companyCode])
+        }
+        return this.initCompaines(data.list.map(i => i.code))
+      })
+    },
+    initCompaines(compaines) {
+      var cmpStr = compaines.join('##')
+      console.log(cmpStr)
+      return summary(cmpStr).then(data => {
+        for (var s in data.list) {
+          if (!this.statisticsDic[data.list[s].id]) {
+            this.statisticsDic[data.list[s].id] = data.list[s]
+          }
+        }
+        return details(
+          compaines,
+          data.list.map(i => i.id)
+        ).then(de => {
+          this.initData(de)
+        })
+      })
+    },
+    initData(data) {
+      const labelItem = ['year', 'season', 'month', 'week']
+      for (var d in data.list) {
+        var item = data.list[d]
+        for (var label in labelItem) {
+          if (item.statisticsId.toLowerCase().indexOf(labelItem[label]) > -1) {
+            var key = `data_${labelItem[label]}`
+            if (!this[key][item.company.code]) this[key][item.company.code] = {}
+            this[key][item.company.code][item.statisticsId] = item
+            this.companyDic[item.company.code] = item.company
+            break
+          }
+        }
+      }
+    },
     handleSetLineChartData(
       onApplyingData,
       beenAuditData,

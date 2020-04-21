@@ -11,6 +11,18 @@ const animationDuration = 3000
 
 export default {
   props: {
+    data: {
+      type: Object,
+      default() {
+        return null
+      }
+    },
+    companyDic: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
     className: {
       type: String,
       default: 'chart'
@@ -26,7 +38,9 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      nowCompanies: [],
+      lastUpdate: new Date()
     }
   },
   mounted() {
@@ -46,14 +60,34 @@ export default {
     this.chart.dispose()
     this.chart = null
   },
+
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
+    },
+    refresh() {
+      var result = []
+      for (var i in this.data) {
+        console.log(i)
+        result.push(this.companyDic[i])
+      }
+      this.nowCompanies = result
+      var lastUpdate = new Date()
+      this.lastUpdate = lastUpdate
+      var self = this
+      setTimeout(() => {
+        if (lastUpdate !== this.lastUpdate) return
+        self.update()
+      }, 1000)
+    },
 
+    update() {
+      console.log('update')
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
+          axisPointer: {
+            // 坐标轴指示器，坐标轴触发有效
             type: 'line' // 默认为直线，可选为：'line' | 'shadow'
           }
         },
@@ -64,41 +98,49 @@ export default {
           bottom: '3%',
           containLabel: true
         },
-        xAxis: [{
-          type: 'category',
-          data: ['机动一组', '机动二组', '保障组', '一组', '二组', '三组', '四组', '五组', '六组', '七组', '八组', '九组', '政工组', '经济组', '保障组'],
-          axisTick: {
-            alignWithLabel: true
+        xAxis: [
+          {
+            type: 'category',
+            data: this.nowCompanies.map(c => c.name),
+            axisTick: {
+              alignWithLabel: true
+            }
           }
-        }],
-        yAxis: [{
-          type: 'value',
-          axisTick: {
-            show: true
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            axisTick: {
+              show: true
+            }
           }
-        }],
-        series: [{
-          name: '完成休假',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [79, 52, 200, 334, 390, 330, 220, 79, 52, 200, 334, 390, 330, 220, 79, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }, {
-          name: '未完成休假',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [80, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }, {
-          name: '未休假',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [30, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }]
+        ],
+        series: [
+          {
+            name: '完成休假',
+            type: 'bar',
+            stack: 'vistors',
+            barWidth: '60%',
+            data: [79, 52, 200, 334, 390],
+            animationDuration
+          },
+          {
+            name: '未完成休假',
+            type: 'bar',
+            stack: 'vistors',
+            barWidth: '60%',
+            data: [80, 52, 200, 334, 390, 330, 220],
+            animationDuration
+          },
+          {
+            name: '未休假',
+            type: 'bar',
+            stack: 'vistors',
+            barWidth: '60%',
+            data: [30, 52, 200, 334, 390, 330, 220],
+            animationDuration
+          }
+        ]
       })
     }
   }
