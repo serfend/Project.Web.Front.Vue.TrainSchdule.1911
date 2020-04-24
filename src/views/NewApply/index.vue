@@ -159,6 +159,13 @@
             </el-row>
             <el-form-item v-if="formApply.VocationType=='正休'" label="福利假">
               <el-button icon="el-icon-plus" @click="OpenOtherVacation('')">添加</el-button>
+              <el-alert
+                v-show="SelectVacationList.length>0"
+                title="注意：当假期包含福利假时将无法享受法定节假日假期"
+                close-text="知道了"
+                type="warning"
+                show-icon
+              />
               <el-collapse accordion style="width:400px">
                 <el-collapse-item
                   v-for="(item,index) in SelectVacationList"
@@ -789,6 +796,7 @@ export default {
       this.SelectVacationList.forEach(v => {
         SelectVacationCount += v.length
       })
+      // 正休假计算路途，如果存在福利假则不计算法定节假日
       var caculateVocationCount = this.formApply.VocationType === '正休'
       this.caculaingDate = {
         start: parseTime(this.formApply.StampLeave, '{yyyy}-{mm}-{dd}'),
@@ -797,7 +805,8 @@ export default {
           (caculateVocationCount
             ? parseInt(this.formApply.OnTripLength) + SelectVacationCount
             : 0),
-        caculateLawVocation: caculateVocationCount
+        caculateLawVocation:
+          caculateVocationCount && this.SelectVacationList.length === 0
       }
       this.formApply.isArchitect =
         new Date(this.caculaingDate.start) <= new Date()
