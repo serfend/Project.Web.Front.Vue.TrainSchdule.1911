@@ -1,7 +1,7 @@
 var dict = {
   default: {
     language: {
-      en: '英文',
+      en: 'English',
       ch: '中文'
     },
     system: {
@@ -61,6 +61,8 @@ var dict = {
     audit: '审核注册'
   },
   login: {
+    title: '登录',
+    defaultTitle: '登录到系统',
     username: '用户名',
     password: '密码'
   },
