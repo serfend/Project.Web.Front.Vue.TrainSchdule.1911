@@ -126,6 +126,14 @@ export function validEmail(email) {
   return reg.test(email)
 }
 
+export function validPhone(phone) {
+  if (!phone) return '未填写'
+  if (phone.length !== 11) return `长度应有11位，实际${phone.length}位`
+  const reg = /^1[3456789]\d{9}$/
+  if (reg.test(phone)) return null
+  return '格式有误'
+}
+
 /**
  * @param {string} str
  * @returns {Boolean}
