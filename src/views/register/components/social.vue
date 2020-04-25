@@ -12,15 +12,21 @@
         </el-tooltip>
       </el-col>
     </el-form-item>
-    <el-form-item label="联系方式">
-      <el-col :lg="8">
-        <el-input v-model="innerForm.phone" />
-      </el-col>
-    </el-form-item>
+    <el-col :span="8">
+      <el-form-item
+        label="联系方式"
+        prop="phone"
+        inline-message
+        :rules="[{ validator: phoneRoleCheck, trigger: 'blur' }]"
+      >
+        <el-input v-model="innerForm.phone" placeholder="请输入常用的手机号" />
+      </el-form-item>
+    </el-col>
   </div>
 </template>
 
 <script>
+import { validPhone } from '@/utils/validate'
 import SettleFormItem from '@/components/SettleFormItem'
 export default {
   name: 'Social',
@@ -64,6 +70,14 @@ export default {
       },
       deep: true,
       immediate: true
+    }
+  },
+  methods: {
+    phoneRoleCheck(filed, invalidVal, cb) {
+      var val = this.innerForm[filed.field]
+      var result = validPhone(val)
+      if (result) cb(new Error(result))
+      cb()
     }
   }
 }
