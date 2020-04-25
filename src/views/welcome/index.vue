@@ -30,7 +30,7 @@
       <el-row style="bottom:0px;position:fixed;" type="flex" justify="space-between">
         <div style="color:#3f3f3f;font-size:0.5em;">power by serfend@2020</div>
         <el-popover placement="top" trigger="hover" @show="loadContactMe">
-          <ContactMe v-if="contactMeHasShow" :url="wechatUrl" />
+          <ContactMe v-if="contactMeHasShow" :content="wechatUrl" />
           <el-link slot="reference" style="margin:0 0 0 20px;font-size:0.5em">联系我们</el-link>
         </el-popover>
       </el-row>
@@ -93,7 +93,7 @@ export default {
       qrCodeUrl: '',
       innerList: [],
       contactMeHasShow: false,
-      wechatUrl: 'ae7d0f7f-23e6-48d5-6777-08d7e2db9acb'
+      wechatUrl: 'https://u.wechat.com/MPTgt41EIncEhLhBIGPovMo'
     }
   },
   watch: {

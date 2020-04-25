@@ -3,7 +3,7 @@
     <el-image v-show="qrCodeUrl" :style="{width:size + 'px'}" :src="qrCodeUrl" />
     <div
       v-show="!qrCodeUrl"
-      :style="{width:size + 'px',height:size + 'px','line-height':size+'px','text-align':center}"
+      :style="{width:size + 'px',height:size + 'px','line-height':size+'px','text-align':'center'}"
     >加载中</div>
   </div>
 </template>

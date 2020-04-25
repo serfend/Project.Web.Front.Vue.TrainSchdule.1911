@@ -20,6 +20,10 @@ export default {
     url: {
       type: String,
       default: null
+    },
+    content: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -29,6 +33,14 @@ export default {
     }
   },
   watch: {
+    content: {
+      handler(val) {
+        if (val) {
+          this.innerUrl = val
+        }
+      },
+      immediate: true
+    },
     url: {
       handler(val) {
         if (val) {
@@ -50,7 +62,7 @@ export default {
       download(url).then(data => {
         var reader = new FileReader()
         reader.onload = function(event) {
-          var content = reader.result // 内容就在这里
+          var content = reader.result
           self.innerUrl = content
         }
         reader.readAsText(data)
