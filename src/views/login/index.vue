@@ -9,8 +9,8 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">登录到系统</h3>
-        <!-- <lang-select class="set-language" /> -->
+        <h3 class="title">{{ $t('login.defaultTitle') }}</h3>
+        <lang-select class="set-language" />
       </div>
 
       <el-form-item prop="username">
@@ -51,18 +51,18 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
+      <el-row />
+      <el-button
+        style="width:40%;"
+        plain
+        @click.native.prevent="handleReg"
+      >{{ $t('register.title') }}</el-button>
       <el-button
         :loading="loading"
-        style="width:100%;margin-bottom:30px;"
         type="primary"
+        style="width:40%;float:right"
         @click.native.prevent="handleLogin"
-      >登 录</el-button>
-      <el-button
-        style="width:100%;margin-bottom:5px;margin-left:0px"
-        type="primary"
-        @click.native.prevent="handleReg"
-      >注 册</el-button>
+      >{{ $t('login.title') }}</el-button>
     </el-form>
 
     <el-dialog title="第三方登录" :visible.sync="showDialog">
@@ -74,13 +74,13 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-// import LangSelect from '@/components/LangSelect'
+import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
 import { Message } from 'element-ui'
 import { getUserBase } from '@/api/userinfo'
 export default {
   name: 'Login',
-  components: { SocialSign },
+  components: { SocialSign, LangSelect },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
