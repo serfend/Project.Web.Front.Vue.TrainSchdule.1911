@@ -16,7 +16,7 @@
     <el-button
       type="success"
       style="width:100%"
-      :disabled="!(editPwd.username&&editPwd.newPassword&&editPwd.confirmNewPassword===editPwd.newPassword)"
+      :disabled="!(editPwd.username&&editPwd.newPassword&&editPwd.confirmNewPassword===editPwd.newPassword&&(!oldPswInput||(editPwd.oldPassword||editPwd.auth.code)))"
       @click="savePwd"
     >修改</el-button>
   </el-form>
@@ -33,7 +33,7 @@ export default {
   props: {
     oldPswInput: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
