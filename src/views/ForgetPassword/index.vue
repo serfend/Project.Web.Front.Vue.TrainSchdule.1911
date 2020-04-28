@@ -20,12 +20,12 @@
               v-model="nowSelectRealName"
               style="width: 100%"
               placeholder="输入姓名查找"
-              @input="handleUserSByCompanyelectChange"
+              @input="loadCollapseUserAvatarBoth"
             />
             <el-collapse
               v-model="nowCollapseSelectUserId"
               accordion
-              @change="loadCollapseUserAvatarRealName"
+              @change="loadCollapseUserAvatarBoth"
             >
               <el-collapse-item v-for="u in usersByRealName" :key="u.id" :name="u.id">
                 <template slot="title">
@@ -108,6 +108,12 @@ export default {
         realName: li.realName,
         avatar: li.avatar
       }
+    },
+    loadCollapseUserAvatarBoth(id) {
+      return (
+        this.loadCollapseUserAvatarCompany(id) +
+        this.loadCollapseUserAvatarRealName(id)
+      )
     },
     loadCollapseUserAvatarCompany(id) {
       return this.loadCollapseUserAvatar(this.usersByCompany, id)
