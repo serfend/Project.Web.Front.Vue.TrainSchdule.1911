@@ -11,7 +11,7 @@
             <div class="title">{{ $t('application.new') }}</div>
           </div>
         </router-link>
-        <router-link to="/register/main">
+        <router-link to="/register">
           <div
             :class="isActive==1?'menuactive':'menu'"
             @mouseenter="changeActive(1)"
@@ -50,7 +50,7 @@
 <script>
 import AppIcon from '@/components/AppIcon'
 export default {
-  name: 'welcome',
+  name: 'Welcome',
   components: { AppIcon },
   data() {
     return {
@@ -65,7 +65,7 @@ export default {
   methods: {
     authRegisterUser(isToRegister) {
       this.$store.state.user.isToRegister = isToRegister
-      return this.$router.push(`/register/main`)
+      return this.$router.push(`/register`)
     },
     changeActive(index) {
       this.isActive = index

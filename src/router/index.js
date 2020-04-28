@@ -82,12 +82,16 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/register',
+    path: '/reg',
     component: Layout,
     children: [
       {
-        path: '/register/main',
+        path: '/register',
         component: () => import('@/views/register/index')
+      },
+      {
+        path: '/forget',
+        component: () => import('@/views/ForgetPassword')
       }
     ],
     hidden: true

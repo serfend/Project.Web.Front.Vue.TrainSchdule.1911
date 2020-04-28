@@ -59,7 +59,7 @@ export default {
             description: '注册和审批新账号窗口',
             svg: '注册',
             // icon: '/favicon.png',
-            href: '/register/main'
+            href: '/register'
           },
           {
             id: '1',

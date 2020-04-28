@@ -64,7 +64,7 @@ export default {
   methods: {
     authRegisterUser(isToRegister) {
       this.$store.state.user.isToRegister = isToRegister
-      return this.$router.push(`/register/main`)
+      return this.$router.push(`/register`)
     }
   }
 }
