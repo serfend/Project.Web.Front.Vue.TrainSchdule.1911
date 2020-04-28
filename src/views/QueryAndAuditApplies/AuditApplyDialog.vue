@@ -1,32 +1,20 @@
 <template>
   <div>
-    <el-dialog :visible.sync="auditShow" title="提交审核" width="30%">
+    <el-dialog :visible.sync="auditShow" title="审批">
       <el-form ref="auditForm" :model="auditForm" label-width="80px">
-        <el-form-item label="审核结果">
+        <el-form-item label="同意" align="left">
           <el-switch
             v-model="auditForm.action"
             :active-value="1"
             :inactive-value="2"
             active-color="#13ce66"
-            active-text="通过"
-            class="pt-2"
             inactive-color="#ff4949"
-            inactive-text="驳回"
-            style="display: block"
           />
         </el-form-item>
-        <el-form-item label="批复内容">
-          <el-input v-model="auditForm.remark" placeholder="请输入批复" type="textarea" />
+        <el-form-item label="备注内容">
+          <el-input v-model="auditForm.remark" placeholder="可选项" type="textarea" />
         </el-form-item>
-        <el-collapse>
-          <el-collapse-item title="授权人">
-            <template slot="title">
-              默认为当前登录
-              <el-tag>{{ $store.state.user.name }}</el-tag>
-            </template>
-            <AuthCode :form.sync="auditForm.auth" :auth-check-method="checkAuthCode" />
-          </el-collapse-item>
-        </el-collapse>
+        <AuthCode :form.sync="auditForm.auth" :auth-check-method="checkAuthCode" />
       </el-form>
       <span slot="footer">
         <el-button @click="auditShow = false">取 消</el-button>

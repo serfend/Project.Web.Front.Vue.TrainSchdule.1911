@@ -242,17 +242,7 @@
             @close="handleAuditMembersSelectClosed(tag)"
           >{{ newRule.auditMembersRealName[tag] }}</el-tag>
         </el-form-item>
-        <el-form-item label="授权人">
-          <el-collapse>
-            <el-collapse-item title="授权人">
-              <template slot="title">
-                默认为当前登录
-                <el-tag>{{ $store.state.user.name }}</el-tag>
-              </template>
-              <AuthCode :form.sync="newRule.auth" :auth-check-method="checkAuthCode" />
-            </el-collapse-item>
-          </el-collapse>
-        </el-form-item>
+        <AuthCode :form.sync="newRule.auth" :auth-check-method="checkAuthCode" />
         <el-button-group style="width:100%">
           <el-button
             v-loading="newRule.loading"

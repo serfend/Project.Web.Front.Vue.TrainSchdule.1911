@@ -2,15 +2,7 @@
   <div>
     <el-dialog :visible.sync="authFormShow" title="敏感操作授权">
       <el-form ref="authForm" :model="authForm">
-        <el-collapse v-model="activeName" accordion>
-          <el-collapse-item :title="sensitiveAction" name="auth">
-            <template slot="title">
-              默认为当前登录
-              <el-tag>{{ $store.state.user.name }}</el-tag>
-            </template>
-            <AuthCode :form.sync="authForm.auth" :auth-check-method="checkAuthCode" />
-          </el-collapse-item>
-        </el-collapse>
+        <AuthCode :form.sync="authForm.auth" :auth-check-method="checkAuthCode" />
         <el-form-item>
           <el-button-group style="width:100%">
             <el-button type="info" style="width:50%" @click=" authFormShow = false ">取消</el-button>

@@ -43,15 +43,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-collapse>
-        <el-collapse-item title="授权人" :disabled="innerIsOnlyToShowRecallMsg">
-          <template slot="title">
-            {{ recallByUser?'召回命令下达':'默认为当前登录' }}
-            <el-tag>{{ recallByUser?recallByUser:$store.state.user.name }}</el-tag>
-          </template>
-          <AuthCode :form.sync="auditForm.auth" :auth-check-method="checkAuthCode" />
-        </el-collapse-item>
-      </el-collapse>
+      <AuthCode :form.sync="auditForm.auth" :auth-check-method="checkAuthCode" />
     </el-form>
     <span slot="footer">
       <el-button-group v-if="!innerIsOnlyToShowRecallMsg">
