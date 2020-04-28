@@ -99,19 +99,6 @@ service.interceptors.response.use(
    * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
    */
   response => {
-    if (response.config.responseType === 'arraybuffer') {
-      const data = response.data
-      if (!data) {
-        return Promise.reject('图片加载失败')
-      }
-      return Promise.resolve({
-        msg: null,
-        status: 0,
-        url: btoa(
-          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
-        )
-      })
-    }
     const res = response.data
     // cache.set(response.config.cacheIndex, res)
     // 如果不存在status，说明是直接文件，直接返回
