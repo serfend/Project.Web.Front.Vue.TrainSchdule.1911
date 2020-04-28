@@ -63,6 +63,7 @@
         style="width:40%;float:right"
         @click.native.prevent="handleLogin"
       >{{ $t('login.title') }}</el-button>
+      <el-link href="/#/forget">忘记账号/密码</el-link>
     </el-form>
 
     <el-dialog title="第三方登录" :visible.sync="showDialog">
@@ -97,6 +98,7 @@ export default {
       }
     }
     return {
+      wrongTime: 0,
       loginForm: {
         username: '',
         password: '',
@@ -179,7 +181,7 @@ export default {
     },
     handleReg() {
       this.$store.state.user.isToRegister = true
-      this.$router.push({ path: '/register/main' })
+      this.$router.push({ path: '/register' })
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
@@ -196,8 +198,41 @@ export default {
               })
               this.$router.push({ path: this.redirect || '/' })
             })
-            .catch(() => {
+            .catch(e => {
               this.loading = false
+              var msg = ''
+              var title = ''
+              switch (e.status) {
+                case 12440: {
+                  title = '账号审批未通过且有紧急情况需报假?'
+                  msg = '可联系本级领导或管理员完成账号的审批'
+                  break
+                }
+                case 12450: {
+                  title = '账号审批被退回?'
+                  msg =
+                    '进入注册页面 选中【切换到审批模式】、搜索本人姓名找到本人账号、修改正确信息并重新提交'
+                  break
+                }
+                case 11500: {
+                  this.wrongTime++
+                  if (this.wrongTime % 3 === 0 || this.wrongTime > 10) {
+                    title = '不记得密码了?'
+                    msg = '尝试<a href="/#/forget">点击此处</a>找回密码'
+                  }
+                }
+              }
+
+              var opt = {
+                title: title,
+                message: msg,
+                dangerouslyUseHTMLString: true,
+                type: 'success',
+                duration: 0
+              }
+              if (msg) {
+                this.$notify(opt)
+              }
             })
         } else {
           return false
