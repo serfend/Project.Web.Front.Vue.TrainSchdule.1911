@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form-item prop="company" label="单位">
+    <el-form-item prop="company" label="单位" style="width:400px">
       <cascader-selector
         :code.sync="innerForm.company.code"
         :child-getter-method="companyChild"

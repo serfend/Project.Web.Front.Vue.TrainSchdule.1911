@@ -1,5 +1,5 @@
 <template>
-  <el-card class="box-card">
+  <el-card>
     <div v-show="waitToAuthRegisterUsersLoadId!==''">
       <el-steps :active="nowStep" simple>
         <el-step
@@ -460,8 +460,5 @@ export default {
 .top-enter-active,
 .top-leave-active {
   transition: all 0.2s;
-}
-.box-card {
-  width: 1080px;
 }
 </style>
