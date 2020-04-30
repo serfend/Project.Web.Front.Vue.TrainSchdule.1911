@@ -1,725 +1,112 @@
 <template>
-  <div class="application-new">
-    <el-card :body-style="{padding: 0}" shadow="hover">
-      <div :style="{'backgroundColor': theme}" class="layout pa-3 row justify-space-between">
-        <span>新建申请</span>
+  <el-container>
+    <el-container>
+      <el-aside width="100px">
+        <el-steps
+          direction="vertical"
+          :active="nowStep"
+          finish-status="success"
+          style="height:400px;position:fixed;"
+        >
+          <el-step title="个人信息" />
+          <el-step title="休假信息" />
+          <el-step title="确认提交" />
+        </el-steps>
+      </el-aside>
+      <el-main>
+        <BaseInfo
+          ref="BaseInfo"
+          :submit-id.sync="formFinal.BaseInfoId"
+          :userid.sync="userid"
+          style="margin:20px 5px"
+          @submited="baseInfoSubmit"
+        />
+        <RequestInfo
+          ref="RequestInfo"
+          :submit-id.sync="formFinal.RequestId"
+          :userid.sync="userid"
+          style="margin:20px 5px"
+          @submited="requestInfoSubmit"
+        />
+      </el-main>
+    </el-container>
+    <el-footer>
+      <div class="row layout" />
+      <div :style="{'backgroundColor': theme}" class="footer-nav">
+        <div class="row layout justify-center fill-height">
+          <el-button
+            v-loading="onLoading"
+            :disabled="nowStep<2"
+            type="success"
+            @click="submitApply(0)"
+          >仅提交</el-button>
+          <el-button
+            v-loading="onLoading"
+            :disabled="nowStep<2"
+            type="success"
+            @click="submitApply(1)"
+          >提交并保存</el-button>
+          <el-button
+            v-loading="onLoading"
+            :disabled="nowStep<2"
+            type="success"
+            @click="submitApply(2)"
+          >提交并发布</el-button>
+          <el-button type="info" @click="createNew">新建申请</el-button>
+        </div>
       </div>
-      <el-card class="elevation-0">
-        <div class="px-2 pb-2 pt-0">
-          <el-steps :active="active" finish-status="success" simple style="margin-top: 20px">
-            <el-step title="填写基础信息" />
-            <el-step title="填写休假请求" />
-            <el-step title="准备提交" />
-          </el-steps>
-        </div>
-      </el-card>
-      <el-card class="elevation-0 p-relitive">
-        <div v-show="showAll == true || active == 0" class="row layout">
-          <el-form ref="form" :model="form" class="full-width" label-width="180px">
-            <div class="subheading pa-3">一、填写基础信息</div>
-            <el-form-item label="身份号">
-              <el-input
-                v-model="form.id"
-                :style="{ width: '400px' }"
-                @keydown.native.enter="fetchUserInfoes('id')"
-              >
-                <el-tooltip
-                  slot="append"
-                  class="item"
-                  content="点击自动查询对应信息"
-                  effect="dark"
-                  placement="bottom"
-                >
-                  <el-button
-                    :loading="OnloadingUserInfoes"
-                    icon="el-icon-search"
-                    @click="fetchUserInfoes('id')"
-                  />
-                </el-tooltip>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="真实姓名">
-              <el-input
-                v-model="form.realName"
-                :style="{ width: '400px' }"
-                @keydown.native.enter="fetchUserInfoes('realName')"
-              >
-                <el-tooltip
-                  slot="append"
-                  class="item"
-                  content="点击自动查询对应信息"
-                  effect="dark"
-                  placement="bottom"
-                >
-                  <el-button
-                    :loading="OnloadingUserInfoes"
-                    icon="el-icon-search"
-                    @click="fetchUserInfoes('realName')"
-                  />
-                </el-tooltip>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="所在部门">
-              <el-input v-model="form.companyName" disabled />
-            </el-form-item>
-            <el-form-item hidden label="所在部门">
-              <el-input v-model="form.company" disabled hidden />
-            </el-form-item>
-            <el-form-item label="担任职务">
-              <el-input v-model="form.duties" disabled />
-            </el-form-item>
-
-            <SettleFormItem :form.sync="form.Settle.self" disabled label="本人所在地" />
-            <SettleFormItem :form.sync="form.Settle.lover" disabled label="配偶所在地" />
-            <SettleFormItem :form.sync="form.Settle.parent" disabled label="父母所在地" />
-            <SettleFormItem :form.sync="form.Settle.loversParent" disabled label="配偶父母所在地" />
-
-            <el-form-item label="初始全年天数">
-              <el-input-number v-model="form.Settle.prevYearlyLength" disabled />
-            </el-form-item>
-
-            <el-form-item label="联系方式">
-              <el-input v-model="form.Phone" />
-            </el-form-item>
-
-            <el-row class="divider" />
-            <el-form-item v-show="showAll == false">
-              <el-button-group>
-                <el-button
-                  type="success"
-                  style="width:50%"
-                  @click="goStepTwo(nowYear)"
-                >本年度休假({{ nowYear }}年)</el-button>
-                <el-button
-                  type="success"
-                  style="width:50%"
-                  @click="goStepTwo(nowYear+1)"
-                >下一年度休假({{ nowYear + 1 }}年)</el-button>
-              </el-button-group>
-            </el-form-item>
-          </el-form>
-        </div>
-
-        <div v-show="showAll == true || active == 1" class="row layout">
-          <el-form ref="formApply" :model="formApply" class="full-width" label-width="180px">
-            <div class="subheading pa-3">二、填写休假请求</div>
-            <el-form-item label="全年休假完成率">
-              <VacationDescription
-                :users-vocation="usersVocation"
-                :this-time-vacation-length="formApply.VocationType=='正休'?formApply.VocationLength:0"
-              />
-            </el-form-item>
-
-            <el-form-item label="休假类型">
-              <el-select v-model="formApply.VocationType" placeholder="必填">
-                <el-option label="正休" value="正休" />
-                <el-option label="事假" value="事假" />
-                <el-option label="病休" value="病休" />
-              </el-select>
-              <el-tooltip placement="top">
-                <div slot="content">如果您存在前期已休过假，但未记录的情况，则应选为【补充记录】</div>
-                <el-switch
-                  v-model="formApply.isArchitect"
-                  active-text="补充记录"
-                  inactive-text="新增申请"
-                  active-color="#ff9999"
-                />
-              </el-tooltip>
-            </el-form-item>
-            <el-form-item label="休假原因">
-              <el-input
-                v-model="formApply.reason"
-                type="textarea"
-                maxlength="30"
-                show-word-limit
-                style="width:300px"
-              />
-            </el-form-item>
-            <el-row>
-              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-                <el-form-item label="休假天数">
-                  <el-input-number
-                    v-model="formApply.VocationLength"
-                    :max="usersVocation.leftLength"
-                    :min="1"
-                    @change="handleChange"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-                <el-form-item label="路途天数">
-                  <el-input-number
-                    v-model="formApply.OnTripLength"
-                    :max="14"
-                    :min="0"
-                    @change="handleChange"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-form-item v-if="formApply.VocationType=='正休'" label="福利假">
-              <el-button icon="el-icon-plus" @click="OpenOtherVacation('')">添加</el-button>
-              <el-alert
-                v-show="SelectVacationList.length>0"
-                title="注意：当假期包含福利假时将无法享受法定节假日假期"
-                close-text="知道了"
-                type="warning"
-                show-icon
-              />
-              <el-collapse accordion style="width:400px">
-                <el-collapse-item
-                  v-for="(item,index) in SelectVacationList"
-                  :key="item.value"
-                  style="position:relative;"
-                >
-                  <template slot="title">
-                    {{ item.name }} {{ item.length }}天
-                    <i
-                      class="el-icon-edit group-edit"
-                      @click="OpenOtherVacation(index)"
-                    />
-                    <!-- .stop="doSomething($event) -->
-                    <i
-                      class="el-icon-delete group-remove"
-                      @click.stop="removeVacation(index,$event)"
-                    />
-                  </template>
-                  {{ item.description }}
-                </el-collapse-item>
-              </el-collapse>
-            </el-form-item>
-            <el-row>
-              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-                <el-form-item label="离队时间">
-                  <el-date-picker
-                    v-model="formApply.StampLeave"
-                    placeholder="选择日期"
-                    type="date"
-                    format="yyyy年MM月dd日"
-                    value-format="yyyy-MM-dd"
-                    @change="handleChange"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-                <el-form-item label="预计归队">
-                  <el-date-picker
-                    v-model="formApply.StampReturn"
-                    disabled
-                    placeholder="自动计算"
-                    type="date"
-                    format="yyyy年MM月dd日"
-                    value-format="yyyy-MM-dd"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-form-item
-              v-show="lawVocations.length>0&&formApply.VocationType=='正休'"
-              label="法定节假日"
-            >
-              <el-tag
-                v-for="item in lawVocations"
-                :key="item.start"
-                style="margin:10px"
-              >{{ item.start|parseTime("{mm}月{dd}日") }} {{ item.name }}{{ item.length }} 天</el-tag>
-            </el-form-item>
-            <el-form-item label="休假目的地">
-              <cascader-selector
-                placeholder="选择本次休假的目的地"
-                :code.sync="formApply.vocationPlace"
-                :child-getter-method="locationChildren"
-                style="width:300px"
-              />
-            </el-form-item>
-            <el-form-item label="详细地址">
-              <el-input v-model="formApply.vocationPlaceName" style="width:300px" />
-            </el-form-item>
-            <el-form-item label="所乘交通工具">
-              <el-select v-model="formApply.ByTransportation" placeholder="火车">
-                <el-option label="火车" value="0" />
-                <!-- <el-option label="飞机" value="1" /> -->
-                <el-option label="汽车" value="2" />
-                <el-option label="其他" value="-1" />
-              </el-select>
-            </el-form-item>
-            <el-form-item v-show="showAll == false" style="width:100%">
-              <el-button-group style="width:100%">
-                <el-button style="width:50%" type="info" @click="active = 0">上一步</el-button>
-                <el-button style="width:50%" type="success" @click="goStepThree">下一步</el-button>
-              </el-button-group>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div v-show="showAll == true || active == 3" class="row layout" />
-        <div v-if="showAll" class="mask" />
-        <div v-if="showAll" :style="{'backgroundColor': theme}" class="footer-nav">
-          <div class="row layout justify-center fill-height">
-            <el-button-group style="width:100%">
-              <el-button
-                v-loading="onLoading"
-                type="success"
-                style="width:10%"
-                @click="submitApply(0)"
-              >仅提交</el-button>
-              <el-button
-                v-loading="onLoading"
-                type="success"
-                style="width:10%"
-                @click="submitApply(1)"
-              >提交并保存</el-button>
-              <el-button
-                v-loading="onLoading"
-                type="success"
-                style="width:10%"
-                @click="submitApply(2)"
-              >提交并发布</el-button>
-              <el-button style="width:10%" type="danger" @click="active = 0">重新填写</el-button>
-              <el-button style="width:10%" type="info" @click="createNew">新建申请</el-button>
-            </el-button-group>
-          </div>
-        </div>
-        <!-- card body -->
-      </el-card>
-    </el-card>
-
-    <el-dialog title="添加" :visible.sync="dialogVisible" width="600px">
-      <el-form ref="VacationModel" :rules="VacationModelRules" :model="VacationModel">
-        <el-form-item label="福利假" prop="name">
-          <el-autocomplete
-            v-model.trim="VacationModel.name"
-            :fetch-suggestions="querySearch"
-            placeholder="选择/输入福利假"
-            @select="handleSelect"
-          />
-        </el-form-item>
-        <el-form-item label="休假天数" prop="length">
-          <el-input-number v-model.number="VacationModel.length" />
-        </el-form-item>
-        <el-form-item label="福利假理由" prop="description">
-          <el-input
-            v-model.trim="VacationModel.description"
-            type="textarea"
-            maxlength="30"
-            show-word-limit
-          />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="SaveOtherVacation">确 定</el-button>
-      </span>
-    </el-dialog>
-  </div>
+    </el-footer>
+  </el-container>
 </template>
 
 <script>
-import { parseTime } from '@/utils'
-import SettleFormItem from '@/components/SettleFormItem'
-import CascaderSelector from '@/components/CascaderSelector'
-import VacationDescription from './VacationDescription'
-import { getUserAllInfo } from '@/api/usercompany'
-import {
-  getUserIdByCid,
-  getUserIdByRealName,
-  getUsersVocationLimit
-} from '@/api/userinfo'
-import {
-  postBaseInfo,
-  postRequestInfo,
-  submitApply,
-  save,
-  publish,
-  getStampReturn
-} from '@/api/apply'
-import { locationChildren } from '@/api/static'
+import BaseInfo from './BaseInfo'
+import RequestInfo from './RequestInfo'
+
+import { submitApply, save, publish } from '@/api/apply'
 export default {
   name: 'NewApply',
   components: {
-    SettleFormItem,
-    CascaderSelector,
-    VacationDescription
+    BaseInfo,
+    RequestInfo
   },
   data() {
     return {
-      active: 0,
-      OnloadingUserInfoes: false,
-      OnloadingUserStamp: false,
+      nowStep: 0,
       onLoading: false,
-      form: this.createNewBase(),
-      formApply: this.createNewRequest(),
+      userid: '',
       formFinal: {
-        baseInfoId: '',
+        BaseInfoId: '',
         RequestId: ''
       },
-      usersVocation: {
-        yearlyLength: 0,
-        nowTimes: 0,
-        leftLength: 0,
-        onTripTimes: 0,
-        maxTripTimes: 0
-      },
-      isAfterSubmit: false,
-      caculaingDate: {},
-      restaurants: [], // 福利假选择
-      lawVocations: [],
-      SelectVacationList: [],
-      VacationModel: {
-        name: '',
-        length: '',
-        description: ''
-      },
-      dialogVisible: false,
-      VacationIndex: '',
-      VacationModelRules: {
-        name: [
-          { required: true, message: '请选择/输入福利假', trigger: 'change' }
-        ],
-        length: [
-          { required: true, message: '请输入假期天数', trigger: 'blur' },
-          {
-            min: 1,
-            message: '天数不能少于1天',
-            type: 'number',
-            trigger: 'blur'
-          }
-        ]
-      }
+      isAfterSubmit: false
     }
   },
   computed: {
-    nowYear() {
-      var date = new Date()
-      return date.getFullYear()
-    },
-    showAll() {
-      return this.active === 3
-    },
     theme() {
       return this.$store.state.settings.theme
-    },
-    isAllowGoStepTow() {
-      return this.formFinal.baseInfoId && this.form.id
-    },
-    currentUser() {
-      return this.$store.state.user.data
     }
   },
   mounted() {
     setTimeout(() => {
-      this.createNew()
+      this.createNewDirect()
     }, 1000)
-    this.restaurants = this.loadAll()
   },
   methods: {
-    createNewBase() {
-      var f = {
-        id: this.currentUser === undefined ? '' : this.currentUser.id,
-        realName:
-          this.currentUser === undefined ? '' : this.currentUser.realName,
-        company: '',
-        companyName: '',
-        duties: '',
-        Phone: 0,
-        Settle: {
-          self: this.buildSettle(),
-          lover: this.buildSettle(),
-          parent: this.buildSettle(),
-          loversParent: this.buildSettle(),
-          prevYearlyLength: 0
-        }
-      }
-      if (f.id && f.id !== '') {
-        setTimeout(() => {
-          this.fetchUserInfoes('id')
-        }, 200)
-      } else if (f.realName && f.realName !== '') {
-        setTimeout(() => {
-          this.fetchUserInfoes('realName')
-        }, 200)
-      }
-      return f
-    },
-    createNewRequest() {
-      return {
-        StampLeave: '',
-        StampReturn: '',
-        VocationLength: 0,
-        OnTripLength: 0,
-        VocationType: '',
-        vocationPlace: '0',
-        vocationPlaceName: '',
-        reason: '',
-        ByTransportation: '0',
-        yearIndex: 0
-      }
-    },
-    removeVacation(index) {
-      this.SelectVacationList.splice(index, 1)
-      this.handleChange()
-    },
-    SaveOtherVacation() {
-      this.$refs['VacationModel'].validate(valid => {
-        if (!valid) {
-          return
-        }
-        for (var i = 0; i < this.SelectVacationList.length; i++) {
-          if (
-            this.SelectVacationList[i].name === this.VacationModel.name &&
-            this.VacationIndex !== i
-          ) {
-            this.$message({
-              type: 'info',
-              message: `已添加过该假期`
-            })
-            return
-          }
-        }
-        var obj = JSON.parse(JSON.stringify(this.VacationModel))
-
-        if (this.VacationIndex !== '') {
-          this.SelectVacationList[this.VacationIndex].name = obj.name
-          this.SelectVacationList[this.VacationIndex].length = obj.length
-          this.SelectVacationList[this.VacationIndex].description =
-            obj.description
-          this.VacationIndex = ''
-        } else {
-          this.SelectVacationList.push({
-            name: obj.name,
-            length: obj.length,
-            description: obj.description
-          })
-        }
-        this.handleChange()
-        this.dialogVisible = false
-      })
-    },
-    OpenOtherVacation(index) {
-      this.VacationIndex = index
-      this.$refs['VacationModel'] && this.$refs['VacationModel'].resetFields()
-      if (index !== '') {
-        this.VacationModel.name = this.SelectVacationList[
-          this.VacationIndex
-        ].name
-        this.VacationModel.length = this.SelectVacationList[
-          this.VacationIndex
-        ].length
-        this.VacationModel.description = this.SelectVacationList[
-          this.VacationIndex
-        ].description
-      }
-      this.dialogVisible = true
-    },
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants
-      // 调用 callback 返回建议列表的数据
-      cb(results)
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        )
-      }
-    },
-    loadAll() {
-      return [
-        {
-          value: '婚假',
-          length: 10,
-          description: '于今年x月结婚，已提交相关证明材料'
-        },
-        { value: '护理假', length: 30, description: '于今年x月结婚,...' },
-        { value: '产假', length: 188, description: '于今年x月结婚,...' }
-      ]
-    },
-    handleSelect(item) {
-      this.VacationModel.length = item.length
-      this.VacationModel.description = item.description
-    },
-
-    goStepTwo(yearIndex) {
-      this.formApply.yearIndex = yearIndex
-      this.submitBaseInfo(yearIndex).then(() => {
-        if (this.isAllowGoStepTow) {
-          this.active = 1
-        } else {
-          this.$message.error('请生成回执编号')
-        }
-      })
-    },
-    locationChildren(id) {
-      return locationChildren(id)
-    },
-    fetchUserInfoes(byIdOrRealname) {
-      const realName = this.form.realName
-      const id = this.form.id
-      this.formFinal.RequestId = ''
-      this.formFinal.baseInfoId = ''
-      if (this.OnloadingUserInfoes === true) {
-        return this.$message.info({
-          message: '用户信息获取中，请稍等'
-        })
-      }
-      if (byIdOrRealname === 'id') {
-        this.OnloadingUserInfoes = true
-        if (id.length === 18) {
-          getUserIdByCid(id)
-            .then(data => {
-              this.OnloadingUserInfoes = false
-              this.form.id = data.id
-              this.$message.success({
-                message: '身份证识别成功:' + data.id
-              })
-              this.fetchUserInfoesDerect()
-            })
-            .catch(err => {
-              this.OnloadingUserInfoes = false
-              return this.$message.error({
-                message: err.message
-              })
-            })
-        } else {
-          this.fetchUserInfoesDerect()
-        }
+    baseInfoSubmit(success) {
+      if (success) {
+        this.nowStep = 1
+        this.$refs.RequestInfo.refreshVacation()
       } else {
-        this.OnloadingUserInfoes = true
-        return getUserIdByRealName(realName)
-          .then(data => {
-            this.OnloadingUserInfoes = false
-            const list = data.list
-            if (!list || list.length === 0) {
-              this.$message.warning({
-                message: '无' + realName + '的信息，请核对'
-              })
-              return Promise.reject()
-            }
-            this.form.id = list[0].id
-            this.$message.success({
-              message: '成功获取' + list[0].realName + '的信息'
-            })
-            return this.fetchUserInfoesDerect()
-          })
-          .finally(() => {
-            this.OnloadingUserInfoes = false
-          })
+        this.nowStep = 0
       }
     },
-
-    fetchUserInfoesDerect() {
-      this.OnloadingUserInfoes = true
-      return getUserAllInfo(this.form.id)
-        .then(data => {
-          const { base, company, duties, social } = data
-          try {
-            this.form.realName = base.base.realName
-            this.form.company = company.company.code
-            this.form.companyName = company.company.name
-            this.form.duties = duties.name
-            this.form.Phone = social.phone
-            const {
-              self,
-              lover,
-              parent,
-              loversParent,
-              prevYearlyLength
-            } = social.settle
-            if (!this.form.Settle) this.form.Settle = {}
-            this.form.Settle.self = self
-            this.form.Settle.lover = lover
-            this.form.Settle.parent = parent
-            this.form.Settle.loversParent = loversParent
-            this.form.Settle.prevYearlyLength = prevYearlyLength
-          } catch (error) {
-            console.warn(error)
-          }
-          this.$message.success('获取成功，已自动填充到表单')
-          return Promise.resolve()
-        })
-        .catch(err => {
-          this.OnloadingUserInfoes = false
-          this.$message.warning(err.message)
-          return Promise.reject()
-        })
-        .finally(() => {
-          this.OnloadingUserInfoes = false
-        })
-    },
-    // 提交基础信息
-    submitBaseInfo(yearIndex) {
-      const { id, realName, company, duties, Phone } = this.form
-      this.onLoading = true
-      getUsersVocationLimit(id, yearIndex).then(data => {
-        this.usersVocation = {
-          yearlyLength: 0,
-          nowTimes: 0,
-          leftLength: 0,
-          onTripTimes: 0,
-          maxTripTimes: 0,
-          ...data
-        }
-      })
-      return postBaseInfo({
-        id,
-        realName,
-        company,
-        duties,
-        Phone,
-        Settle: null
-      })
-        .then(data => {
-          this.onLoading = false
-          if (data.id) {
-            this.formFinal.baseInfoId = data.id
-            this.$message.success('成功提交，回执编号为：' + data.id)
-          }
-          return Promise.resolve()
-        })
-        .catch(() => {
-          this.onLoading = false
-          this.formFinal.baseInfoId = ''
-          this.$message.error('提交失败')
-          return Promise.reject()
-        })
-    },
-    goStepThree() {
-      this.submitRequestInfo().then(() => {
-        this.active = 3
-      })
-    },
-    /**
-     * 提交请求信息
-     */
-    submitRequestInfo() {
-      if (this.onLoading === true) {
-        return this.$message.info('生成中，请等待')
+    requestInfoSubmit(success) {
+      if (success) {
+        this.nowStep = 2
+      } else {
+        this.nowStep = 1
       }
-      const infoParam = Object.assign({}, this.formApply, {
-        id: this.form.id
-      })
-      this.onLoading = true
-      infoParam['vocationAdditionals'] = this.SelectVacationList
-      infoParam.StampLeave = parseTime(infoParam.StampLeave, '{yyyy}-{mm}-{dd}')
-      return postRequestInfo(infoParam)
-        .then(data => {
-          const id = data.id
-          this.formFinal.RequestId = id
-          if (id) {
-            this.$message.success('申请信息提交完成，回执编号为' + id)
-            return Promise.resolve()
-          }
-        })
-        .catch(() => {
-          this.$message.error('失败，请检查')
-          return Promise.reject()
-        })
-        .finally(() => {
-          this.onLoading = false
-        })
     },
     /**
      * 提交申请 0:仅提交，1:提交并保存，2:提交并发布
@@ -728,7 +115,7 @@ export default {
       if (this.onLoading === true) {
         return this.$message.info('提交中，请等待')
       }
-      const BaseId = this.formFinal.baseInfoId
+      const BaseId = this.formFinal.BaseInfoId
       const RequestId = this.formFinal.RequestId
       this.onLoading = true
       submitApply({
@@ -740,108 +127,50 @@ export default {
       })
         .then(data => {
           var applyId = data.id
-          this.active = 3
           this.isAfterSubmit = true
 
           var fn = actionStatus === 1 ? save : publish
           this.$message.success('提交成功')
           if (actionStatus > 0) {
             fn(applyId).then(() => {
-              return this.$message.success(
+              this.$message.success(
                 `${actionStatus === 1 ? '提交并保存' : '提交并发布'}成功`
               )
             })
           }
         })
         .finally(() => {
-          return (this.onLoading = false)
+          this.onLoading = false
         })
     },
 
-    buildSettle() {
-      return {
-        date: '',
-        valid: '',
-        address: {
-          parentId: '',
-          rank: '',
-          name: '',
-          shortname: ''
-        },
-        addressDetail: ''
-      }
-    },
     /**
      * 创建新的申请
      */
     createNew() {
-      this.active = 0
-      this.form = this.createNewBase()
-      this.formApply = this.createNewRequest()
+      this.$confirm('此操作将清空并重新填写, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.createNewDirect()
+      })
+    },
+    createNewDirect() {
+      this.$refs.BaseInfo.reset()
+      this.$refs.RequestInfo.reset()
       this.formFinal = {
-        baseInfoId: '',
+        BaseInfoId: '',
         RequestId: ''
       }
       this.onLoading = false
       this.isAfterSubmit = false
-      this.caculaingDate = {}
-    },
-
-    /**
-     * 用户计算预期归队日期
-     */
-    handleChange() {
-      if (!this.formApply.StampLeave) return
-      var SelectVacationCount = 0
-      this.SelectVacationList.forEach(v => {
-        SelectVacationCount += v.length
-      })
-      // 正休假计算路途，如果存在福利假则不计算法定节假日
-      var caculateVocationCount = this.formApply.VocationType === '正休'
-      this.caculaingDate = {
-        start: parseTime(this.formApply.StampLeave, '{yyyy}-{mm}-{dd}'),
-        length:
-          parseInt(this.formApply.VocationLength) +
-          (caculateVocationCount
-            ? parseInt(this.formApply.OnTripLength) + SelectVacationCount
-            : 0),
-        caculateLawVocation:
-          caculateVocationCount && this.SelectVacationList.length === 0
-      }
-      this.formApply.isArchitect =
-        new Date(this.caculaingDate.start) <= new Date()
-      if (this.OnloadingUserStamp) return
-      this.OnloadingUserStamp = true
-
-      setTimeout(() => {
-        getStampReturn(this.caculaingDate)
-          .then(data => {
-            const endDate = data.endDate
-            this.formApply.StampReturn = endDate
-            this.lawVocations = data.descriptions ? data.descriptions : []
-            this.$notify({
-              title: '预计归队时间',
-              message: data.endDate,
-              type: 'success'
-            })
-          })
-          .catch(err => {
-            return this.$message.error(err)
-          })
-          .finally(() => {
-            this.OnloadingUserStamp = false
-          })
-      }, 1000)
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.application-new {
-  background: #f5f5f5;
-  padding: 24px;
-}
+<style lang="scss">
 hr.divider {
   border: 1px solid grey;
   margin: 16px;
@@ -854,25 +183,10 @@ hr.divider {
 .p-relitive {
   position: relative;
 }
-.mask {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #e1f5fe47;
-  z-index: 1000;
-  cursor: not-allowed;
-}
 .footer-nav {
-  position: fixed;
-  bottom: 0;
-  min-height: 48px;
   width: 100%;
-  z-index: 1000;
   background: white;
   box-shadow: 0 -2px 10px -4px;
-  border-radius: 4px 4px 0 0;
   padding: 8px;
 }
 .group-remove {
@@ -893,5 +207,15 @@ hr.divider {
   position: absolute;
   right: 100px;
   top: 10px;
+}
+.mask {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: all 0.5s;
+  pointer-events: none;
+  z-index: 1000;
 }
 </style>
