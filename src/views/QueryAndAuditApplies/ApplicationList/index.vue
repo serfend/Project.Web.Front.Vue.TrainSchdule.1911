@@ -255,7 +255,7 @@ export default {
     showDetail(row, column, event) {
       if (column.label === '操作') return
       this.$store.state.vocation.vacationDetail = row
-      this.$router.push('/application/applyDetail')
+      this.$router.push('/application/applyDetail?id=' + row.id)
     }
   }
 }

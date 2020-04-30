@@ -5,18 +5,20 @@
     <h2 style="padding-top:10px">
       {{ staticData.applyDetailName }}
       <el-tag
-        v-if="statusDic[row.status] && staticData.vacationStart"
-        :color="statusDic[row.status].color"
+        v-if="statusDic[detail.status] && staticData.vacationStart"
+        :color="statusDic[detail.status].color"
         class="white--text"
-      >{{ statusDic[row.status].desc }}</el-tag>
+      >{{ statusDic[detail.status].desc }}</el-tag>
     </h2>
-    <action-examine style="float:right" :row="row" @updated="requestUpdate" />
-    <action-user style="float:right" :row="row" @updated="requestUpdate" />
+    <div v-if="detail&&detail.status">
+      <action-examine style="float:right" :row="detail" @updated="requestUpdate" />
+      <action-user style="float:right" :row="detail" @updated="requestUpdate" />
+    </div>
     <div style="padding-top:20px">
       <el-form type="flex" label-width="120px">
         <div class="content-card">
           <el-card
-            v-if="detail.status"
+            v-if="detail&&detail.status"
             v-loading="loading"
             :visible.sync="innerShow"
             :show-close="false"
@@ -25,7 +27,7 @@
             <h3 slot="header">
               本次休假
               <el-tooltip
-                v-for="av in detail.requestInfo.additialVocations"
+                v-for="av in detail.request.additialVocations"
                 :key="av.id"
                 :content="`${av.description},开始于${av.start}`"
               >
@@ -35,10 +37,10 @@
             <div v-if="detail.status">
               <el-row>
                 <el-col :span="6">
-                  <el-form-item label="原因">{{ detail.requestInfo.reason }}</el-form-item>
+                  <el-form-item label="原因">{{ detail.request.reason }}</el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <el-form-item label="路途">{{ detail.requestInfo.onTripLength }}天</el-form-item>
+                  <el-form-item label="路途">{{ detail.request.onTripLength }}天</el-form-item>
                 </el-col>
                 <el-col :span="10">
                   <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
@@ -47,7 +49,7 @@
               <el-row>
                 <el-form-item
                   label="休假日期"
-                >{{ detail.requestInfo.stampLeave }} - {{ detail.requestInfo.stampReturn }}</el-form-item>
+                >{{ detail.request.stampLeave }} - {{ detail.request.stampReturn }}</el-form-item>
               </el-row>
               <el-form-item v-if="staticData.vacationStart" label="休假情况">
                 <el-col :lg="2" :md="3" :sm="4">
@@ -61,20 +63,20 @@
               </el-form-item>
               <el-form-item v-else label="状态">
                 <el-tag
-                  v-if="statusDic[row.status]"
-                  :color="statusDic[row.status].color"
+                  v-if="statusDic[detail.status]"
+                  :color="statusDic[detail.status].color"
                   class="white--text"
-                >{{ statusDic[row.status].desc }}</el-tag>
+                >{{ statusDic[detail.status].desc }}</el-tag>
               </el-form-item>
               <el-form-item label="休假地点">
                 <el-col
                   :span="12"
-                >{{ detail.requestInfo.vocationPlace.name }}{{ detail.requestInfo.vocationPlaceName?`(${detail.requestInfo.vocationPlaceName})`:'' }}</el-col>
+                >{{ detail.request.vocationPlace.name }}{{ detail.request.vocationPlaceName?`(${detail.request.vocationPlaceName})`:'' }}</el-col>
               </el-form-item>
               <el-col :span="8">
                 <el-form-item
                   label="交通工具"
-                >{{ detail.requestInfo.byTransportation===0?'火车':detail.requestInfo.byTransportation===1?'飞机':'其他' }}</el-form-item>
+                >{{ detail.request.byTransportation===0?'火车':detail.request.byTransportation===1?'飞机':'其他' }}</el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="联系方式">{{ detail.social.phone }}</el-form-item>
@@ -83,7 +85,7 @@
           </el-card>
         </div>
         <div class="content-card">
-          <AuditStatus :data="detail" :loading="loading" />
+          <AuditStatus :loading="loading" :data="detail" />
         </div>
         <div class="content-card">
           <el-card v-loading="loading" :visible.sync="innerShow" :show-close="false" shadow="hover">
@@ -92,38 +94,30 @@
         </div>
         <div class="content-card">
           <el-card
-            v-if="detail.status"
+            v-if="detail&&detail.status"
             v-loading="loading"
             label="家庭信息"
             :visible.sync="innerShow"
             :show-close="false"
             shadow="hover"
           >
-            <h3 slot="header">
-              申请人
-              <div class="pull-left">
-                <el-image
-                  v-if="avatar"
-                  class="avatar-32"
-                  :src="avatar"
-                  alt
-                  @click="handleClickAvatar"
-                />
-              </div>
-            </h3>
+            <h3 slot="header">申请人</h3>
 
-            <el-form-item label="单位">{{ detail.base.companyName }}</el-form-item>
-            <el-form-item label="职务">{{ detail.base.dutiesName }}</el-form-item>
-            <el-form-item>
-              <SettleFormItem :form.sync="detail.social.settle.self" disabled label="本人所在地" />
-              <SettleFormItem :form.sync="detail.social.settle.lover" disabled label="配偶所在地" />
-              <SettleFormItem :form.sync="detail.social.settle.parent" disabled label="父母所在地" />
-              <SettleFormItem
-                :form.sync="detail.social.settle.loversParent"
-                disabled
-                label="配偶父母所在地"
-              />
-            </el-form-item>
+            <el-container style="background:#fff">
+              <el-aside width="padding:0;margin:0;background: rgb(255, 255, 255);width:350px">
+                <User :data="detail.base" :can-load-avatar="true" />
+              </el-aside>
+              <el-main>
+                <SettleFormItem :form.sync="detail.social.settle.self" disabled label="本人所在地" />
+                <SettleFormItem :form.sync="detail.social.settle.lover" disabled label="配偶所在地" />
+                <SettleFormItem :form.sync="detail.social.settle.parent" disabled label="父母所在地" />
+                <SettleFormItem
+                  :form.sync="detail.social.settle.loversParent"
+                  disabled
+                  label="配偶父母所在地"
+                />
+              </el-main>
+            </el-container>
           </el-card>
         </div>
       </el-form>
@@ -140,13 +134,15 @@ import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
 import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'
 import AuditStatus from './components/AuditStatus'
+import User from '@/components/User'
 export default {
   name: 'ApplyDetail',
   components: {
     SettleFormItem,
     ActionExamine,
     ActionUser,
-    AuditStatus
+    AuditStatus,
+    User
   },
   props: {
     show: {
@@ -156,6 +152,7 @@ export default {
   },
   data() {
     return {
+      id: null,
       avatar: null,
       detail: {},
       innerShow: false,
@@ -170,43 +167,35 @@ export default {
     }
   },
   computed: {
-    row() {
-      return this.$store.state.vocation.vacationDetail
-    },
     statusDic() {
       return this.$store.state.vocation.statusDic
     }
   },
-  watch: {
-    row: {
-      handler(val) {
-        if (!val || !val.base) {
-          this.$message.error('未选择休假申请')
-          return this.$router.push('/application/queryAndAuditApplies')
-        }
-        this.loadDetail(val.id)
-      },
-      deep: true,
-      immediate: true
-    }
+  mounted() {
+    this.id = this.$route.query.id
+    this.requestUpdate()
   },
   methods: {
     datedifference,
     requestUpdate() {
-      this.loadDetail(this.row.id)
+      if (!this.id) {
+        this.$message.error('未选择休假申请')
+        return this.$router.push('/application/queryAndAuditApplies')
+      }
+      this.loadDetail(this.id)
     },
     initstaticDataData() {
       var now = new Date()
-      var start = this.detail.requestInfo.stampLeave
-      var end = this.detail.requestInfo.stampReturn
-      this.staticData.vacationLength = datedifference(end, start)
+      var start = this.detail.request.stampLeave
+      var end = this.detail.request.stampReturn
+      this.staticData.vacationLength = datedifference(end, start) + 1
       this.staticData.vacationSpent = datedifference(now, start)
-      this.staticData.applyDetailName = `${this.row.base.dutiesName}${
-        this.row.base.realName
+      this.staticData.applyDetailName = `${this.detail.base.dutiesName}${
+        this.detail.base.realName
       }的${datedifference(
-        this.row.request.stampReturn,
-        this.row.request.stampLeave
-      ) + 1}天${this.row.request.vocationType}休假`
+        this.detail.request.stampReturn,
+        this.detail.request.stampLeave
+      ) + 1}天${this.detail.request.vocationType}休假`
       this.staticData.vacationStart =
         this.detail.status &&
         this.statusDic[this.detail.status].desc === '已通过'
@@ -230,7 +219,7 @@ export default {
     },
     downloadUserApplies() {
       var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
-      querySelf(null, this.row.userBase.id).then(data => {
+      querySelf(null, this.detail.base.id).then(data => {
         if (data.list.length === 0) {
           return this.$message.error('当前用户无申请可导出')
         }
@@ -244,6 +233,7 @@ export default {
       this.loading = true
       detail(id).then(data => {
         this.detail = data
+        this.detail.request = data.requestInfo
         this.loading = false
         this.getUserAvatar(data.base.id)
         this.initstaticDataData()

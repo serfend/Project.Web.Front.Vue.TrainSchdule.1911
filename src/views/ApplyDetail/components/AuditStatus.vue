@@ -9,11 +9,12 @@
               <el-collapse v-model="step.activeName" accordion>
                 <el-collapse-item
                   v-for="rec in detail.response.filter(i=>i.index===step.index)"
-                  :key="rec.auditingUserRealName"
-                  :name="rec.auditingUserRealName"
+                  :key="rec.auditingUserId?rec.auditingUserId:rec.auditingUserRealName"
+                  :name="rec.auditingUserId?rec.auditingUserId:rec.auditingUserRealName"
                 >
                   <div slot="title">
-                    {{ rec.auditingUserRealName }}
+                    <UserFormItem v-if="auditingUserId" :userid="rec.auditingUserId" />
+                    <div v-else>{{ rec.auditingUserRealName }}</div>
                     <el-tag
                       :type="rec.status===4?'success':rec.status===8?'danger':'info'"
                     >{{ rec.status===4?'通过':rec.status===8?'驳回':'未处理' }}</el-tag>
@@ -47,6 +48,7 @@
                 驳回
               </span>
             </div>
+            <div v-else>审批已结束</div>
           </el-tooltip>
           <div
             class="audit-process-companyName grey--text row layout justify-start align-center"
@@ -70,9 +72,10 @@
 
 <script>
 import { format } from 'timeago.js'
-
+import UserFormItem from '@/components/User/UserFormItem'
 export default {
   name: 'AuditStatus',
+  components: { UserFormItem },
   props: {
     data: {
       type: Object,
@@ -126,6 +129,13 @@ export default {
         this.detail.steps[i].timeStamp = this.GetHandleTimeAgo(
           this.detail.steps[i]
         )
+      }
+      if (
+        this.statusDic[this.detail.status].desc === '已通过' &&
+        !this.detail.nowStep
+      ) {
+        this.nowActiveAudit = this.detail.response.length
+        return
       }
       for (i = 0; i < this.detail.response.length; i++) {
         var item = this.detail.response[i]
