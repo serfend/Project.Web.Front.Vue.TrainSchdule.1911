@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'hidden':hidden}" class="pagination-container">
+  <div v-show="!hidden" class="pagination-container">
     <el-pagination
       :background="background"
       :current-page.sync="innerPages.pageIndex"
@@ -26,10 +26,6 @@ export default {
       default() {
         return this.innerPages
       }
-    },
-    limit: {
-      type: Number,
-      default: 20
     },
     pageSizes: {
       type: Array,
