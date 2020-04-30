@@ -147,14 +147,20 @@
       :visible.sync="newNodeDialogShow"
       :title="newNode.mode=='new'?'新增':newNode.mode=='edit'?'编辑':'删除'"
     >
-      <el-form v-loading="newNode.loading">
-        <el-form-item label="名称">
+      <el-form v-loading="newNode.loading" label-width="120px">
+        <el-form-item label="名称" style="width:400px">
           <el-input v-model="newNode.name" placeholder="填入独一无二的名称" />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="newNode.description" placeholder="节点描述，可自定义" />
+          <el-input
+            v-model="newNode.description"
+            placeholder="节点描述，可自定义"
+            style="width:400px"
+            type="textarea"
+            autosize
+          />
         </el-form-item>
-        <el-form-item label="单位">
+        <el-form-item label="单位" style="width:400px">
           <CascaderSelector
             :code.sync="companySelect.code"
             :child-getter-method="companyChild"
@@ -174,7 +180,6 @@
             <el-option v-for="item in 10" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-
         <el-form-item label="相对路径">
           <el-select v-model="newNode.companyRefer" placeholder="相对查询何种">
             <el-option
@@ -185,7 +190,6 @@
             />
           </el-select>
         </el-form-item>
-
         <el-form-item label="单位类型">
           <el-select
             v-model="newNode.companyTags"
@@ -194,6 +198,23 @@
             allow-create
             default-first-option
             placeholder="单位类型选取，输入后按回车键确认"
+          />
+        </el-form-item>
+        <el-form-item label="主官">
+          <el-radio-group v-model="newNode.dutyIsMajor">
+            <el-radio :label="0">不限</el-radio>
+            <el-radio :label="1">仅主官</el-radio>
+            <el-radio :label="2">仅非主官</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="职务类型">
+          <el-select
+            v-model="newNode.dutyTags"
+            multiple
+            filterable
+            allow-create
+            default-first-option
+            placeholder="职务类型选取，输入后按回车键确认"
           />
         </el-form-item>
         <el-form-item label="指定审核人">

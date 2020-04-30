@@ -166,7 +166,7 @@
       :visible.sync="newSolutionRuleDialogShow"
       :title="newRule.mode=='new'?'新增':newRule.mode=='edit'?'编辑':'删除'"
     >
-      <el-form v-loading="newRule.loading">
+      <el-form v-loading="newRule.loading" label-width="120px">
         <el-form-item label="启用">
           <el-switch
             v-model="newRule.enable"
@@ -176,10 +176,16 @@
           />
         </el-form-item>
         <el-form-item label="名称">
-          <el-input v-model="newRule.name" placeholder="填入独一无二的名称" />
+          <el-input v-model="newRule.name" placeholder="填入独一无二的名称" style="width:400px" />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="newRule.description" placeholder="节点描述，可自定义" />
+          <el-input
+            v-model="newRule.description"
+            placeholder="规则描述，可自定义"
+            style="width:400px"
+            type="textarea"
+            autosize
+          />
         </el-form-item>
         <el-form-item label="优先级">
           <el-input-number v-model="newRule.priority" placeholder="值越大优先级越高" />
@@ -226,11 +232,27 @@
             placeholder="单位类型选取，输入后按回车键确认"
           />
         </el-form-item>
-        <el-form-item label="指定审核人">
+        <el-form-item label="主官">
+          <el-radio-group v-model="newRule.dutyIsMajor">
+            <el-radio :label="0">不限</el-radio>
+            <el-radio :label="1">仅主官</el-radio>
+            <el-radio :label="2">仅非主官</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="职务类型">
+          <el-select
+            v-model="newRule.dutyTags"
+            multiple
+            filterable
+            allow-create
+            default-first-option
+            placeholder="职务类型选取，输入后按回车键确认"
+          />
+        </el-form-item>
+        <el-form-item label="休假申请来源">
           <el-autocomplete
             v-model="userSelect.code"
             :fetch-suggestions="queryMember"
-            style="width:100%"
             :placeholder="userSelect.realName?userSelect.realName:'搜索成员'"
             @select="handleUserSelectChange"
           />
