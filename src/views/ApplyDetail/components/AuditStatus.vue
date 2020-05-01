@@ -13,8 +13,8 @@
                   :name="rec.auditingUserId?rec.auditingUserId:rec.auditingUserRealName"
                 >
                   <div slot="title">
-                    <UserFormItem v-if="auditingUserId" :userid="rec.auditingUserId" />
-                    <div v-else>{{ rec.auditingUserRealName }}</div>
+                    <UserFormItem v-if="rec.auditingUserId" :userid="rec.auditingUserId" />
+                    <span v-else>{{ rec.auditingUserRealName }}</span>
                     <el-tag
                       :type="rec.status===4?'success':rec.status===8?'danger':'info'"
                     >{{ rec.status===4?'通过':rec.status===8?'驳回':'未处理' }}</el-tag>
