@@ -4,7 +4,7 @@
       <el-row>
         <QrCodeGenerate :url="innerUrl" />
       </el-row>
-      <el-row style="font-size:12px;margin:10px 20px">使用微信扫一扫联系我们吧~</el-row>
+      <el-row style="font-size:12px;margin:10px 20px">{{ description }}</el-row>
     </div>
     <div v-else style="width:200px;height:200px;text-align:center;line-height:200px">加载中</div>
   </div>
@@ -24,6 +24,10 @@ export default {
     content: {
       type: String,
       default: null
+    },
+    description: {
+      type: String,
+      default: '使用微信扫一扫联系我们吧~'
     }
   },
   data() {
