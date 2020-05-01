@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <el-image v-show="qrCodeUrl" :style="{width:size + 'px'}" :src="qrCodeUrl" />
-    <div
-      v-show="!qrCodeUrl"
-      :style="{width:size + 'px',height:size + 'px','line-height':size+'px','text-align':'center'}"
-    >加载中</div>
+  <div
+    v-loading="onLoading"
+    :style="{width:size + 'px',height:size + 'px','line-height':size+'px','text-align':'center'}"
+  >
+    <el-image v-show="qrCodeUrl" class="full" :src="qrCodeUrl" />
+    <div v-show="!qrCodeUrl" class="full">加载中</div>
   </div>
 </template>
 
@@ -24,7 +24,7 @@ export default {
     }
   },
   data() {
-    return { qrCodeUrl: null }
+    return { qrCodeUrl: null, onLoading: false }
   },
   watch: {
     url: {
@@ -46,14 +46,25 @@ export default {
   },
   methods: {
     refresh() {
-      qrCodeEncode(this.innerUrl).then(data => {
-        this.qrCodeUrl = 'data:image/jpg;base64,' + data.img
-      })
+      if (this.onLoading) return
+      this.onLoading = true
+      qrCodeEncode(this.innerUrl)
+        .then(data => {
+          this.qrCodeUrl = 'data:image/jpg;base64,' + data.img
+        })
+        .finally(() => {
+          this.onLoading = false
+        })
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.full {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 </style>
-
