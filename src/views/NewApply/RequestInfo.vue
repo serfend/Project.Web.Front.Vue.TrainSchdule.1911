@@ -1,12 +1,8 @@
 <template>
-  <div
-    :style="{filter:hideDetail?'blur(5px)':'',transition:'all 0.5s'}"
-    @mouseenter="isHover=true"
-    @mouseleave="leaveCard"
-  >
+  <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
     <el-card v-loading="onLoading" header="休假信息" style="position:relative">
       <el-container>
-        <el-main>
+        <el-main :style="{filter:hideDetail?'blur(5px)':''}">
           <el-form ref="formApply" :model="formApply" label-width="120px">
             <el-form-item label="休假年度">
               <el-radio-group v-model="submitYear">
