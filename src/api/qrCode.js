@@ -9,5 +9,18 @@ import request from '../utils/request'
 export function qrCodeEncode(text) {
   return request.post('/static/qrCodeGenerate', {
     data: text
-  }, { respondErrorIngore: true })
+  })
+}
+
+/**
+ * qr
+ *
+ * @export
+ * @param {String} img base64string
+ * @returns
+ */
+export function qrCodeScan(img) {
+  return request.post('/static/qrCodeScan', {
+    img
+  })
 }
