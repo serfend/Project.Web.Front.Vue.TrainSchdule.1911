@@ -172,6 +172,7 @@ export default {
     }
   },
   mounted() {
+    if (!this.$route || !this.$route.query) return
     this.id = this.$route.query.id
     this.requestUpdate()
   },

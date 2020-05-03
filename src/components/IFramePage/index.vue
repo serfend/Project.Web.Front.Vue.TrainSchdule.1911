@@ -13,7 +13,7 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.query.src) {
+    if (this.$route && this.$route.query.src) {
       this.src = `${process.env.VUE_APP_BASEURL}/${this.$route.query.src}`
     } else {
       this.$message.error('未指定src')

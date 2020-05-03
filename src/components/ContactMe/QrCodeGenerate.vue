@@ -38,6 +38,7 @@ export default {
     }
   },
   mounted() {
+    if (!this.$route) return
     var temp = this.$route.query.url
     if (temp && !this.innerUrl) {
       this.innerUrl = temp

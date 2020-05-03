@@ -26,6 +26,7 @@ export default {
     }
   },
   mounted() {
+    if (!this.$route || !this.$route.query) return
     var fn = this.$route.query.filename
     if (fn) this.fileName = fn
     this.refreshDoc()
