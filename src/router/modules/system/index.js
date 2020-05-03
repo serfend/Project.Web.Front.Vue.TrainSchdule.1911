@@ -3,6 +3,7 @@ import Layout from '@/layout'
 import logRouter from './modules/log'
 import fileRouter from './modules/file'
 import qrCodeRouter from './modules/qrCode'
+import dwzRouter from './modules/dwz'
 import managerRouter from './modules/manager'
 import commentRouter from '../comment'
 
@@ -20,7 +21,7 @@ const systemRouter =
       path: '/app',
       component: () => import('@/views/blank'),
       meta: { title: 'default.app.title', icon: 'component' },
-      children: [managerRouter, logRouter, fileRouter,
+      children: [managerRouter, logRouter, fileRouter, dwzRouter,
         {
           path: '/app/iframePage',
           component: () => import('@/components/IFramePage'),
