@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     url() {
-      return `${process.env.VUE_APP_BASE_API}/${this.innerData.urlKey}`
+      return `${process.env.VUE_APP_BASE_API}/s/${this.innerData.urlKey}`
     }
   },
   watch: {

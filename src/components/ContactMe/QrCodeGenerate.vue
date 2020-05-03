@@ -3,8 +3,8 @@
     v-loading="onLoading"
     :style="{width:size + 'px',height:size + 'px','line-height':size+'px','text-align':'center'}"
   >
-    <el-image v-show="qrCodeUrl" class="full" :src="qrCodeUrl" />
-    <div v-show="!qrCodeUrl" class="full">加载中</div>
+    <el-image v-if="qrCodeUrl" class="full" :src="qrCodeUrl" />
+    <div v-else class="full">加载中</div>
   </div>
 </template>
 
@@ -51,7 +51,7 @@ export default {
       this.onLoading = true
       qrCodeEncode(this.innerUrl)
         .then(data => {
-          this.qrCodeUrl = 'data:image/jpg;base64,' + data.img
+          this.qrCodeUrl = `data:image/jpg;base64,${data.img}`
         })
         .finally(() => {
           this.onLoading = false

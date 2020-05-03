@@ -12,7 +12,7 @@
       </el-form-item>
       <el-button type="success" @click="create">创建</el-button>
       <el-button type="danger" @click="remove">删除</el-button>
-      <el-button type="info" @click="statistics">统计情况</el-button>
+      <el-button type="info" @click="loadStatistics">统计情况</el-button>
     </el-form>
   </el-card>
 </template>
