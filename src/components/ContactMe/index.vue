@@ -4,7 +4,7 @@
       <el-row>
         <QrCodeGenerate :url="innerUrl" />
       </el-row>
-      <el-row style="font-size:12px;margin:10px 20px">{{ description }}</el-row>
+      <el-row style="font-size:12px;text-align:center">{{ description }}</el-row>
     </div>
     <div v-else style="width:200px;height:200px;text-align:center;line-height:200px">加载中</div>
   </div>
@@ -55,6 +55,7 @@ export default {
     }
   },
   mounted() {
+    if (!this.$route) return
     var temp = this.$route.query.url
     if (temp && !this.innerUrl) {
       this.refresh(temp)
