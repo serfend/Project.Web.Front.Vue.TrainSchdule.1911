@@ -15,6 +15,7 @@ var dict = {
       file: {
         title: 'file'
       },
+      dwz: { title: 'shortUrl' },
       manager: {
         title: 'manager'
       },

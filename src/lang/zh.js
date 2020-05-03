@@ -15,6 +15,9 @@ var dict = {
       file: {
         title: '文件'
       },
+      dwz: {
+        title: '短网址'
+      },
       manager: {
         title: '后台管理'
       },
