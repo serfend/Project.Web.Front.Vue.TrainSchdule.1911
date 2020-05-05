@@ -37,8 +37,7 @@ export default {
           companyCode: '',
           dutiesCode: 0,
           companyName: '',
-          dutiesName: '',
-          lastLogin: {}
+          dutiesName: ''
         }
       }
     }
@@ -86,7 +85,7 @@ export default {
   overflow: hidden;
 }
 .avatar-uploader .el-upload:hover {
-  border-color: #FF9BE3;
+  border-color: #ff9be3;
 }
 .avatar-uploader-icon {
   font-size: 28px;

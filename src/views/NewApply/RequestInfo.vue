@@ -3,6 +3,13 @@
     <el-card v-loading="onLoading" header="休假信息" style="position:relative">
       <el-container>
         <el-main :style="{filter:hideDetail?'blur(5px)':''}">
+          <el-tooltip
+            effect="light"
+            content="鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。"
+            style="margin-bottom:10px"
+          >
+            <el-alert :type="submitId?'success':'error'" center>请检查信息是否有误,输入id或姓名后回车</el-alert>
+          </el-tooltip>
           <el-form ref="formApply" :model="formApply" label-width="120px">
             <el-form-item label="休假年度">
               <el-radio-group v-model="submitYear">
@@ -160,7 +167,7 @@
             </el-form-item>
           </el-form>
         </el-main>
-        <el-aside width="20%" style="padding:0;margin:0;background: rgb(255, 255, 255)">
+        <el-aside width="2%" style="padding:0;margin:0;background: rgb(255, 255, 255)">
           <div
             class="mask"
             :style="{filter:hideDetail?'':'blur(30px)',background:hideDetail?'#ffffff8f':''}"
@@ -218,6 +225,10 @@ export default {
     userid: {
       type: String,
       default: null
+    },
+    selfSettle: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -272,6 +283,9 @@ export default {
     nowYear() {
       var date = new Date()
       return date.getFullYear()
+    },
+    currentUser() {
+      return this.$store.state.user.data
     }
   },
   watch: {
@@ -290,6 +304,13 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    selfSettle: {
+      handler(val) {
+        if (val && val.address) this.formApply.vocationPlace = val.address.code
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
@@ -305,6 +326,7 @@ export default {
     locationChildren,
     leaveCard() {
       this.isHover = false
+      console.log(this.currentUser)
       if (this.anyChanged) {
         this.anyChanged = false
         this.submitRequestInfo()
@@ -314,6 +336,7 @@ export default {
       console.log('request init')
       this.caculaingDate = {}
       this.formApply = this.createNewRequest()
+
       this.onLoading = false
       this.anyChanged = false
     },
@@ -350,11 +373,14 @@ export default {
         console.log('id')
         return false
       }
-      if (params.vocationPlace.length < 6) {
+      if (!params.vocationPlace || params.vocationPlace.length < 6) {
         console.log('address')
         return false
       }
-      if (new Date(params.StampLeave) < new Date('2000-1-1')) {
+      if (
+        !params.StampLeave ||
+        new Date(params.StampLeave) < new Date('2000-1-1')
+      ) {
         console.log('stamp leave')
         return false
       }

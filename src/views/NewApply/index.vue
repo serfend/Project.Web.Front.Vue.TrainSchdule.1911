@@ -18,6 +18,7 @@
           ref="BaseInfo"
           :submit-id.sync="formFinal.BaseInfoId"
           :userid.sync="userid"
+          :self-settle.sync="selfSettle"
           style="margin:20px 5px"
           @submited="baseInfoSubmit"
         />
@@ -25,12 +26,14 @@
           ref="RequestInfo"
           :submit-id.sync="formFinal.RequestId"
           :userid.sync="userid"
+          :self-settle.sync="selfSettle"
           style="margin:20px 5px"
           @submited="requestInfoSubmit"
         />
+        <el-link type="success" :href="applyDetailUrl">查看详情</el-link>
       </el-main>
     </el-container>
-    <el-footer>
+    <el-footer v-loading="onLoading" :disabled="childOnLoading">
       <div class="row layout" />
       <div :style="{'backgroundColor': theme}" class="footer-nav">
         <div class="row layout justify-center fill-height">
@@ -74,17 +77,23 @@ export default {
     return {
       nowStep: 0,
       onLoading: false,
+      childOnLoading: true,
       userid: '',
+      selfSettle: null,
       formFinal: {
         BaseInfoId: '',
         RequestId: ''
       },
+      submitId: '',
       isAfterSubmit: false
     }
   },
   computed: {
     theme() {
       return this.$store.state.settings.theme
+    },
+    applyDetailUrl() {
+      return `/#/application/applydetail?id=${this.submitId}`
     }
   },
   mounted() {
@@ -98,13 +107,16 @@ export default {
         this.nowStep = 1
         this.$refs.RequestInfo.refreshVacation()
       } else {
+        this.childOnLoading = true
         this.nowStep = 0
       }
     },
     requestInfoSubmit(success) {
       if (success) {
         this.nowStep = 2
+        this.childOnLoading = false
       } else {
+        this.childOnLoading = true
         this.nowStep = 1
       }
     },
@@ -131,6 +143,7 @@ export default {
 
           var fn = actionStatus === 1 ? save : publish
           this.$message.success('提交成功')
+          this.submitId = data.id
           if (actionStatus > 0) {
             fn(applyId).then(() => {
               this.$message.success(

@@ -3,6 +3,9 @@
     <el-card v-loading="onLoading" header="基本信息" style="position:relative">
       <el-container>
         <el-main :style="{filter:hideDetail?'blur(5px)':''}">
+          <el-tooltip effect="light" content="若有误（含信息有变化），请到审核注册页面修改信息" style="margin-bottom:10px">
+            <el-alert :type="submitId?'success':'error'" center>请检查信息是否有误,输入id或姓名后回车</el-alert>
+          </el-tooltip>
           <el-form ref="form" :model="form" label-width="120px" style="background:#fff">
             <el-form-item label="身份号" :rules="[{required:true}]">
               <el-input v-model="form.id" @keydown.native.enter="fetchUserInfoes('id')">
@@ -196,6 +199,7 @@ export default {
           const { self, lover, parent, loversParent } = social.settle
           if (!this.form.Settle) this.form.Settle = {}
           this.form.Settle.self = self
+          this.$emit('update:selfSettle', self)
           this.form.Settle.lover = lover
           this.form.Settle.parent = parent
           this.form.Settle.loversParent = loversParent
