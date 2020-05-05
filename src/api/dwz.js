@@ -6,14 +6,14 @@ import { parseTime } from '../utils'
  * @export
  * @param {*} target 目标网址
  * @param {*} key 短网址，可不传
- * @param {*} expire 过期时间，默认为7天
+ * @param {int} expire 过期时间，默认为7天
  * @returns
  */
 export function createDwz(target, key, expire) {
   if (!key || key === '') key = null
-  if (!expire || new Date(expire) <= new Date()) {
-    expire = parseTime(new Date((+new Date() + 7 * 24 * 3600 * 1000)))
-  }
+  var validLength = 1
+  if (!expire || expire === '') expire = parseTime(new Date((+new Date() + validLength * 24 * 3600 * 1000)))
+
   return request.post('/static/shorturl/create', {
     target, expire, key
   })
@@ -32,9 +32,8 @@ export function createDwz(target, key, expire) {
  * @returns
  */
 export function loadDwz({ key, target, createBy, ip, device, pages }) {
-  var pl = {
-    key: { value: key }
-  }
+  var pl = {}
+  if (key) pl.key = { value: key }
   if (target) pl.target = { value: target }
   if (createBy) pl.createBy = { value: createBy }
   if (ip) pl.ip = { value: ip }
@@ -61,7 +60,7 @@ export function remove(key) {
  * @param {*} { key, create, viewBy, ip, device, pages }
  * @returns
  */
-export function statistics({ key, create, viewBy, ip, device, pages }) {
+export function statistics(key, create, viewBy, ip, device, pages) {
   var pl = {}
   if (create) pl.create = create
   if (viewBy) pl.viewBy = { value: viewBy }
