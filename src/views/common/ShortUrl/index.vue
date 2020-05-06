@@ -21,7 +21,10 @@
             <el-form-item label="短链接">
               <ShortUrl :url-key.sync="urlKey" />
             </el-form-item>
-            <el-button type="success" @click="create">创建</el-button>
+            <el-button type="success" @click="create()">创建</el-button>
+            <el-tooltip v-show="urlKey" :content="`基于已填写的key:${urlKey}创建`">
+              <el-button type="success" @click="create(urlKey)">保存</el-button>
+            </el-tooltip>
             <el-button type="danger" @click="remove">删除</el-button>
             <el-button type="info" @click="loadStatistics">统计情况</el-button>
           </el-form>
@@ -116,8 +119,8 @@ export default {
     this.loadShortUrls()
   },
   methods: {
-    create() {
-      createDwz(this.target, this.urlKey, this.validDateLength).then(data => {
+    create(key) {
+      createDwz(this.target, key, this.exipre).then(data => {
         this.urlKey = data.key
       })
     },
