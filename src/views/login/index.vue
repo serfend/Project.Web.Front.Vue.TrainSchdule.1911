@@ -27,7 +27,6 @@
           type="text"
         />
       </el-form-item>
-
       <el-tooltip v-model="capsTooltip" content="大写已开启" manual placement="right">
         <el-form-item prop="password">
           <span class="svg-container">
@@ -51,6 +50,11 @@
           </span>
         </el-form-item>
       </el-tooltip>
+      <el-form-item style="text-align:center">
+        <el-checkbox v-model="loginForm.RememberUserName" label="记住用户名" />
+        <el-checkbox v-model="loginForm.RememberUserPassword" label="记住密码" />
+        <el-checkbox v-model="loginForm.RememberMe" label="自动登录" />
+      </el-form-item>
       <el-row />
       <el-button
         style="width:40%;"
@@ -75,6 +79,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { passwordCache, setLoginSetting, getLoginSetting } from '@/api/account'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
 import { Message } from 'element-ui'
@@ -91,7 +96,7 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
+      if (value && value.length < 6) {
         callback(new Error('密码不少于6位'))
       } else {
         callback()
@@ -102,6 +107,8 @@ export default {
       loginForm: {
         username: '',
         password: '',
+        RememberUserName: false,
+        RememberUserPassword: false,
         RememberMe: false,
         verify: 201700816
       },
@@ -126,6 +133,14 @@ export default {
     }
   },
   watch: {
+    'loginForm.RememberUserName': {
+      handler(val) {
+        if (!val && this.loginForm.RememberUserPassword) {
+          this.loginForm.RememberUserPassword = false
+        }
+      },
+      immediate: true
+    },
     $route: {
       handler: function(route) {
         this.redirect = route.query && route.query.redirect
@@ -142,6 +157,7 @@ export default {
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
+    this.loadLoginSetting()
     getUserBase('', true).then(data => {
       if (data) {
         Message({
@@ -149,7 +165,16 @@ export default {
           type: 'success',
           duration: 5000
         })
-        this.$router.push(this.redirect)
+        if (!this.redirect) this.redirect = '/'
+        if (this.redirect !== '/') {
+          this.$router.push(this.redirect)
+        } else {
+          this.$confirm(`欢迎您 ${data.base.realName}：是否回到首页？`).then(
+            () => {
+              this.$router.push(this.redirect + '?login=true')
+            }
+          )
+        }
       }
     })
   },
@@ -183,61 +208,84 @@ export default {
       this.$store.state.user.isToRegister = true
       this.$router.push({ path: '/register' })
     },
+    loadLoginSetting() {
+      var loginSetting = getLoginSetting()
+      this.loginForm.RememberUserName = loginSetting.RememberUserName
+      this.loginForm.RememberUserPassword = loginSetting.RememberUserPassword
+      this.loginForm.RememberMe = loginSetting.RememberMe
+
+      if (this.loginForm.RememberUserName) {
+        this.loginForm.username = loginSetting.username
+        if (this.loginForm.RememberUserPassword) {
+          this.loginForm.password = passwordCache(loginSetting.username)
+        }
+      }
+      if (this.loginForm.RememberMe) {
+        this.handleLogin()
+      }
+    },
+    saveLoginSetting() {
+      var setting = Object.assign({}, this.loginForm)
+      setLoginSetting(setting)
+    },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm)
-            .then(data => {
-              this.loading = false
-              Message({
-                message: '登录成功',
-                type: 'success',
-                duration: 5 * 1000
-              })
-              this.$router.push({ path: this.redirect || '/' })
-            })
-            .catch(e => {
-              this.loading = false
-              var msg = ''
-              var title = ''
-              switch (e.status) {
-                case 12440: {
-                  title = '账号审批未通过且有紧急情况需报假?'
-                  msg = '可联系本级领导或管理员完成账号的审批'
-                  break
-                }
-                case 12450: {
-                  title = '账号审批被退回?'
-                  msg =
-                    '进入注册页面 选中【切换到审批模式】、搜索本人姓名找到本人账号、修改正确信息并重新提交'
-                  break
-                }
-                case 11500: {
-                  this.wrongTime++
-                  if (this.wrongTime % 3 === 0 || this.wrongTime > 10) {
-                    title = '不记得密码了?'
-                    msg = '尝试<a href="/#/forget">点击此处</a>找回密码'
-                  }
-                }
-              }
-
-              var opt = {
-                title: title,
-                message: msg,
-                dangerouslyUseHTMLString: true,
-                type: 'success',
-                duration: 0
-              }
-              if (msg) {
-                this.$notify(opt)
-              }
-            })
-        } else {
-          return false
+        if (!valid) {
+          return this.$message.error('信息有误')
         }
+        this.loading = true
+        this.$store
+          .dispatch('user/login', this.loginForm)
+          .then(data => {
+            Message({
+              message: '登录成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            this.$router.push({ path: this.redirect || '/' })
+          })
+          .catch(e => {
+            this.showLoginFailTip(e)
+          })
+          .finally(() => {
+            this.saveLoginSetting()
+            this.loading = false
+          })
       })
+    },
+    showLoginFailTip(e) {
+      var msg = ''
+      var title = ''
+      switch (e.status) {
+        case 12440: {
+          title = '账号审批未通过且有紧急情况需报假?'
+          msg = '可联系本级领导或管理员完成账号的审批'
+          break
+        }
+        case 12450: {
+          title = '账号审批被退回?'
+          msg =
+            '进入注册页面 选中【切换到审批模式】、搜索本人姓名找到本人账号、修改正确信息并重新提交'
+          break
+        }
+        case 11500: {
+          this.wrongTime++
+          if (this.wrongTime % 3 === 0 || this.wrongTime > 10) {
+            title = '不记得密码了?'
+            msg = '尝试<a href="/#/forget">点击此处</a>找回密码'
+          }
+        }
+      }
+      var opt = {
+        title: title,
+        message: msg,
+        dangerouslyUseHTMLString: true,
+        type: 'success',
+        duration: 0
+      }
+      if (msg) {
+        this.$notify(opt)
+      }
     }
     // afterQRScan() {
     //   if (e.key === 'x-admin-oauth-code') {

@@ -1,12 +1,33 @@
 import request from '../utils/request'
 import rsa from '../utils/crtypto/rsa'
+import aes from '../utils/crtypto/aes'
 import { parseTime } from '../utils'
 import crypto from 'crypto'
 function formatPsw(username, rawPsw) {
+  if (rawPsw === passwordCache(username)) {
+    rawPsw = aes.decrypt(getLoginSetting().password)
+  }
   const md5 = crypto.createHash('md5')
   md5.update(username)
   var tmpraw = parseTime(new Date(), '{yyyy}{mm}{dd}') + rawPsw + md5.digest('hex')
   return rsa.encrypt(tmpraw)
+}
+const dic_loginSetting = 'login.setting'
+const dic_passwordCache = '##password.cache.inmemory##'
+export function getLoginSetting() {
+  var s = localStorage.getItem(dic_loginSetting)
+  var p = JSON.parse(s)
+  if (!p) p = {}
+  return p
+}
+export function setLoginSetting(val) {
+  if (!val) val = {}
+  val.password = val.password === passwordCache(val.username) ? getLoginSetting().password : aes.encrypt(val.password)
+  localStorage.setItem(dic_loginSetting, JSON.stringify(val))
+}
+export function passwordCache(username) {
+  const c = crypto.createHash('sha1')
+  return c.update(dic_passwordCache + username).digest('hex')
 }
 /**
  * 登录账号

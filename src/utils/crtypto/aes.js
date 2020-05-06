@@ -1,7 +1,6 @@
 const CryptoJS = require('crypto-js')
-
-const key = CryptoJS.enc.Utf8.parse('abcefg12defgabcd')
-const iv = CryptoJS.enc.Utf8.parse('fgabcdabcefg12de')
+const key = CryptoJS.enc.Utf8.parse('001f2e3d4c5b6a79')
+const iv = CryptoJS.enc.Utf8.parse(`001f4c5b6a792e3d`)
 
 function decrypt(word) {
   const encryptedHexStr = CryptoJS.enc.Hex.parse(word)
@@ -14,7 +13,7 @@ function decrypt(word) {
 function encrypt(word) {
   const srcs = CryptoJS.enc.Utf8.parse(word)
   const encrypted = CryptoJS.AES.encrypt(srcs, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 })
-  return encrypted.ciphertext.toString().toUpperCase()
+  return encrypted.ciphertext.toString()
 }
 
 export default {
