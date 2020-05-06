@@ -53,7 +53,9 @@
       <el-form-item style="text-align:center">
         <el-checkbox v-model="loginForm.RememberUserName" label="记住用户名" />
         <el-checkbox v-model="loginForm.RememberUserPassword" label="记住密码" />
-        <el-checkbox v-model="loginForm.RememberMe" label="自动登录" />
+        <el-tooltip content="将无需输入账号和密码">
+          <el-checkbox v-model="loginForm.RememberMe" label="自动登录" />
+        </el-tooltip>
       </el-form-item>
       <el-row />
       <el-button
@@ -137,6 +139,14 @@ export default {
       handler(val) {
         if (!val && this.loginForm.RememberUserPassword) {
           this.loginForm.RememberUserPassword = false
+        }
+      },
+      immediate: true
+    },
+    'loginForm.RememberUserPassword': {
+      handler(val) {
+        if (val && !this.loginForm.RememberUserName) {
+          this.loginForm.RememberUserName = true
         }
       },
       immediate: true
