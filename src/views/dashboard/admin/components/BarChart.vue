@@ -11,18 +11,6 @@ const animationDuration = 3000
 
 export default {
   props: {
-    data: {
-      type: Object,
-      default() {
-        return null
-      }
-    },
-    companyDic: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
     className: {
       type: String,
       default: 'chart'
@@ -34,13 +22,17 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    nowCompaines: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   data() {
     return {
-      chart: null,
-      nowCompanies: [],
-      lastUpdate: new Date()
+      chart: null
     }
   },
   mounted() {
@@ -64,25 +56,20 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
+      this.chart.on('click', e => {
+        // 控制台打印数据的名称
+        console.log(e)
+      })
+      this.chart.on('datazoom', e => {
+        var status = e.batch[0]
+        var isZoomIn = status.start + 100 - status.end > 20
+        if (isZoomIn) {
+          // 此处需要判断
+        }
+        this.$emit('datazoom', isZoomIn)
+      })
     },
-    refresh() {
-      var result = []
-      for (var i in this.data) {
-        console.log(i)
-        result.push(this.companyDic[i])
-      }
-      this.nowCompanies = result
-      var lastUpdate = new Date()
-      this.lastUpdate = lastUpdate
-      var self = this
-      setTimeout(() => {
-        if (lastUpdate !== this.lastUpdate) return
-        self.update()
-      }, 1000)
-    },
-
     update() {
-      console.log('update')
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
@@ -98,10 +85,15 @@ export default {
           bottom: '3%',
           containLabel: true
         },
+        dataZoom: [
+          {
+            type: 'inside'
+          }
+        ],
         xAxis: [
           {
             type: 'category',
-            data: this.nowCompanies.map(c => c.name),
+            data: this.nowCompaines.map(c => c.name),
             axisTick: {
               alignWithLabel: true
             }

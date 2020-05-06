@@ -9,7 +9,12 @@
     <el-row :gutter="20">
       <el-col :lg="32" :md="32">
         <div class="chart-wrapper">
-          <bar-chart ref="barchart" :data="data_week" :company-dic="companyDic" />
+          <bar-chart
+            ref="barchart"
+            :data="data_focus"
+            :now-compaines="nowCompanies"
+            @datazoom="handleZoom"
+          />
         </div>
       </el-col>
     </el-row>
@@ -18,11 +23,11 @@
         <todo-list />
       </el-col>
       <el-col :lg="{ span: 8 }" :md="{ span: 24 }" style="margin-bottom:30px;">
-        <box-card />
+        <box-card :data="data_focus" :now-compaines="nowCompanies" />
       </el-col>
       <el-col :lg="8" :sm="24" :xs="24">
         <div class="chart-wrapper">
-          <pie-chart />
+          <pie-chart ref="piechart" :data="data_focus" :now-compaines="nowCompanies" />
         </div>
       </el-col>
     </el-row>
@@ -51,6 +56,7 @@ export default {
   },
   data() {
     return {
+      lastUpdate: '',
       lineChartData: {
         onApplyingData: [0, 2000, 10000, 2000, 1000],
         beenAuditData: [0, 3000, 1000, 2000, 1000],
@@ -61,8 +67,32 @@ export default {
       data_month: {}, // 月数据
       data_season: {}, // 季度数据
       data_year: {}, // 年度数据
+      data_focus: {},
+      focusType: '',
       statisticsDic: {},
-      companyDic: {}
+      companyDic: {},
+      nowCompanies: []
+    }
+  },
+  watch: {
+    focusType: {
+      handler(val) {
+        if (val) this.data_focus = this['data_' + val]
+      },
+      immediate: true
+    },
+    nowCompanies: {
+      handler(val) {
+        var lastUpdate = new Date()
+        this.lastUpdate = lastUpdate
+        setTimeout(() => {
+          if (lastUpdate !== this.lastUpdate) return
+          this.$refs.barchart.update()
+          this.$refs.piechart.update()
+        }, 1000)
+      },
+      immediate: true,
+      deep: true
     }
   },
   created() {
@@ -75,8 +105,13 @@ export default {
       for (var c in data.list) {
         actions.push(this.init(data.list[c].code))
       }
+      this.focusType = 'week'
       Promise.all(actions).then(() => {
-        this.$refs.barchart.refresh()
+        var result = []
+        for (var i in this.data_focus) {
+          result.push(this.companyDic[i])
+        }
+        this.nowCompanies = result
       })
     })
   },
@@ -91,7 +126,6 @@ export default {
     },
     initCompaines(compaines) {
       var cmpStr = compaines.join('##')
-      console.log(cmpStr)
       return summary(cmpStr).then(data => {
         for (var s in data.list) {
           if (!this.statisticsDic[data.list[s].id]) {
@@ -121,6 +155,8 @@ export default {
         }
       }
     },
+    // 返回是否需要重置
+    handleZoom(e) {},
     handleSetLineChartData(
       onApplyingData,
       beenAuditData,

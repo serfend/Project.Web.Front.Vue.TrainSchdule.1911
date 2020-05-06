@@ -20,6 +20,12 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    nowCompaines: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   data() {
@@ -47,7 +53,8 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
-
+    },
+    update() {
       this.chart.setOption({
         tooltip: {
           trigger: 'item',
@@ -56,7 +63,7 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['机动通信一组', '五组', '九组', '政工组', '七组']
+          data: this.nowCompaines.map(c => c.name)
         },
         calculable: true,
         series: [
@@ -66,13 +73,12 @@ export default {
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              { value: 12, name: '机动通信一组' },
-              { value: 9, name: '五组' },
-              { value: 10, name: '九组' },
-              { value: 3, name: '政工组' },
-              { value: 4, name: '七组' }
-            ],
+            data: this.nowCompaines.map(c => {
+              return {
+                value: Math.floor(Math.random() * 10),
+                name: c.name
+              }
+            }),
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
