@@ -39,7 +39,7 @@
       </template>
       <el-form>
         <el-form-item label="授权人">
-          <el-input v-model="innerForm.authByUserId" placeholder="请输入授权人的id" />
+          <el-input v-model="innerForm.authByUserId" placeholder="请输入授权人的账户" />
         </el-form-item>
         <el-form-item label="安全码">
           <el-input v-model="innerForm.code" placeholder="请输入安全码" @change="checkCode">
