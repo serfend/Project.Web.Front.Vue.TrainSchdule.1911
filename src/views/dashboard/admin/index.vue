@@ -56,6 +56,7 @@ export default {
   },
   data() {
     return {
+      lastScale: 0,
       lastUpdate: '',
       lineChartData: {
         onApplyingData: [0, 2000, 10000, 2000, 1000],
@@ -95,8 +96,12 @@ export default {
       deep: true
     }
   },
-  created() {
+  activated() {
+    this.lastScale = document.body.style.zoom
     document.body.style.zoom = 1
+  },
+  deactivated() {
+    document.body.style.zoom = this.lastScale
   },
   mounted() {
     companyChild().then(data => {
