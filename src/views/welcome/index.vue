@@ -66,7 +66,7 @@ export default {
             label: '我要休假',
             description: '个人提交休假申请窗口',
             svg: '测试申请',
-            href: '/application/newApply'
+            href: '/login?redirect=/application/newApply'
           },
           {
             id: '4',
@@ -74,7 +74,7 @@ export default {
             description: '个人休假情况概览窗口',
             // icon: '/favicon.png',
             svg: 'people_fill',
-            href: '/application/myApply'
+            href: '/login?redirect=/application/myApply'
           },
           {
             id: '2',

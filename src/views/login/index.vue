@@ -231,7 +231,14 @@ export default {
         }
       }
       if (this.loginForm.RememberMe) {
-        this.handleLogin()
+        this.loading = true
+        setTimeout(() => {
+          if (!this.loginForm.RememberMe) {
+            this.loading = false
+            return this.$message.warning('自动登录被终止')
+          }
+          this.handleLogin()
+        }, 2000)
       }
     },
     saveLoginSetting() {
