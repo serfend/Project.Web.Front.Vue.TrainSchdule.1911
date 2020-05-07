@@ -21,6 +21,7 @@
                   class="white--text"
                 >{{ statusDic[i.status].desc }}</el-tag>
                 <el-switch v-model="i.show" />
+                <el-link :href="applyDetailUrl(i.id)">查看详情</el-link>
               </div>
               <div v-else-if="!haveNext">没有更多了</div>
               <el-button v-else @click="load">加载更多...</el-button>
@@ -69,6 +70,9 @@ export default {
     this.load()
   },
   methods: {
+    applyDetailUrl(id) {
+      return `/#/application/applydetail?id=${id}`
+    },
     format(val) {
       return format(val, 'zh_CN')
     },

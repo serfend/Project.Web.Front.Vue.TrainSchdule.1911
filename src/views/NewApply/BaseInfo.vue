@@ -4,7 +4,10 @@
       <el-container>
         <el-main :style="{filter:hideDetail?'blur(5px)':''}">
           <el-tooltip effect="light" content="若有误（含信息有变化），请到审核注册页面修改信息" style="margin-bottom:10px">
-            <el-alert :type="submitId?'success':'error'" center>请检查信息是否有误,输入id或姓名后回车</el-alert>
+            <el-alert
+              :type="submitId?'success':'error'"
+              center
+            >{{ submitId?'恭喜您，信息已无误':'请检查信息是否有误,输入id或姓名后回车' }}</el-alert>
           </el-tooltip>
           <el-form ref="form" :model="form" label-width="120px" style="background:#fff">
             <el-form-item label="身份号" :rules="[{required:true}]">
@@ -203,6 +206,10 @@ export default {
           this.form.Settle.lover = lover
           this.form.Settle.parent = parent
           this.form.Settle.loversParent = loversParent
+
+          setTimeout(() => {
+            this.submitBaseInfo()
+          }, 100)
         })
         .finally(() => {
           this.onLoading = false

@@ -34,15 +34,15 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
-    path: '/dashboard',
+    path: '/main',
     component: Layout,
     // redirect: '/dashboard',
     children: [
       {
-        path: '',
+        path: '/dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
+        meta: { title: 'dashboard', icon: 'dashboard' }
       }
     ]
   },

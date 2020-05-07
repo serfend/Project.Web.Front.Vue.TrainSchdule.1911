@@ -8,7 +8,10 @@
             content="鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。"
             style="margin-bottom:10px"
           >
-            <el-alert :type="submitId?'success':'error'" center>请检查信息是否有误,输入id或姓名后回车</el-alert>
+            <el-alert
+              :type="submitId?'success':'error'"
+              center
+            >{{ submitId?'恭喜您，信息已无误':'请检查信息是否有误' }}</el-alert>
           </el-tooltip>
           <el-form ref="formApply" :model="formApply" label-width="120px">
             <el-form-item label="休假年度">

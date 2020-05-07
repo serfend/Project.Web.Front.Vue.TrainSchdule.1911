@@ -103,7 +103,6 @@ export default {
     data: {
       handler(val) {
         if (val && val.steps) {
-          console.log(val)
           this.detail = val
           this.refresh()
         }

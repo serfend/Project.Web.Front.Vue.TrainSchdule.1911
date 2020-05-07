@@ -1,6 +1,6 @@
 <template>
   <div style="padding:10px">
-    <el-button icon="el-icon-back" @click="$router.push('/application/queryAndAuditApplies')">返回</el-button>
+    <el-button icon="el-icon-back" @click="$router.back(-1)">返回</el-button>
     <el-button icon="el-icon-download" type="success" @click="downloadUserApplies">导出休假登记卡</el-button>
     <h2 style="padding-top:10px">
       {{ staticData.applyDetailName }}

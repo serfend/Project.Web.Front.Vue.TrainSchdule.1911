@@ -30,7 +30,7 @@
           style="margin:20px 5px"
           @submited="requestInfoSubmit"
         />
-        <el-link type="success" :href="applyDetailUrl">查看详情</el-link>
+        <el-link v-show="submitId" type="success" :href="applyDetailUrl">查看详情</el-link>
       </el-main>
     </el-container>
     <el-footer v-loading="onLoading" :disabled="childOnLoading">
