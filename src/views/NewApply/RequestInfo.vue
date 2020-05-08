@@ -342,7 +342,7 @@ export default {
     resetSettle(val) {
       if (val && val.self && val.self.address) {
         var self = val.self.address
-        var checkDic = [val.parent, val.lover.val.loversParent].map(
+        var checkDic = [val.parent, val.lover, val.loversParent].map(
           i => i.address
         )
         var target = null
