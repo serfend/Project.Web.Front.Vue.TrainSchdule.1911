@@ -151,13 +151,12 @@ export default {
         data: model,
         Auth: this.auditForm.auth
       }).then(result => {
-        this.$notify.success('已召回' + result.id)
+        this.$notify.success('召回操作已提交')
         this.innerShow = false
         this.$emit('updated')
       })
     },
     recallApply() {
-      console.log('准备进行召回')
       var row = this.row
       this.auditForm.applyId = row.id
       this.auditForm.recallData = {
@@ -166,7 +165,6 @@ export default {
       this.recallByUser = null
     },
     showRecallMsg() {
-      console.log('查看召回信息')
       var row = this.row
       this.auditForm.recallData.rawStampReturn = row.request.stampReturn
       var auditForm = this.auditForm

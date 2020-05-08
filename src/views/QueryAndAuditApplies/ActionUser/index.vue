@@ -120,9 +120,6 @@ export default {
         .then(data => {
           this.$message.success(method.description + '成功')
         })
-        .catch(err => {
-          console.log(err)
-        })
         .finally(() => {
           this.onLoading = false
           this.$emit('updated')

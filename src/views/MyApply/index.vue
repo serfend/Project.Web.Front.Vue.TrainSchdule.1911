@@ -27,7 +27,12 @@
               <el-button v-else @click="load">加载更多...</el-button>
             </div>
             <div slot="description">
-              <ApplyCard v-if="i.create" :data="i" :show="i.show" />
+              <ApplyCard
+                v-if="i.create"
+                :data="i"
+                :show="i.show"
+                @updated="applyUpdate(i.itemIndex)"
+              />
             </div>
           </el-step>
         </el-steps>
@@ -76,24 +81,50 @@ export default {
     format(val) {
       return format(val, 'zh_CN')
     },
+    applyUpdate(index) {
+      querySelf({ pageIndex: index, pageSize: 1 }).then(data => {
+        if (data.list[0]) {
+          this.list[index] = Object.assign(this.list[index], data.list[0])
+          this.list[index].show = false
+          setTimeout(() => {
+            this.list[index].show = true
+          }, 1000)
+        }
+      })
+    },
     load() {
       if (this.loading) return
       if (this.haveNext) {
         this.loading = true
         this.lastPage++
-        querySelf({ pageIndex: this.lastPage, pageSize: 20 })
+        var pages = { pageIndex: this.lastPage, pageSize: 5 }
+        querySelf(pages)
           .then(data => {
-            this.list.pop()
-            for (var i = 0; i < data.list.length; i++) {
-              this.list.push(data.list[i])
-            }
-            this.list.push({ label: '', id: 999 })
-            if (data.list.length < 20) {
-              setTimeout(() => {
-                this.$message.error('没有更多了')
-              }, 2000)
-              this.haveNext = false
-            }
+            this.list.pop() // 删除队尾的提示
+            setTimeout(() => {
+              for (var i = 0; i < data.list.length; i++) {
+                var newItem = Object.assign(
+                  {
+                    itemIndex: i + pages.pageIndex * pages.pageSize,
+                    show: false
+                  },
+                  data.list[i]
+                )
+                this.list.push(newItem)
+              }
+              this.list.push({ label: '', id: 999 })
+              if (data.list.length < pages.pageSize) {
+                setTimeout(() => {
+                  this.$message.error('没有更多了')
+                }, 2000)
+                this.haveNext = false
+              }
+              if (pages.pageIndex === 0) {
+                setTimeout(() => {
+                  this.list[0].show = true
+                }, 1000)
+              }
+            }, 100)
           })
           .finally(() => {
             this.loading = false
