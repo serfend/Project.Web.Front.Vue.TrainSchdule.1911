@@ -12,7 +12,12 @@
         />
       </div>
       <el-table :data="data.allSolutionRule">
-        <el-table-column label="优先" width="80px" sortable :sort-method="(a,b)=>a-b">
+        <el-table-column
+          label="优先"
+          width="80px"
+          sortable
+          :sort-method="(a,b)=>a.priority-b.priority"
+        >
           <template slot-scope="scope">
             <el-tooltip>
               <div slot="content">数字越大，则优先级越高</div>

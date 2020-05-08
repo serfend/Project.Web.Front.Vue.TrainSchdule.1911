@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     create(key) {
-      createDwz(this.target, key, this.exipre).then(data => {
+      createDwz(this.target, key, this.expire).then(data => {
         this.urlKey = data.key
       })
     },

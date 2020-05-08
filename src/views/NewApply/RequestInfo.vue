@@ -150,12 +150,17 @@
               prop="vocationPlace"
               :rules="[{required:true,trigger:'blur'}]"
             >
-              <cascader-selector
-                placeholder="选择本次休假的目的地"
-                :code.sync="formApply.vocationPlace"
-                :child-getter-method="locationChildren"
-                style="width:300px"
-              />
+              <el-tooltip>
+                <template slot="content">
+                  <span>当前为{{ formApply.vocationPlaceName }}</span>
+                </template>
+                <cascader-selector
+                  placeholder="选择本次休假的目的地"
+                  :code.sync="formApply.vocationPlace"
+                  :child-getter-method="locationChildren"
+                  style="width:300px"
+                />
+              </el-tooltip>
             </el-form-item>
             <el-form-item label="详细地址">
               <el-input v-model="formApply.vocationPlaceName" style="width:300px" />
@@ -310,7 +315,10 @@ export default {
     },
     selfSettle: {
       handler(val) {
-        if (val && val.address) this.formApply.vocationPlace = val.address.code
+        if (val && val.address) {
+          this.formApply.vocationPlace = val.address.code
+          this.formApply.vocationPlaceName = val.address.name
+        }
       },
       deep: true,
       immediate: true
@@ -329,7 +337,6 @@ export default {
     locationChildren,
     leaveCard() {
       this.isHover = false
-      console.log(this.currentUser)
       if (this.anyChanged) {
         this.anyChanged = false
         this.submitRequestInfo()
