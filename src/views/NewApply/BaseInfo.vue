@@ -202,7 +202,7 @@ export default {
           const { self, lover, parent, loversParent } = social.settle
           if (!this.form.Settle) this.form.Settle = {}
           this.form.Settle.self = self
-          this.$emit('update:selfSettle', self)
+          this.$emit('update:selfSettle', social.settle)
           this.form.Settle.lover = lover
           this.form.Settle.parent = parent
           this.form.Settle.loversParent = loversParent

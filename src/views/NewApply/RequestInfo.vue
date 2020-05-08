@@ -315,10 +315,7 @@ export default {
     },
     selfSettle: {
       handler(val) {
-        if (val && val.address) {
-          this.formApply.vocationPlace = val.address.code
-          this.formApply.vocationPlaceName = val.address.name
-        }
+        this.resetSettle(val)
       },
       deep: true,
       immediate: true
@@ -340,6 +337,26 @@ export default {
       if (this.anyChanged) {
         this.anyChanged = false
         this.submitRequestInfo()
+      }
+    },
+    resetSettle(val) {
+      if (val && val.self && val.self.address) {
+        var self = val.self.address
+        var checkDic = [val.parent, val.lover.val.loversParent].map(
+          i => i.address
+        )
+        var target = null
+        var clength = checkDic.length
+        for (var i = 0; i < clength; i++) {
+          if (checkDic[i] && checkDic[i].code !== self.code) {
+            target = checkDic[i]
+            break
+          }
+        }
+        if (target) {
+          this.formApply.vocationPlace = target.code
+          this.formApply.vocationPlaceName = target.name
+        }
       }
     },
     reset() {
