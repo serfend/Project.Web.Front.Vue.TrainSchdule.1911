@@ -175,7 +175,10 @@
             </el-form-item>
           </el-form>
         </el-main>
-        <el-aside width="2%" style="padding:0;margin:0;background: rgb(255, 255, 255)">
+        <el-aside
+          width="2%"
+          style="padding:0;margin:0;text-align:center;background: rgb(255, 255, 255)"
+        >
           <div
             class="mask"
             :style="{filter:hideDetail?'':'blur(30px)',background:hideDetail?'#ffffff8f':''}"
@@ -183,7 +186,7 @@
             <svg-icon
               :style="{transition:'all 0.5s',opacity:hideDetail?1:0,transform:hideDetail?'rotate(-360deg)':''}"
               icon-class="certification_f"
-              style-normal="width:100%;height:100%;fill:#67C23Aaa"
+              style-normal="width:5em;height:5em;fill:#67C23Aaa"
             />
           </div>
         </el-aside>

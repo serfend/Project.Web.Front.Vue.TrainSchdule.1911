@@ -12,14 +12,22 @@
           <el-form ref="form" :model="form" label-width="120px" style="background:#fff">
             <el-form-item label="身份号" :rules="[{required:true}]">
               <el-input v-model="form.id" @keydown.native.enter="fetchUserInfoes('id')">
-                <el-tooltip slot="prepend" content="点击自动查询对应信息">
+                <el-tooltip slot="prepend" content="点击加载信息">
                   <el-button icon="el-icon-search" @click="fetchUserInfoes('id')" />
+                </el-tooltip>
+                <el-tooltip slot="append" content="点击加载信息">
+                  <el-button
+                    icon="el-icon-search"
+                    :disabled="!currentUser||!currentUser.id"
+                    size="mini"
+                    @click="setCurrentUser(3)"
+                  >{{ currentUser?currentUser.realName:'未登录' }}</el-button>
                 </el-tooltip>
               </el-input>
             </el-form-item>
             <el-form-item label="真实姓名" :rules="[{required:true}]">
               <el-input v-model="form.realName" @keydown.native.enter="fetchUserInfoes('realName')">
-                <el-tooltip slot="prepend" content="点击自动查询对应信息">
+                <el-tooltip slot="prepend" content="点击加载信息">
                   <el-button icon="el-icon-search" @click="fetchUserInfoes('realName')" />
                 </el-tooltip>
               </el-input>
@@ -47,7 +55,7 @@
             <SettleFormItem :form.sync="form.Settle.loversParent" disabled label="配偶父母所在地" />
           </el-form>
         </el-main>
-        <el-aside width="20%" style="padding:0;margin:0;background: rgb(255, 255, 255)">
+        <el-aside width="20%" style="padding:0;text-align:center;margin:0;background: rgb(255, 255, 255)">
           <div
             class="mask"
             :style="{filter:hideDetail?'':'blur(30px)',background:hideDetail?'#ffffff8f':''}"
@@ -55,7 +63,7 @@
             <svg-icon
               :style="{transition:'all 0.5s',opacity:hideDetail?1:0,transform:hideDetail?'rotate(-360deg)':''}"
               icon-class="certification_f"
-              style-normal="width:100%;height:100%;fill:#67C23Aaa"
+              style-normal="width:5em;height:5em;fill:#67C23Aaa"
             />
           </div>
         </el-aside>
@@ -115,7 +123,7 @@ export default {
     },
     reset() {
       console.log('baseinfo init')
-      this.form = this.createNewBase()
+      this.form = this.createNewBase(true)
       this.onLoading = false
       this.anyChanged = false
     },
@@ -126,11 +134,10 @@ export default {
         this.submitBaseInfo()
       }
     },
-    createNewBase() {
+    createNewBase(fetch) {
       var f = {
-        id: this.currentUser === undefined ? '' : this.currentUser.id,
-        realName:
-          this.currentUser === undefined ? '' : this.currentUser.realName,
+        id: '',
+        realName: '',
         company: '',
         companyName: '',
         duties: '',
@@ -142,16 +149,26 @@ export default {
           loversParent: this.buildSettle()
         }
       }
-      if (f.id && f.id !== '') {
+      if (fetch) {
         setTimeout(() => {
-          this.fetchUserInfoes('id')
-        }, 200)
-      } else if (f.realName && f.realName !== '') {
-        setTimeout(() => {
-          this.fetchUserInfoes('realName')
-        }, 200)
+          this.setCurrentUser()
+        }, 100)
       }
       return f
+    },
+    setCurrentUser(tryTime) {
+      if (!this.currentUser || !this.currentUser.id) {
+        if (tryTime > 0) {
+          setTimeout(() => {
+            this.setCurrentUser(tryTime - 1)
+          }, 500)
+        } else {
+          this.$message.warning('获取当前用户失败')
+        }
+        return
+      }
+      this.form.id = this.currentUser.id
+      this.fetchUserInfoes('id')
     },
     fetchUserInfoes(byIdOrRealname) {
       if (this.onLoading) return
@@ -194,6 +211,8 @@ export default {
       return getUserAllInfo(this.form.id)
         .then(data => {
           const { base, company, duties, social } = data
+          this.form.id = base.id
+          console.log(this.form.id)
           this.form.realName = base.base.realName
           this.form.company = company.company.code
           this.form.companyName = company.company.name
