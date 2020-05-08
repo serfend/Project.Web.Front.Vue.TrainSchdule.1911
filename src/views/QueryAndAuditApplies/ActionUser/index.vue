@@ -16,21 +16,31 @@
       </el-form>
     </el-dialog>
     <el-tooltip content="点击下载休假单">
-      <el-dropdown split-button size="small" trigger="click" @click="exportApply(row)">
+      <el-dropdown
+        v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
+        split-button
+        size="small"
+        trigger="click"
+        @click="exportApply(row)"
+      >
         <i class="el-icon-download" />
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-for="item in userActionDic" :key="item.name">
-            <el-popconfirm :title="`确定要${item.description}吗？`" @onConfirm="hendleExecute(item,row)">
+          <el-dropdown-item v-for="item in statusDic[row.status].acessable" :key="item.name">
+            <el-popconfirm
+              :title="`${actionDic[item].description} 确定要${actionDic[item].alias}吗？`"
+              :confirm-button-text="actionDic[item].alias"
+              @onConfirm="hendleExecute(item,row)"
+            >
               <el-button
-                v-show="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.indexOf(item.name)>-1"
                 slot="reference"
-                :type="item.type"
+                :type="actionDic[item].type"
                 size="mini"
-              >{{ item.description }}</el-button>
+              >{{ actionDic[item].alias }}</el-button>
             </el-popconfirm>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <el-button v-else icon="el-icon-download" size="mini" @click="exportApply(row)">下载</el-button>
     </el-tooltip>
   </div>
 </template>
@@ -39,7 +49,7 @@
 import AuthCode from '@/components/AuthCode'
 import { checkAuthCode } from '@/api/account'
 import { exportApplyDetail } from '@/api/static'
-import { deleteApply, publish, save, withdrew } from '@/api/apply'
+import { deleteApply, doAction } from '@/api/apply'
 export default {
   name: 'ActionUser',
   components: {
@@ -56,32 +66,6 @@ export default {
   data() {
     return {
       activeName: '',
-      userActionDic: [
-        {
-          name: 'Save',
-          description: '保存',
-          fn: save,
-          type: 'primary'
-        },
-        {
-          name: 'Withdrew',
-          description: '撤回',
-          fn: withdrew,
-          type: 'info'
-        },
-        {
-          name: 'Publish',
-          description: '发布',
-          fn: publish,
-          type: 'success'
-        },
-        {
-          name: 'Delete',
-          description: '删除',
-          fn: deleteApply,
-          type: 'danger'
-        }
-      ],
       authForm: {},
       authFormShow: false
     }
@@ -92,6 +76,9 @@ export default {
     },
     statusDic() {
       return this.$store.state.vocation.statusDic
+    },
+    actionDic() {
+      return this.$store.state.vocation.actionDic
     }
   },
   methods: {
@@ -102,8 +89,8 @@ export default {
         return false
       }
       var params = row.id
-      const fn = method.fn
-      if (method.name === 'Delete') {
+      const fnName = method
+      if (fnName === 'Delete') {
         if (!this.authFormShow) {
           this.authForm.method = method
           this.authFormShow = true
@@ -116,14 +103,14 @@ export default {
         }
       }
       this.onLoading = true
-      fn(params)
-        .then(data => {
-          this.$message.success(method.description + '成功')
-        })
-        .finally(() => {
-          this.onLoading = false
-          this.$emit('updated')
-        })
+      var fn =
+        fnName === 'Delete' ? deleteApply(params) : doAction(fnName, params)
+      fn.then(data => {
+        this.$message.success(`${this.actionDic[method].alias}成功`)
+      }).finally(() => {
+        this.onLoading = false
+        this.$emit('updated')
+      })
     },
     exportApply(row) {
       var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确

@@ -84,27 +84,12 @@ export function deleteApply(params) {
 }
 
 /**
- * 保存申请
- * @param {String} id 申请的id
- */
-export function save(id) {
-  return request.put('/apply/Save?id=' + id)
-}
-
-/**
- * 发布申请
+ * 操作申请
+ * @param {String} action 操作类型 required
  * @param {String} id 申请的id required
  */
-export function publish(id) {
-  return request.put('/apply/Publish?id=' + id)
-}
-
-/**
- * 撤回申请
- * @param {String} id 申请的id required
- */
-export function withdrew(id) {
-  return request.put('/apply/Withdrew?id=' + id)
+export function doAction(action, id) {
+  return request.put(`/apply/${action}?id=${id}`)
 }
 
 /**

@@ -66,7 +66,7 @@
 import BaseInfo from './BaseInfo'
 import RequestInfo from './RequestInfo'
 
-import { submitApply, save, publish } from '@/api/apply'
+import { submitApply, doAction } from '@/api/apply'
 export default {
   name: 'NewApply',
   components: {
@@ -141,11 +141,11 @@ export default {
           var applyId = data.id
           this.isAfterSubmit = true
 
-          var fn = actionStatus === 1 ? save : publish
+          var fn = actionStatus === 1 ? 'save' : 'publish'
           this.$message.success('提交成功')
           this.submitId = data.id
           if (actionStatus > 0) {
-            fn(applyId).then(() => {
+            doAction(fn, applyId).then(() => {
               this.$message.success(
                 `${actionStatus === 1 ? '提交并保存' : '提交并发布'}成功`
               )
