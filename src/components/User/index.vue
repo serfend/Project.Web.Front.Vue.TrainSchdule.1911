@@ -3,7 +3,11 @@
     <el-container v-if="innerData">
       <el-aside width="100px" style="padding:0;margin:0;background: rgb(255, 255, 255);">
         <el-popover :placement="direction" trigger="hover" @show="loadContactMe">
-          <ContactMe v-if="contactMeHasShow" :content="contactUrl" />
+          <ContactMe
+            v-if="contactMeHasShow"
+            :content="contactUrl"
+            :description="`微信或手机通讯录扫码，获取${innerData.realName}的联系方式`"
+          />
           <div slot="reference">
             <el-avatar :size="100" :src="avatar" />
           </div>
