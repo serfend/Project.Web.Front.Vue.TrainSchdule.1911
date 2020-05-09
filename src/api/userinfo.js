@@ -201,3 +201,16 @@ export function postUserAvatar(newAvatar, ignoreErr) {
     url: newAvatar
   }, { respondErrorIngore: ignoreErr })
 }
+
+/**
+ * 获取指定用户的审批流
+ *
+ * @export
+ * @param {*} id
+ * @returns
+ */
+export function auditStream(id) {
+  return request.get('/users/auditStream', {
+    params: { id }
+  })
+}

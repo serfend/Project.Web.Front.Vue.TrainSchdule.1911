@@ -30,6 +30,7 @@
           style="margin:20px 5px"
           @submited="requestInfoSubmit"
         />
+        <VacationPreview v-show="nowStep>=2" ref="VacationPreview" style="margin:20px 5px" />
         <el-link v-show="submitId" type="success" :href="applyDetailUrl">查看详情</el-link>
       </el-main>
     </el-container>
@@ -37,6 +38,22 @@
       <div class="row layout" />
       <div :style="{'backgroundColor': theme}" class="footer-nav">
         <div class="row layout justify-center fill-height">
+          <el-popover placement="top-start" trigger="hover">
+            <div>
+              <h2>提交、保存、发布是什么</h2>
+              <el-divider />
+              <p>
+                <b>提交</b>任何人都可以操作，但24小时后仍未保存则会被删除
+              </p>
+              <p>
+                <b>保存</b>仅本人及上级操作，将会使休假申请进入草稿状态，随时可发布
+              </p>
+              <p>
+                <b>发布</b>仅本人及上级操作，将会使休假申请进入审核中状态
+              </p>
+            </div>
+            <i slot="reference" class="el-icon-question" style="color:#999999;font-size:1em" />
+          </el-popover>
           <el-button
             v-loading="onLoading"
             :disabled="nowStep<2"
@@ -65,13 +82,15 @@
 <script>
 import BaseInfo from './BaseInfo'
 import RequestInfo from './RequestInfo'
+import VacationPreview from './VacationPreview'
 
 import { submitApply, doAction } from '@/api/apply'
 export default {
   name: 'NewApply',
   components: {
     BaseInfo,
-    RequestInfo
+    RequestInfo,
+    VacationPreview
   },
   data() {
     return {
