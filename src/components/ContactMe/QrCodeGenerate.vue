@@ -1,7 +1,7 @@
 <template>
   <div
     v-loading="onLoading"
-    :style="{width:size + 'px',height:size + 'px','line-height':size+'px','text-align':'center'}"
+    :style="{width:size + 'px',height:size + 'px','line-height':size+'px','text-align':'center',display:'flex',margin:'0 auto'}"
   >
     <el-image v-if="qrCodeUrl" class="full" :src="qrCodeUrl" />
     <div v-else class="full">加载中</div>
