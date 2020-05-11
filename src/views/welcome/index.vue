@@ -1,39 +1,54 @@
 <template>
   <el-container>
-    <div style="margin:40px;width:100%">
-      <el-row v-if="showTitle" type="flex" justify="space-between">
-        <div>
-          <span style="color:#ffffff;font-size:2em">休假登记和审核系统</span>
-          <span style="color:#aaaaaa;font-size:0.8em">v1.0.0</span>
-        </div>
-      </el-row>
-      <el-divider v-if="showTitle" />
-      <el-row
-        v-for="rowlist in innerList"
-        :key="rowlist.key"
-        style="width:100%;"
-        type="flex"
-        justify="space-between"
-      >
-        <el-col v-for="i in rowlist.value" :key="i.id" :xs="12" :sm="8" :md="6" :lg="4">
-          <AppIcon
-            style="margin:50px 20px"
-            :icon="i.icon"
-            :svg="i.svg"
-            :size="130"
-            :label="i.label"
-            :description="i.description"
-            @click="lintTo(i)"
+    <div style="width:100%">
+      <el-main>
+        <el-row v-if="showTitle" type="flex">
+          <div>
+            <span style="color:#ffffff;font-size:2em">休假登记和审核系统</span>
+            <span style="color:#aaaaaa;font-size:0.8em">v1.0.0</span>
+          </div>
+        </el-row>
+        <el-divider v-if="showTitle" />
+        <el-row>
+          <el-col v-for="i in innerList" :key="i.id" :xs="12" :sm="8" :md="6" :lg="4">
+            <AppIcon
+              style="margin:3em 2em"
+              :icon="i.icon"
+              :svg="i.svg"
+              :size="8"
+              :label="i.label"
+              :description="i.description"
+              @click="lintTo(i)"
+            />
+          </el-col>
+        </el-row>
+      </el-main>
+
+      <el-footer height="2em" class="footer">
+        <el-popover placement="top" trigger="hover" @show="contactMeHasShow = true">
+          <ContactMe
+            v-if="contactMeHasShow"
+            content="https://u.wechat.com/MPTgt41EIncEhLhBIGPovMo"
           />
-        </el-col>
-      </el-row>
-      <el-row style="bottom:0px;position:fixed;" type="flex" justify="space-between">
-        <div style="color:#3f3f3f;font-size:0.5em;">power by serfend@2020</div>
-        <el-popover placement="top" trigger="hover" @show="loadContactMe">
-          <ContactMe v-if="contactMeHasShow" :content="wechatUrl" />
-          <el-link slot="reference" style="margin:0 0 0 20px;font-size:0.5em">联系我们</el-link>
+          <el-link slot="reference" type="primary">联系我们</el-link>
         </el-popover>
-      </el-row>
+        <el-popover placement="top" trigger="hover" @show="helpMeHasShow = true">
+          <ContactMe
+            v-if="helpMeHasShow"
+            content="http://39.97.229.104/s/b4afa7"
+            description="扫码反馈意见/问题"
+          />
+          <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">用户反馈</el-link>
+        </el-popover>
+        <el-popover placement="top" trigger="hover" @show="helpMeHasShow = true">
+          <ContactMe
+            v-if="helpMeHasShow"
+            content="http://39.97.229.104/s/policy"
+            description="扫码查看相关政策"
+          />
+          <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">相关政策</el-link>
+        </el-popover>
+      </el-footer>
     </div>
   </el-container>
 </template>
@@ -54,7 +69,6 @@ export default {
       default() {
         return [
           {
-            id: '3',
             label: '注册账号',
             description: '注册和审批新账号窗口',
             svg: '注册',
@@ -62,14 +76,12 @@ export default {
             href: '/register'
           },
           {
-            id: '1',
             label: '我要休假',
             description: '个人提交休假申请窗口',
             svg: '测试申请',
             href: '/login?redirect=/application/newApply'
           },
           {
-            id: '4',
             label: '我的假期',
             description: '个人休假情况概览窗口',
             // icon: '/favicon.png',
@@ -77,12 +89,18 @@ export default {
             href: '/login?redirect=/application/myApply'
           },
           {
-            id: '2',
             label: '休假审批',
             description: '查询批假情况和审批单位休假窗口',
             // icon: '/favicon.png',
             svg: '提案审批',
             href: '/login?redirect=/application/queryAndAuditApplies'
+          },
+          {
+            label: '统计情况',
+            description: '各单位休假情况统计操作仓',
+            // icon: '/favicon.png',
+            svg: 'dashboard',
+            href: '/login?redirect=/dashboard'
           }
         ]
       }
@@ -93,7 +111,7 @@ export default {
       qrCodeUrl: '',
       innerList: [],
       contactMeHasShow: false,
-      wechatUrl: 'https://u.wechat.com/MPTgt41EIncEhLhBIGPovMo'
+      helpMeHasShow: false
     }
   },
   watch: {
@@ -101,21 +119,9 @@ export default {
       handler(val) {
         if (!val) return
         var result = []
-        const rowItemCount = 4
-        const totalRowCount = Math.ceil(val.length / rowItemCount)
-        for (var i = 0; i < totalRowCount; i++) {
-          var tmpList = []
-          for (
-            var j = 0;
-            j + i * rowItemCount < val.length && j < rowItemCount;
-            j++
-          ) {
-            tmpList.push(val[j + i * rowItemCount])
-          }
-          result.push({
-            key: Math.random(),
-            value: tmpList
-          })
+        var vLen = val.length
+        for (var j = 0; j < vLen; j++) {
+          result.push(Object.assign(val[j], { id: Math.random() }))
         }
         this.innerList = result
       },
@@ -123,10 +129,6 @@ export default {
     }
   },
   methods: {
-    loadContactMe() {
-      if (this.contactMeHasShow) return
-      this.contactMeHasShow = true
-    },
     lintTo(item) {
       if (item.callback) {
         item.callback()
@@ -141,20 +143,36 @@ export default {
 
 <style lang="scss" scoped>
 .el-container {
-  background-size: 100%;
-  background-size: cover;
-  background-attachment: fixed;
   background-color: #cccccc;
 
   top: 0px;
   left: 0px;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(
+  background-image: repeating-linear-gradient(
     to bottom,
     rgb(30, 30, 144),
     rgb(185, 157, 201),
     rgb(162, 104, 180)
   );
+}
+.footer {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  transition: all 0.5s;
+  background: #f5f6f59f;
+  border-top: 1px solid #ebebeb9f;
+  line-height: 1.5em;
+  font-size: 1em;
+  .el-link {
+    font-size: 0.8em;
+    margin-left: 1em;
+  }
+}
+.footer:hover {
+  background: #f5f6f5;
+  border-top: 1px solid #ebebeb;
 }
 </style>

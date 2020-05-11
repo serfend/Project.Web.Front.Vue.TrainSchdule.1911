@@ -1,6 +1,6 @@
 <template>
   <el-tooltip placement="top" effect="light" :content="description">
-    <div :style="{ width:size+'px',height:size+'px'}">
+    <div :style="{ width:size+'em',height:size+'em'}">
       <el-image
         v-if="icon"
         :class="isActive?'icon-buttonactive':'icon-button'"
@@ -17,7 +17,10 @@
         @mouseenter="activeMe"
         @mouseleave="disactiveMe"
       />
-      <div :class="isActive?'icon-labelactive':'icon-label'">{{ label }}</div>
+      <div
+        :class="isActive?'icon-labelactive':'icon-label'"
+        :style="{'font-size':(size/5)+'em'}"
+      >{{ label }}</div>
     </div>
   </el-tooltip>
 </template>
@@ -40,7 +43,7 @@ export default {
     },
     size: {
       type: Number,
-      default: 30
+      default: 3
     },
     description: {
       type: String,
@@ -91,21 +94,19 @@ export default {
   user-select: none;
 }
 .icon-label {
-  border-radius: 5px;
-  font-size: 20px;
+  border-radius: 0.2em;
   background-color: #00009f;
   opacity: 0.8;
   text-align: center;
   color: #ffffff;
   transition: all 0.5s;
   box-shadow: 2px 2px 1px 1px rgba(0, 0, 0, 0.7);
-  margin: 20px 0;
+  margin: 1em 0;
   user-select: none;
 }
 
 .icon-labelactive {
-  border-radius: 5px;
-  font-size: 20px;
+  border-radius: 0.2em;
   background-color: #0000ff;
   opacity: 0.8;
   text-align: center;
