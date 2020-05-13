@@ -16,47 +16,12 @@
         </el-col>
         <el-col :lg="8" :md="12" :sm="24">
           <el-card header="找回账号 - 通过姓名">
-            <el-input
-              v-model="nowSelectRealName"
-              style="width: 100%"
-              placeholder="输入姓名查找"
-              @input="handleUserSelectByRealnameChange"
-            />
-            <el-collapse
-              v-model="nowCollapseSelectUserId"
-              accordion
-              @change="loadCollapseUserAvatarBoth"
-            >
-              <el-collapse-item v-for="u in usersByRealName" :key="u.id" :name="u.id">
-                <template slot="title">
-                  <el-tag>{{ u.dutiesName }}</el-tag>
-                  {{ u.companyName }} {{ u.realName }}
-                </template>
-                <User :data="u" :can-load-avatar="u.canLoadAvatar" />
-              </el-collapse-item>
-            </el-collapse>
+            <FindUserByRealName />
           </el-card>
         </el-col>
         <el-col :lg="8" :md="12" :sm="24">
           <el-card header="找回账号 - 通过单位">
-            <cascader-selector
-              :code.sync="nowSelectCompanyCode"
-              placeholder="选择需要检查的单位"
-              :child-getter-method="companyChild"
-            />
-            <el-collapse
-              v-model="nowCollapseSelectUserId"
-              accordion
-              @change="loadCollapseUserAvatarBoth"
-            >
-              <el-collapse-item v-for="u in usersByCompany" :key="u.id" :name="u.id">
-                <template slot="title">
-                  <el-tag>{{ u.dutiesName }}</el-tag>
-                  {{ u.companyName }} {{ u.realName }}
-                </template>
-                <User :data="u" :can-load-avatar="u.canLoadAvatar" />
-              </el-collapse-item>
-            </el-collapse>
+            <FindUserByCompany />
           </el-card>
         </el-col>
       </div>
@@ -66,77 +31,11 @@
 
 <script>
 import ResetPassword from '@/components/ResetPassword'
-import CascaderSelector from '@/components/CascaderSelector'
-import User from '@/components/User'
-import { getMembers, companyChild } from '@/api/company'
-import { getUserIdByRealName } from '@/api/userinfo'
+import FindUserByRealName from './FindUserByRealName'
+import FindUserByCompany from './FindUserByCompany'
 export default {
   name: 'ForgetPassword',
-  components: { ResetPassword, CascaderSelector, User },
-  data() {
-    return {
-      nowSelectCompanyCode: '',
-      usersByCompany: [],
-      nowCollapseSelectUserId: '',
-
-      nowSelectRealName: '',
-      usersByRealName: []
-    }
-  },
-  watch: {
-    nowSelectCompanyCode: {
-      handler(val) {
-        if (val) {
-          getMembers({ code: val, page: 0, pageSize: 999 }).then(data => {
-            this.usersByCompany = data.list.map(li => {
-              li.canLoadAvatar = false
-              return li
-            })
-          })
-        }
-      },
-      immediate: true
-    }
-  },
-  methods: {
-    companyChild,
-    mapUser(li) {
-      return {
-        description: li.companyName + li.dutiesName,
-        id: li.id,
-        value: li.id,
-        realName: li.realName,
-        avatar: li.avatar
-      }
-    },
-    loadCollapseUserAvatarBoth(id) {
-      this.loadCollapseUserAvatarCompany(id)
-      this.loadCollapseUserAvatarRealName(id)
-    },
-    loadCollapseUserAvatarCompany(id) {
-      return this.loadCollapseUserAvatar(this.usersByCompany, id)
-    },
-    loadCollapseUserAvatarRealName(id) {
-      return this.loadCollapseUserAvatar(this.usersByRealName, id)
-    },
-    loadCollapseUserAvatar(users, id) {
-      for (var i = 0; i < users.length; i++) {
-        if (users[i].id === id) {
-          users[i].canLoadAvatar = true
-          break
-        }
-      }
-    },
-    handleUserSelectByRealnameChange(val) {
-      if (!val) return (this.usersByRealName = [])
-      getUserIdByRealName(val).then(data => {
-        this.usersByRealName = data.list.map(li => {
-          li.canLoadAvatar = false
-          return li
-        })
-      })
-    }
-  }
+  components: { ResetPassword, FindUserByRealName, FindUserByCompany }
 }
 </script>
 
