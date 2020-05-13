@@ -20,13 +20,19 @@
         </el-tag>
       </el-aside>
 
-      <el-main style="padding:0;margin:0;background: rgb(255, 255, 255);">
-        <div style="padding-left:10px">
+      <el-main class="miniForm">
+        <el-form label-width="3em" size="mini">
           <h2>{{ innerData.realName }}</h2>
-          <div style="color:#cccccc">{{ innerData.id }}</div>
-          <div style="color:#8f8f8f">{{ innerData.about }}</div>
-          <div>{{ innerData.companyName }}</div>
-        </div>
+          <el-form-item label="id">
+            <div style="color:#cccccc">{{ innerData.id }}</div>
+          </el-form-item>
+          <el-form-item label="关于">
+            <div style="color:#8f8f8f">{{ innerData.about }}</div>
+          </el-form-item>
+          <el-form-item label="单位">
+            <div>{{ innerData.companyName }}</div>
+          </el-form-item>
+        </el-form>
       </el-main>
     </el-container>
 
@@ -119,5 +125,16 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.miniForm {
+  padding: 0;
+  margin: 0;
+  background: rgb(255, 255, 255);
+  .el-form {
+    padding-left: 0.5em;
+    .el-form-item {
+      margin-bottom: 0px;
+    }
+  }
+}
 </style>
