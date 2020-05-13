@@ -248,6 +248,6 @@ hr.divider {
   right: 0;
   transition: all 0.5s;
   pointer-events: none;
-  z-index: 1000;
+  z-index: 1;
 }
 </style>

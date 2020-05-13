@@ -244,7 +244,7 @@ export default {
   },
   data() {
     return {
-      OnloadingUserStamp: false,
+      OnloadingUserStamp: '',
       onLoading: true,
 
       formApply: this.createNewRequest(),
@@ -556,27 +556,20 @@ export default {
       }
       this.formApply.isArchitect =
         new Date(this.caculaingDate.start) <= new Date()
-      if (this.OnloadingUserStamp) return
-      this.OnloadingUserStamp = true
-
+      this.OnloadingUserStamp = new Date()
+      var OnloadingUserStamp = this.OnloadingUserStamp
       setTimeout(() => {
-        getStampReturn(this.caculaingDate)
-          .then(data => {
-            const endDate = data.endDate
-            this.formApply.StampReturn = endDate
-            this.lawVocations = data.descriptions ? data.descriptions : []
-            this.$notify({
-              title: '预计归队时间',
-              message: data.endDate,
-              type: 'success'
-            })
+        if (OnloadingUserStamp !== this.OnloadingUserStamp) return
+        getStampReturn(this.caculaingDate).then(data => {
+          const endDate = data.endDate
+          this.formApply.StampReturn = endDate
+          this.lawVocations = data.descriptions ? data.descriptions : []
+          this.$notify({
+            title: '预计归队时间',
+            message: data.endDate,
+            type: 'success'
           })
-          .catch(err => {
-            return this.$message.error(err)
-          })
-          .finally(() => {
-            this.OnloadingUserStamp = false
-          })
+        })
       }, 1000)
     }
   }
