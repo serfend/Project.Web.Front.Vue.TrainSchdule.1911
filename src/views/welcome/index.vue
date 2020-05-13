@@ -28,7 +28,7 @@
         <el-popover placement="top" trigger="hover" @show="contactMeHasShow = true">
           <ContactMe
             v-if="contactMeHasShow"
-            content="https://u.wechat.com/MPTgt41EIncEhLhBIGPovMo"
+            content="https://u.wechat.com/MKXY9nIvV-9oPgMNhB4cd58"
           />
           <el-link slot="reference" type="primary">联系我们</el-link>
         </el-popover>
@@ -43,7 +43,7 @@
         <el-popover placement="top" trigger="hover" @show="helpMeHasShow = true">
           <ContactMe
             v-if="helpMeHasShow"
-            content="http://39.97.229.104/s/policy"
+            content="http://39.97.229.104/s/policy_vacation.md"
             description="扫码查看相关政策"
           />
           <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">相关政策</el-link>
@@ -97,7 +97,7 @@ export default {
           },
           {
             label: '统计情况',
-            description: '各单位休假情况统计操作仓',
+            description: '各单位休假情况统计驾驶舱',
             // icon: '/favicon.png',
             svg: 'dashboard',
             href: '/login?redirect=/dashboard'
