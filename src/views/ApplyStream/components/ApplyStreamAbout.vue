@@ -7,6 +7,7 @@
         :toolbars-flag="false"
         :editable="false"
         :subfield="false"
+        style="z-index:0"
         default-open="preview"
       />
     </div>
@@ -57,5 +58,5 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 </style>

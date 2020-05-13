@@ -1,8 +1,8 @@
 <template>
   <el-card class="content-card">
-    <el-tabs v-model="activeName">
+    <el-tabs v-model="activeName" class="tab-container">
       <el-tab-pane label="说明" name="ApplyStreamAbout">
-        <ApplyStreamAbout />
+        <ApplyStreamAbout v-show="activeName=='ApplyStreamAbout'" />
       </el-tab-pane>
       <el-tab-pane label="方案规则" name="ApplyStreamSolution">
         <ApplyStreamSolution :loading="loading" :data="data" @refresh="solutionRuleRefresh" />
@@ -100,8 +100,22 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss"  scoped>
 .content-card {
   padding-top: 20px;
+}
+.tab-container {
+  .el-tab-pane {
+    animation: fade 0.5s ease;
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+    }
+  }
 }
 </style>
