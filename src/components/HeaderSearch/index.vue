@@ -106,7 +106,7 @@ export default {
     generateRoutes(routes, basePath = '/', prefixTitle = []) {
       let res = []
 
-      for (const router of routes) {
+      for (var router of routes) {
         // skip hidden router
         if (router.hidden) { continue }
 

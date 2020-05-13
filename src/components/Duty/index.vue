@@ -12,7 +12,7 @@
         <el-form-item label="代码">{{ data.code }}</el-form-item>
         <el-form-item label="类别">
           <el-tag v-if="data.tags.length==0" type="info">无</el-tag>
-          <el-tag v-else v-for="i in data.tags" :key="i">{{ i }}</el-tag>
+          <el-tag v-for="i in data.tags" v-else :key="i">{{ i }}</el-tag>
         </el-form-item>
       </el-form>
     </el-card>
