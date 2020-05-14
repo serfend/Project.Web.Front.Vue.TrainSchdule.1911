@@ -6,11 +6,7 @@
       placeholder="输入姓名查找"
       @input="handleUserSelectByRealnameChange"
     />
-    <el-collapse
-      v-model="nowCollapseSelectUserId"
-      accordion
-      @change="loadCollapseUserAvatarRealName"
-    >
+    <el-collapse v-model="nowCollapseSelectUserId" accordion @change="selectUserChange">
       <el-collapse-item v-for="u in usersByRealName" :key="u.id" :name="u.id">
         <template slot="title">
           <el-tag>{{ u.dutiesName }}</el-tag>
@@ -31,8 +27,23 @@ export default {
   data: () => ({
     nowSelectRealName: '',
     usersByRealName: [],
+    userDict: {},
     nowCollapseSelectUserId: ''
   }),
+  watch: {
+    usersByRealName: {
+      handler(val) {
+        if (val) {
+          this.userDict = {}
+          var vLen = val.length
+          for (var i = 0; i < vLen; i++) {
+            this.userDict[val[i].id] = val[i]
+          }
+        }
+      }
+    },
+    immediate: true
+  },
   methods: {
     mapUser(li) {
       return {
@@ -43,16 +54,15 @@ export default {
         avatar: li.avatar
       }
     },
-    loadCollapseUserAvatarRealName(id) {
-      return this.loadCollapseUserAvatar(this.usersByRealName, id)
-    },
-    loadCollapseUserAvatar(users, id) {
-      for (var i = 0; i < users.length; i++) {
-        if (users[i].id === id) {
-          users[i].canLoadAvatar = true
-          break
-        }
+    selectUserChange(id) {
+      if (id) {
+        this.loadCollapseUserAvatarRealName(id)
       }
+    },
+    loadCollapseUserAvatarRealName(id) {
+      var u = this.userDict[id]
+      this.$emit('change', u)
+      u.canLoadAvatar = true
     },
     handleUserSelectByRealnameChange(val) {
       if (!val) return (this.usersByRealName = [])
