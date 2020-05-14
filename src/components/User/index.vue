@@ -1,6 +1,6 @@
 <template>
-  <el-card :style="{width:width}">
-    <el-container v-if="innerData">
+  <el-card :style="{width:innerData&&innerData.id?width:'100%'}">
+    <el-container v-if="innerData&&innerData.id">
       <el-aside width="100px" style="padding:0;margin:0;background: rgb(255, 255, 255);">
         <el-popover :placement="direction" trigger="hover" @show="loadContactMe">
           <ContactMe
@@ -36,7 +36,7 @@
       </el-main>
     </el-container>
 
-    <div v-else style="color:#888888;font-size:0.5em">加载中...</div>
+    <div v-else style="color:#888888;font-size:1em">加载中...</div>
   </el-card>
 </template>
 
@@ -114,6 +114,7 @@ export default {
     },
     refreshAvatar() {
       if (!this.canLoadAvatar) return
+      if (!this.userid) return
       getUserAvatar(this.userid).then(data => {
         this.avatar = data.url
       })

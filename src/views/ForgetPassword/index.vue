@@ -31,8 +31,8 @@
 
 <script>
 import ResetPassword from '@/components/ResetPassword'
-import FindUserByRealName from './FindUserByRealName'
-import FindUserByCompany from './FindUserByCompany'
+import FindUserByRealName from '@/components/User/FindUserByRealName'
+import FindUserByCompany from '@/components/User/FindUserByCompany'
 export default {
   name: 'ForgetPassword',
   components: { ResetPassword, FindUserByRealName, FindUserByCompany }
