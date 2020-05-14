@@ -1,7 +1,11 @@
 <template>
-  <el-collapse>
+  <el-collapse
+    style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"
+    @change="collaspseOpen"
+  >
     <el-collapse-item title="授权人">
       <template slot="title">
+        <AuthCodeAbout />
         <div v-if="$store.state.user.name">
           <el-tooltip>
             <template slot="content">默认为当前登录</template>
@@ -9,63 +13,21 @@
           </el-tooltip>
         </div>
         <span v-else style="color:#ff8f8f">未登录,请使用授权码</span>
-
-        <el-tooltip placement="top" effect="light">
-          <div slot="content">
-            <div>授权码是用于敏感操作认证的密钥</div>
-            <div>
-              <el-popover placement="top" trigger="hover" @show="downloadAutherHasShow = true">
-                <ContactMe
-                  v-if="downloadAutherHasShow"
-                  content="双重验证码"
-                  description="搜索微信小程序【双重验证码】"
-                />
-                <el-link slot="reference" type="primary">获取身份验证器</el-link>
-              </el-popover>
-            </div>
-            <div>
-              <el-popover placement="top" trigger="hover" @show="authKeyUrlHasShow = true">
-                <ContactMe
-                  v-if="authKeyUrlHasShow"
-                  :content="authKeyUrl"
-                  description="请使用身份验证器扫描此码（仅首次需要）"
-                />
-                <el-link slot="reference" type="primary">获取当前账号授权码</el-link>
-              </el-popover>
-            </div>
-            <div v-if="$store.state.user.name">
-              <el-tag type="success">已登录无需使用授权码哦~</el-tag>
-            </div>
-            <div v-else>
-              <el-alert title="当前未登录,登录后显示授权码" type="error" center />
-            </div>
-          </div>
-          <el-tag type="info" style="margin:0 0 0 20px">
-            <span>什么是授权码</span>
-            <i class="el-icon-info blue--text" />
-          </el-tag>
-        </el-tooltip>
       </template>
       <el-form>
         <el-form-item label="授权人">
-          <el-popover @show="forgetHasShow=true">
-            <FindUserByRealName v-if="forgetHasShow" />
-            <el-input
-              slot="reference"
-              v-model="innerForm.authByUserId"
-              placeholder="请输入授权人的账户（不是姓名）"
-            />
-          </el-popover>
+          <UserSelector
+            :code.sync="innerForm.authByUserId"
+            :default-info="defaultUser"
+            @updated="userSelectChanged"
+          />
         </el-form-item>
         <el-form-item label="授权码">
-          <el-input v-model="innerForm.code" placeholder="请输入授权码" @change="checkCode">
-            <template slot="suffix">
-              <el-tooltip :content="invalid.code.des">
-                <i v-if="invalid.code.status" class="el-icon-error" style="color:#F56C6C" />
-                <i v-else class="el-icon-success" style="color:#67C23A" />
-              </el-tooltip>
-            </template>
-          </el-input>
+          <CodeInput
+            :listen-user-input.sync="collaspseIsOpen"
+            :check-code-method="checkCode"
+            :code.sync="innerForm.code"
+          />
         </el-form-item>
       </el-form>
     </el-collapse-item>
@@ -73,13 +35,18 @@
 </template>
 
 <script>
-import FindUserByRealName from '@/views/ForgetPassword/FindUserByRealName'
-import ContactMe from '@/components/ContactMe'
-import { getAuthKey, checkAuthCode } from '@/api/account'
+import AuthCodeAbout from './AuthCodeAbout'
+import CodeInput from './CodeInput'
+import UserSelector from '@/components/User/UserSelector'
+import { checkAuthCode } from '@/api/account'
 import { getUserIdByCid } from '@/api/userinfo'
 export default {
   name: 'AuthCode',
-  components: { ContactMe, FindUserByRealName },
+  components: {
+    CodeInput,
+    AuthCodeAbout,
+    UserSelector
+  },
   props: {
     form: {
       type: Object,
@@ -96,20 +63,12 @@ export default {
   },
   data() {
     return {
-      forgetHasShow: false,
-      downloadAutherHasShow: false,
-      authKeyUrlHasShow: false,
-      authKeyUrl: null,
+      collaspseIsOpen: false,
       innerForm: {
         authByUserId: null,
         code: null
       },
-      invalid: {
-        code: {
-          status: false,
-          des: ''
-        }
-      }
+      defaultUser: null
     }
   },
   watch: {
@@ -135,41 +94,37 @@ export default {
     }
   },
   mounted() {
-    this.innerForm.authByUserId = this.$store.state.user.userid
-    this.getAuthKeyImg()
+    setInterval(() => {
+      this.innerForm.authByUserId = this.$store.state.user.userid
+      var id = this.$store.state.user.userid
+      this.defaultUser = `${this.$store.state.user.name}(${id})`
+    }, 1000)
   },
   methods: {
-    getAuthKeyImg() {
-      getAuthKey(true).then(r => {
-        if (r.url) this.authKeyUrl = r.url
-        if (
-          !this.$store.state.user.data.isInitPassword &&
-          this.$store.state.user.userid !== ''
-        ) {
-          this.$message.error('注册以来密码从未被修改')
-          setTimeout(() => {
-            this.$message.error('为了您账号安全，建议尽快更换')
-          }, 1000)
-        }
-      })
+    collaspseOpen(e) {
+      this.collaspseIsOpen = e.length > 0
+    },
+    userSelectChanged(user) {
+      console.log(user)
     },
     checkCode() {
       var fn = this.authCheckMethod
-      fn(this.innerForm.authByUserId, this.innerForm.code, true)
-        .then(() => {
-          this.$emit('update:status', true)
-          this.invalid.code.status = false
-          this.invalid.code.des = '验证成功'
-        })
-        .catch(err => {
-          this.$emit('update:status', false)
-          this.invalid.code.status = true
-          this.invalid.code.des = err.message
-        })
+      return new Promise((res, rej) => {
+        if (!this.innerForm.authByUserId) {
+          this.$message.error('请输入id')
+          return rej('id未输入')
+        }
+        return fn(this.innerForm.authByUserId, this.innerForm.code)
+          .then(() => {
+            this.$emit('update:status', true)
+            return res()
+          })
+          .catch(err => {
+            this.$emit('update:status', false)
+            return rej(err)
+          })
+      })
     }
   }
 }
 </script>
-
-<style>
-</style>
