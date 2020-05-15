@@ -28,7 +28,7 @@ export function download(fileid) {
       fileid
     },
     respondErrorIngore: true,
-    responseType: 'blob'
+    responseType: 'arraybuffer'
   })
 }
 

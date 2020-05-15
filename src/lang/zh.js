@@ -5,7 +5,11 @@ var dict = {
       ch: '中文'
     },
     system: {
-      title: '高级'
+      title: '高级',
+      clipboard: {
+        success: '复制成功',
+        fail: '复制失败'
+      }
     },
     app: {
       title: '应用',

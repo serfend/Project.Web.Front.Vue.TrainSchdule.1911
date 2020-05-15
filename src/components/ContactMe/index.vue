@@ -2,7 +2,15 @@
   <div>
     <div v-if="innerUrl">
       <el-row>
-        <QrCodeGenerate :url="innerUrl" />
+        <QrCodeGenerate
+          ref="qrCode"
+          :url="innerUrl"
+          :pixel="pixel"
+          :icon="icon"
+          :icon-size="iconSize"
+          :icon-border-size="iconBorderSize"
+          :margin="margin"
+        />
       </el-row>
       <el-row style="font-size:12px;text-align:center;margin-top:5px">{{ description }}</el-row>
     </div>
@@ -17,18 +25,15 @@ export default {
   name: 'ContactMe',
   components: { QrCodeGenerate },
   props: {
-    url: {
-      type: String,
-      default: null
-    },
-    content: {
-      type: String,
-      default: null
-    },
-    description: {
-      type: String,
-      default: '使用微信扫一扫联系我们吧~'
-    }
+    url: { type: String, default: null },
+    content: { type: String, default: null },
+    description: { type: String, default: '使用微信扫一扫联系我们吧~' },
+    size: { type: Number, default: 200 },
+    pixel: { type: Number, default: 5 },
+    icon: { type: String, default: null },
+    iconSize: { type: Number, default: 15 },
+    iconBorderSize: { type: Number, default: 6 },
+    margin: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -41,6 +46,7 @@ export default {
       handler(val) {
         if (val) {
           this.innerUrl = val
+          this.refresh()
         }
       },
       immediate: true
@@ -48,7 +54,7 @@ export default {
     url: {
       handler(val) {
         if (val) {
-          this.refresh(val)
+          this.load(val)
         }
       },
       immediate: true
@@ -58,11 +64,16 @@ export default {
     if (!this.$route) return
     var temp = this.$route.query.url
     if (temp && !this.innerUrl) {
-      this.refresh(temp)
+      this.load(temp)
     }
   },
   methods: {
-    refresh(url) {
+    refresh() {
+      this.$nextTick(() => {
+        this.$refs.qrCode.refreshDelay(300)
+      })
+    },
+    load(url) {
       var self = this
       download(url).then(data => {
         var reader = new FileReader()

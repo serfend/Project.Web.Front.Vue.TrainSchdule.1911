@@ -5,7 +5,11 @@ var dict = {
       ch: '中文'
     },
     system: {
-      title: 'system'
+      title: 'system',
+      clipboard: {
+        success: '复制成功',
+        fail: '复制失败'
+      }
     },
     app: {
       title: 'application',
@@ -15,7 +19,9 @@ var dict = {
       file: {
         title: 'file'
       },
-      dwz: { title: 'shortUrl' },
+      dwz: {
+        title: 'shortUrl'
+      },
       manager: {
         title: 'manager'
       },
@@ -98,5 +104,7 @@ var dict = {
 }
 dict.tagsView = dict.settings
 dict.route = dict
-Object.keys(dict.navbar).forEach((k) => { dict.route[k] = dict.navbar[k] })
+Object.keys(dict.navbar).forEach((k) => {
+  dict.route[k] = dict.navbar[k]
+})
 export default dict

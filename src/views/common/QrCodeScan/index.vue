@@ -6,9 +6,42 @@
           <el-form-item label="内容">
             <el-input v-model="file.data" type="textarea" autosize />
           </el-form-item>
-          <el-form-item label="二维码">
-            <ContactMe :content="file.data" description />
+          <el-form-item label="边框">
+            <el-switch v-model="setting.margin" />
           </el-form-item>
+          <el-form-item>
+            <el-collapse>
+              <el-collapse-item>
+                <template slot="title">
+                  <i class="el-icon-picture-outline" />
+                  <span>图标设置</span>
+                </template>
+                <el-form-item label="文件">
+                  <el-input v-model="setting.icon" placeholder="需要使用系统内部文件名" />
+                </el-form-item>
+                <el-form-item label="占比">
+                  <el-slider v-model="setting.iconSize" :step="1" />
+                </el-form-item>
+                <el-form-item label="外宽">
+                  <el-slider v-model="setting.iconBorderSize" :step="1" />
+                </el-form-item>
+              </el-collapse-item>
+            </el-collapse>
+          </el-form-item>
+
+          <el-form label="二维码">
+            <ContactMe
+              ref="qrCode"
+              :content="file.data"
+              :pixel="setting.pixel"
+              :size="setting.size"
+              :icon="setting.icon"
+              :icon-size="setting.iconSize"
+              :icon-border-size="setting.iconBorderSize"
+              :margin="setting.margin"
+              description
+            />
+          </el-form>
         </el-aside>
         <el-main>
           <el-form-item>
@@ -37,6 +70,7 @@
 
 <script>
 import ContactMe from '@/components/ContactMe'
+import { fileToBase64 } from '@/utils/file'
 import { qrCodeScan } from '@/api/qrCode'
 export default {
   name: 'QrCodeScan',
@@ -48,23 +82,41 @@ export default {
         img: '',
         imgraw: '',
         data: ''
+      },
+      setting: {
+        pixel: 5,
+        size: 200,
+        icon: null,
+        iconSize: 15,
+        iconBorderSize: 6,
+        margin: false
       }
+    }
+  },
+  watch: {
+    setting: {
+      handler(val) {
+        if (val) {
+          this.$nextTick(() => {
+            this.$refs.qrCode.refresh()
+          })
+        }
+      },
+      deep: true
     }
   },
   methods: {
     beforeAvatarUpload(file) {
       const cfile = this.file
       var self = this
-      var reader = new FileReader()
-      reader.onload = function(evt) {
-        cfile.imgraw = evt.target.result
+      fileToBase64(file).then(b64 => {
+        cfile.imgraw = b64
         cfile.img = cfile.imgraw.substring('data:image/jpeg;base64,'.length)
         qrCodeScan(cfile.img).then(data => {
           cfile.data = data.data
           self.$message.success(`加载${file.name}成功`)
         })
-      }
-      reader.readAsDataURL(file)
+      })
       return false
     },
     onUploadSuccess(data, status, arr) {

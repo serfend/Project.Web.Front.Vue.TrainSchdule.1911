@@ -36,14 +36,27 @@
           <el-form-item label="大小">{{ fileInfo.length }}</el-form-item>
           <el-form-item label="创建时间">{{ fileInfo.create }}</el-form-item>
           <el-form-item label="验证码">{{ fileInfo.clientKey }}</el-form-item>
-          <el-button
-            :disabled="!fileInfo.id"
-            :loading="fileDownloading"
-            type="success"
-            style="width:100%"
-            icon="el-icon-download"
-            @click="download(fileInfo.id,`${fileInfo.path}_${fileInfo.name}`)"
-          >下载文件</el-button>
+
+          <div>
+            <el-button
+              :disabled="!fileInfo.id"
+              :loading="fileDownloading"
+              type="info"
+              style="width:100%;margin-bottom:1em"
+              icon="el-icon-document-copy"
+              @click="clipBoard(fileInfo.id,`${fileInfo.path}_${fileInfo.name}`,$event)"
+            >复制链接</el-button>
+          </div>
+          <div>
+            <el-button
+              :disabled="!fileInfo.id"
+              :loading="fileDownloading"
+              type="success"
+              style="width:100%"
+              icon="el-icon-download"
+              @click="download(fileInfo.id,`${fileInfo.path}_${fileInfo.name}`)"
+            >下载文件</el-button>
+          </div>
         </el-card>
       </el-col>
       <el-col class="row">
@@ -79,6 +92,7 @@
 
 <script>
 // download,
+import clipboard from '@/utils/clipboard'
 import AuthCode from '@/components/AuthCode'
 import { upload, requestFile, status, getClientKey } from '@/api/file'
 export default {
@@ -106,8 +120,7 @@ export default {
       },
       uploadurl: '',
       statusList: [],
-      lastQueryDate: new Date(),
-      lastLfpn: ''
+      lastQueryDate: new Date()
     }
   },
   computed: {
@@ -118,34 +131,13 @@ export default {
   watch: {
     file: {
       handler(val) {
-        if (val && val.filePath && val.fileName) {
-          var lastQueryDate = new Date()
-          this.lastQueryDate = lastQueryDate
-          setTimeout(() => {
-            if (this.lastQueryDate === lastQueryDate) {
-              var lastLfpn = `${this.file.filePath}/${this.file.fileName}`
-              if (lastLfpn === this.lastLfpn) return
-              requestFile(val.filePath, val.fileName).then(data => {
-                var id = data.file.id
-                data.file.clientKey = '加载中...'
-                this.$forceUpdate()
-                getClientKey(id, this.file.auth)
-                  .then(ck => {
-                    this.fileInfo.clientKey = ck
-                    this.file.clientKey = ck
-                    this.$forceUpdate()
-                  })
-                  .catch(e => {
-                    this.fileInfo.clientKey = `无法加载(${e.message})`
-                  })
-                  .finally(() => {
-                    this.lastLfpn = ''
-                  })
-                this.fileInfo = data.file
-              })
-            }
-          }, 1000)
-        }
+        var lastQueryDate = new Date()
+        this.lastQueryDate = lastQueryDate
+        setTimeout(() => {
+          if (this.lastQueryDate === lastQueryDate) {
+            this.updateFile()
+          }
+        }, 1000)
       },
       deep: true,
       immediate: true
@@ -156,26 +148,40 @@ export default {
     this.refreshStatus()
   },
   methods: {
+    clipBoard(fileid, fileName, event) {
+      var requestUrl =
+        process.env.VUE_APP_BASE_API + '/file/download?fileid=' + fileid
+      clipboard(requestUrl, event)
+    },
     download(fileid, fileName) {
       var requestUrl =
         process.env.VUE_APP_BASE_API + '/file/download?fileid=' + fileid
       var a = document.createElement('a')
       a.href = requestUrl
       a.click()
-      // this.fileDownloading = true
-      // download(fileid).then(data => {
-      //   const blob = new Blob([data])
-      //   var link = document.createElement('a')
-      //   link.href = window.URL.createObjectURL(blob)
-      //   link.download = fileName
-      //   link.click()
-      //   window.URL.revokeObjectURL(link.href)
-      //   this.fileDownloading = false
-      // })
     },
     upload,
     requestFile,
     status,
+    updateFile() {
+      if (!this.file || !this.file.filePath || !this.file.fileName) return
+      requestFile(this.file.filePath, this.file.fileName).then(data => {
+        var id = data.file.id
+        data.file.clientKey = '加载中...'
+        this.$nextTick(() => {
+          getClientKey(id, this.file.auth)
+            .then(ck => {
+              this.fileInfo.clientKey = ck
+              this.file.clientKey = ck
+              this.$forceUpdate()
+            })
+            .catch(e => {
+              this.fileInfo.clientKey = `无法加载(${e.message})`
+            })
+          this.fileInfo = data.file
+        })
+      })
+    },
     onUploadSuccess(data, status, arr) {
       if (data.status !== 0) {
         this.$message.error(data.message)

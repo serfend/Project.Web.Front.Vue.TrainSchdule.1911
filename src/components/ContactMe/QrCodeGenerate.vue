@@ -10,28 +10,26 @@
 
 <script>
 import { qrCodeEncode } from '@/api/qrCode'
-
+import { fileToBase64 } from '@/utils/file'
 export default {
   name: 'QrCodeGenerate',
   props: {
-    url: {
-      type: String,
-      default: null
-    },
-    size: {
-      type: Number,
-      default: 200
-    }
+    url: { type: String, default: null },
+    size: { type: Number, default: 200 },
+    pixel: { type: Number, default: 5 },
+    icon: { type: String, default: null },
+    iconSize: { type: Number, default: 15 },
+    iconBorderSize: { type: Number, default: 6 },
+    margin: { type: Boolean, default: false }
   },
   data() {
-    return { qrCodeUrl: null, onLoading: false }
+    return { qrCodeUrl: null, onLoading: false, lastUpdate: new Date() }
   },
   watch: {
     url: {
       handler(val) {
         if (val) {
           this.innerUrl = val
-          this.refresh()
         }
       },
       immediate: true
@@ -46,12 +44,33 @@ export default {
     }
   },
   methods: {
+    refreshDelay(delay) {
+      var lastUpdate = new Date()
+      if (!delay) delay = 1000
+      this.lastUpdate = lastUpdate
+      setTimeout(() => {
+        this.refresh()
+      }, delay)
+    },
     refresh() {
       if (this.onLoading) return
       this.onLoading = true
-      qrCodeEncode(this.innerUrl)
+      var self = this
+      qrCodeEncode(
+        this.innerUrl,
+        {
+          fileName: this.icon,
+          iconSize: this.iconSize,
+          borderSize: this.iconBorderSize
+        },
+        this.margin,
+        this.pixel
+      )
         .then(data => {
-          this.qrCodeUrl = `data:image/jpg;base64,${data.img}`
+          var t = fileToBase64(data)
+          t.then(url => {
+            self.qrCodeUrl = url
+          })
         })
         .finally(() => {
           this.onLoading = false
