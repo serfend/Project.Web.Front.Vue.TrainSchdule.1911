@@ -44,10 +44,15 @@ export default {
           download(data.file.id).then(data => {
             var reader = new FileReader()
             reader.onload = function(event) {
-              var content = reader.result // 内容就在这里
+              var content = reader.result
               self.value = content
             }
-            reader.readAsText(data)
+            // it seem sometimes occur that data is just simply `string`
+            if (typeof data === 'string') {
+              self.value = data
+            } else {
+              reader.readAsText(data)
+            }
           })
         })
         .catch(e => {

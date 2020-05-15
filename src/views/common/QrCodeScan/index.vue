@@ -6,6 +6,9 @@
           <el-form-item label="内容">
             <el-input v-model="file.data" type="textarea" autosize />
           </el-form-item>
+          <el-form-item label="分辨率">
+            <el-slider v-model="setting.pixel" :max="1280" :step="1" />
+          </el-form-item>
           <el-form-item label="边框">
             <el-switch v-model="setting.margin" />
           </el-form-item>

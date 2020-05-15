@@ -23,13 +23,12 @@ export function upload(filepath, filename, filedata, lastuploadId) {
  * @returns
  */
 export function download(fileid) {
-  return request.get('file/download', {
+  var opt = {
     params: {
       fileid
-    },
-    respondErrorIngore: true,
-    responseType: 'arraybuffer'
-  })
+    }
+  }
+  return request.get('file/download', opt)
 }
 
 /**
@@ -72,4 +71,3 @@ export function getClientKey(id, auth) {
     auth
   })
 }
-

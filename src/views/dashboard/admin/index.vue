@@ -1,7 +1,5 @@
 <template>
   <div class="dashboard-editor-container">
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
-
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <vacation-complete-chart :chart-data="lineChartData" />
     </el-row>
@@ -35,7 +33,6 @@
 </template>
 
 <script>
-import PanelGroup from './components/PanelGroup'
 import VacationCompleteChart from './components/VacationCompleteChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
@@ -47,7 +44,6 @@ import { companyChild } from '@/api/company'
 export default {
   name: 'DashboardAdmin',
   components: {
-    PanelGroup,
     VacationCompleteChart,
     PieChart,
     BarChart,
