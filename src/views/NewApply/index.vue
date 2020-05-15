@@ -30,7 +30,12 @@
           style="margin:20px 5px"
           @submited="requestInfoSubmit"
         />
-        <VacationPreview v-show="nowStep>=2" ref="VacationPreview" style="margin:20px 5px" />
+        <VacationPreview
+          v-show="nowStep>=2"
+          ref="VacationPreview"
+          :userid="userid"
+          style="margin:20px 5px"
+        />
         <el-link v-show="submitId" type="success" :href="applyDetailUrl">查看详情</el-link>
       </el-main>
     </el-container>
