@@ -8,53 +8,63 @@
     />
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-
-    <div class="right-menu">
+    <div v-loading="loading" class="right-menu">
       <template v-if="device !== 'mobile'">
         <search id="header-search" class="right-menu-item" />
-
         <error-log class="errLog-container right-menu-item hover-effect" />
-
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
       </template>
-
-      <el-tooltip v-if="!hasLogin" content="未登录状态，点击登录可获取更多权限" effect="dark" placement="left">
-        <div class="orange right-menu-item hover-effect" @click="login">
-          <i class="el-icon-user" />未登录
+      <el-popover
+        v-model="userCardShow"
+        placement="bottom-end"
+        trigger="hover"
+        @show="userCardShowing(true)"
+        @hide="userCardShowing(false)"
+      >
+        <Login v-if="!hasLogin&&loginFormHasShow" @login="hdlLogin" />
+        <div v-else style="width:250px">
+          <UserSummary :showout="userCardIsShowing" :data="currentUser" />
+          <div class="menu-divider" />
+          <el-menu style="border-right:none">
+            <el-submenu index="1">
+              <template slot="title">
+                <SvgIcon icon-class="principal" text="账号" />
+              </template>
+              <el-menu-item index="1" @click="isToShowPasswordModefier=true">
+                <SvgIcon icon-class="scan_namecard" text="修改密码" />
+              </el-menu-item>
+              <el-menu-item index="2" @click="handleReg(true)">
+                <SvgIcon icon-class="newapplication_" text="授权注册" />
+              </el-menu-item>
+            </el-submenu>
+            <el-menu-item @click="logout">
+              <SvgIcon icon-class="dengchu" text="退出" />
+            </el-menu-item>
+          </el-menu>
         </div>
-        <!-- content to trigger tooltip here -->
-      </el-tooltip>
-      <el-dropdown v-else class="avatar-container right-menu-item hover-effect" trigger="click">
-        <div class="avatar-wrapper">
-          <el-tag>{{ companyName }}</el-tag>
-          <span class="caption">{{ realName }}</span>
-          <el-image class="user-avatar" :src="avatar" />
-          <i class="el-icon-caret-bottom" />
+        <div slot="reference" class="avatar-container right-menu-item">
+          <el-image
+            class="user-avatar"
+            :style="{transform:userCardIsShowing?'scale(0)':''}"
+            :src="avatar"
+          />
+          <div class="right-menu-item" />
         </div>
-        <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
-            <el-dropdown-item>{{ $t("navbar.profile") }}</el-dropdown-item>
-          </router-link>
-          <router-link to="dashboard">
-            <el-dropdown-item>{{ $t("navbar.dashboard") }}</el-dropdown-item>
-          </router-link>
-          <router-link to="/">
-            <el-dropdown-item>{{ $t("navbar.welcome") }}</el-dropdown-item>
-          </router-link>
-          <el-dropdown-item divided>
-            <span style="display:block;" @click="isToShowPasswordModefier = true">修改密码</span>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <span style="display:block;" @click="authRegisterUser(true)">{{ $t("register.title") }}</span>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <span style="display:block;" @click="authRegisterUser(false)">授权注册</span>
-          </el-dropdown-item>
-          <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">{{ $t("navbar.logOut") }}</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      </el-popover>
+      <div v-if="!hasLogin" class="right-menu-item">
+        <el-link>登录</el-link>
+        <el-link @click="handleReg">注册</el-link>
+      </div>
+      <div v-else class="right-menu-item">
+        <el-popover trigger="hover">
+          <span>建设中</span>
+          <el-link slot="reference">消息</el-link>
+        </el-popover>
+        <el-popover trigger="hover">
+          <span>建设中</span>
+          <el-link slot="reference">收藏</el-link>
+        </el-popover>
+      </div>
     </div>
     <el-dialog title="修改密码" :modal="false" :visible.sync="isToShowPasswordModefier" width="500px">
       <ResetPassword ref="resetPassword" />
@@ -70,6 +80,9 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import Search from '@/components/HeaderSearch'
 import ResetPassword from '@/components/ResetPassword'
+import Login from '@/views/login'
+import SvgIcon from '@/components/SvgIcon'
+import UserSummary from '@/layout/components/UserSummary/index'
 export default {
   components: {
     Breadcrumb,
@@ -77,11 +90,18 @@ export default {
     ErrorLog,
     Screenfull,
     Search,
-    ResetPassword
+    SvgIcon,
+    ResetPassword,
+    UserSummary,
+    Login
   },
   data() {
     return {
-      isToShowPasswordModefier: false
+      userCardShow: false,
+      userCardIsShowing: false,
+      loginFormHasShow: false,
+      isToShowPasswordModefier: false,
+      loading: false
     }
   },
   computed: {
@@ -97,18 +117,46 @@ export default {
         this.$store.state.user.data.dutiesName +
         this.$store.state.user.data.realName
       )
+    },
+    currentUser() {
+      var userWithAvatar = Object.assign(this.$store.state.user.data, {
+        avatar: this.$store.state.user.avatar
+      })
+      var userWithVacation = Object.assign(userWithAvatar, {
+        vacation: this.$store.state.user.vacation
+      })
+      return userWithVacation
+    }
+  },
+  mounted() {
+    if (!this.hasLogin && !this.$store.state.user.isUserLogout) {
+      this.userCardShow = true
     }
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    userCardShowing(show) {
+      this.userCardIsShowing = show
+      this.loginFormHasShow = true
     },
-    login() {
-      return this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    hdlLogin(success) {
+      if (success) {
+        this.userCardShow = false
+      }
+    },
+    handleReg(isToAuthRegister) {
+      this.$store.state.user.isToRegister = !isToAuthRegister
+      this.$router.push({ path: '/register' })
+    },
+    async logout() {
+      this.loading = true
+      await this.$store.dispatch('user/logout')
+      this.loading = false
+      this.$nextTick(() => {
+        this.userCardShow = false
+      })
     },
     authRegisterUser(isToRegister) {
       this.$store.state.user.isToRegister = isToRegister
@@ -119,6 +167,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.menu-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #ccc8;
+  margin-top: 2px;
+}
 .navbar {
   height: 50px;
   overflow: hidden;
@@ -131,7 +185,7 @@ export default {
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s;
     -webkit-tap-highlight-color: transparent;
 
     &:hover {
@@ -150,6 +204,7 @@ export default {
 
   .right-menu {
     float: right;
+    margin-right: 20px;
     height: 100%;
     line-height: 50px;
 
@@ -159,7 +214,6 @@ export default {
 
     .right-menu-item {
       display: inline-block;
-      padding: 0 8px;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
@@ -167,7 +221,7 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background 0.3s;
+        transition: all 0.3s;
 
         &:hover {
           background: rgba(0, 0, 0, 0.025);
@@ -176,26 +230,12 @@ export default {
     }
 
     .avatar-container {
-      margin-right: 12px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-
-        /* .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        } */
+      .user-avatar {
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
       }
     }
   }

@@ -1,13 +1,17 @@
 import store from '@/store'
 
-const { body } = document
+const {
+  body
+} = document
 const WIDTH = 992 // refer to Bootstrap's responsive design
 
 export default {
   watch: {
     $route(route) {
       if (this.device === 'mobile' && this.sidebar.opened) {
-        store.dispatch('app/closeSideBar', { withoutAnimation: false })
+        store.dispatch('app/closeSideBar', {
+          withoutAnimation: false
+        })
       }
     }
   },
@@ -20,8 +24,11 @@ export default {
   mounted() {
     const isMobile = this.$_isMobile()
     if (isMobile) {
+      console.log('is mobile')
       store.dispatch('app/toggleDevice', 'mobile')
-      store.dispatch('app/closeSideBar', { withoutAnimation: true })
+      store.dispatch('app/closeSideBar', {
+        withoutAnimation: true
+      })
     }
   },
   methods: {
@@ -37,7 +44,9 @@ export default {
         store.dispatch('app/toggleDevice', isMobile ? 'mobile' : 'desktop')
 
         if (isMobile) {
-          store.dispatch('app/closeSideBar', { withoutAnimation: true })
+          store.dispatch('app/closeSideBar', {
+            withoutAnimation: true
+          })
         }
       }
     }
