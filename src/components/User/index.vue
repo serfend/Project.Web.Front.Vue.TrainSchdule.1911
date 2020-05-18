@@ -26,7 +26,7 @@
           <el-form-item label="id">
             <div style="color:#cccccc">{{ innerData.id }}</div>
           </el-form-item>
-          <el-form-item label="关于">
+          <el-form-item v-if="innerData.about" label="关于">
             <div style="color:#8f8f8f">{{ innerData.about }}</div>
           </el-form-item>
           <el-form-item label="单位">
