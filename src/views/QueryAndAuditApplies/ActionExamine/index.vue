@@ -13,25 +13,18 @@
       :show.sync="showAudit"
       @updated="requireUpdate"
     />
-    <el-button
-      v-if="CheckIfShowRecall(row)"
-      size="mini"
-      type="warning"
-      @click="recallApply(false)"
-    >召回</el-button>
-    <div v-else-if="row.status>30&&row.status<100">
-      <el-button v-show="!showAudit" size="mini" type="success" @click="showAudit=true">审批</el-button>
-    </div>
-    <el-button
+    <el-link
+      v-if="row.status>30&&row.status<75&&!showAudit"
+      type="success"
+      @click="showAudit=true"
+    >审批</el-link>
+    <el-link v-if="CheckIfShowRecall(row)" type="warning" @click="recallApply(false)">召回</el-link>
+    <el-link
       v-else-if="row.recallId!==null"
       type="primary"
       size="mini"
       @click="recallApply(true)"
-    >召回信息</el-button>
-    <el-tag v-else-if="row.status===100" type="success">正常休假</el-tag>
-    <el-tag v-else-if="row.status>30" type="warning">审批中</el-tag>
-    <el-tag v-else-if="row.status===30" type="danger">已失效</el-tag>
-    <el-tag v-else type="info">未提交申请</el-tag>
+    >召回信息</el-link>
   </div>
 </template>
 
