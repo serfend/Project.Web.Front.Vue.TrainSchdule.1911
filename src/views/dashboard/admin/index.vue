@@ -92,13 +92,6 @@ export default {
       deep: true
     }
   },
-  activated() {
-    this.lastScale = document.body.style.zoom
-    document.body.style.zoom = 1
-  },
-  deactivated() {
-    document.body.style.zoom = this.lastScale
-  },
   mounted() {
     companyChild().then(data => {
       if (data.list.length === 0) data.list = ['root']

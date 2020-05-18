@@ -63,7 +63,7 @@
             <svg-icon
               :style="{transition:'all 0.5s',opacity:hideDetail?1:0,transform:hideDetail?'rotate(-360deg)':''}"
               icon-class="certification_f"
-              style-normal="width:5em;height:5em;fill:#67C23Aaa"
+              style-normal="width:5em;height:5em;fill:#67C23A;color:#67C23A"
             />
           </div>
         </el-aside>

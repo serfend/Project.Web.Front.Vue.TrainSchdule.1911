@@ -4,8 +4,8 @@
       <el-main>
         <el-row v-if="showTitle" type="flex">
           <div>
-            <span style="color:#ffffff;font-size:2em">休假登记和审核系统</span>
-            <span style="color:#aaaaaa;font-size:0.8em">v1.0.0</span>
+            <span style="color:#ffffff;font-size:2em">{{ $store.state.settings.title }}</span>
+            <span style="color:#aaaaaa;font-size:0.8em">{{ $store.state.settings.version }}</span>
           </div>
         </el-row>
         <el-divider v-if="showTitle" />
@@ -79,28 +79,28 @@ export default {
             label: '我要休假',
             description: '个人提交休假申请窗口',
             svg: '测试申请',
-            href: '/login?redirect=/application/newApply'
+            href: '/application/newApply'
           },
           {
             label: '我的假期',
             description: '个人休假情况概览窗口',
             // icon: '/favicon.png',
             svg: 'people_fill',
-            href: '/login?redirect=/application/myApply'
+            href: '/application/myApply'
           },
           {
             label: '休假审批',
             description: '查询批假情况和审批单位休假窗口',
             // icon: '/favicon.png',
             svg: '提案审批',
-            href: '/login?redirect=/application/queryAndAuditApplies'
+            href: '/application/queryAndAuditApplies'
           },
           {
             label: '统计情况',
             description: '各单位休假情况统计驾驶舱',
             // icon: '/favicon.png',
             svg: 'dashboard',
-            href: '/login?redirect=/dashboard'
+            href: '/dashboard'
           }
         ]
       }
