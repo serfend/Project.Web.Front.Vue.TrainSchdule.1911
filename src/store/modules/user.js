@@ -1,5 +1,7 @@
 import {
-  getUserSummary, getUserAvatar, getUsersVocationLimit
+  getUserSummary,
+  getUserAvatar,
+  getUsersVacationLimit
 } from '@/api/userinfo'
 import {
   login,
@@ -13,21 +15,26 @@ import {
 import router, {
   resetRouter
 } from '@/router'
+import defaultAvatar from '@/assets/plain/defaultAvatar.js'
 const state = {
+  isUserLogout: false,
   data: {},
   token: getToken(),
   name: '',
   companyid: '',
   dutiesType: '',
   userid: '',
-  vocation: {}, // 当前休假状态
-  avatar: '',
+  vacation: {}, // 当前休假状态
+  avatar: defaultAvatar,
   introduction: '',
   roles: [],
   isToRegister: true
 }
 
 const mutations = {
+  SET_ISUSERLOGOUT: (state, val) => {
+    state.isUserLogout = val
+  },
   SET_TOKEN: (state, token) => {
     state.token = token
   },
@@ -55,8 +62,8 @@ const mutations = {
   SET_ROLES: (state, roles) => {
     state.roles = roles
   },
-  SET_VOCA: (state, vocation) => {
-    state.vocation = vocation
+  SET_VACA: (state, vacation) => {
+    state.vacation = vacation
   }
 }
 
@@ -86,7 +93,10 @@ const actions = {
       })
     })
   },
-  initBase({ commit, state }) {
+  initBase({
+    commit,
+    state
+  }) {
     return new Promise((resolve, reject) => {
       getUserSummary(null, true).then(data => {
         commit('SET_NAME', data.realName)
@@ -101,20 +111,34 @@ const actions = {
       })
     })
   },
-  initAvatar({ commit, state }) {
+  initAvatar({
+    commit,
+    state
+  }) {
     return new Promise((resolve, reject) => {
       getUserAvatar(null, null, true).then(data => {
         commit('SET_AVATAR', data.url)
         return resolve()
       }).catch(() => {
+        commit('SET_AVATAR', defaultAvatar)
         return reject()
       })
     })
   },
-  initVocation({ commit, state }) {
+  initVacation({
+    commit,
+    state
+  }) {
     return new Promise((resolve, reject) => {
-      getUsersVocationLimit(null, null, true).then(data => {
-        commit('SET_VOCA', data)
+      getUsersVacationLimit(null, null, true).then(data => {
+        commit('SET_VACA', {
+          yearlyLength: 0,
+          nowTimes: 0,
+          leftLength: 0,
+          onTripTimes: 0,
+          maxTripTimes: 0,
+          ...data
+        })
         return resolve()
       }).catch(() => {
         return reject()
@@ -131,8 +155,9 @@ const actions = {
         commit('SET_TOKEN', '')
         commit('SET_NAME', '')
         commit('SET_USERID', '')
-        commit('SET_AVATAR', '')
+        commit('SET_AVATAR', defaultAvatar)
         commit('SET_INTRODUCTION', '')
+        commit('SET_ISUSERLOGOUT', true)
         removeToken()
         resetRouter()
         resolve()
