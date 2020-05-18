@@ -48,7 +48,7 @@ export default {
       await this.$store.dispatch('user/initBase').then(() => {
         this.$store.dispatch('user/initAvatar')
         this.$store.dispatch('user/initVacation')
-        this.$store.dispatch('vocation/initDic')
+        this.$store.dispatch('vacation/initDic')
       })
     }
   }

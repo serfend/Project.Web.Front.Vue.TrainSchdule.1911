@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     statusDic() {
-      return this.$store.state.vocation.statusDic
+      return this.$store.state.vacation.statusDic
     }
   },
   watch: {

@@ -68,7 +68,7 @@ export default {
       return this.$store.state.user.data
     },
     statusDic() {
-      return this.$store.state.vocation.statusDic
+      return this.$store.state.vacation.statusDic
     }
   },
   mounted() {
