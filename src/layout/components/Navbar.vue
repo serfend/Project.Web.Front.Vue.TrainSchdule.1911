@@ -28,17 +28,21 @@
           <el-menu style="border-right:none">
             <el-submenu index="1">
               <template slot="title">
-                <SvgIcon icon-class="principal" text="账号" />
+                <SvgIcon icon-class="principal" />
+                <span>账号</span>
               </template>
               <el-menu-item index="1" @click="isToShowPasswordModefier=true">
-                <SvgIcon icon-class="scan_namecard" text="修改密码" />
+                <SvgIcon icon-class="scan_namecard" />
+                <span>修改密码</span>
               </el-menu-item>
               <el-menu-item index="2" @click="handleReg(true)">
-                <SvgIcon icon-class="newapplication_" text="授权注册" />
+                <SvgIcon icon-class="newapplication_" />
+                <span>授权注册</span>
               </el-menu-item>
             </el-submenu>
             <el-menu-item @click="logout">
-              <SvgIcon icon-class="dengchu" text="退出" />
+              <SvgIcon icon-class="dengchu" />
+              <span>退出</span>
             </el-menu-item>
           </el-menu>
         </div>
@@ -101,31 +105,39 @@ export default {
       userCardIsShowing: false,
       loginFormHasShow: false,
       isToShowPasswordModefier: false,
-      loading: false
+      loading: false,
+      currentUser: null
     }
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'device']),
     hasLogin() {
-      return this.$store.state.user.userid
+      return this.currentUser ? this.currentUser.id : false
     },
     companyName() {
-      return this.$store.state.user.data.companyName
+      return this.currentUser ? this.currentUser.companyName : null
     },
     realName() {
-      return (
-        this.$store.state.user.data.dutiesName +
-        this.$store.state.user.data.realName
-      )
-    },
-    currentUser() {
-      var userWithAvatar = Object.assign(this.$store.state.user.data, {
-        avatar: this.$store.state.user.avatar
-      })
-      var userWithVacation = Object.assign(userWithAvatar, {
-        vacation: this.$store.state.user.vacation
-      })
-      return userWithVacation
+      return this.currentUser
+        ? `${this.currentUser.dutiesName}${this.currentUser.realName}`
+        : null
+    }
+  },
+  watch: {
+    '$store.state.user': {
+      handler(val) {
+        if (val) {
+          var userWithAvatar = Object.assign(val.data, {
+            avatar: val.avatar
+          })
+          var userWithVacation = Object.assign(userWithAvatar, {
+            vacation: val.vacation
+          })
+          this.currentUser = userWithVacation
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
