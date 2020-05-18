@@ -1,10 +1,7 @@
 <template>
-  <span :class="text?'svgLink':''" @click="$emit('click')">
-    <svg :class="svgClass" :style="styleNormal" aria-hidden="true" v-on="$listeners">
-      <use :xlink:href="iconName" />
-    </svg>
-    <span v-if="text">{{ text }}</span>
-  </span>
+  <svg :class="svgClass" :style="styleNormal" aria-hidden="true" v-on="$listeners">
+    <use :xlink:href="iconName" />
+  </svg>
 </template>
 
 <script>
