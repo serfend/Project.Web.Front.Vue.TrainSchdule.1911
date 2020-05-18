@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
     <el-row type="flex">
       <el-col :span="6">
         <el-upload
@@ -44,7 +44,8 @@ export default {
   },
   data() {
     return {
-      avatarSubmitUrl: ''
+      avatarSubmitUrl: '',
+      loading: false
     }
   },
   created() {
@@ -60,13 +61,19 @@ export default {
         this.$message.error('上传头像图片大小不能超过 200KB')
       }
       if (isLt2M) {
+        var self = this
         var reader = new FileReader()
         const fn = this.avatarRefresh
         reader.onload = function(evt) {
           var base64 = evt.target.result
-          postUserAvatar(base64).then(() => {
-            fn()
-          })
+          self.loading = true
+          postUserAvatar(base64)
+            .then(() => {
+              fn()
+            })
+            .finally(() => {
+              self.loading = false
+            })
         }
         reader.readAsDataURL(file)
       }
