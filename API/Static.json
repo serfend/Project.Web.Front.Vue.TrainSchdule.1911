@@ -1,9 +1,0 @@
-
-{
-    "static": {
-        "title": "资源",
-        "type": "desc",
-        "description": "包含静态资源，用于提供下拉框层级和其他功能"
-    }
-}
-

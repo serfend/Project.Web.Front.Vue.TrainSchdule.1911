@@ -1,7 +1,0 @@
-{
-    "createApply":{
-        "title":"创建申请",
-        "type":"desc",
-        "description":"申请由 请假人信息、申请信息、审批流信息构成，当申请提交时，需分步进行，依次调用/Apply/User、/Apply/Request、/Apply/Submit接口完成申请的提交"
-    }
-}
