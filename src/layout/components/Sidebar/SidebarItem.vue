@@ -1,16 +1,24 @@
 <template>
-  <div v-if="!item.hidden" class="menu-wrapper">
-    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="generateTitle(onlyOneChild.meta.title)" />
-        </el-menu-item>
-      </app-link>
+  <div v-if="!item.hidden">
+    <template
+      v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow"
+    >
+      <el-menu-item
+        v-if="onlyOneChild.meta"
+        :index="resolvePath(onlyOneChild.path)"
+        :class="{'submenu-title-noDropdown':!isNest}"
+      >
+        <app-link :to="resolvePath(onlyOneChild.path)">
+          <SvgIcon :icon-class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" />
+          <span>{{ generateTitle(onlyOneChild.meta.title) }}</span>
+        </app-link>
+      </el-menu-item>
     </template>
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
-      <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="generateTitle(item.meta.title)" />
+      <template v-if="item.meta" slot="title">
+        <SvgIcon :icon-class="item.meta && item.meta.icon" />
+        <span>{{ generateTitle(item.meta.title) }}</span>
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -26,15 +34,15 @@
 
 <script>
 import path from 'path'
+import SvgIcon from '@/components/SvgIcon'
 import { generateTitle } from '@/utils/i18n'
 import { isExternal } from '@/utils/validate'
-import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'
 
 export default {
   name: 'SidebarItem',
-  components: { Item, AppLink },
+  components: { AppLink, SvgIcon },
   mixins: [FixiOSBug],
   props: {
     // route object
@@ -76,7 +84,7 @@ export default {
 
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
-        this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
+        this.onlyOneChild = { ...parent, path: '', noShowingChildren: true }
         return true
       }
 

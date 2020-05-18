@@ -69,7 +69,7 @@ var dict = {
   },
   login: {
     title: 'login',
-    defaultTitle: 'login page',
+    defaultTitle: 'login',
     username: 'username',
     password: 'password'
   },

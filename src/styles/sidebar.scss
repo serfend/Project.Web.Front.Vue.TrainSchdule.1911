@@ -66,8 +66,12 @@
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
+      box-shadow: 0 0 8px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.5s;
+
       &:hover {
         background-color: $menuHover !important;
+        transform: scale(1.1) translateX(20px);
       }
     }
 
@@ -79,9 +83,11 @@
     & .el-submenu .el-menu-item {
       min-width: $sideBarWidth !important;
       background-color: $subMenuBg !important;
+      transition: all 0.5s;
 
       &:hover {
         background-color: $subMenuHover !important;
+        transform: scale(1.1) translateX(20px);
       }
     }
   }
@@ -102,6 +108,8 @@
     .submenu-title-noDropdown {
       padding: 0 !important;
       position: relative;
+      box-shadow: 0 0 8px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.5s;
 
       .el-tooltip {
         padding: 0 !important;
@@ -189,6 +197,7 @@
     &:hover {
       // you can use $subMenuHover
       background-color: $menuHover !important;
+
     }
   }
 

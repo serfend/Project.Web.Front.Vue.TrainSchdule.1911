@@ -1,5 +1,9 @@
 <template>
-  <div class="sidebar-logo-container" :class="{ collapse: collapse }">
+  <div
+    class="sidebar-logo-container"
+    :class="{ collapse: collapse }"
+    :style="{background:variables.logoBg,color:variables.logoText}"
+  >
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <el-image v-if="logo" src="/favicon-32x32.png" class="sidebar-logo" />
@@ -14,6 +18,8 @@
 </template>
 
 <script>
+import variables from '@/styles/variables.scss'
+
 export default {
   name: 'SidebarLogo',
   props: {
@@ -24,8 +30,13 @@ export default {
   },
   data() {
     return {
-      title: '休假登记和审核系统',
+      title: this.$store.state.settings.title,
       logo: '/favicon-32x32.png'
+    }
+  },
+  computed: {
+    variables() {
+      return variables
     }
   }
 }
@@ -46,7 +57,6 @@ export default {
   width: 100%;
   height: 50px;
   line-height: 50px;
-  background: #2b2f3a;
   text-align: center;
   overflow: hidden;
 
@@ -64,7 +74,6 @@ export default {
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;

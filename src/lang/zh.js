@@ -69,7 +69,7 @@ var dict = {
   },
   login: {
     title: '登录',
-    defaultTitle: '登录到系统',
+    defaultTitle: '登录',
     username: '用户名',
     password: '密码'
   },
