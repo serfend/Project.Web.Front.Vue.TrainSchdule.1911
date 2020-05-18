@@ -19,7 +19,7 @@
       <el-dropdown
         v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
         split-button
-        size="small"
+        size="mini"
         trigger="click"
         @click="exportApply(row)"
       >
