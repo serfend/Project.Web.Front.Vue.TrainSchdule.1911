@@ -41,7 +41,7 @@ export default {
     data: {
       handler(val) {
         this.$nextTick(() => {
-          if (val && val.vacation) {
+          if (val && val.vacation && val.vacation.yearlyLength) {
             var v = val.vacation
             this.form.days = `${v.comsumeLength}/${v.nowTimes}`
             this.form.rate =

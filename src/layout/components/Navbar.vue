@@ -105,14 +105,13 @@ export default {
       userCardIsShowing: false,
       loginFormHasShow: false,
       isToShowPasswordModefier: false,
-      loading: false,
-      currentUser: null
+      loading: false
     }
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'device']),
     hasLogin() {
-      return this.currentUser ? this.currentUser.id : false
+      return this.$store.state.user.userid
     },
     companyName() {
       return this.currentUser ? this.currentUser.companyName : null
@@ -121,23 +120,18 @@ export default {
       return this.currentUser
         ? `${this.currentUser.dutiesName}${this.currentUser.realName}`
         : null
-    }
-  },
-  watch: {
-    '$store.state.user': {
-      handler(val) {
-        if (val) {
-          var userWithAvatar = Object.assign(val.data, {
-            avatar: val.avatar
-          })
-          var userWithVacation = Object.assign(userWithAvatar, {
-            vacation: val.vacation
-          })
-          this.currentUser = userWithVacation
-        }
-      },
-      deep: true,
-      immediate: true
+    },
+    currentUser() {
+      var val = this.$store.state.user
+      var userWithAvatar = Object.assign(val.data, {
+        avatar: val.avatar
+      })
+      var userWithVacation = Object.assign(userWithAvatar, {
+        vacation: val.vacation
+      })
+      console.log('caculate current user')
+      console.log(userWithVacation)
+      return userWithVacation
     }
   },
   mounted() {
