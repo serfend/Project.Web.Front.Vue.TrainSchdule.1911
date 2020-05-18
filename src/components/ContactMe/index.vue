@@ -76,12 +76,7 @@ export default {
     load(url) {
       var self = this
       download(url).then(data => {
-        var reader = new FileReader()
-        reader.onload = function(event) {
-          var content = reader.result
-          self.innerUrl = content
-        }
-        reader.readAsText(data)
+        self.innerUrl = data
       })
     }
   }
