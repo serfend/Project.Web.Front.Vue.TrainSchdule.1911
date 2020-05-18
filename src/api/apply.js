@@ -7,12 +7,12 @@ import request from '../utils/request'
  * @param {*} params
  *      date  params.start
  *      int  params.length
- *      boolean params.caculateLawVocation
+ *      boolean params.caculateLawVacation
  * @returns
  */
 export function getStampReturn(params) {
   return request({
-    url: '/static/vocationDate',
+    url: '/static/vacationDate',
     method: 'get',
     params: params
   })

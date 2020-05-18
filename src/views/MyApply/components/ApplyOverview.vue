@@ -1,10 +1,10 @@
 <template>
-  <el-card v-loading="!usersVocation">
+  <el-card v-loading="!usersvacation">
     <el-form>
       <el-form-item label="休假率">
         <VacationDescription
-          v-if="usersVocation"
-          :users-vocation="usersVocation"
+          v-if="usersvacation"
+          :users-vacation="usersvacation"
           :this-time-vacation-length="0"
         />
       </el-form-item>
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { getUsersVocationLimit } from '@/api/userinfo'
+import { getUsersVacationLimit } from '@/api/userinfo'
 import VacationDescription from '@/views/NewApply/VacationDescription'
 export default {
   name: 'ApplyOverview',
@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      usersVocation: null
+      usersvacation: null
     }
   },
   computed: {
@@ -38,8 +38,8 @@ export default {
     userid: {
       handler(val) {
         if (val) {
-          getUsersVocationLimit(val, new Date().getFullYear()).then(data => {
-            this.usersVocation = {
+          getUsersVacationLimit(val, new Date().getFullYear()).then(data => {
+            this.usersvacation = {
               yearlyLength: 0,
               nowTimes: 0,
               leftLength: 0,

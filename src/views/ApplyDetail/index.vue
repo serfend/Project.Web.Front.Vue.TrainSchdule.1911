@@ -27,7 +27,7 @@
             <h3 slot="header">
               本次休假
               <el-tooltip
-                v-for="av in detail.request.additialVocations"
+                v-for="av in detail.request.additialvacations"
                 :key="av.id"
                 :content="`${av.description},开始于${av.start}`"
               >
@@ -71,7 +71,7 @@
               <el-form-item label="休假地点">
                 <el-col
                   :span="12"
-                >{{ detail.request.vocationPlace.name }}{{ detail.request.vocationPlaceName?`(${detail.request.vocationPlaceName})`:'' }}</el-col>
+                >{{ detail.request.vacationPlace.name }}{{ detail.request.vacationPlaceName?`(${detail.request.vacationPlaceName})`:'' }}</el-col>
               </el-form-item>
               <el-col :span="8">
                 <el-form-item
@@ -168,7 +168,7 @@ export default {
   },
   computed: {
     statusDic() {
-      return this.$store.state.vocation.statusDic
+      return this.$store.state.vacation.statusDic
     }
   },
   mounted() {
@@ -196,7 +196,7 @@ export default {
       }的${datedifference(
         this.detail.request.stampReturn,
         this.detail.request.stampLeave
-      ) + 1}天${this.detail.request.vocationType}休假`
+      ) + 1}天${this.detail.request.vacationType}休假`
       this.staticData.vacationStart =
         this.detail.status &&
         this.statusDic[this.detail.status].desc === '已通过'

@@ -258,7 +258,7 @@ export default {
   },
   computed: {
     statusOptions() {
-      return this.$store.state.vocation.statusDic
+      return this.$store.state.vacation.statusDic
     },
     currentUserId() {
       return this.$store.state.user.userid

@@ -16,8 +16,8 @@
             <el-tag
               effect="dark"
               size="mini"
-              :type="row.request.vocationType==='正休'?'':'danger'"
-            >{{ row.request.vocationType }}</el-tag>
+              :type="row.request.vacationType==='正休'?'':'danger'"
+            >{{ row.request.vacationType }}</el-tag>
             <span
               style="font-size:10px;margin:2px;color:#3f3f3f"
             >{{ row.base.companyName }} {{ row.base.dutiesName }}</span>
@@ -80,7 +80,7 @@
       </el-table-column>
       <el-table-column align="center" label="休假地点">
         <template slot-scope="{row}">
-          <span>{{ row.request.vocationPlace? row.request.vocationPlace.name :'' }}</span>
+          <span>{{ row.request.vacationPlace? row.request.vacationPlace.name :'' }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假总天数">
@@ -91,11 +91,11 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>正休假{{ row.request.vocationLength }}天</el-dropdown-item>
+              <el-dropdown-item>正休假{{ row.request.vacationLength }}天</el-dropdown-item>
               <el-dropdown-item>路途{{ row.request.onTripLength }}天</el-dropdown-item>
               <el-dropdown-item
-                v-for="additial in row.request.additialVocations"
-                v-show="row.request.additialVocations.length>0"
+                v-for="additial in row.request.additialVacations"
+                v-show="row.request.additialVacations.length>0"
                 :key="additial.name"
               >
                 <el-tooltip :content="additial.description">
@@ -193,7 +193,7 @@ export default {
   watch: {
     list: {
       handler(val) {
-        var statusOptions = this.$store.state.vocation.statusDic
+        var statusOptions = this.$store.state.vacation.statusDic
         this.formatedList = this.list.map(li =>
           this.formatApplyItem(li, statusOptions)
         )
@@ -242,7 +242,7 @@ export default {
       return (
         datedifference(row.stampLeave, row.stampReturn) -
         row.onTripLength -
-        row.vocationLength
+        row.vacationLength
       )
     },
     showMutilAudit() {
@@ -254,7 +254,7 @@ export default {
     },
     showDetail(row, column, event) {
       if (column.label === '操作') return
-      this.$store.state.vocation.vacationDetail = row
+      this.$store.state.vacation.vacationDetail = row
       this.$router.push('/application/applyDetail?id=' + row.id)
     }
   }

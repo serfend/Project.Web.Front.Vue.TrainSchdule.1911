@@ -22,13 +22,13 @@
             </el-form-item>
             <el-form-item label="全年休假完成率">
               <VacationDescription
-                :users-vocation="usersVocation"
-                :this-time-vacation-length="formApply.VocationType=='正休'?formApply.VocationLength:0"
+                :users-vacation="usersvacation"
+                :this-time-vacation-length="formApply.vacationType=='正休'?formApply.vacationLength:0"
               />
             </el-form-item>
 
             <el-form-item label="休假类型">
-              <el-select v-model="formApply.VocationType">
+              <el-select v-model="formApply.vacationType">
                 <el-option label="正休" value="正休" />
                 <el-option label="事假" value="事假" />
                 <el-option label="病休" value="病休" />
@@ -56,8 +56,8 @@
               <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
                 <el-form-item label="休假天数">
                   <el-input-number
-                    v-model="formApply.VocationLength"
-                    :max="usersVocation.leftLength"
+                    v-model="formApply.vacationLength"
+                    :max="usersvacation.leftLength"
                     :min="1"
                     @change="handleChange"
                   />
@@ -74,7 +74,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-form-item v-if="formApply.VocationType=='正休'" label="福利假">
+            <el-form-item v-if="formApply.vacationType=='正休'" label="福利假">
               <el-button icon="el-icon-plus" @click="OpenOtherVacation('')">添加</el-button>
               <el-alert
                 v-show="SelectVacationList.length>0"
@@ -136,34 +136,34 @@
               </el-col>
             </el-row>
             <el-form-item
-              v-show="lawVocations.length>0&&formApply.VocationType=='正休'"
+              v-show="lawvacations.length>0&&formApply.vacationType=='正休'"
               label="法定节假日"
             >
               <el-tag
-                v-for="item in lawVocations"
+                v-for="item in lawvacations"
                 :key="item.start"
                 style="margin:10px"
               >{{ item.start|parseTime("{mm}月{dd}日") }} {{ item.name }}{{ item.length }} 天</el-tag>
             </el-form-item>
             <el-form-item
               label="休假目的地"
-              prop="vocationPlace"
+              prop="vacationPlace"
               :rules="[{required:true,trigger:'blur'}]"
             >
               <el-tooltip>
                 <template slot="content">
-                  <span>当前为{{ formApply.vocationPlaceName }}</span>
+                  <span>当前为{{ formApply.vacationPlaceName }}</span>
                 </template>
                 <cascader-selector
                   placeholder="选择本次休假的目的地"
-                  :code.sync="formApply.vocationPlace"
+                  :code.sync="formApply.vacationPlace"
                   :child-getter-method="locationChildren"
                   style="width:300px"
                 />
               </el-tooltip>
             </el-form-item>
             <el-form-item label="详细地址">
-              <el-input v-model="formApply.vocationPlaceName" style="width:300px" />
+              <el-input v-model="formApply.vacationPlaceName" style="width:300px" />
             </el-form-item>
             <el-form-item label="所乘交通工具">
               <el-select v-model="formApply.ByTransportation" placeholder="火车">
@@ -186,7 +186,7 @@
             <svg-icon
               :style="{transition:'all 0.5s',opacity:hideDetail?1:0,transform:hideDetail?'rotate(-360deg)':''}"
               icon-class="certification_f"
-              style-normal="width:5em;height:5em;fill:#67C23Aaa"
+              style-normal="width:5em;height:5em;fill:#67C23A;color:#67C23A"
             />
           </div>
         </el-aside>
@@ -228,7 +228,7 @@ import { parseTime } from '@/utils'
 import VacationDescription from './VacationDescription'
 import CascaderSelector from '@/components/CascaderSelector'
 import { locationChildren } from '@/api/static'
-import { getUsersVocationLimit } from '@/api/userinfo'
+import { getUsersVacationLimit } from '@/api/userinfo'
 export default {
   name: 'RequestInfo',
   components: { VacationDescription, CascaderSelector },
@@ -249,7 +249,7 @@ export default {
 
       formApply: this.createNewRequest(),
       submitYear: new Date().getFullYear(),
-      usersVocation: {
+      usersvacation: {
         yearlyLength: 0,
         nowTimes: 0,
         leftLength: 0,
@@ -258,7 +258,7 @@ export default {
       },
       caculaingDate: {},
       restaurants: [], // 福利假选择
-      lawVocations: [],
+      lawvacations: [],
       SelectVacationList: [],
       VacationModel: {
         name: '',
@@ -357,8 +357,8 @@ export default {
           }
         }
         if (target) {
-          this.formApply.vocationPlace = target.code
-          this.formApply.vocationPlaceName = target.name
+          this.formApply.vacationPlace = target.code
+          this.formApply.vacationPlaceName = target.name
         }
       }
     },
@@ -371,9 +371,9 @@ export default {
       this.anyChanged = false
     },
     refreshVacation() {
-      getUsersVocationLimit(this.userid, this.formApply.yearIndex)
+      getUsersVacationLimit(this.userid, this.formApply.yearIndex)
         .then(data => {
-          this.usersVocation = data
+          this.usersvacation = data
         })
         .finally(() => {
           this.onLoading = false
@@ -384,11 +384,11 @@ export default {
       return {
         StampLeave: new Date(),
         StampReturn: '',
-        VocationLength: 0,
+        vacationLength: 0,
         OnTripLength: 0,
-        VocationType: '正休',
-        vocationPlace: '0',
-        vocationPlaceName: '',
+        vacationType: '正休',
+        vacationPlace: '0',
+        vacationPlaceName: '',
         reason: '',
         ByTransportation: '0',
         yearIndex: new Date().getFullYear()
@@ -403,7 +403,7 @@ export default {
         console.log('id')
         return false
       }
-      if (!params.vocationPlace || params.vocationPlace.length < 6) {
+      if (!params.vacationPlace || params.vacationPlace.length < 6) {
         console.log('address')
         return false
       }
@@ -425,7 +425,7 @@ export default {
       const infoParam = Object.assign({}, this.formApply, {
         id: this.userid
       })
-      infoParam['vocationAdditionals'] = this.SelectVacationList
+      infoParam['vacationAdditionals'] = this.SelectVacationList
       infoParam.StampLeave = parseTime(infoParam.StampLeave, '{yyyy}-{mm}-{dd}')
       if (!this.checkParamValid(infoParam)) {
         this.anyChanged = false
@@ -543,16 +543,16 @@ export default {
         SelectVacationCount += v.length
       })
       // 正休假计算路途，如果存在福利假则不计算法定节假日
-      var caculateVocationCount = this.formApply.VocationType === '正休'
+      var caculatevacationCount = this.formApply.vacationType === '正休'
       this.caculaingDate = {
         start: parseTime(this.formApply.StampLeave, '{yyyy}-{mm}-{dd}'),
         length:
-          parseInt(this.formApply.VocationLength) +
-          (caculateVocationCount
+          parseInt(this.formApply.vacationLength) +
+          (caculatevacationCount
             ? parseInt(this.formApply.OnTripLength) + SelectVacationCount
             : 0),
-        caculateLawVocation:
-          caculateVocationCount && this.SelectVacationList.length === 0
+        caculateLawvacation:
+          caculatevacationCount && this.SelectVacationList.length === 0
       }
       this.formApply.isArchitect =
         new Date(this.caculaingDate.start) <= new Date()
@@ -563,7 +563,7 @@ export default {
         getStampReturn(this.caculaingDate).then(data => {
           const endDate = data.endDate
           this.formApply.StampReturn = endDate
-          this.lawVocations = data.descriptions ? data.descriptions : []
+          this.lawvacations = data.descriptions ? data.descriptions : []
           this.$notify({
             title: '预计归队时间',
             message: data.endDate,

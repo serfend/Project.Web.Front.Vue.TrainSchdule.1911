@@ -69,8 +69,8 @@
                 </el-form-item>
                 <el-form-item label="类别">
                   <el-tag
-                    :type="innerData.request.vocationType=='正休'?'success':(innerData.request.vocationType=='病休'?'danger':'warning')"
-                  >{{ innerData.request.vocationType }}</el-tag>
+                    :type="innerData.request.vacationType=='正休'?'success':(innerData.request.vacationType=='病休'?'danger':'warning')"
+                  >{{ innerData.request.vacationType }}</el-tag>
                   <svg-icon v-if="data.request.byTransportation==0" icon-class="huoche" />
                   <svg-icon v-else-if="innerData.request.byTransportation==1" icon-class="feiji" />
                   <svg-icon v-else-if="innerData.request.byTransportation==2" icon-class="qiche" />
@@ -80,9 +80,9 @@
                   label="休假原因"
                 >{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
                 <el-form-item label="假期天数">
-                  <span>{{ `净假期${innerData.request.vocationLength}天 在途${innerData.request.onTripLength}天` }}</span>
+                  <span>{{ `净假期${innerData.request.vacationLength}天 在途${innerData.request.onTripLength}天` }}</span>
                   <el-tooltip
-                    v-for="a in innerData.request.additialVocations"
+                    v-for="a in innerData.request.additialvacations"
                     :key="a.id"
                     :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`"
                   >
@@ -91,7 +91,7 @@
                 </el-form-item>
                 <el-form-item
                   label="休假地点"
-                >{{ `${innerData.request.vocationPlace.name} ${innerData.request.vocationPlaceName==null?'无详细地址':innerData.request.vocationPlaceName}` }}</el-form-item>
+                >{{ `${innerData.request.vacationPlace.name} ${innerData.request.vacationPlaceName==null?'无详细地址':innerData.request.vacationPlaceName}` }}</el-form-item>
                 <el-form-item label="离队时间">{{ timeFormat(innerData.request.stampLeave) }}</el-form-item>
                 <el-form-item label="归队时间">{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
               </el-form>

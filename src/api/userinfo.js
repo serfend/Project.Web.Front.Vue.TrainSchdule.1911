@@ -162,8 +162,8 @@ export function getUserIdByRealName(realName, ignoreErr) {
  * @param {*} id
  * @param {int} yearIndex
  */
-export function getUsersVocationLimit(id, yearIndex, ignoreErr) {
-  return request.get('/users/vocation', {
+export function getUsersVacationLimit(id, yearIndex, ignoreErr) {
+  return request.get('/users/vacation', {
     params: {
       id,
       yearIndex

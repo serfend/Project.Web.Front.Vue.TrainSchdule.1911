@@ -75,10 +75,10 @@ export default {
       return '敏感操作'
     },
     statusDic() {
-      return this.$store.state.vocation.statusDic
+      return this.$store.state.vacation.statusDic
     },
     actionDic() {
-      return this.$store.state.vocation.actionDic
+      return this.$store.state.vacation.actionDic
     }
   },
   methods: {

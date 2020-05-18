@@ -100,13 +100,20 @@
         >
           <el-table-column prop="avatar" label=" " width="80">
             <template slot-scope="scope">
-              <el-avatar shape="square" :size="50" :src="scope.row.avatar" />
+              <el-popover
+                placement="right-start"
+                trigger="hover"
+                @show="scope.row.userHasShow=true"
+              >
+                <User :data="scope.row" :can-load-avatar="scope.row.userHasShow" />
+                <el-avatar slot="reference" shape="square" :size="50" :src="scope.row.avatar" />
+              </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="姓名" width="100" />
-          <el-table-column prop="duties" label="职务" width="150" />
-          <el-table-column prop="vocation.yearlyLength" label="基础假" width="50" />
-          <el-table-column prop="vocation.maxTripTimes" label="可休路途次数" width="50" />
+          <el-table-column prop="realName" label="姓名" width="100" />
+          <el-table-column prop="dutiesName" label="职务" width="150" />
+          <el-table-column prop="vacation.yearlyLength" label="基础假" width="50" />
+          <el-table-column prop="vacation.maxTripTimes" label="可休路途次数" width="50" />
           <el-table-column prop="accountAuthStatus" label="状态" width="100">
             <template slot-scope="scope">
               <el-tag
@@ -114,7 +121,7 @@
               >{{ scope.row.accountAuthStatus==1?'已认证':scope.row.accountAuthStatus==0?'待认证':'已退回' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="vocation.description" label="休假详情描述" />
+          <el-table-column prop="vacation.description" label="休假详情描述" />
         </el-table>
       </el-card>
     </div>
@@ -151,11 +158,12 @@ import Company from './components/Company'
 // import Diy from './components/Diy'
 import Social from './components/Social'
 import Auth from '@/components/AuthCode'
+import User from '@/components/User'
 import CascaderSelector from '@/components/CascaderSelector'
 import { regnew, authUserRegister, modefyUser } from '@/api/account'
 import { getMembers, companyChild } from '@/api/company'
 import {
-  getUsersVocationLimit,
+  getUsersVacationLimit,
   getUserAvatar,
   getUserIdByRealName
 } from '@/api/userinfo'
@@ -173,7 +181,8 @@ export default {
     Social,
     Company,
     // Diy,
-    Auth
+    Auth,
+    User
   },
   data() {
     return {
@@ -251,15 +260,9 @@ export default {
     this.refreshFormType()
   },
   methods: {
-    modefyUser(form) {
-      return modefyUser(form)
-    },
-    regnew(form) {
-      return regnew(form)
-    },
-    companyChild(id) {
-      return companyChild(id)
-    },
+    modefyUser,
+    regnew,
+    companyChild,
     createForm() {
       return {
         Base: {},
@@ -271,9 +274,6 @@ export default {
         password: '',
         confirmPassword: ''
       }
-    },
-    returnToLogin() {
-      this.$router.push({ path: '/login' })
     },
     switchFormType() {
       this.$store.state.user.isToRegister = !this.$store.state.user.isToRegister
@@ -349,11 +349,11 @@ export default {
             var item = this.waitToAuthRegisterUsers[i]
             return Promise.all([
               getUserAvatar(item.id),
-              getUsersVocationLimit(item.id)
+              getUsersVacationLimit(item.id)
             ])
-              .then(([avatar, vocation]) => {
+              .then(([avatar, vacation]) => {
                 item.avatar = avatar.url
-                item.vocation = vocation
+                item.vacation = vacation
                 resolve()
               })
               .catch(err => reject(err))
@@ -367,11 +367,13 @@ export default {
     loadUserList(list) {
       var result = list.map(item => {
         var obj = {
+          userHasShow: false,
           id: item.id,
-          name: item.realName,
-          duties: item.dutiesName,
+          realName: item.realName,
+          dutiesName: item.dutiesName,
+          companyName: item.companyName,
           avatar: '',
-          vocation: {},
+          vacation: {},
           accountAuthStatus:
             item.inviteBy === null ? 0 : item.inviteBy === '00Invalid' ? -1 : 1 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
         }

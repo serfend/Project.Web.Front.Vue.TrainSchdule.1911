@@ -41,7 +41,7 @@
               @change="r.modefiedByUser=true"
             />
             <el-tag>{{ r.apply.base.realName }}</el-tag>
-            <el-tag>{{ r.apply.request.vocationPlace.name }}</el-tag>
+            <el-tag>{{ r.apply.request.vacationPlace.name }}</el-tag>
             <el-tag>{{ datedifference(r.apply.request.stampLeave, r.apply.request.stampReturn) + 1 }}天{{ r.apply.request.onTripLength>0?`(路途${r.apply.request.onTripLength}天)`:'(无路途)' }}</el-tag>
           </template>
           <el-form style>
@@ -53,7 +53,7 @@
               {{ r.apply.base.dutiesName }}
             </el-form-item>
             <el-form-item label="休假原因">{{ r.apply.request.reason }}</el-form-item>
-            <el-form-item label="休假地点">{{ r.apply.request.vocationPlace.name }}</el-form-item>
+            <el-form-item label="休假地点">{{ r.apply.request.vacationPlace.name }}</el-form-item>
             <el-form-item label="开始时间">{{ r.apply.request.stampLeave }}</el-form-item>
             <el-form-item label="结束时间">{{ r.apply.request.stampReturn }}</el-form-item>
             <el-form-item
@@ -62,7 +62,7 @@
             <el-form-item
               label="路途"
             >{{ r.apply.request.onTripLength>0?`路途${r.apply.request.onTripLength}天`:'无路途' }}</el-form-item>
-            <div v-for="a in r.apply.request.additialVocations" :key="a.length">
+            <div v-for="a in r.apply.request.additialvacations" :key="a.length">
               <el-tag>{{ a.name }}{{ a.length }}天</el-tag>
               {{ a.description }}
             </div>
