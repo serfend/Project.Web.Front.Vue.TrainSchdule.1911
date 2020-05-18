@@ -1,94 +1,85 @@
 <template>
-  <div class="login-container">
-    <el-form
-      ref="loginForm"
-      :model="loginForm"
-      :rules="loginRules"
-      auto-complete="on"
-      class="login-form"
-      label-position="left"
-    >
-      <div class="title-container">
-        <h3 class="title">{{ $t('login.defaultTitle') }}</h3>
-        <lang-select class="set-language" />
-      </div>
+  <el-form
+    ref="loginForm"
+    v-loading="loading"
+    :model="loginForm"
+    :rules="loginRules"
+    auto-complete="on"
+    class="login-form"
+    label-position="left"
+  >
+    <div class="title-container">
+      <h3 class="title">{{ $t('login.defaultTitle') }}</h3>
+      <lang-select class="set-language" />
+    </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
+    <el-form-item prop="username">
+      <el-input
+        ref="username"
+        v-model="loginForm.username"
+        placeholder="用户名或身份证号"
+        auto-complete="on"
+        name="username"
+        tabindex="1"
+        type="text"
+      >
+        <template slot="prepend">
           <svg-icon icon-class="user" />
-        </span>
+        </template>
+      </el-input>
+    </el-form-item>
+    <el-tooltip v-model="capsTooltip" content="大写已开启" manual placement="right">
+      <el-form-item prop="password">
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="用户名或身份证号"
+          :key="passwordType"
+          ref="password"
+          v-model="loginForm.password"
+          placeholder="密码"
+          :type="passwordType"
           auto-complete="on"
-          name="username"
-          tabindex="1"
-          type="text"
-        />
-      </el-form-item>
-      <el-tooltip v-model="capsTooltip" content="大写已开启" manual placement="right">
-        <el-form-item prop="password">
-          <span class="svg-container">
+          name="password"
+          tabindex="2"
+          @blur="capsTooltip = false"
+          @keyup.enter.native="handleLogin"
+          @keyup.native="checkCapslock"
+        >
+          <template slot="prepend">
             <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            placeholder="密码"
-            :type="passwordType"
-            auto-complete="on"
-            name="password"
-            tabindex="2"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-            @keyup.native="checkCapslock"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
-      </el-tooltip>
-      <el-form-item style="text-align:center">
-        <el-checkbox v-model="loginForm.RememberUserName" label="记住用户名" />
-        <el-checkbox v-model="loginForm.RememberUserPassword" label="记住密码" />
-        <el-tooltip content="将无需输入账号和密码">
-          <el-checkbox v-model="loginForm.RememberMe" label="自动登录" />
-        </el-tooltip>
+          </template>
+          <template slot="append">
+            <span class="show-pwd" @click="showPwd">
+              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+            </span>
+          </template>
+        </el-input>
       </el-form-item>
-      <el-row />
-      <el-button
-        style="width:40%;"
-        plain
-        @click.native.prevent="handleReg"
-      >{{ $t('register.title') }}</el-button>
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width:40%;float:right"
-        @click.native.prevent="handleLogin"
-      >{{ $t('login.title') }}</el-button>
+    </el-tooltip>
+    <el-form-item style="text-align:center" inline-message>
+      <el-checkbox v-model="loginForm.RememberUserPassword" label="记住密码" />
+      <el-tooltip content="将无需输入账号和密码">
+        <el-checkbox v-model="loginForm.RememberMe" label="自动登录" />
+      </el-tooltip>
       <el-link href="/#/forget">忘记账号/密码</el-link>
-    </el-form>
-
-    <el-dialog title="第三方登录" :visible.sync="showDialog">
-      论坛登录功能暂未开放
-      <social-sign />
-    </el-dialog>
-  </div>
+    </el-form-item>
+    <el-row />
+    <el-button style="width:40%;" plain @click.native.prevent="handleReg">{{ $t('register.title') }}</el-button>
+    <el-button
+      type="primary"
+      style="width:40%;float:right"
+      @click.native.prevent="handleLogin"
+    >{{ $t('login.title') }}</el-button>
+  </el-form>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
 import { passwordCache, setLoginSetting, getLoginSetting } from '@/api/account'
 import LangSelect from '@/components/LangSelect'
-import SocialSign from './components/SocialSignin'
 import { Message } from 'element-ui'
 import { getUserBase } from '@/api/userinfo'
 export default {
   name: 'Login',
-  components: { SocialSign, LangSelect },
+  components: { LangSelect },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
@@ -98,8 +89,8 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value && value.length < 6) {
-        callback(new Error('密码不少于6位'))
+      if (value && value.length < 8) {
+        callback(new Error('密码不少于8位'))
       } else {
         callback()
       }
@@ -109,7 +100,6 @@ export default {
       loginForm: {
         username: '',
         password: '',
-        RememberUserName: false,
         RememberUserPassword: false,
         RememberMe: false,
         verify: 201700816
@@ -124,42 +114,16 @@ export default {
       },
       passwordType: 'password',
       capsTooltip: false,
-      loading: false,
-      showDialog: false,
-      redirect: undefined
+      loading: false
     }
   },
   computed: {
     currentUser() {
       return this.$store.state.user.realName
-    }
-  },
-  watch: {
-    'loginForm.RememberUserName': {
-      handler(val) {
-        if (!val && this.loginForm.RememberUserPassword) {
-          this.loginForm.RememberUserPassword = false
-        }
-      },
-      immediate: true
     },
-    'loginForm.RememberUserPassword': {
-      handler(val) {
-        if (val && !this.loginForm.RememberUserName) {
-          this.loginForm.RememberUserName = true
-        }
-      },
-      immediate: true
-    },
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
+    hasLogin() {
+      return this.$store.state.user.userid
     }
-  },
-  created() {
-    // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -175,16 +139,6 @@ export default {
           type: 'success',
           duration: 5000
         })
-        if (!this.redirect) this.redirect = '/'
-        if (this.redirect !== '/') {
-          this.$router.push(this.redirect)
-        } else {
-          this.$confirm(`欢迎您 ${data.base.realName}：是否回到首页？`).then(
-            () => {
-              this.$router.push(this.redirect + '?login=true')
-            }
-          )
-        }
       }
     })
   },
@@ -220,22 +174,23 @@ export default {
     },
     loadLoginSetting() {
       var loginSetting = getLoginSetting()
-      this.loginForm.RememberUserName = loginSetting.RememberUserName
       this.loginForm.RememberUserPassword = loginSetting.RememberUserPassword
       this.loginForm.RememberMe = loginSetting.RememberMe
 
-      if (this.loginForm.RememberUserName) {
-        this.loginForm.username = loginSetting.username
-        if (this.loginForm.RememberUserPassword) {
-          this.loginForm.password = passwordCache(loginSetting.username)
-        }
+      this.loginForm.username = loginSetting.username
+      if (this.loginForm.RememberUserPassword) {
+        this.loginForm.password = passwordCache(loginSetting.username)
       }
-      if (this.loginForm.RememberMe) {
+      if (this.loginForm.RememberMe && !this.$store.state.user.isUserLogout) {
         this.loading = true
         setTimeout(() => {
           if (!this.loginForm.RememberMe) {
             this.loading = false
             return this.$message.warning('自动登录被终止')
+          } else if (this.$store.state.user.isUserLogout || this.hasLogin) {
+            this.$emit('login', true)
+            this.loading = false
+            return
           }
           this.handleLogin()
         }, 2000)
@@ -246,29 +201,26 @@ export default {
       setLoginSetting(setting)
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (!valid) {
-          return this.$message.error('信息有误')
-        }
-        this.loading = true
-        this.$store
-          .dispatch('user/login', this.loginForm)
-          .then(data => {
-            Message({
-              message: '登录成功',
-              type: 'success',
-              duration: 5 * 1000
-            })
-            this.$router.push({ path: this.redirect || '/' })
+      this.loading = true
+      this.$store
+        .dispatch('user/login', this.loginForm)
+        .then(data => {
+          Message({
+            message: '登录成功',
+            type: 'success',
+            duration: 5 * 1000
           })
-          .catch(e => {
-            this.showLoginFailTip(e)
-          })
-          .finally(() => {
-            this.saveLoginSetting()
-            this.loading = false
-          })
-      })
+          this.$emit('login', true)
+          this.$store.dispatch('app/reload', { complete: false })
+        })
+        .catch(e => {
+          this.showLoginFailTip(e)
+          this.$emit('login', false)
+        })
+        .finally(() => {
+          this.saveLoginSetting()
+          this.loading = false
+        })
     },
     showLoginFailTip(e) {
       var msg = ''
@@ -297,11 +249,11 @@ export default {
         title: title,
         message: msg,
         dangerouslyUseHTMLString: true,
-        type: 'success',
-        duration: 0
+        type: 'info',
+        duration: 10000
       }
       if (msg) {
-        this.$notify(opt)
+        this.$message(opt)
       }
     }
     // afterQRScan() {
@@ -330,8 +282,8 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/serfend/vue-element-admin/pull/927 */
 
-$bg: #283443;
-$light_gray: #fff;
+$bg: #ccc;
+$light_gray: #222;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -374,86 +326,58 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+$bg: #aaa;
 $dark_gray: #889aa4;
-$light_gray: #eee;
+$light_gray: #222;
 
-.login-container {
-  min-height: 100%;
-  width: 100%;
-  background-color: $bg;
+.login-form {
+  position: relative;
+  max-width: 500px;
+  min-width: 300px;
+  margin: 0 auto;
   overflow: hidden;
+}
 
-  .login-form {
-    position: relative;
-    width: 520px;
-    max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 0 auto;
-    overflow: hidden;
-  }
+.tips {
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 10px;
 
-  .tips {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 10px;
-
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
+  span {
+    &:first-of-type {
+      margin-right: 16px;
     }
   }
+}
 
-  .svg-container {
-    padding: 6px 5px 6px 15px;
-    color: $dark_gray;
-    vertical-align: middle;
-    width: 30px;
-    display: inline-block;
+.title-container {
+  position: relative;
+
+  .title {
+    font-size: 26px;
+    color: $light_gray;
+    margin: 0px auto 40px auto;
+    text-align: center;
+    font-weight: bold;
   }
 
-  .title-container {
-    position: relative;
-
-    .title {
-      font-size: 26px;
-      color: $light_gray;
-      margin: 0px auto 40px auto;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .set-language {
-      color: #fff;
-      position: absolute;
-      top: 3px;
-      font-size: 18px;
-      right: 0px;
-      cursor: pointer;
-    }
-  }
-
-  .show-pwd {
+  .set-language {
+    color: #333;
     position: absolute;
-    right: 10px;
-    top: 7px;
-    font-size: 16px;
-    color: $dark_gray;
+    top: 3px;
+    font-size: 18px;
+    right: 0px;
     cursor: pointer;
-    user-select: none;
   }
+}
 
-  .thirdparty-button {
-    position: absolute;
-    right: 0;
-    bottom: 6px;
-  }
-
-  @media only screen and (max-width: 470px) {
-    .thirdparty-button {
-      display: none;
-    }
-  }
+.show-pwd {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+  font-size: 16px;
+  color: $dark_gray;
+  cursor: pointer;
+  user-select: none;
 }
 </style>
