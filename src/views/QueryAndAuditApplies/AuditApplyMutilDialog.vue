@@ -152,7 +152,14 @@ export default {
       this.$refs['auditForm'].validate(valid => {
         if (!valid) return
         const auth = this.auditForm.auth
-        audit({ list: this.multiAuditForm.responseList }, auth)
+        var list = this.multiAuditForm.responseList.map(item => {
+          return {
+            id: item.id,
+            action: item.action,
+            remark: item.remark
+          }
+        })
+        audit({ list: list }, auth)
           .then(resultlist => {
             for (var i = 0; i < resultlist.length; i++) {
               var item = {
@@ -162,23 +169,11 @@ export default {
               var applyraw = this.multiAuditForm.responseList[i]
               var apply = applyraw.apply
               var from = apply.base.realName
-              var vacationLen =
-                datedifference(
-                  apply.request.stampLeave,
-                  apply.request.stampReturn
-                ) + 1
-              if (applyraw.action === 2) {
-                item.msg = '驳回'
-              } else {
-                item.msg = '通过'
-              }
+              var r = apply.request
+              var vacationLen = datedifference(r.stampLeave, r.stampReturn) + 1
+              item.msg = applyraw.action === 2 ? '驳回' : '通过'
               item.msg = `${item.msg}${from}的${vacationLen}天申请`
-              if (item.status === 0) {
-                item.msg += '成功'
-              } else {
-                item.msg += `失败:${item.message}`
-              }
-              this.$emit('updated')
+              item.msg += item.status === 0 ? '成功' : `失败:${item.message}`
               setTimeout(
                 result => {
                   if (result.status === 0) {
@@ -187,10 +182,11 @@ export default {
                     this.$notify.error(result.msg)
                   }
                 },
-                (i + 1) * 2000,
+                (i + 1) * 3000,
                 item
               )
             }
+            this.$emit('updated')
           })
           .finally(() => {
             this.multiAuditFormShow = false
