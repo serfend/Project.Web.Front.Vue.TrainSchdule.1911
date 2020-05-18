@@ -112,9 +112,6 @@ service.interceptors.response.use(
         setTimeout(() => {
           delete warningInfoLog[res.message]
         }, 10000)
-        if (res.status === 12120) {
-          location.href = '/#/login'
-        }
         Message({
           message: res.message,
           type: 'error',
