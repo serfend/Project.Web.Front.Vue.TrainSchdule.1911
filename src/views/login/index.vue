@@ -4,9 +4,8 @@
     v-loading="loading"
     :model="loginForm"
     :rules="loginRules"
-    auto-complete="on"
+    auto-complete="off"
     class="login-form"
-    label-position="left"
   >
     <div class="title-container">
       <h3 class="title">{{ $t('login.defaultTitle') }}</h3>
@@ -22,11 +21,7 @@
         name="username"
         tabindex="1"
         type="text"
-      >
-        <template slot="prepend">
-          <svg-icon icon-class="user" />
-        </template>
-      </el-input>
+      />
     </el-form-item>
     <el-tooltip v-model="capsTooltip" content="大写已开启" manual placement="right">
       <el-form-item prop="password">
@@ -36,16 +31,13 @@
           v-model="loginForm.password"
           placeholder="密码"
           :type="passwordType"
-          auto-complete="on"
+          auto-complete="off"
           name="password"
           tabindex="2"
           @blur="capsTooltip = false"
           @keyup.enter.native="handleLogin"
           @keyup.native="checkCapslock"
         >
-          <template slot="prepend">
-            <svg-icon icon-class="password" />
-          </template>
           <template slot="append">
             <span class="show-pwd" @click="showPwd">
               <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
@@ -54,20 +46,29 @@
         </el-input>
       </el-form-item>
     </el-tooltip>
-    <el-form-item style="text-align:center" inline-message>
+    <div style="margin-bottom:0.5em;">
       <el-checkbox v-model="loginForm.RememberUserPassword" label="记住密码" />
-      <el-tooltip content="将无需输入账号和密码">
-        <el-checkbox v-model="loginForm.RememberMe" label="自动登录" />
+      <el-tooltip content="每次打开网站时将自动登录">
+        <el-checkbox v-model="loginForm.RememberMe" label="记住我" />
       </el-tooltip>
-      <el-link href="/#/forget">忘记账号/密码</el-link>
-    </el-form-item>
-    <el-row />
-    <el-button style="width:40%;" plain @click.native.prevent="handleReg">{{ $t('register.title') }}</el-button>
-    <el-button
-      type="primary"
-      style="width:40%;float:right"
-      @click.native.prevent="handleLogin"
-    >{{ $t('login.title') }}</el-button>
+      <el-link type="info" href="/#/forget" style="float:right">忘记账号/密码？</el-link>
+    </div>
+    <el-row type="flex" justify="space-around">
+      <el-col :span="10">
+        <el-button
+          plain
+          style="width:100%"
+          @click.native.prevent="handleReg"
+        >{{ $t('register.title') }}</el-button>
+      </el-col>
+      <el-col :span="10">
+        <el-button
+          type="primary"
+          style="width:100%"
+          @click.native.prevent="handleLogin"
+        >{{ $t('login.title') }}</el-button>
+      </el-col>
+    </el-row>
   </el-form>
 </template>
 
@@ -256,128 +257,10 @@ export default {
         this.$message(opt)
       }
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
 }
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/serfend/vue-element-admin/pull/927 */
-
-$bg: #ccc;
-$light_gray: #222;
-$cursor: #fff;
-
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
-    color: $cursor;
-  }
-}
-
-/* reset element-ui css */
-.login-container {
-  .el-input {
-    display: inline-block;
-    height: 47px;
-    width: 85%;
-
-    input {
-      background: transparent;
-      border: 0px;
-      -webkit-appearance: none;
-      border-radius: 0px;
-      padding: 12px 5px 12px 15px;
-      color: $light_gray;
-      height: 47px;
-      caret-color: $cursor;
-
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
-    }
-  }
-
-  .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    color: #454545;
-  }
-}
-</style>
-
-<style lang="scss" scoped>
-$bg: #aaa;
-$dark_gray: #889aa4;
-$light_gray: #222;
-
-.login-form {
-  position: relative;
-  max-width: 500px;
-  min-width: 300px;
-  margin: 0 auto;
-  overflow: hidden;
-}
-
-.tips {
-  font-size: 14px;
-  color: #fff;
-  margin-bottom: 10px;
-
-  span {
-    &:first-of-type {
-      margin-right: 16px;
-    }
-  }
-}
-
-.title-container {
-  position: relative;
-
-  .title {
-    font-size: 26px;
-    color: $light_gray;
-    margin: 0px auto 40px auto;
-    text-align: center;
-    font-weight: bold;
-  }
-
-  .set-language {
-    color: #333;
-    position: absolute;
-    top: 3px;
-    font-size: 18px;
-    right: 0px;
-    cursor: pointer;
-  }
-}
-
-.show-pwd {
-  position: absolute;
-  right: 10px;
-  top: 7px;
-  font-size: 16px;
-  color: $dark_gray;
-  cursor: pointer;
-  user-select: none;
-}
+@import "./login-form.scss";
 </style>
