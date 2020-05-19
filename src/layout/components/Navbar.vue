@@ -17,7 +17,7 @@
       <el-popover
         v-model="userCardShow"
         placement="bottom-end"
-        trigger="hover"
+        trigger="click"
         @show="userCardShowing(true)"
         @hide="userCardShowing(false)"
       >
