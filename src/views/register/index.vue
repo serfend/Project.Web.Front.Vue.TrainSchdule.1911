@@ -188,6 +188,7 @@ export default {
     return {
       submitLoading: false,
       tableLoading: false,
+      isToRegister: true,
       registerForm: this.createForm(),
       nowStep: 1,
       stepOptions: [
@@ -241,9 +242,6 @@ export default {
     }
   },
   computed: {
-    isToRegister() {
-      return this.$store.state.user.isToRegister
-    },
     nowLoginUserName() {
       return this.$store.state.user.realName
     }
@@ -257,6 +255,9 @@ export default {
     }
   },
   mounted() {
+    if (this.$route.query) {
+      this.isToRegister = this.$route.query.isRegister
+    }
     this.refreshFormType()
   },
   methods: {
@@ -276,7 +277,7 @@ export default {
       }
     },
     switchFormType() {
-      this.$store.state.user.isToRegister = !this.$store.state.user.isToRegister
+      this.isToRegister = !this.isToRegister
       this.refreshFormType()
     },
     refreshFormType() {

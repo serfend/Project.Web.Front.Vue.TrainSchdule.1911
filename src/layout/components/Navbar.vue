@@ -35,7 +35,7 @@
                 <SvgIcon icon-class="scan_namecard" />
                 <span>修改密码</span>
               </el-menu-item>
-              <el-menu-item index="2" @click="handleReg(true)">
+              <el-menu-item index="2" @click="handleReg(false)">
                 <SvgIcon icon-class="newapplication_" />
                 <span>授权注册</span>
               </el-menu-item>
@@ -57,7 +57,7 @@
       </el-popover>
       <div v-if="!hasLogin" class="right-menu-item">
         <el-link>登录</el-link>
-        <el-link @click="handleReg">注册</el-link>
+        <el-link @click="handleReg(true)">注册</el-link>
       </div>
       <div v-else class="right-menu-item">
         <el-popover trigger="hover">
@@ -138,9 +138,8 @@ export default {
         this.userCardShow = false
       }
     },
-    handleReg(isToAuthRegister) {
-      this.$store.state.user.isToRegister = !isToAuthRegister
-      this.$router.push({ path: '/register' })
+    handleReg(isToRegister) {
+      this.$router.push({ path: `/register?isRegister=${isToRegister}` })
     },
     async logout() {
       this.loading = true
@@ -149,10 +148,6 @@ export default {
       this.$nextTick(() => {
         this.userCardShow = false
       })
-    },
-    authRegisterUser(isToRegister) {
-      this.$store.state.user.isToRegister = isToRegister
-      return this.$router.push(`/register`)
     }
   }
 }

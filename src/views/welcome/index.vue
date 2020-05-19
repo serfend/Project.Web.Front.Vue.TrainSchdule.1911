@@ -73,7 +73,7 @@ export default {
             description: '注册和审批新账号窗口',
             svg: '注册',
             // icon: '/favicon.png',
-            href: '/register'
+            href: '/register?isRegister=true'
           },
           {
             label: '我要休假',
