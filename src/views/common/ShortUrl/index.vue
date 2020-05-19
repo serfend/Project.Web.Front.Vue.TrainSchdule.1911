@@ -122,6 +122,7 @@ export default {
     create(key) {
       createDwz(this.target, key, this.expire).then(data => {
         this.urlKey = data.key
+        this.$message.success('保存成功')
       })
     },
     remove() {

@@ -78,7 +78,15 @@
                 <el-tag>{{ i.fileInfo.path }}</el-tag>
                 {{ i.fileInfo.create }}
               </el-row>
-              <el-row>{{ i.current }} / {{ i.total }}</el-row>
+              <el-row>
+                <span>{{ i.current }} / {{ i.total }}</span>
+                <el-button
+                  type="info"
+                  icon="el-icon-document-copy"
+                  size="mini"
+                  @click="clipBoard(i.fileInfo.id,`${i.fileInfo.path}_${i.fileInfo.name}`,$event)"
+                >复制链接</el-button>
+              </el-row>
               <el-row>
                 <el-progress :percentage="i.total<=0?0:100*i.current/i.total" show-text />
               </el-row>
@@ -151,7 +159,9 @@ export default {
     clipBoard(fileid, fileName, event) {
       var requestUrl =
         process.env.VUE_APP_BASE_API + '/file/download?fileid=' + fileid
-      clipboard(requestUrl, event)
+      clipboard(requestUrl, event).then(() => {
+        this.$message.success(`文件${fileName} 链接已复制`)
+      })
     },
     download(fileid, fileName) {
       var requestUrl =
