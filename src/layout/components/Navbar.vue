@@ -23,7 +23,7 @@
       >
         <Login v-if="!hasLogin&&loginFormHasShow" @login="hdlLogin" />
         <div v-else style="width:250px">
-          <UserSummary :showout="userCardIsShowing" :data="currentUser" />
+          <UserSummary :showout="userCardIsShowing" :data="null" />
           <div class="menu-divider" />
           <el-menu style="border-right:none">
             <el-submenu index="1">
@@ -114,24 +114,10 @@ export default {
       return this.$store.state.user.userid
     },
     companyName() {
-      return this.currentUser ? this.currentUser.companyName : null
+      return this.$store.state.user.companyName
     },
     realName() {
-      return this.currentUser
-        ? `${this.currentUser.dutiesName}${this.currentUser.realName}`
-        : null
-    },
-    currentUser() {
-      var val = this.$store.state.user
-      var userWithAvatar = Object.assign(val.data, {
-        avatar: val.avatar
-      })
-      var userWithVacation = Object.assign(userWithAvatar, {
-        vacation: val.vacation
-      })
-      console.log('caculate current user')
-      console.log(userWithVacation)
-      return userWithVacation
+      return `${this.$store.state.user.dutiesName}${this.$store.state.user.realName}`
     }
   },
   mounted() {

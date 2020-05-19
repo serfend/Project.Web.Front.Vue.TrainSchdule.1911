@@ -1,8 +1,8 @@
 <template>
   <div v-if="data" class="SummaryContainer">
     <el-image
-      v-if="data.avatar"
-      :src="data.avatar"
+      :src="avatar"
+      :preview-src-list="[avatar]"
       class="avatar"
       :style="{transform:showout?'':'scale(0)'}"
     />
@@ -11,7 +11,7 @@
       <el-tag class="userduties">{{ data.dutiesName }}</el-tag>
     </div>
     <div class="menu-divider" />
-    <VacationSummary :data="data" />
+    <VacationSummary :data="vacation" />
     <div class="menu-divider" />
   </div>
 </template>
@@ -22,13 +22,20 @@ export default {
   name: 'UserSummary',
   components: { VacationSummary },
   props: {
-    data: {
-      type: Object,
-      default: null
-    },
     showout: {
       type: Boolean,
       default: false
+    }
+  },
+  computed: {
+    avatar() {
+      return this.$store.state.user.avatar
+    },
+    data() {
+      return this.$store.state.user.data
+    },
+    vacation() {
+      return this.$store.state.user.vacation
     }
   }
 }

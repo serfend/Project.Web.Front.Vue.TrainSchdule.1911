@@ -40,17 +40,15 @@ export default {
   watch: {
     data: {
       handler(val) {
-        this.$nextTick(() => {
-          if (val && val.vacation && val.vacation.yearlyLength) {
-            var v = val.vacation
-            this.form.days = `${v.comsumeLength}/${v.nowTimes}`
-            this.form.rate =
-              v.yearlyLength === 0
-                ? 0
-                : Math.round((v.comsumeLength / v.yearlyLength) * 10000) / 100
-            this.form.times = `${v.onTripTimes}/${v.maxTripTimes}`
-          }
-        })
+        if (val && val.yearlyLength) {
+          var v = val
+          this.form.days = `${v.comsumeLength}/${v.nowTimes}`
+          this.form.rate =
+            v.yearlyLength === 0
+              ? 0
+              : Math.round((v.comsumeLength / v.yearlyLength) * 10000) / 100
+          this.form.times = `${v.onTripTimes}/${v.maxTripTimes}`
+        }
       },
       deep: true,
       immediate: true
