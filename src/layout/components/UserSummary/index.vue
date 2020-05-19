@@ -8,10 +8,11 @@
     />
     <div class="userinfo">
       <div class="username">{{ data.realName }}</div>
-      <el-tag class="userduties">{{ data.dutiesName }}</el-tag>
+      <el-tag class="userduties" size="mini">{{ data.dutiesName }}</el-tag>
     </div>
+    <div style="height:0.7em" />
     <div class="menu-divider" />
-    <VacationSummary :data="vacation" />
+    <VacationSummary style="margin:0.3em" :data="vacation" />
     <div class="menu-divider" />
   </div>
 </template>
@@ -42,14 +43,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~@/styles/element-variables.scss";
-
-.menu-divider {
-  width: 100%;
-  height: 1px;
-  background-color: #ccc8;
-  margin-top: 2px;
-}
+@import "../menu-divider.scss";
 .SummaryContainer {
   min-height: 300px;
   position: relative;
@@ -64,10 +58,10 @@ export default {
     font-weight: 600;
     text-align: center;
     .username {
-      color: $--color-primary;
+      color: --color-primary;
     }
     .userduties {
-      color: $--color-primary;
+      color: --color-primary;
       display: grid;
     }
   }
