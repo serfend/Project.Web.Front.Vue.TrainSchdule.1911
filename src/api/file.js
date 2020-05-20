@@ -32,6 +32,42 @@ export function download(fileid) {
 }
 
 /**
+ * 获取文件夹下的文件列表
+ *
+ * @export
+ * @param {*} filepath
+ * @param {*} pages
+ * @returns
+ */
+export function folderFiles(path, pages) {
+  return request.get('file/folderFiles', {
+    params: {
+      path,
+      pageIndex: pages.pageIndex,
+      pageSize: pages.pageSize
+    }
+  })
+}
+
+/**
+ * 获取子文件夹
+ *
+ * @export
+ * @param {*} path
+ * @param {*} pages
+ * @returns
+ */
+export function requestFolder(path, pages) {
+  return request.get('file/folders', {
+    params: {
+      path,
+      pageIndex: pages.pageIndex,
+      pageSize: pages.pageSize
+    }
+  })
+}
+
+/**
  *获取指定文件信息
  *
  * @export
