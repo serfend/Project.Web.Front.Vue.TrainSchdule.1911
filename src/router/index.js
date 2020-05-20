@@ -34,17 +34,10 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
-    path: '/main',
-    component: Layout,
-    // redirect: '/dashboard',
-    children: [
-      {
-        path: '/dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard' }
-      }
-    ]
+    path: '/dashboard',
+    component: () => import('@/views/dashboard/index'),
+    name: 'Dashboard',
+    meta: { title: 'dashboard', icon: 'dashboard' }
   },
   applicationRouter,
   applicationSettingRouter,

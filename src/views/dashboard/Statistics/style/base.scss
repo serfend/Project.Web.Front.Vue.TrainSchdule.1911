@@ -1,0 +1,8 @@
+%base-bar-pseudo {
+  content: "";
+  height: 1px;
+  width: 0;
+  bottom: 0;
+  position: absolute;
+  transition: $transition;
+}
