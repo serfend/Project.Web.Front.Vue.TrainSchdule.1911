@@ -94,6 +94,11 @@
           </div>
         </el-card>
       </el-col>
+      <el-col>
+        <el-card :header="`文件:${file.filePath}`">
+          <Explorer :path.sync="file.filePath" @select="fileSelect" />
+        </el-card>
+      </el-col>
     </el-row>
   </el-form>
 </template>
@@ -102,10 +107,11 @@
 // download,
 import clipboard from '@/utils/clipboard'
 import AuthCode from '@/components/AuthCode'
+import Explorer from './Explorer'
 import { upload, requestFile, status, getClientKey } from '@/api/file'
 export default {
   name: 'FileEngine',
-  components: { AuthCode },
+  components: { AuthCode, Explorer },
   data() {
     return {
       statusLoading: false,
@@ -156,6 +162,9 @@ export default {
     this.refreshStatus()
   },
   methods: {
+    fileSelect(file) {
+      this.file.fileName = file
+    },
     clipBoard(fileid, fileName, event) {
       var requestUrl =
         process.env.VUE_APP_BASE_API + '/file/download?fileid=' + fileid
