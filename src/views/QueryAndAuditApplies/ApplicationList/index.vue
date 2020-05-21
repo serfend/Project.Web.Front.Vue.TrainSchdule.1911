@@ -14,6 +14,7 @@
         <template slot-scope="{row}">
           <el-row>
             <el-tag
+              v-if="row.request.vacationType"
               effect="dark"
               size="mini"
               :type="row.request.vacationType==='正休'?'':'danger'"
@@ -31,29 +32,11 @@
         <template slot-scope="{row}">
           <div v-if="row.nowStep">
             <el-tooltip effect="light">
-              <div slot="content">
-                可审批的共有 {{ row.nowStep.membersFitToAudit.length }} 人，共需要 {{ row.nowStep.requireMembersAcceptCount }} 人
-                <el-card style="padding:10px">
-                  已审核
-                  <el-tag
-                    v-for="p in GetUserByArray(row.nowStep.membersAcceptToAudit)"
-                    :key="p.name"
-                  >
-                    <div v-if="p.duties">{{ p.duties }}({{ p.realName }})</div>
-                    <div v-else>{{ p.realName }}({{ p.name }})</div>
-                  </el-tag>
-                </el-card>
-                <el-card style="padding:10px">
-                  待审核
-                  <el-tag
-                    v-for="p in GetUserByArray(row.nowStep.membersFitToAudit.concat(row.nowStep.membersAcceptToAudit).filter(v=>!row.nowStep.membersFitToAudit.includes(v)||!row.nowStep.membersAcceptToAudit.includes(v)))"
-                    :key="p.name"
-                  >
-                    <div v-if="p.duties">{{ p.duties }}({{ p.realName }})</div>
-                    <div v-else>{{ p.realName }}({{ p.name }})</div>
-                  </el-tag>
-                </el-card>
-              </div>
+              <ApplyAuditStreamPreview
+                slot="content"
+                :userid="row.userBase.id"
+                :now-step="row.nowStep.index"
+              />
               <el-tag
                 class="caption"
               >{{ row.nowStep.index+1 }}/{{ row.steps.length }}步 {{ row.nowStep.firstMemberCompanyName }}</el-tag>
@@ -112,7 +95,11 @@
           <el-tooltip content="此申请可能为休假结束后创建">
             <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
           </el-tooltip>
-          <el-tag :color="row.statusColor" class="white--text">{{ row.statusDesc }}</el-tag>
+          <el-tag
+            v-if="row.statusDesc"
+            :color="row.statusColor"
+            class="white--text"
+          >{{ row.statusDesc }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -144,12 +131,14 @@ import { format } from 'timeago.js'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
 import Pagination from '@/components/Pagination'
+import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 
 export default {
   name: 'ApplicationList',
   components: {
     AuditApplyMutilDialog,
-    Pagination
+    Pagination,
+    ApplyAuditStreamPreview
   },
   props: {
     list: {
@@ -223,17 +212,15 @@ export default {
       var stampLeave = new Date(item.request.stampLeave)
       item.checkIfIsReplentApply = stampLeave <= new Date(item.create)
       var nowYear = new Date().getFullYear()
-      item.stampLeave = `${
-        stampLeave.getFullYear() !== nowYear
-          ? stampLeave.getFullYear() + '年'
-          : ''
-      }${stampLeave.getMonth() + 1}月${stampLeave.getDate()}日`
+      var nowYearDes = stampLeave.getFullYear() !== nowYear
+        ? stampLeave.getFullYear() + '年'
+        : ''
+      item.stampLeave = `${nowYearDes}${stampLeave.getMonth() + 1}月${stampLeave.getDate()}日`
       var stampReturn = new Date(item.request.stampReturn)
-      item.stampReturn = `${
-        stampReturn.getFullYear() !== nowYear
-          ? stampReturn.getFullYear() + '年'
-          : ''
-      }${stampReturn.getMonth() + 1}月${stampReturn.getDate()}日`
+      var stampReturnYearDes = stampReturn.getFullYear() !== nowYear
+        ? stampReturn.getFullYear() + '年'
+        : ''
+      item.stampReturn = `${stampReturnYearDes}${stampReturn.getMonth() + 1}月${stampReturn.getDate()}日`
       item.create = format(item.create, 'zh_CN')
       return item
     },
@@ -254,8 +241,7 @@ export default {
     },
     showDetail(row, column, event) {
       if (column.label === '操作') return
-      this.$store.state.vacation.vacationDetail = row
-      this.$router.push('/application/applyDetail?id=' + row.id)
+      this.$router.push(`/application/applyDetail?id=${row.id}`)
     }
   }
 }

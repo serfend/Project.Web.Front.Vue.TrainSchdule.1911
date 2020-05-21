@@ -1,7 +1,12 @@
 <template>
   <div>
     <div v-if="solutionName">
-      <el-steps :space="200" :active="streams.length" align-center>
+      <el-steps
+        :space="200"
+        :active="nowStep>=0?nowStep:streams.length"
+        :finish-status="nowStep>=0?'success':'finish'"
+        align-center
+      >
         <el-step v-for="s in streams" :key="s.index">
           <template slot="title">
             <div>{{ s.name }}</div>
@@ -31,6 +36,10 @@ export default {
     userid: {
       type: String,
       default: null
+    },
+    nowStep: {
+      type: Number,
+      default: -1
     }
   },
   data: () => ({
