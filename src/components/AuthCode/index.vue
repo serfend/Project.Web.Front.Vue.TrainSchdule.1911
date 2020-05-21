@@ -16,11 +16,7 @@
       </template>
       <el-form>
         <el-form-item label="授权人">
-          <UserSelector
-            :code.sync="innerForm.authByUserId"
-            :default-info="defaultUser"
-            @updated="userSelectChanged"
-          />
+          <UserSelector :code.sync="innerForm.authByUserId" :default-info="defaultUser" />
         </el-form-item>
         <el-form-item label="授权码">
           <CodeInput
@@ -48,12 +44,6 @@ export default {
     UserSelector
   },
   props: {
-    form: {
-      type: Object,
-      default() {
-        return this.innerForm
-      }
-    },
     authCheckMethod: {
       type: Function,
       default() {
@@ -94,7 +84,7 @@ export default {
     }
   },
   mounted() {
-    setInterval(() => {
+    setTimeout(() => {
       this.innerForm.authByUserId = this.$store.state.user.userid
       var id = this.$store.state.user.userid
       this.defaultUser = `${this.$store.state.user.name}(${id})`
@@ -103,9 +93,6 @@ export default {
   methods: {
     collaspseOpen(e) {
       this.collaspseIsOpen = e.length > 0
-    },
-    userSelectChanged(user) {
-      console.log(user)
     },
     checkCode() {
       var fn = this.authCheckMethod
