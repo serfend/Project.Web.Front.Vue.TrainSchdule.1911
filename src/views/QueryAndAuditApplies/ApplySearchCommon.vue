@@ -422,15 +422,6 @@ export default {
           this.$emit('update:pages', f.pages)
         })
         .finally(() => {
-          const showText = [
-            '离队时间为空时，默认将查询近一个星期的申请',
-            '双击表格可查看休假详情',
-            '点击操作栏下方的下载按钮可以直接下载休假单',
-            '只有当休假还没有被任何人审批的时候才能撤回',
-            '新申请的假默认是未保存状态，并且会在1天内被删除，注意及时保存'
-          ]
-          var rndIndex = Math.floor(Math.random() * showText.length)
-          this.$notify.info(showText[rndIndex])
           this.onLoading = false
         })
     },
