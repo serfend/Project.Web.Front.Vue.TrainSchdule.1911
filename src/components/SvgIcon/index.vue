@@ -12,6 +12,10 @@ export default {
       type: String,
       required: true
     },
+    defaultIconClass: {
+      type: String, // 默认图标，当iconClass不存在时生效
+      default: ''
+    },
     className: {
       type: String,
       default: ''

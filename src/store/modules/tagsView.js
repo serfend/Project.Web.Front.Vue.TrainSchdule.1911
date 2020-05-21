@@ -20,7 +20,7 @@ const mutations = {
   },
 
   DEL_VISITED_VIEW: (state, view) => {
-    for (const [i, v] of state.visitedViews.entries()) {
+    for (var [i, v] of state.visitedViews.entries()) {
       if (v.path === view.path) {
         state.visitedViews.splice(i, 1)
         break
@@ -28,7 +28,7 @@ const mutations = {
     }
   },
   DEL_CACHED_VIEW: (state, view) => {
-    for (const i of state.cachedViews) {
+    for (var i of state.cachedViews) {
       if (i === view.name) {
         const index = state.cachedViews.indexOf(i)
         state.cachedViews.splice(index, 1)
@@ -43,7 +43,7 @@ const mutations = {
     })
   },
   DEL_OTHERS_CACHED_VIEWS: (state, view) => {
-    for (const i of state.cachedViews) {
+    for (var i of state.cachedViews) {
       if (i === view.name) {
         const index = state.cachedViews.indexOf(i)
         state.cachedViews = state.cachedViews.slice(index, index + 1)
@@ -62,7 +62,7 @@ const mutations = {
   },
 
   UPDATE_VISITED_VIEW: (state, view) => {
-    for (let v of state.visitedViews) {
+    for (var v of state.visitedViews) {
       if (v.path === view.path) {
         v = Object.assign(v, view)
         break

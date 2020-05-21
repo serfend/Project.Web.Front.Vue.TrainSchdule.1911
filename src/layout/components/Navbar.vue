@@ -56,7 +56,7 @@
         </div>
       </el-popover>
       <div v-if="!hasLogin" class="right-menu-item">
-        <el-link>登录</el-link>
+        <el-link @click="userCardShowing(true)">登录</el-link>
         <el-link @click="handleReg(true)">注册</el-link>
       </div>
       <div v-else class="right-menu-item">
@@ -101,6 +101,7 @@ export default {
   },
   data() {
     return {
+      lastUpdateShow: new Date(),
       userCardShow: false,
       userCardIsShowing: false,
       loginFormHasShow: false,
@@ -130,8 +131,16 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     userCardShowing(show) {
-      this.userCardIsShowing = show
-      this.loginFormHasShow = true
+      var lastUpdateShow = new Date()
+      this.lastUpdateShow = lastUpdateShow
+      setTimeout(() => {
+        if (lastUpdateShow !== this.lastUpdateShow) return
+        if (show) {
+          this.userCardShow = true
+        }
+        this.userCardIsShowing = show
+        this.loginFormHasShow = true
+      }, 100)
     },
     hdlLogin(success) {
       if (success) {
@@ -154,6 +163,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "./menu-divider.scss";
-@import "./nav-bar.scss";
+@import './menu-divider.scss';
+@import './nav-bar.scss';
 </style>

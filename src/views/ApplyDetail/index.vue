@@ -10,7 +10,7 @@
         class="white--text"
       >{{ statusDic[detail.status].desc }}</el-tag>
     </h2>
-    <div v-if="detail&&detail.status">
+    <div v-if="detail&&detail.id">
       <action-examine style="float:right" :row="detail" @updated="requestUpdate" />
       <action-user style="float:right" :row="detail" @updated="requestUpdate" />
     </div>
@@ -18,7 +18,7 @@
       <el-form type="flex" label-width="120px">
         <div class="content-card">
           <el-card
-            v-if="detail&&detail.status"
+            v-if="detail&&detail.id"
             v-loading="loading"
             :visible.sync="innerShow"
             :show-close="false"
@@ -34,7 +34,7 @@
                 <el-tag type="success">{{ av.name }}{{ av.length }}天</el-tag>
               </el-tooltip>
             </h3>
-            <div v-if="detail.status">
+            <div v-if="detail.id">
               <el-row>
                 <el-col :span="6">
                   <el-form-item label="原因">{{ detail.request.reason }}</el-form-item>
@@ -94,7 +94,7 @@
         </div>
         <div class="content-card">
           <el-card
-            v-if="detail&&detail.status"
+            v-if="detail&&detail.id"
             v-loading="loading"
             label="家庭信息"
             :visible.sync="innerShow"

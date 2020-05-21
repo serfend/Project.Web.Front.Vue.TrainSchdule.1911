@@ -165,18 +165,17 @@ export default {
     fileSelect(file) {
       this.file.fileName = file
     },
+    downloadUrl(fileId) {
+      return `${process.env.VUE_APP_BASE_API}/file/download?fileid=${fileId}`
+    },
     clipBoard(fileid, fileName, event) {
-      var requestUrl =
-        process.env.VUE_APP_BASE_API + '/file/download?fileid=' + fileid
-      clipboard(requestUrl, event).then(() => {
+      clipboard(this.downloadUrl(fileid), event).then(() => {
         this.$message.success(`文件${fileName} 链接已复制`)
       })
     },
     download(fileid, fileName) {
-      var requestUrl =
-        process.env.VUE_APP_BASE_API + '/file/download?fileid=' + fileid
       var a = document.createElement('a')
-      a.href = requestUrl
+      a.href = this.downloadUrl(fileid)
       a.click()
     },
     upload,

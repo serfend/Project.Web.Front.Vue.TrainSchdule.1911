@@ -122,7 +122,7 @@ export default {
       return '无'
     },
     refresh() {
-      if (!this.detail) return
+      if (!this.detail || !this.statusDic || this.statusDic.length === 0) return
       var i = 0
       for (i = 0; i < this.detail.steps.length; i++) {
         this.detail.steps[i].timeStamp = this.GetHandleTimeAgo(
