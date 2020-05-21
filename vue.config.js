@@ -126,6 +126,11 @@ module.exports = {
                   priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
                   test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
                 },
+                echarts: {
+                  name: 'chunk-echarts',
+                  priority: 20,
+                  test: /[\\/]node_modules[\\/]_?echarts(.*)/
+                },
                 commons: {
                   name: 'chunk-commons',
                   test: resolve('src/components'), // can customize your rules
