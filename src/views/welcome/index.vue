@@ -22,43 +22,18 @@
             />
           </el-col>
         </el-row>
+        <Footer />
       </el-main>
-
-      <el-footer height="2em" class="footer">
-        <el-popover placement="top" trigger="hover" @show="contactMeHasShow = true">
-          <ContactMe
-            v-if="contactMeHasShow"
-            content="https://u.wechat.com/MKXY9nIvV-9oPgMNhB4cd58"
-          />
-          <el-link slot="reference" type="primary">联系我们</el-link>
-        </el-popover>
-        <el-popover placement="top" trigger="hover" @show="helpMeHasShow = true">
-          <ContactMe
-            v-if="helpMeHasShow"
-            content="http://39.97.229.104/s/b4afa7"
-            description="扫码反馈意见/问题"
-          />
-          <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">用户反馈</el-link>
-        </el-popover>
-        <el-popover placement="top" trigger="hover" @show="helpMeHasShow = true">
-          <ContactMe
-            v-if="helpMeHasShow"
-            content="http://39.97.229.104/s/policy_vacation.md"
-            description="扫码查看相关政策"
-          />
-          <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">相关政策</el-link>
-        </el-popover>
-      </el-footer>
     </div>
   </el-container>
 </template>
 
 <script>
 import AppIcon from '@/components/AppIcon'
-import ContactMe from '@/components/ContactMe'
+import Footer from './Footer'
 export default {
   name: 'Welcome',
-  components: { AppIcon, ContactMe },
+  components: { AppIcon, Footer },
   props: {
     showTitle: {
       type: Boolean,
@@ -109,9 +84,7 @@ export default {
   data() {
     return {
       qrCodeUrl: '',
-      innerList: [],
-      contactMeHasShow: false,
-      helpMeHasShow: false
+      innerList: []
     }
   },
   watch: {
@@ -155,24 +128,5 @@ export default {
     rgb(185, 157, 201),
     rgb(162, 104, 180)
   );
-}
-.footer {
-  position: fixed;
-  width: 100%;
-  left: 0;
-  bottom: 0;
-  transition: all 0.5s;
-  background: #f5f6f59f;
-  border-top: 1px solid #ebebeb9f;
-  line-height: 1.5em;
-  font-size: 1em;
-  .el-link {
-    font-size: 0.8em;
-    margin-left: 1em;
-  }
-}
-.footer:hover {
-  background: #f5f6f5;
-  border-top: 1px solid #ebebeb;
 }
 </style>
