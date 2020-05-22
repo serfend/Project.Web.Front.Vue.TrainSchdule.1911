@@ -10,7 +10,7 @@ export function details(companies, ids) {
 export function summary(company) {
   return request.get('vacationStatistics/summary', {
     params: {
-      compainesCode: company
+      companiesCode: company
     }
   })
 }

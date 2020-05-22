@@ -21,7 +21,7 @@ export default {
       type: String,
       default: '300px'
     },
-    nowCompaines: {
+    nowCompanies: {
       type: Array,
       default() {
         return []
@@ -63,7 +63,7 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: this.nowCompaines.map(c => c.name)
+          data: this.nowCompanies.map(c => c.name)
         },
         calculable: true,
         series: [
@@ -73,7 +73,7 @@ export default {
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: this.nowCompaines.map(c => {
+            data: this.nowCompanies.map(c => {
               return {
                 value: Math.floor(Math.random() * 10),
                 name: c.name

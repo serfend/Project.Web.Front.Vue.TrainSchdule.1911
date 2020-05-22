@@ -7,7 +7,7 @@
       <pan-thumb :image="avatar" class="panThumb" />
       <Mallki style="float:right" text="休假完成程度" :description="description" />
       <div style="padding-top:35px">
-        <div v-for="c in nowCompaines" :key="c.code" class="progress-item">
+        <div v-for="c in nowCompanies" :key="c.code" class="progress-item">
           <span>{{ c.name }}</span>
           <el-progress :percentage="Math.floor(Math.random()*100) " />
         </div>
@@ -39,7 +39,7 @@ export default {
         return null
       }
     },
-    nowCompaines: {
+    nowCompanies: {
       type: Array,
       default() {
         return []
@@ -57,7 +57,7 @@ export default {
   computed: {
     ...mapGetters(['name', 'avatar', 'roles']),
     description() {
-      return `${this.nowCompaines.length}c虚拟数据`
+      return `${this.nowCompanies.length}c虚拟数据`
     }
   }
 }

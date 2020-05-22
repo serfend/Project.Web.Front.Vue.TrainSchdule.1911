@@ -10,7 +10,7 @@
           <bar-chart
             ref="barchart"
             :data="data_focus"
-            :now-compaines="nowCompanies"
+            :now-companies="nowCompanies"
             @datazoom="handleZoom"
           />
         </div>
@@ -21,11 +21,11 @@
         <todo-list />
       </el-col>
       <el-col :lg="{ span: 8 }" :md="{ span: 24 }" style="margin-bottom:30px;">
-        <box-card :data="data_focus" :now-compaines="nowCompanies" />
+        <box-card :data="data_focus" :now-companies="nowCompanies" />
       </el-col>
       <el-col :lg="8" :sm="24" :xs="24">
         <div class="chart-wrapper">
-          <pie-chart ref="piechart" :data="data_focus" :now-compaines="nowCompanies" />
+          <pie-chart ref="piechart" :data="data_focus" :now-companies="nowCompanies" />
         </div>
       </el-col>
     </el-row>
@@ -113,13 +113,13 @@ export default {
     init(companyCode) {
       return companyChild(companyCode).then(data => {
         if (data.list.length === 0) {
-          return this.initCompaines([companyCode])
+          return this.initCompanies([companyCode])
         }
-        return this.initCompaines(data.list.map(i => i.code))
+        return this.initCompanies(data.list.map(i => i.code))
       })
     },
-    initCompaines(compaines) {
-      var cmpStr = compaines.join('##')
+    initCompanies(companies) {
+      var cmpStr = companies.join('##')
       return summary(cmpStr).then(data => {
         for (var s in data.list) {
           if (!this.statisticsDic[data.list[s].id]) {
@@ -127,7 +127,7 @@ export default {
           }
         }
         return details(
-          compaines,
+          companies,
           data.list.map(i => i.id)
         ).then(de => {
           this.initData(de)

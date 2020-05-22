@@ -23,7 +23,7 @@ export default {
       type: String,
       default: '300px'
     },
-    nowCompaines: {
+    nowCompanies: {
       type: Array,
       default() {
         return []
@@ -93,7 +93,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: this.nowCompaines.map(c => c.name),
+            data: this.nowCompanies.map(c => c.name),
             axisTick: {
               alignWithLabel: true
             }
