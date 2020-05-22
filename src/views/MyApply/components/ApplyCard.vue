@@ -20,52 +20,13 @@
             <el-row>
               <el-form>
                 <el-form-item label="审批流">
-                  <div>
-                    <el-tooltip v-if="innerData.steps&&innerData.steps.length>0" effect="light">
-                      <el-steps
-                        slot="content"
-                        :style="{ width:`${100*innerData.steps.length}px` }"
-                        :active="innerData.nowStep?(innerData.nowStep.index):(innerData.steps.length)"
-                        finish-status="success"
-                      >
-                        <el-step
-                          v-for="s in innerData.steps"
-                          :key="s.index"
-                          :title="`${s.firstMemberCompanyName}`"
-                        >
-                          <div slot="description">
-                            <h3>{{ s.name }}</h3>
-                            <el-popover trigger="hover" @show="anyStepShow(s)">
-                              <span
-                                slot="reference"
-                              >{{ s.membersAcceptToAudit.length }}人 / {{ s.requireMembersAcceptCount==0?'所有':s.requireMembersAcceptCount }}人</span>
-                              <div v-if="s.memberShow">
-                                <el-card>
-                                  可审批人
-                                  <UserFormItem
-                                    v-for="u in s.membersFitToAudit"
-                                    :key="u"
-                                    :userid="u"
-                                    placement="top"
-                                  />
-                                </el-card>
-                                <el-card>
-                                  已审批人
-                                  <UserFormItem
-                                    v-for="u in s.membersAcceptToAudit"
-                                    :key="u"
-                                    :userid="u"
-                                    placement="top"
-                                  />
-                                </el-card>
-                              </div>
-                            </el-popover>
-                          </div>
-                        </el-step>
-                      </el-steps>
-                      <el-tag>{{ innerData.auditStreamSolution }}</el-tag>
-                    </el-tooltip>
-                  </div>
+                  <ApplyAuditStreamPreview
+                    :show-detail="false"
+                    :now-step="innerData.nowStep?(innerData.nowStep.index):(innerData.steps.length)"
+                    :audit-status="innerData.steps"
+                    :solution-name.sync="innerData.auditStreamSolution"
+                    :title="innerData.auditStreamSolution"
+                  />
                 </el-form-item>
                 <el-form-item label="类别">
                   <el-tag
@@ -108,10 +69,10 @@
 import { parseTime, datedifference } from '@/utils'
 import { format } from 'timeago.js'
 import ActionUser from '@/views/QueryAndAuditApplies/ActionUser'
-import UserFormItem from '@/components/User/UserFormItem'
+import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 export default {
   name: 'ApplyCard',
-  components: { ActionUser, UserFormItem },
+  components: { ActionUser, ApplyAuditStreamPreview },
   props: {
     data: {
       type: Object,
@@ -149,11 +110,6 @@ export default {
       handler(val) {
         if (val) {
           this.innerData = val
-          if (this.innerData.steps && this.innerData.steps.length > 0) {
-            for (var i = 0; i < this.innerData.steps.length; i++) {
-              this.innerData.steps[i].memberShow = false
-            }
-          }
         }
       },
       immediate: true,
@@ -172,10 +128,6 @@ export default {
     datedifference,
     userUpdate() {
       this.$emit('updated')
-    },
-    anyStepShow(step) {
-      step.memberShow = true
-      this.$forceUpdate()
     },
     timeFormat(val) {
       return `${parseTime(val, '{y}年{m}月{d}日')}(${format(val, 'zh_CN')})`
