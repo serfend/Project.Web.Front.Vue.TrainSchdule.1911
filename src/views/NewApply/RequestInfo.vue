@@ -281,7 +281,6 @@ export default {
           }
         ]
       },
-
       submitId: '',
       isHover: false,
       anyChanged: false
@@ -310,7 +309,6 @@ export default {
       handler(val) {
         if (val && !this.onLoading) {
           this.anyChanged = true
-          this.submitId = ''
         }
       },
       deep: true,
@@ -561,16 +559,10 @@ export default {
       setTimeout(() => {
         if (OnloadingUserStamp !== this.OnloadingUserStamp) return
         getStampReturn(this.caculaingDate).then(data => {
-          const endDate = data.endDate
-          this.formApply.StampReturn = endDate
+          this.formApply.StampReturn = data.endDate
           this.lawvacations = data.descriptions ? data.descriptions : []
-          this.$notify({
-            title: '预计归队时间',
-            message: data.endDate,
-            type: 'success'
-          })
         })
-      }, 1000)
+      }, 500)
     }
   }
 }
