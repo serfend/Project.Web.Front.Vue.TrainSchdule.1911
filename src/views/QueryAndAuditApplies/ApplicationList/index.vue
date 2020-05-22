@@ -41,8 +41,8 @@
       <el-table-column header-align="center" align="center" label="休假时间">
         <template slot-scope="{row}">
           <el-row>
-            <el-tooltip content="申请被创建的时间">
-              <span>{{ row.create }}</span>
+            <el-tooltip :content="`创建于:${row.create}`">
+              <span>{{ format(row.create, 'zh_CN') }}</span>
             </el-tooltip>
           </el-row>
           <el-row>
@@ -54,7 +54,11 @@
       </el-table-column>
       <el-table-column align="center" label="休假地点">
         <template slot-scope="{row}">
-          <span>{{ row.request.vacationPlace? row.request.vacationPlace.name :'' }}</span>
+          <el-tooltip
+            :content="`详细地址:${row.request.vacationPlaceName?row.request.vacationPlaceName:'未填写'}`"
+          >
+            <span>{{ row.request.vacationPlace? row.request.vacationPlace.name :'未选择' }}</span>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假总天数">
@@ -186,6 +190,7 @@ export default {
     }
   },
   methods: {
+    format,
     formatApplyItem(li, statusOptions) {
       const { ...item } = li
       const statusObj = statusOptions[item.status]
@@ -196,15 +201,14 @@ export default {
       item.checkIfIsReplentApply = stampLeave <= new Date(item.create)
       var nowYear = new Date().getFullYear()
       var nowYearDes = stampLeave.getFullYear() !== nowYear
-        ? stampLeave.getFullYear() + '年'
+        ? `${stampLeave.getFullYear()}年`
         : ''
       item.stampLeave = `${nowYearDes}${stampLeave.getMonth() + 1}月${stampLeave.getDate()}日`
       var stampReturn = new Date(item.request.stampReturn)
       var stampReturnYearDes = stampReturn.getFullYear() !== nowYear
-        ? stampReturn.getFullYear() + '年'
+        ? `${stampReturn.getFullYear()}年`
         : ''
       item.stampReturn = `${stampReturnYearDes}${stampReturn.getMonth() + 1}月${stampReturn.getDate()}日`
-      item.create = format(item.create, 'zh_CN')
       return item
     },
     datedifference,
