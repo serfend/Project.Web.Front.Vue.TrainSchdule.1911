@@ -26,18 +26,27 @@ export function companyChild(id) {
  * @export
  * @param {string} id 单位id
  * @returns
-* {array} list:
- *  {json} list[i]:
- *      {string} list[i].realName:"测试管理员"
- *      {string} list[i].duties:"助理工程师"
- *      {string} list[i].company:""
- *      {string} list[i].id:"1000000"
  */
 export function Managers(id) {
   return request({
     url: '/company/Managers',
     method: 'get',
     id
+  })
+}
+
+/**
+ * 获取多个单位的管理
+ *
+ * @export
+ * @param {Array<String>} ids 单位id
+ * @returns
+ */
+export function companiesManagers(ids) {
+  return request.get('/company/companiesManagers', {
+    params: {
+      ids: ids.join('##')
+    }
   })
 }
 
