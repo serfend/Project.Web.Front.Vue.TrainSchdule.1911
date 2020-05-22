@@ -12,6 +12,9 @@
         />
       </el-col>
       <el-col :xl="12" :lg="24">
+        <VacationPreview ref="VacationPreview" :userid="userid" style="margin:20px 5px" />
+      </el-col>
+      <el-col :xl="12" :lg="24">
         <RequestInfo
           ref="RequestInfo"
           :submit-id.sync="formFinal.RequestId"
@@ -19,14 +22,6 @@
           :self-settle.sync="selfSettle"
           style="margin:20px 5px"
           @submited="requestInfoSubmit"
-        />
-      </el-col>
-      <el-col :xl="12" :lg="24">
-        <VacationPreview
-          v-show="nowStep>=2"
-          ref="VacationPreview"
-          :userid="userid"
-          style="margin:20px 5px"
         />
       </el-col>
     </el-row>
