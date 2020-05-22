@@ -32,7 +32,7 @@
         :icon="onLoading?'el-icon-loading':'el-icon-refresh-right'"
         circle
         style="float:right"
-        @click="searchData"
+        @click="searchDataDirect(true)"
       />
     </el-card>
     <el-form
@@ -360,21 +360,21 @@ export default {
       }
       this.searchData()
     },
-    searchData() {
+    searchData(isUserAction) {
       var lastUpdate = new Date()
       this.lastUpdate = lastUpdate
       setTimeout(() => {
         if (this.lastUpdate !== lastUpdate) return
-        this.searchDataDirect()
+        this.searchDataDirect(isUserAction)
       }, 500)
     },
-    searchDataDirect() {
+    searchDataDirect(isUserAction) {
       var f = this.createQueryPost()
       // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
       var status = this.queryForm.status
       var actionStatus = this.queryForm.actionStatus
       var queryString = `${JSON.stringify(f)}${status}${actionStatus}`
-      if (queryString === this.lastQueryString) return
+      if (queryString === this.lastQueryString && !isUserAction) return
       this.lastQueryString = queryString
 
       const action = this.adminQuery
