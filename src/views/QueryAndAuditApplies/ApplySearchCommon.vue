@@ -200,7 +200,7 @@ export default {
     pages: {
       type: Object,
       default() {
-        return this.innerTableForm.pages
+        return this.innerPages
       }
     },
     fullui: {
@@ -229,7 +229,7 @@ export default {
         }
       ],
       onLoading: false,
-      loadingDate: '',
+      lastUpdate: '',
       innerList: [],
       queryForm: {
         createTime: null,
@@ -244,13 +244,11 @@ export default {
         createCompanyName: ''
       },
       queryFormStartRecord: false,
-      innerTableForm: {
-        pages: {
-          pageIndex: 0,
-          pageSize: 20,
-          totalCount: 0
-        }
+      innerPages: {
+        pageIndex: 0,
+        pageSize: 20
       },
+      lastQueryString: '',
       adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
       innerfullui: false,
       onlySeeSelfApplies: false // 仅查询当前用户的申请
@@ -304,10 +302,10 @@ export default {
     },
     pages: {
       handler(val) {
-        if (val.totalCount) {
-          this.innerTableForm.pages = val
+        if (val) {
+          this.innerPages = val
           this.searchData()
-        } else this.$emit('update:pages', this.innerTableForm.pages)
+        } else this.$emit('update:pages', this.innerPages)
       },
       immediate: true,
       deep: true
@@ -318,9 +316,6 @@ export default {
     var tmp = JSON.parse(tmpItem)
     if (tmp) {
       this.queryForm = tmp
-      // if (this.currentUserId && !tmp.auditBy) {
-      //   this.queryForm.auditBy = this.currentUserId
-      // }
     }
     this.queryFormStartRecord = true
   },
@@ -356,10 +351,50 @@ export default {
       exportMultiApplies('休假人员统计表.xlsx', f)
     },
     clearForm() {
-      this.$refs.innerTableForm.resetFields()
+      this.$refs.queryForm.resetFields()
+    },
+
+    seeSelfChange() {
+      if (this.onlySeeSelfApplies) {
+        this.queryForm.auditBy = ''
+      }
+      this.searchData()
+    },
+    searchData() {
+      var lastUpdate = new Date()
+      this.lastUpdate = lastUpdate
+      setTimeout(() => {
+        if (this.lastUpdate !== lastUpdate) return
+        this.searchDataDirect()
+      }, 500)
+    },
+    searchDataDirect() {
+      var f = this.createQueryPost()
+      // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
+      var status = this.queryForm.status
+      var actionStatus = this.queryForm.actionStatus
+      var queryString = `${JSON.stringify(f)}${status}${actionStatus}`
+      if (queryString === this.lastQueryString) return
+      this.lastQueryString = queryString
+
+      const action = this.adminQuery
+        ? queryList(f)
+        : queryMyAudit(f.pages, status, actionStatus)
+      this.onLoading = true
+      action
+        .then(data => {
+          this.innerList = data.list || []
+          this.$emit('update:pages', f.pages)
+          this.$emit('update:pagesTotalCount', data.totalCount)
+        })
+        .finally(() => {
+          this.onLoading = false
+        })
     },
     createQueryPost() {
-      var f = this.innerTableForm
+      var f = {
+        pages: Object.assign({}, this.innerPages)
+      }
       f.create = this.formatData_DateTime(this.queryForm.createTime)
       f.stampLeave = this.formatData_DateTime(this.queryForm.stampLeaveTime)
       f.stampReturn = this.formatData_DateTime(this.queryForm.stampReturnTime)
@@ -395,35 +430,6 @@ export default {
         f.createFor = null
       }
       return f
-    },
-    seeSelfChange() {
-      if (this.onlySeeSelfApplies) {
-        this.queryForm.auditBy = ''
-      }
-      this.searchData()
-    },
-    searchData() {
-      var f = this.createQueryPost()
-      this.onLoading = true
-      var ld = new Date()
-      this.loadingDate = ld
-
-      // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
-      var status = this.queryForm.status
-      var actionStatus = this.queryForm.actionStatus
-      const action = this.adminQuery
-        ? queryList(f)
-        : queryMyAudit(f.pages, status, actionStatus)
-      action
-        .then(data => {
-          if (this.loadingDate !== ld) return
-          this.innerList = data.list || []
-          f.pages.totalCount = data.totalCount
-          this.$emit('update:pages', f.pages)
-        })
-        .finally(() => {
-          this.onLoading = false
-        })
     },
     formatData_DateTime(datetime) {
       if (datetime && datetime[0]) {

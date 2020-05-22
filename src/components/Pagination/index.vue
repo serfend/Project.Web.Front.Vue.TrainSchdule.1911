@@ -2,14 +2,14 @@
   <div v-show="!hidden" class="pagination-container">
     <el-pagination
       :background="background"
-      :current-page.sync="innerPages.pageIndex"
-      :page-size.sync="innerPages.pageSize"
+      :current-page="innerPages.pageIndex"
+      :page-size="innerPages.pageSize"
       :layout="layout"
       :page-sizes="pageSizes"
-      :total="innerPages.totalCount"
+      :total="totalCount"
       v-bind="$attrs"
-      @size-change="handleChange"
-      @current-change="handleChange"
+      @size-change="handleSizeChange"
+      @current-change="handlePageChange"
     />
   </div>
 </template>
@@ -33,6 +33,10 @@ export default {
         return [5, 10, 20, 30, 50, 100]
       }
     },
+    totalCount: {
+      type: Number,
+      default: 0
+    },
     layout: {
       type: String,
       default: 'total, sizes, prev, pager, next, jumper'
@@ -52,24 +56,37 @@ export default {
   },
   data() {
     return {
-      innerPages: { pageIndex: 0, pageSize: 10, totalCount: 0 }
+      innerPages: { pageIndex: 1, pageSize: 10, totalCount: 0 }
     }
   },
   watch: {
     pagesetting: {
       handler(val) {
-        this.innerPages = val
+        this.innerPages = {
+          pageIndex: val.pageIndex + 1,
+          pageSize: val.pageSize
+        }
       },
-      deep: true
+      deep: true, immediate: true
     }
   },
   methods: {
-    handleChange(val) {
-      this.pages = val
+    handleSizeChange(val) {
+      this.innerPages.pageSize = val
+      this.handleChange()
+    },
+    handlePageChange(val) {
+      this.innerPages.pageIndex = val
+      this.handleChange()
+    },
+    handleChange() {
       if (this.autoScroll) {
         scrollTo(0, 800)
       }
-      this.$emit('updated')
+      this.$emit('update:pagesetting', {
+        pageSize: this.innerPages.pageSize,
+        pageIndex: this.innerPages.pageIndex - 1
+      })
     }
   }
 }

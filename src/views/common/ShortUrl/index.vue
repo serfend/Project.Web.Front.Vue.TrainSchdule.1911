@@ -56,7 +56,7 @@
               <template slot-scope="scope">{{ scope.row.createBy }}</template>
             </el-table-column>
           </el-table>
-          <Pagination :pagesetting.sync="pages" @updated="loadShortUrls" />
+          <Pagination :pagesetting.sync="pages" :pages-total-count="pagesTotalCount" />
         </el-card>
       </el-col>
       <el-col :sm="24" :md="18" :lg="12">
@@ -95,9 +95,9 @@ export default {
       shortUrls: [],
       pages: {
         pageIndex: 0,
-        pageSize: 20,
-        totalCount: 0
-      }
+        pageSize: 20
+      },
+      pagesTotalCount: 0
     }
   },
   computed: {
@@ -113,6 +113,11 @@ export default {
         }
       },
       immediate: true
+    },
+    pages: {
+      handler(val) {
+        this.loadShortUrls()
+      }, immediate: true
     }
   },
   mounted() {
@@ -130,14 +135,14 @@ export default {
         this.$message.success('已删除')
       })
     },
-    loadStatistics() {},
+    loadStatistics() { },
     loadShortUrls() {
       this.onLoading = true
       loadDwz({ pages: this.pages })
         .then(data => {
           var list = data.list
           this.shortUrls = list
-          this.pages.totalCount = data.totalCount
+          this.pagesTotalCount = data.totalCount
         })
         .finally(() => {
           this.onLoading = false

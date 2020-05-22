@@ -30,21 +30,12 @@
       </el-table-column>
       <el-table-column align="center" label="当前审批">
         <template slot-scope="{row}">
-          <div v-if="row.nowStep">
-            <el-tooltip effect="light">
-              <ApplyAuditStreamPreview
-                slot="content"
-                :userid="row.userBase.id"
-                :now-step="row.nowStep.index"
-              />
-              <el-tag
-                class="caption"
-              >{{ row.nowStep.index+1 }}/{{ row.steps.length }}步 {{ row.nowStep.firstMemberCompanyName }}</el-tag>
-            </el-tooltip>
-          </div>
-          <el-tooltip v-else content="未明确审批流程的休假。可能存在问题，请联系人力审查。">
-            <span>{{ row.auditStreamSolution }}</span>
-          </el-tooltip>
+          <ApplyAuditStreamPreview
+            slot="content"
+            :audit-status="row.steps"
+            :title="row.auditStreamSolution"
+            :now-step="row.nowStep?row.nowStep.index:row.steps.length"
+          />
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="休假时间">
@@ -121,8 +112,8 @@
     >批量审批</el-button>
     <Pagination
       :pagesetting.sync="pagesetting"
+      :total-count="pagesTotalCount"
       :hidden="formatedList.length===0"
-      @updated="$emit('updated')"
     />
   </div>
 </template>
@@ -156,9 +147,12 @@ export default {
       default() {
         return {}
       }
+    },
+    pagesTotalCount: {
+      type: Number,
+      default: 0
     }
   },
-
   data() {
     return {
       multiAuditFormShow: false,
@@ -192,17 +186,6 @@ export default {
     }
   },
   methods: {
-    GetUserByArray(userIdArr) {
-      var result = []
-      for (var i = 0; i < userIdArr.length; i++) {
-        var item = {
-          name: userIdArr[i],
-          realName: ''
-        }
-        result.push(item)
-      }
-      return result
-    },
     formatApplyItem(li, statusOptions) {
       const { ...item } = li
       const statusObj = statusOptions[item.status]
@@ -248,32 +231,5 @@ export default {
 </script>
 
 <style lang='scss'>
-.p-fixed {
-  position: fixed !important;
-  top: 0;
-  bottom: 0;
-  background: white;
-}
-.f-right {
-  right: 0 !important;
-}
-.el-dialog.apply-detail {
-  margin-right: 0;
-  z-index: 10000;
-  .el-dialog__header,
-  .apply-detail-header {
-    background: #304156;
-    color: whitesmoke;
-  }
-}
-.el-dialog.apply-detail .el-dialog__body {
-  padding: 0;
-}
-.pull-left {
-  float: left !important;
-}
-.pull-right {
-  float: right !important;
-}
 </style>
 

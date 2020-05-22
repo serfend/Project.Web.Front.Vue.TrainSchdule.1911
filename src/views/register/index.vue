@@ -121,7 +121,14 @@
               >{{ scope.row.accountAuthStatus==1?'已认证':scope.row.accountAuthStatus==0?'待认证':'已退回' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="vacation.description" label="休假详情描述" />
+          <el-table-column prop="vacation.description" label="休假详情描述">
+            <template slot-scope="scope">
+              <el-popover trigger="hover">
+                <VacationDescriptionContent :users-vacation="scope.row.vacation" />
+                <span slot="reference">{{ scope.row.vacation.description }}</span>
+              </el-popover>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </div>
@@ -140,11 +147,7 @@
           :style="{ width: '20%' }"
           @click="switchFormType"
         >切换到普通注册</el-button>
-        <Pagination
-          :pagesetting="MembersQuery"
-          @updatepage="updatepage"
-          @updated="loadWaitToAuthRegisterUsers"
-        />
+        <Pagination :pagesetting.sync="MembersQuery" :total-count="MembersQueryTotalCount" />
       </div>
     </el-card>
   </el-card>
@@ -160,6 +163,7 @@ import Social from './components/Social'
 import Auth from '@/components/AuthCode'
 import User from '@/components/User'
 import CascaderSelector from '@/components/CascaderSelector'
+import VacationDescriptionContent from '@/views/NewApply/VacationDescriptionContent'
 import { regnew, authUserRegister, modefyUser } from '@/api/account'
 import { getMembers, companyChild } from '@/api/company'
 import {
@@ -182,7 +186,8 @@ export default {
     Company,
     // Diy,
     Auth,
-    User
+    User,
+    VacationDescriptionContent
   },
   data() {
     return {
@@ -230,10 +235,10 @@ export default {
         }
       ],
       MembersQuery: {
-        pageIndex: 1,
-        pageSize: 10,
-        totalCount: 0
+        pageIndex: 0,
+        pageSize: 10
       },
+      MembersQueryTotalCount: 0,
       waitToAuthRegisterUsers: [],
       waitToAuthRegisterUsersLoadId: '',
       nowSelectRealName: '', // 通过姓名选择器选中的人员
@@ -249,9 +254,14 @@ export default {
   watch: {
     nowSelectCompanyCode: {
       handler(val) {
-        if (this.isToRegister === false) this.loadWaitToAuthRegisterUsers()
+        this.loadWaitToAuthRegisterUsers()
       },
       immediate: true
+    },
+    MembersQuery: {
+      handler(val) {
+        this.loadWaitToAuthRegisterUsers()
+      }, immediate: true, deep: true
     }
   },
   mounted() {
@@ -291,17 +301,12 @@ export default {
       if (this.waitToAuthRegisterUsersLoadId === '') {
         return this.$message.error('未选中用户')
       }
-      if (
-        confirm(
-          '即将对用户' +
-            this.registerForm.Base.realName +
-            '(' +
-            this.waitToAuthRegisterUsersLoadId +
-            ')的注册进行【' +
-            (valid ? '认证' : '退回') +
-            '】操作，请确认'
-        )
-      ) {
+      var actionName = valid ? '认证' : '退回'
+      this.$confirm(`即将对用户${this.registerForm.Base.realName}(${this.waitToAuthRegisterUsersLoadId})的注册进行【${actionName}】操作`, `${actionName}提示`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
         const username = this.waitToAuthRegisterUsersLoadId
         this.waitToAuthRegisterUsersLoadId = ''
         authUserRegister(username, valid).then(() => {
@@ -315,11 +320,7 @@ export default {
             }
           }
         })
-      }
-    },
-    updatepage(newpage) {
-      if (newpage) this.MembersQuery = newpage
-      this.loadWaitToAuthRegisterUsers()
+      })
     },
     // 刷新待认证人员列表
     loadWaitToAuthRegisterUsers() {
@@ -327,12 +328,12 @@ export default {
       this.submitLoading = true
       getMembers({
         code: this.nowSelectCompanyCode,
-        page: this.MembersQuery.pageIndex - 1,
+        page: this.MembersQuery.pageIndex,
         pageSize: this.MembersQuery.pageSize
       })
         .then(data => {
           const list = data.list.filter(item => item.inviteBy === null)
-          this.MembersQuery.totalCount = data.totalCount
+          this.MembersQueryTotalCount = data.totalCount
           if (list.length === 0) this.$message.success('当前无用户待审批')
           this.waitToAuthRegisterUsers = this.loadUserList(data.list)
           this.loadSingleUser()
