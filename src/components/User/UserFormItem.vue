@@ -1,7 +1,12 @@
 <template>
   <el-popover :placement="placement" width="200" trigger="hover" @show="isActive=true">
     <User :data="innerData" :can-load-avatar="isActive" />
-    <el-tag slot="reference">
+    <el-tag
+      v-show="innerData.realName"
+      slot="reference"
+      class="user-item"
+      :style="innerData.realName?'':'transform:scale(0)'"
+    >
       <i class="el-icon-user-solid" />
       {{ innerData.realName }}
     </el-tag>
@@ -19,7 +24,7 @@ export default {
       type: Object,
       default() {
         return {
-          realName: 'null'
+          realName: null
         }
       }
     },
@@ -72,5 +77,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.user-item {
+  transition: all 0.5s;
+}
 </style>
