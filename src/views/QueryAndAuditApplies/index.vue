@@ -5,12 +5,14 @@
       :loading.sync="appliesListIsLoading"
       :list.sync="appliesList"
       :pages.sync="pages"
+      :pages-total-count.sync="pagesTotalCount"
       :fullui.sync="fullSearchUI"
     />
     <ApplicationList
       ref="applicationlist"
       :list="appliesList"
       :pages.sync="pages"
+      :pages-total-count="pagesTotalCount"
       :loading="appliesListIsLoading"
       @updated="requestUpdate"
     >
@@ -34,8 +36,28 @@ export default {
     return {
       appliesList: [],
       appliesListIsLoading: false,
-      pages: {},
+      pages: {
+        pageSize: 20,
+        pageIndex: 0
+      },
+      pagesTotalCount: 0,
       fullSearchUI: false
+    }
+  },
+  watch: {
+    pages: {
+      handler(val) {
+        localStorage.setItem('queryAndAuditApplies', JSON.stringify({ pages: val }))
+      }, deep: true
+    }
+  },
+  mounted() {
+    var item = JSON.parse(localStorage.getItem('queryAndAuditApplies'))
+    console.log(item)
+    if (item) {
+      if (item.pages) {
+        this.pages = item.pages
+      }
     }
   },
   methods: {
