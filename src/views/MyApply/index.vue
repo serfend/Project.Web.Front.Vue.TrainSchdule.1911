@@ -58,7 +58,7 @@ export default {
           id: 999
         }
       ],
-      lastPage: -1,
+      lastPage: 0,
       haveNext: true,
       loading: false
     }
@@ -96,10 +96,10 @@ export default {
       if (this.loading) return
       if (this.haveNext) {
         this.loading = true
-        this.lastPage++
         var pages = { pageIndex: this.lastPage, pageSize: 5 }
         querySelf(pages)
           .then(data => {
+            this.lastPage++
             this.list.pop() // 删除队尾的提示
             setTimeout(() => {
               for (var i = 0; i < data.list.length; i++) {

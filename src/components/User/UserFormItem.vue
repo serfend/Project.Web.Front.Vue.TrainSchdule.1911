@@ -5,7 +5,7 @@
       v-show="innerData.realName"
       slot="reference"
       class="user-item"
-      :style="innerData.realName?'':'transform:scale(0)'"
+      v-bind="$attrs"
     >
       <i class="el-icon-user-solid" />
       {{ innerData.realName }}
@@ -79,6 +79,6 @@ export default {
 
 <style lang="scss" scoped>
 .user-item {
-  transition: all 0.5s;
+  transition: transform 0.5s;
 }
 </style>

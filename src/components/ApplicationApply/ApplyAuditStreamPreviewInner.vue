@@ -110,10 +110,10 @@ export default {
       for (var s of val) {
         if (!this.userStatus[s.index]) this.userStatus[s.index] = {}
         var dic = this.userStatus[s.index]
-        for (u of s.membersFitToAudit) {
+        for (var u of s.membersFitToAudit) {
           dic[u] = 'primary'
         }
-        for (var u of s.membersAcceptToAudit) {
+        for (u of s.membersAcceptToAudit) {
           dic[u] = 'success'
         }
       }
