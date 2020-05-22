@@ -1,6 +1,10 @@
 <template>
-  <el-card :header="`确认提交 ${solutionName}`">
-    <ApplyAuditStreamPreview :solution-name.sync="solutionName" :userid="userid" />
+  <el-card :header="`审批流程预览：${solutionName}`">
+    <ApplyAuditStreamPreview
+      :solution-name.sync="solutionName"
+      :userid="userid"
+      :show-detail="true"
+    />
   </el-card>
 </template>
 

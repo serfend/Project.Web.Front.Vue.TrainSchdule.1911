@@ -24,7 +24,6 @@
                     :show-detail="false"
                     :now-step="innerData.nowStep?(innerData.nowStep.index):(innerData.steps.length)"
                     :audit-status="innerData.steps"
-                    :solution-name.sync="innerData.auditStreamSolution"
                     :title="innerData.auditStreamSolution"
                   />
                 </el-form-item>
