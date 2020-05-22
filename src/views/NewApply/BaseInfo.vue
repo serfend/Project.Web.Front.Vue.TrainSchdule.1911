@@ -15,13 +15,16 @@
                 <el-tooltip slot="prepend" content="点击加载信息">
                   <el-button icon="el-icon-search" @click="fetchUserInfoes('id')" />
                 </el-tooltip>
-                <el-tooltip slot="append" content="点击加载信息">
+                <el-tooltip
+                  v-if="currentUser"
+                  slot="append"
+                  :content="`点击加载 ${currentUser.realName} 的信息`"
+                >
                   <el-button
-                    icon="el-icon-search"
                     :disabled="!currentUser||!currentUser.id"
                     size="mini"
                     @click="setCurrentUser(3)"
-                  >{{ currentUser?currentUser.realName:'未登录' }}</el-button>
+                  >当前</el-button>
                 </el-tooltip>
               </el-input>
             </el-form-item>
@@ -55,7 +58,10 @@
             <SettleFormItem :form.sync="form.Settle.loversParent" disabled label="配偶父母所在地" />
           </el-form>
         </el-main>
-        <el-aside width="20%" style="padding:0;text-align:center;margin:0;background: rgb(255, 255, 255)">
+        <el-aside
+          width="20%"
+          style="padding:0;text-align:center;margin:0;background: rgb(255, 255, 255)"
+        >
           <div
             class="mask"
             :style="{filter:hideDetail?'':'blur(30px)',background:hideDetail?'#ffffff8f':''}"
@@ -193,11 +199,12 @@ export default {
               return this.$message.warning(`无${realName}的信息，请核对`)
             }
             this.form.id = list[0].id
-            this.$message.success(
-              `成功获取${list[0].realName}的信息${
-                list.length > 1 ? `,存在${list.length}人同名` : ''
-              }`
-            )
+            var infoMain = `成功获取${list[0].realName}的信息`
+            if (list.length === 1) {
+              this.$message.success(infoMain)
+            } else {
+              this.$message.warning(`${infoMain},存在${list.length}人同名，建议使用id查询`)
+            }
             this.fetchUserInfoesDerect()
           })
           .finally(() => {
