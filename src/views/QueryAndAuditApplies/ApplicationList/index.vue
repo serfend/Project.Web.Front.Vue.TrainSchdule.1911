@@ -175,25 +175,26 @@ export default {
     },
     myUserid() {
       return this.$store.state.user.userid
+    },
+    statusOptions() {
+      return this.$store.state.vacation.statusDic
     }
   },
   watch: {
     list: {
       handler(val) {
-        var statusOptions = this.$store.state.vacation.statusDic
-        this.formatedList = this.list.map(li =>
-          this.formatApplyItem(li, statusOptions)
+        this.formatedList = val.map(li =>
+          this.formatApplyItem(li)
         )
       },
-      immediate: true,
       deep: true
     }
   },
   methods: {
     format,
-    formatApplyItem(li, statusOptions) {
+    formatApplyItem(li) {
       const { ...item } = li
-      const statusObj = statusOptions[item.status]
+      const statusObj = this.statusOptions[item.status]
       item.statusDesc = statusObj ? statusObj.desc : '不明类型'
       item.statusColor = statusObj ? statusObj.color : 'gray'
       item.acessable = statusObj ? statusObj.acessable : []

@@ -17,6 +17,7 @@
       @updated="requestUpdate"
     >
       <template slot="action" slot-scope="{row}">
+        <el-link type="info" :href="detailUrl(row.id)">查看详情</el-link>
         <action-examine :row="row" @updated="requestUpdate" />
         <action-user :row="row" @updated="requestUpdate" />
       </template>
@@ -51,9 +52,9 @@ export default {
       }, deep: true
     }
   },
+
   mounted() {
     var item = JSON.parse(localStorage.getItem('queryAndAuditApplies'))
-    console.log(item)
     if (item) {
       if (item.pages) {
         this.pages = item.pages
@@ -61,6 +62,10 @@ export default {
     }
   },
   methods: {
+    detailUrl(id) {
+      var t = `/#/application/applydetail?id=${id}`
+      return t
+    },
     requestUpdate() {
       this.$refs.queryAppliesForm.searchData()
     }

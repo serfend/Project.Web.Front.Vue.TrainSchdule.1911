@@ -194,7 +194,7 @@ export default {
     list: {
       type: Array,
       default() {
-        return this.innerList
+        return []
       }
     },
     pages: {
@@ -230,7 +230,6 @@ export default {
       ],
       onLoading: false,
       lastUpdate: '',
-      innerList: [],
       queryForm: {
         createTime: null,
         stampLeaveTime: null,
@@ -283,13 +282,6 @@ export default {
       handler(val) {
         this.$emit('update:loading', val)
       },
-      immediate: true
-    },
-    innerList: {
-      handler(val) {
-        this.$emit('update:list', val)
-      },
-      deep: true,
       immediate: true
     },
     queryForm: {
@@ -383,7 +375,7 @@ export default {
       this.onLoading = true
       action
         .then(data => {
-          this.innerList = data.list || []
+          this.$emit('update:list', data.list || [])
           this.$emit('update:pages', f.pages)
           this.$emit('update:pagesTotalCount', data.totalCount)
         })
