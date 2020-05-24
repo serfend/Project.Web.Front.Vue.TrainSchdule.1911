@@ -58,8 +58,7 @@ var dict = {
     dashboard: '统计',
     logOut: '退出登录',
     profile: '个人信息',
-    welcome: '首页',
-    guide: '帮助'
+    welcome: '首页'
   },
   register: {
     title: '注册',

@@ -58,8 +58,7 @@ var dict = {
     dashboard: 'statistics',
     logOut: 'logout',
     profile: 'profile',
-    welcome: 'homepage',
-    guide: 'guide'
+    welcome: 'homepage'
   },
   register: {
     title: 'register',
