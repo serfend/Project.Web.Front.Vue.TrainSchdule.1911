@@ -1,88 +1,80 @@
 <template>
-  <div class="container">
-    <dv-loading v-if="!removeLoading" class="loading" :style="{opacity:loading?1:0}">{{ loading }}</dv-loading>
-    <div v-if="company" class="statistics-title">
-      <h1 class="content">{{ company.name }}数据统计</h1>
-    </div>
-    <!-- 页面主体部分 -->
-    <section class="mainbox">
-      <div class="column">
-        <div class="panel bar">
-          <h2>柱形图-就业行业</h2>
-          <div class="chart" />
-          <div class="panel-footer" />
-        </div>
-        <div class="panel line">
-          <h2>
-            折线图-人员变化
-            <a href="javacript:;">2020</a>
-            <a href="javascript:;">2021</a>
-          </h2>
-          <div class="chart">图表</div>
-          <div class="panel-footer" />
-        </div>
-        <div class="panel pie">
-          <h2>饼形图-年龄分布</h2>
-          <div class="chart">图表</div>
-          <div class="panel-footer" />
-        </div>
+  <div id="container" class="container">
+    <div class="container-bg">
+      <dv-loading v-if="!removeLoading" class="loading" :style="{opacity:loading?1:0}">{{ loading }}</dv-loading>
+      <div v-if="company" class="statistics-title">
+        <h1 class="content">信息通信第二旅休假情况</h1>
+        <TimeCenter />
       </div>
-      <div class="column">
-        <!-- no模块制作 -->
-        <div class="no">
-          <div class="no-hd">
-            <ul>
-              <li>125811</li>
-              <li>100000</li>
-            </ul>
+      <!-- 页面主体部分 -->
+      <section class="mainbox">
+        <div class="column">
+          <dv-border-box-11 title="数据区域" class="panel bar">
+            <div class="chart" />
+          </dv-border-box-11>
+          <dv-border-box-11 title="数据区域" class="panel line">
+            <div class="chart" />
+          </dv-border-box-11>
+          <dv-border-box-11 title="数据区域" class="panel pie">
+            <div class="chart" />
+          </dv-border-box-11>
+        </div>
+        <div class="column">
+          <!-- no模块制作 -->
+          <div class="no">
+            <div class="no-hd">
+              <ul>
+                <li style="color:#0f0">12564</li>
+                <li style="color:#0ff">23676</li>
+                <li style="color:#ff0">34788</li>
+                <li style="color:#f0f">45890</li>
+              </ul>
+            </div>
+            <div class="no-bd">
+              <ul>
+                <li>月度通过</li>
+                <li>月度完成</li>
+                <li>季度通过</li>
+                <li>季度完成</li>
+              </ul>
+            </div>
           </div>
-          <div class="no-bd">
-            <ul>
-              <li>前端需求人数</li>
-              <li>市场供应人数</li>
-            </ul>
+          <!-- 地图模块 -->
+          <div class="map">
+            <div class="map1" />
+            <div class="map2" />
+            <div class="map3" />
+            <VacationMap class="chart" />
           </div>
         </div>
-        <!-- 地图模块 -->
-        <div class="map">
-          <div class="map1" />
-          <div class="map2" />
-          <div class="map3" />
-          <VacationMap class="chart" />
+        <div class="column">
+          <dv-border-box-11 title="数据区域" class="panel bar2">
+            <div class="chart" />
+          </dv-border-box-11>
+          <dv-border-box-11 title="数据区域" class="panel line2">
+            <div class="chart" />
+          </dv-border-box-11>
+          <dv-border-box-11 title="数据区域" class="panel pie2">
+            <div class="chart" />
+          </dv-border-box-11>
         </div>
+      </section>
+      <div v-if="company" style="display:flex;position:fixed;bottom:0;">
+        <StatisticsDataDriver
+          ref="dataDriver"
+          :loading.sync="loading"
+          :company-code="company.code"
+          :data.sync="data"
+        />
+        <EchartGeoLoader ref="echartGeoDriver" :file-load="requestFile" />
       </div>
-      <div class="column">
-        <div class="panel bar2">
-          <h2>柱形图-就业行业</h2>
-          <div class="chart">图表</div>
-          <div class="panel-footer" />
-        </div>
-        <div class="panel line2">
-          <h2>折线图-播放量</h2>
-          <div class="chart">图表</div>
-          <div class="panel-footer" />
-        </div>
-        <div class="panel pie2">
-          <h2>饼形图-地区分布</h2>
-          <div class="chart">图表</div>
-          <div class="panel-footer" />
-        </div>
-      </div>
-    </section>
-    <div v-if="company" style="display:flex;position:fixed;bottom:0;">
-      <StatisticsDataDriver
-        ref="dataDriver"
-        :loading.sync="loading"
-        :company-code="company.code"
-        :data.sync="data"
-      />
-      <EchartGeoLoader ref="echartGeoDriver" :file-load="requestFile" />
     </div>
   </div>
 </template>
 
 <script>
 import './js/flexible'
+import TimeCenter from './components/TimeCenter'
 import StatisticsDataDriver from './components/StatisticsDataDriver'
 import EchartGeoLoader from './components/EchartGeoLoader'
 
@@ -91,7 +83,12 @@ import VacationMap from './components/VacationMap'
 import { getUserCompany } from '@/api/userinfo'
 export default {
   name: 'Statistics',
-  components: { EchartGeoLoader, StatisticsDataDriver, VacationMap },
+  components: {
+    TimeCenter,
+    EchartGeoLoader,
+    StatisticsDataDriver,
+    VacationMap
+  },
   data: () => ({
     loading: '未初始化',
     removeLoading: false,
@@ -168,6 +165,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 @import './style/index.scss';
 </style>
