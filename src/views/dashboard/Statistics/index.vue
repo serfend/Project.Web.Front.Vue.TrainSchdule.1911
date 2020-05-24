@@ -3,7 +3,7 @@
     <div class="container-bg">
       <dv-loading v-if="!removeLoading" class="loading" :style="{opacity:loading?1:0}">{{ loading }}</dv-loading>
       <div v-if="company" class="statistics-title">
-        <h1 class="content">信息通信第二旅休假情况</h1>
+        <h1 class="content">{{ company.name }}休假情况</h1>
         <TimeCenter />
       </div>
       <!-- 页面主体部分 -->
@@ -20,31 +20,13 @@
           </dv-border-box-11>
         </div>
         <div class="column">
-          <!-- no模块制作 -->
-          <div class="no">
-            <div class="no-hd">
-              <ul>
-                <li style="color:#0f0">12564</li>
-                <li style="color:#0ff">23676</li>
-                <li style="color:#ff0">34788</li>
-                <li style="color:#f0f">45890</li>
-              </ul>
-            </div>
-            <div class="no-bd">
-              <ul>
-                <li>月度通过</li>
-                <li>月度完成</li>
-                <li>季度通过</li>
-                <li>季度完成</li>
-              </ul>
-            </div>
-          </div>
+          <MembersCounter />
           <!-- 地图模块 -->
           <div class="map">
             <div class="map1" />
             <div class="map2" />
             <div class="map3" />
-            <VacationMap class="chart" />
+            <VacationMap ref="vacationMap" :height="'100%'" />
           </div>
         </div>
         <div class="column">
@@ -78,15 +60,19 @@ import TimeCenter from './components/TimeCenter'
 import StatisticsDataDriver from './components/StatisticsDataDriver'
 import EchartGeoLoader from './components/EchartGeoLoader'
 
-import { requestFile, download } from '@/api/file'
+import MembersCounter from './components/MembersCounter'
 import VacationMap from './components/VacationMap'
+
+import { requestFile, download } from '@/api/file'
 import { getUserCompany } from '@/api/userinfo'
+
 export default {
   name: 'Statistics',
   components: {
     TimeCenter,
     EchartGeoLoader,
     StatisticsDataDriver,
+    MembersCounter,
     VacationMap
   },
   data: () => ({

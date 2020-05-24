@@ -1,12 +1,12 @@
 <template>
   <div>
     <span class="right-panel">
-      <span class="title">{{ right.name }}</span>
+      <span class="display-title">{{ right.name }}</span>
       <span class="time">{{ right.now }}</span>
     </span>
     <span class="left-panel">
       <span class="time">{{ left.now }}</span>
-      <span class="title">{{ left.name }}</span>
+      <span class="display-title">{{ left.name }}</span>
     </span>
   </div>
 </template>

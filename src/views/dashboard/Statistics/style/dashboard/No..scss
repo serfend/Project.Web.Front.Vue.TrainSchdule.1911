@@ -11,8 +11,8 @@
   top: 0;
   left: 0;
   content: "";
-  width: 30px;
-  height: 10px;
+  width: 0.15rem;
+  height: 0.05rem;
   border-top: 2px solid #02a6b5;
   border-left: 2px solid #02a6b5;
 }
@@ -21,10 +21,10 @@
   bottom: 0;
   right: 0;
   content: "";
-  width: 30px;
-  height: 10px;
-  border-right: 2px solid #02a6b5;
-  border-bottom: 2px solid #02a6b5;
+  width: 0.15rem;
+  height: 0.05rem;
+  border-right: 0.01rem solid #02a6b5;
+  border-bottom: 0.01rem solid #02a6b5;
 }
 .no .no-hd ul {
   display: flex;
@@ -44,7 +44,7 @@
   top: 25%;
   right: 0;
   height: 50%;
-  width: 1px;
+  width: 0.01rem;
   background: rgba(255, 255, 255, 0.2);
 }
 .no .no-bd ul {

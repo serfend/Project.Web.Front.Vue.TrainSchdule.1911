@@ -26,6 +26,6 @@ export default {
 <style lang="scss" scoped>
 .display-item {
   color: #aaa;
-  font-size: 0.3em;
+  font-size: 0.05rem;
 }
 </style>
