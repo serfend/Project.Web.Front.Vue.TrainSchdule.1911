@@ -1,0 +1,85 @@
+.mainbox {
+  display: flex;
+  min-width: 1024px;
+  max-width: 1920px;
+  margin: 0 auto;
+  padding: 0.125rem 0.125rem 0;
+}
+.mainbox .column {
+  flex: 3;
+}
+.mainbox .column:nth-child(2) {
+  flex: 5;
+  margin: 0 0.125rem 0.1875rem;
+  overflow: hidden;
+}
+.mainbox .panel {
+  position: relative;
+  height: 3.875rem;
+  padding: 0 0.1875rem 0.5rem;
+  border: 1px solid rgba(25, 186, 139, 0.17);
+  margin-bottom: 0.1875rem;
+  background: url("~@/assets/dashboard/images/line(1).png") rgba(255, 255, 255, 0.03);
+}
+.mainbox .panel::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #02a6b5;
+  border-top: 2px solid #02a6b5;
+  content: "";
+}
+.mainbox .panel::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #02a6b5;
+  border-top: 2px solid #02a6b5;
+  content: "";
+}
+.mainbox .panel .panel-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+.mainbox .panel .panel-footer::before {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #02a6b5;
+  border-bottom: 2px solid #02a6b5;
+  content: "";
+}
+.mainbox .panel .panel-footer::after {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #02a6b5;
+  border-bottom: 2px solid #02a6b5;
+  content: "";
+}
+.mainbox .panel h2 {
+  height: 0.6rem;
+  color: #fff;
+  line-height: 0.6rem;
+  text-align: center;
+  font-size: 0.25rem;
+  font-weight: 400;
+}
+.mainbox .panel h2 a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 0.125rem;
+}
+.mainbox .panel .chart {
+  height: 3rem;
+}

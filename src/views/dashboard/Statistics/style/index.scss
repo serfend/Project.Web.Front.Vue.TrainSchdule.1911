@@ -1,10 +1,9 @@
 @import "./title.scss";
+@import "./base.scss";
+@import "./datav.scss";
+@import "./dashboard";
 .container {
-  background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.05) 2px,
-      transparent 0
-    ),
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 2px, transparent 0),
     linear-gradient(rgba(255, 255, 255, 0.05) 2px, transparent 0);
   background-color: rgb(11, 1, 46);
   background-size: 20px 20px;
