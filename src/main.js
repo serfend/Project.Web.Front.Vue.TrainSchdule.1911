@@ -7,6 +7,13 @@ import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import Element from 'element-ui'
 import '@/styles/index.scss' // global css
 import './styles/element-variables.scss'
+Vue.use(Element, {
+  size: Cookies.get('size') || 'medium', // set element-ui default size
+  i18n: (key, value) => i18n.t(key, value)
+})
+
+import DataV from '@jiaminghi/data-view'
+Vue.use(DataV)
 
 import App from './App'
 import store from './store'
@@ -28,14 +35,8 @@ import * as filters from './filters' // global filters
  * mockXHR()
  */
 
-Vue.use(Element, {
-  size: Cookies.get('size') || 'medium', // set element-ui default size
-  i18n: (key, value) => i18n.t(key, value)
-})
-
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-// use
 Vue.use(mavonEditor)
 
 // register global utility filters
