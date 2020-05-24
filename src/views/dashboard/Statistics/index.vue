@@ -2,7 +2,7 @@
   <div class="container">
     <dv-loading v-if="!removeLoading" class="loading" :style="{opacity:loading?1:0}">{{ loading }}</dv-loading>
     <div v-if="company" class="statistics-title">
-      <span class="content">{{ company.name }}数据统计</span>
+      <h1 class="content">{{ company.name }}数据统计</h1>
     </div>
     <!-- 页面主体部分 -->
     <section class="mainbox">
@@ -48,7 +48,7 @@
           <div class="map1" />
           <div class="map2" />
           <div class="map3" />
-          <div class="chart" />
+          <VacationMap class="chart" />
         </div>
       </div>
       <div class="column">
@@ -82,15 +82,16 @@
 </template>
 
 <script>
+import './js/flexible'
 import StatisticsDataDriver from './components/StatisticsDataDriver'
 import EchartGeoLoader from './components/EchartGeoLoader'
 
 import { requestFile, download } from '@/api/file'
-// import VacationMap from './components/VacationMap'
+import VacationMap from './components/VacationMap'
 import { getUserCompany } from '@/api/userinfo'
 export default {
   name: 'Statistics',
-  components: { EchartGeoLoader, StatisticsDataDriver /* , VacationMap */ },
+  components: { EchartGeoLoader, StatisticsDataDriver, VacationMap },
   data: () => ({
     loading: '未初始化',
     removeLoading: false,

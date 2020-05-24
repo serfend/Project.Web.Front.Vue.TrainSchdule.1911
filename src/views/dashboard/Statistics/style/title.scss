@@ -1,9 +1,30 @@
+// .statistics-title {
+//   margin: 2rem 0 0 2rem;
+//   .content {
+//     font-size: 50px;
+//     color: #fff;
+//     text-shadow: 0 0 10px rgb(0, 183, 255);
+//     font-family: "Sacramento", cursive;
+//   }
+// }
+
 .statistics-title {
-  margin: 2rem 0 0 2rem;
-  .content {
-    font-size: 50px;
-    color: #fff;
-    text-shadow: 0 0 10px rgb(0, 183, 255);
-    font-family: "Sacramento", cursive;
-  }
+  position: relative;
+  height: 1.25rem;
+  background: url(~@/assets/dashboard/images/head_bg.png) no-repeat;
+  background-size: 100% 100%;
+}
+.statistics-title h1 {
+  font-size: 0.475rem;
+  color: #fff;
+  text-align: center;
+  line-height: 1rem;
+}
+.statistics-title .showTime {
+  position: absolute;
+  right: 0.375rem;
+  top: 0;
+  line-height: 0.9375rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.25rem;
 }
