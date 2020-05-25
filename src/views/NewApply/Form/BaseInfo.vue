@@ -7,11 +7,12 @@
             <template slot="content">若有误（含信息有变化），请到审核注册页面修改信息</template>
           </CardTooltipAlert>
           <el-form ref="form" :model="form" label-width="120px">
-            <el-form-item label="选取成员">
-              <UserSelector :code.sync="form.id" :default-info="currentUser" />
+            <el-form-item label="申请人">
+              <UserSelector
+                :code.sync="form.id"
+                :default-info="form&&form.realName?form.realName:'未登录,请选择'"
+              />
             </el-form-item>
-            <el-form-item label="身份号" :rules="[{required:true}]">{{ form.id }}</el-form-item>
-            <el-form-item label="真实姓名" :rules="[{required:true}]">{{ form.realName }}</el-form-item>
             <el-row>
               <el-col>
                 <el-form-item label="部职别">
@@ -149,6 +150,19 @@ export default {
         }, 100)
       }
       return f
+    },
+    setCurrentUser(tryTime) {
+      if (!this.currentUser || !this.currentUser.id) {
+        if (tryTime > 0) {
+          setTimeout(() => {
+            this.setCurrentUser(tryTime - 1)
+          }, 500)
+        } else {
+          this.$message.warning('获取当前用户失败')
+        }
+        return
+      }
+      this.form.id = this.currentUser.id
     },
     fetchUserInfoesDerect() {
       this.onLoading = true

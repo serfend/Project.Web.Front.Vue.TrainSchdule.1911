@@ -1,11 +1,9 @@
 <template>
   <div>
     <el-tooltip content="点击选择成员">
-      <span
-        style="cursor:pointer"
-        @mouseenter="forgetHasShow=true"
-        @mousedown="dialogVisible=true"
-      >{{ userRealName }}</span>
+      <el-link type="info" @click="dialogVisible=true">
+        <span @mouseenter="forgetHasShow=true">{{ userRealName }}</span>
+      </el-link>
     </el-tooltip>
     <el-dialog v-if="forgetHasShow" title="搜索成员" :visible.sync="dialogVisible" append-to-body>
       <FindUserByRealName @change="selectUserChanged" />
@@ -33,9 +31,7 @@ export default {
     defaultInfo: {
       handler(val) {
         if (val) {
-          if (!this.userRealName) {
-            this.userRealName = val
-          }
+          this.userRealName = val
         }
       },
       immediate: true
