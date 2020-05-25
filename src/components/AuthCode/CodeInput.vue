@@ -146,38 +146,46 @@ export default {
     focusOn(isFocus) {
       this.isActive = isFocus
     },
+    reset() {
+      this.showText = ''
+      this.status = 0
+      if (!this.innerCode) this.innerCode = ''
+    },
+    submit(newCode) {
+      this.loading = true
+      if (+new Date() - new Date(this.lastUpdate) < 3 * 1000) {
+        setTimeout(() => {
+          this.loading = false
+          this.userInput(newCode)
+        }, 3000)
+        return
+      }
+      this.lastUpdate = new Date()
+      setTimeout(() => {
+        this.checkCodeMethod(newCode)
+          .then(() => {
+            this.status = 1
+            this.showText = ''
+          })
+          .catch(err => {
+            this.status = -1
+            this.innerCode = ''
+            this.showText = err.message
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      }, 500)
+    },
     userInput(newCode) {
       if (this.loading || !this.listenUserInput) return
       this.$nextTick(() => {
         this.innerCode = newCode
-        if (!this.innerCode) this.innerCode = ''
+        this.reset()
       })
       this.$emit('update:code', newCode)
       if (newCode.length === 6) {
-        this.loading = true
-        if (+new Date() - new Date(this.lastUpdate) < 3 * 1000) {
-          setTimeout(() => {
-            this.loading = false
-            this.userInput(newCode)
-          }, 3000)
-          return
-        }
-        this.lastUpdate = new Date()
-        setTimeout(() => {
-          this.checkCodeMethod(newCode)
-            .then(() => {
-              this.status = 1
-              this.showText = ''
-            })
-            .catch(err => {
-              this.status = -1
-              this.innerCode = ''
-              this.showText = err.message
-            })
-            .finally(() => {
-              this.loading = false
-            })
-        }, 500)
+        this.submit(newCode)
       }
     },
     pswChrBackColor(i) {
