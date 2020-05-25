@@ -12,10 +12,16 @@
         />
       </el-col>
       <el-col :xl="12" :lg="24">
-        <VacationPreview ref="VacationPreview" :userid="userid" style="margin:20px 5px" />
+        <VacationPreview
+          v-show="nowStep>=1"
+          ref="VacationPreview"
+          :userid="userid"
+          style="margin:20px 5px"
+        />
       </el-col>
       <el-col :xl="12" :lg="24">
         <RequestInfo
+          v-show="nowStep>=1"
           ref="RequestInfo"
           :submit-id.sync="formFinal.RequestId"
           :userid.sync="userid"
@@ -38,10 +44,10 @@
 </template>
 
 <script>
-import BaseInfo from './BaseInfo'
-import RequestInfo from './RequestInfo'
-import VacationPreview from './VacationPreview'
-import SubmitApply from './SubmitApply'
+import BaseInfo from './Form/BaseInfo'
+import RequestInfo from './Form/RequestInfo'
+import VacationPreview from '@/components/Vacation/VacationPreview'
+import SubmitApply from './Form/SubmitApply'
 export default {
   name: 'NewApply',
   components: {
@@ -63,8 +69,7 @@ export default {
       }
     }
   },
-  computed: {
-  },
+  computed: {},
   mounted() {
     setTimeout(() => {
       this.createNewDirect()

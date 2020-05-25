@@ -14,7 +14,7 @@
 
 <script>
 import { getUsersVacationLimit } from '@/api/userinfo'
-import VacationDescription from '@/views/NewApply/VacationDescription'
+import VacationDescription from '@/components/Vacation/VacationDescription'
 export default {
   name: 'ApplyOverview',
   components: { VacationDescription },

@@ -3,16 +3,9 @@
     <el-card v-loading="onLoading" header="休假信息" style="position:relative">
       <el-container>
         <el-main :style="{filter:hideDetail?'blur(5px)':''}">
-          <el-tooltip
-            effect="light"
-            content="鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。"
-            style="margin-bottom:10px"
-          >
-            <el-alert
-              :type="submitId?'success':'error'"
-              center
-            >{{ submitId?'恭喜您，信息已无误':'请检查信息是否有误' }}</el-alert>
-          </el-tooltip>
+          <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
+            <template slot="content">鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
+          </CardTooltipAlert>
           <el-form ref="formApply" :model="formApply" label-width="120px">
             <el-form-item label="休假年度">
               <el-radio-group v-model="submitYear">
@@ -95,7 +88,6 @@
                       class="el-icon-edit group-edit"
                       @click="OpenOtherVacation(index)"
                     />
-                    <!-- .stop="doSomething($event) -->
                     <i
                       class="el-icon-delete group-remove"
                       @click.stop="removeVacation(index,$event)"
@@ -152,7 +144,7 @@
             >
               <el-tooltip>
                 <template slot="content">
-                  <span>当前为{{ formApply.vacationPlaceName }}</span>
+                  <span>不填则将使用默认地址：{{ formApply.vacationPlaceName }}</span>
                 </template>
                 <cascader-selector
                   placeholder="选择本次休假的目的地"
@@ -225,13 +217,14 @@
 <script>
 import { postRequestInfo, getStampReturn } from '@/api/apply'
 import { parseTime } from '@/utils'
-import VacationDescription from './VacationDescription'
+import CardTooltipAlert from './FormHelper/CardTooltipAlert'
+import VacationDescription from '@/components/Vacation/VacationDescription'
 import CascaderSelector from '@/components/CascaderSelector'
 import { locationChildren } from '@/api/static'
 import { getUsersVacationLimit } from '@/api/userinfo'
 export default {
   name: 'RequestInfo',
-  components: { VacationDescription, CascaderSelector },
+  components: { CardTooltipAlert, VacationDescription, CascaderSelector },
   props: {
     userid: {
       type: String,
@@ -361,7 +354,6 @@ export default {
       }
     },
     reset() {
-      console.log('request init')
       this.caculaingDate = {}
       this.formApply = this.createNewRequest()
 

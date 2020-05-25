@@ -163,7 +163,7 @@ import Social from './components/Social'
 import Auth from '@/components/AuthCode'
 import User from '@/components/User'
 import CascaderSelector from '@/components/CascaderSelector'
-import VacationDescriptionContent from '@/views/NewApply/VacationDescriptionContent'
+import VacationDescriptionContent from '@/components/Vacation/VacationDescription'
 import { regnew, authUserRegister, modefyUser } from '@/api/account'
 import { getMembers, companyChild } from '@/api/company'
 import {

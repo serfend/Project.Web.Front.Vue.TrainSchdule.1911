@@ -3,38 +3,15 @@
     <el-card v-loading="onLoading" header="基本信息" style="position:relative">
       <el-container>
         <el-main :style="{filter:hideDetail?'blur(5px)':''}">
-          <el-tooltip effect="light" content="若有误（含信息有变化），请到审核注册页面修改信息" style="margin-bottom:10px">
-            <el-alert
-              :type="submitId?'success':'error'"
-              center
-            >{{ submitId?'恭喜您，信息已无误':'请检查信息是否有误,输入id或姓名后回车' }}</el-alert>
-          </el-tooltip>
-          <el-form ref="form" :model="form" label-width="120px" style="background:#fff">
-            <el-form-item label="身份号" :rules="[{required:true}]">
-              <el-input v-model="form.id" @keydown.native.enter="fetchUserInfoes('id')">
-                <el-tooltip slot="prepend" content="点击加载信息">
-                  <el-button icon="el-icon-search" @click="fetchUserInfoes('id')" />
-                </el-tooltip>
-                <el-tooltip
-                  v-if="currentUser"
-                  slot="append"
-                  :content="`点击加载 ${currentUser.realName} 的信息`"
-                >
-                  <el-button
-                    :disabled="!currentUser||!currentUser.id"
-                    size="mini"
-                    @click="setCurrentUser(3)"
-                  >当前</el-button>
-                </el-tooltip>
-              </el-input>
+          <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
+            <template slot="content">若有误（含信息有变化），请到审核注册页面修改信息</template>
+          </CardTooltipAlert>
+          <el-form ref="form" :model="form" label-width="120px">
+            <el-form-item label="选取成员">
+              <UserSelector :code.sync="form.id" :default-info="currentUser" />
             </el-form-item>
-            <el-form-item label="真实姓名" :rules="[{required:true}]">
-              <el-input v-model="form.realName" @keydown.native.enter="fetchUserInfoes('realName')">
-                <el-tooltip slot="prepend" content="点击加载信息">
-                  <el-button icon="el-icon-search" @click="fetchUserInfoes('realName')" />
-                </el-tooltip>
-              </el-input>
-            </el-form-item>
+            <el-form-item label="身份号" :rules="[{required:true}]">{{ form.id }}</el-form-item>
+            <el-form-item label="真实姓名" :rules="[{required:true}]">{{ form.realName }}</el-form-item>
             <el-row>
               <el-col>
                 <el-form-item label="部职别">
@@ -79,14 +56,18 @@
 </template>
 
 <script>
+import UserSelector from '@/components/User/UserSelector'
+
 import SettleFormItem from '@/components/SettleFormItem'
-import { getUserAllInfo } from '@/api/usercompany'
-import { getUserIdByCid, getUserIdByRealName } from '@/api/userinfo'
+import CardTooltipAlert from './FormHelper/CardTooltipAlert'
 import { postBaseInfo } from '@/api/apply'
+import { getUserAllInfo } from '@/api/usercompany'
 import { validPhone } from '@/utils/validate'
 export default {
   name: 'BaseInfo',
   components: {
+    UserSelector,
+    CardTooltipAlert,
     SettleFormItem
   },
   data() {
@@ -118,6 +99,13 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    'form.id': {
+      handler(val) {
+        if (val) {
+          this.fetchUserInfoesDerect()
+        }
+      }
     }
   },
   methods: {
@@ -162,57 +150,6 @@ export default {
       }
       return f
     },
-    setCurrentUser(tryTime) {
-      if (!this.currentUser || !this.currentUser.id) {
-        if (tryTime > 0) {
-          setTimeout(() => {
-            this.setCurrentUser(tryTime - 1)
-          }, 500)
-        } else {
-          this.$message.warning('获取当前用户失败')
-        }
-        return
-      }
-      this.form.id = this.currentUser.id
-      this.fetchUserInfoes('id')
-    },
-    fetchUserInfoes(byIdOrRealname) {
-      if (this.onLoading) return
-      this.onLoading = true
-      const realName = this.form.realName
-      const id = this.form.id
-      if (byIdOrRealname === 'id') {
-        if (id.length === 18) {
-          getUserIdByCid(id).then(data => {
-            this.form.id = data.id
-            this.$message.success(`身份证识别成功:${data.id}`)
-            this.fetchUserInfoesDerect()
-          })
-        } else {
-          this.fetchUserInfoesDerect()
-        }
-      } else {
-        getUserIdByRealName(realName)
-          .then(data => {
-            const list = data.list
-            if (!list || list.length === 0) {
-              return this.$message.warning(`无${realName}的信息，请核对`)
-            }
-            this.form.id = list[0].id
-            var infoMain = `成功获取${list[0].realName}的信息`
-            if (list.length === 1) {
-              this.$message.success(infoMain)
-            } else {
-              this.$message.warning(`${infoMain},存在${list.length}人同名，建议使用id查询`)
-            }
-            this.fetchUserInfoesDerect()
-          })
-          .finally(() => {
-            this.onLoading = false
-          })
-      }
-    },
-
     fetchUserInfoesDerect() {
       this.onLoading = true
       return getUserAllInfo(this.form.id)
@@ -290,6 +227,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>
