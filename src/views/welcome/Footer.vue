@@ -7,7 +7,7 @@
     <el-popover placement="top" trigger="hover" @show="helpMeHasShow = true">
       <ContactMe
         v-if="helpMeHasShow"
-        content="http://39.97.229.104/s/b4afa7"
+        content="https://serfend.top/s/b4afa7"
         description="扫码反馈意见/问题"
       />
       <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">用户反馈</el-link>
@@ -15,7 +15,7 @@
     <el-popover placement="top" trigger="hover" @show="policyHasShow = true">
       <ContactMe
         v-if="policyHasShow"
-        content="http://39.97.229.104/s/policy_vacation.md"
+        content="https://serfend.top/s/policy_vacation.md"
         description="扫码查看相关政策"
       />
       <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">相关政策</el-link>

@@ -30,7 +30,8 @@ export default {
       chart: null,
       series: [],
       startPlace: ['海淀', '昌平', '石家庄', '襄阳'],
-      color: ['#b5bf4f', '#71b3f0', '#f9b230']
+      color: ['#b5bf4f', '#71b3f0', '#f9b230'],
+      refresher: null
     }
   },
   mounted() {
@@ -51,7 +52,9 @@ export default {
     async refresh() {
       this.chart.showLoading()
       this.loadNewData(3)
-      setInterval(() => {
+      console.log('refresh map')
+      if (this.refresher) clearInterval(this.refresher)
+      this.refresher = setInterval(() => {
         this.loadNewData(1)
       }, 15000)
       this.chart.hideLoading()
