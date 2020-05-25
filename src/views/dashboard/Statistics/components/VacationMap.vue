@@ -44,6 +44,7 @@ export default {
     }
     this.chart.dispose()
     this.chart = null
+    if (this.refresher) clearInterval(this.refresher)
   },
   methods: {
     initChart() {
