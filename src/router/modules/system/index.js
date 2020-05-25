@@ -37,7 +37,6 @@ const systemRouter =
       ]
     }, {
       path: '/utils',
-      alwaysShow: true,
       component: () => import('@/views/blank'),
       meta: { title: 'default.utils.title', icon: 'tree-table' },
       children: [qrCodeRouter]

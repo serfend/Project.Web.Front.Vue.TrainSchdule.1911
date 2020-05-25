@@ -1,19 +1,18 @@
 <template>
   <div v-if="!item.hidden">
-    <template
+    <app-link
       v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow"
+      :to="resolvePath(onlyOneChild.path)"
     >
       <el-menu-item
         v-if="onlyOneChild.meta"
         :index="resolvePath(onlyOneChild.path)"
         :class="{'submenu-title-noDropdown':!isNest}"
       >
-        <app-link :to="resolvePath(onlyOneChild.path)">
-          <SvgIcon :icon-class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" />
-          <span>{{ generateTitle(onlyOneChild.meta.title) }}</span>
-        </app-link>
+        <SvgIcon :icon-class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" />
+        <span>{{ generateTitle(onlyOneChild.meta.title) }}</span>
       </el-menu-item>
-    </template>
+    </app-link>
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template v-if="item.meta" slot="title">
@@ -76,18 +75,15 @@ export default {
           return true
         }
       })
-
       // When there is only one child router, the child router is displayed by default
       if (showingChildren.length === 1) {
         return true
       }
-
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
         this.onlyOneChild = { ...parent, path: '', noShowingChildren: true }
         return true
       }
-
       return false
     },
     resolvePath(routePath) {
@@ -99,7 +95,6 @@ export default {
       }
       return path.resolve(this.basePath, routePath)
     },
-
     generateTitle
   }
 }

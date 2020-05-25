@@ -14,7 +14,6 @@
 
 <script>
 import { generateTitle } from '@/utils/i18n'
-import { pathToRegexp } from 'path-to-regexp'
 
 export default {
   data() {
@@ -34,19 +33,20 @@ export default {
     generateTitle,
     getBreadcrumb() {
       // only show routes with meta.title
-      let matched = this.$route.matched.filter(
+      var matched = this.$route.matched.filter(
         item => item.meta && item.meta.title
       )
-      const first = matched[0]
+      // it seems not wise to push dashboard on the first
+      // const first = matched[0]
 
-      if (!this.isDashboard(first)) {
-        matched = [
-          {
-            path: '/dashboard',
-            meta: { title: 'dashboard' }
-          }
-        ].concat(matched)
-      }
+      // if (!this.isDashboard(first)) {
+      //   matched = [
+      //     {
+      //       path: '/dashboard',
+      //       meta: { title: 'dashboard' }
+      //     }
+      //   ].concat(matched)
+      // }
 
       this.levelList = matched.filter(
         item => item.meta && item.meta.title && item.meta.breadcrumb !== false
@@ -59,19 +59,14 @@ export default {
       }
       return name.trim().toLocaleLowerCase() === 'Dashboard'.toLocaleLowerCase()
     },
-    pathCompile(path) {
-      // To solve this problem https://github.com/serfend/vue-element-admin/issues/561
-      const { params } = this.$route
-      var toPath = pathToRegexp.compile(path)
-      return toPath(params)
-    },
     handleLink(item) {
+      console.log(item)
       const { redirect, path } = item
       if (redirect) {
         this.$router.push(redirect)
         return
       }
-      this.$router.push(this.pathCompile(path))
+      this.$router.push(path)
     }
   }
 }

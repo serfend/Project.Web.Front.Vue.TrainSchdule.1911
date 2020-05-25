@@ -7,7 +7,6 @@ const applicationRouter = {
   path: '/application',
   component: Layout,
   redirect: 'noRedirect',
-  alwaysShow: true, // will always show the root menu
   name: 'application',
   meta: {
     title: 'application.title',

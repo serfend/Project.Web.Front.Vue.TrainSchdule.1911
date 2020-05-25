@@ -3,7 +3,6 @@ const applicationSettingRouter = {
   path: '/applicationSetting',
   component: Layout,
   redirect: 'noRedirect',
-  alwaysShow: true, // will always show the root menu
   name: 'applicationSetting',
   meta: {
     title: 'application.setting.title',
