@@ -1,9 +1,10 @@
 import request from '../utils/request'
 
-export function details(companies, ids) {
+export function details(companies, ids, pages) {
   return request.post('vacationStatistics/DetailsList', {
     companyid: { arrays: companies },
-    id: { arrays: ids }
+    id: { arrays: ids },
+    pages
   })
 }
 

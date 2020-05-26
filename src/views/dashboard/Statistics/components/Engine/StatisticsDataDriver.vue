@@ -64,7 +64,8 @@ export default {
             this.showLoading(2, '详细信息')
             return details(
               companies,
-              data.list.map(i => i.id)
+              data.list.map(i => i.id),
+              { pageIndex: 0, pageSize: -1 }
             ).then(de => {
               var r = this.initData(de)
               res(r)
