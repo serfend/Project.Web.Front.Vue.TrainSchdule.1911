@@ -7,10 +7,20 @@
         <TimeCenter />
       </div>
       <!-- 页面主体部分 -->
-      <section class="mainbox">
+      <section v-if="company" class="mainbox">
         <div class="column">
-          <dv-border-box-11 title="数据区域" class="panel bar">
-            <div class="chart" />
+          <dv-border-box-11
+            :title="$refs.vacationDayStatistics?$refs.vacationDayStatistics._data.title:'加载中'"
+            class="panel bar"
+          >
+            <VacationStatisticsBar
+              ref="vacationDayStatistics"
+              height="100%"
+              class="dv-boarder-chart"
+              :color="color"
+              :companies="companies"
+              :data="vacationDay"
+            />
           </dv-border-box-11>
           <dv-border-box-11 title="数据区域" class="panel line">
             <div class="chart" />
@@ -26,7 +36,12 @@
             <div class="map1" />
             <div class="map2" />
             <div class="map3" />
-            <VacationMap ref="vacationMap" :height="'100%'" />
+            <VacationMap3D
+              v-if="echartGeoComplete"
+              ref="vacationMap"
+              :height="'100%'"
+              :file-load="requestFile"
+            />
           </div>
         </div>
         <div class="column">
@@ -48,7 +63,11 @@
           :company-code="company.code"
           :data.sync="data"
         />
-        <EchartGeoLoader ref="echartGeoDriver" :file-load="requestFile" />
+        <EchartGeoLoader
+          ref="echartGeoDriver"
+          :file-load="requestFile"
+          :complete.sync="echartGeoComplete"
+        />
       </div>
     </div>
   </div>
@@ -56,12 +75,14 @@
 
 <script>
 import './js/flexible'
-import TimeCenter from './components/TimeCenter'
-import StatisticsDataDriver from './components/StatisticsDataDriver'
-import EchartGeoLoader from './components/EchartGeoLoader'
+import TimeCenter from './components/NumberCounter/TimeCenter'
+import StatisticsDataDriver from './components/Engine/StatisticsDataDriver'
+import EchartGeoLoader from './components/Engine/EchartGeoLoader'
 
-import MembersCounter from './components/MembersCounter'
-import VacationMap from './components/VacationMap'
+import MembersCounter from './components/NumberCounter/MembersCounter'
+import VacationMap3D from './components/Geo/VacationMap3D'
+
+import VacationStatisticsBar from './components/Bar/VacationStatisticsBar'
 
 import { requestFile, download } from '@/api/file'
 import { getUserCompany } from '@/api/userinfo'
@@ -73,15 +94,43 @@ export default {
     EchartGeoLoader,
     StatisticsDataDriver,
     MembersCounter,
-    VacationMap
+    VacationMap3D,
+    VacationStatisticsBar
   },
   data: () => ({
     loading: '未初始化',
+    echartGeoComplete: false,
     removeLoading: false,
     company: null,
     data: null,
-    lastUpdate: new Date()
+    lastUpdate: new Date(),
+    color: ['#ff6f4f', '#71ff80', '#3581ff']
   }),
+  computed: {
+    companies() {
+      var result = []
+      if (!this.data || !this.data.companyDic) return result
+      var cs = this.data.companyDic
+      result = Object.values(cs)
+      return result
+    },
+    vacationDay() {
+      var result = []
+      result.push({
+        name: '休假天数',
+        data: [7, 2, 6, 2, 4, 5, 3, 1, 9]
+      })
+      result.push({
+        name: '休假次数',
+        data: [5, 3, 6, 2, 4, 1, 9, 7, 2]
+      })
+      result.push({
+        name: '休假人数',
+        data: [2, 4, 6, 1, 9, 5, 3, 7, 2]
+      })
+      return result
+    }
+  },
   watch: {
     loading: {
       handler(val) {
@@ -100,6 +149,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
   },
+
   methods: {
     requestFile(file) {
       return requestFile('/dataview', file).then(data => {
@@ -107,7 +157,7 @@ export default {
       })
     },
     async init() {
-      this.loading = '加载单位信息'
+      this.loading = '初始化'
       await getUserCompany(null, true)
         .then(data => {
           this.company = data.company
@@ -118,14 +168,16 @@ export default {
           }
         })
       this.$nextTick(() => {
-        this.$refs.dataDriver.refresh()
+        this.$refs.dataDriver.refresh().then(() => {
+          this.refresh()
+        })
         this.$refs.echartGeoDriver.refresh()
       })
       window.addEventListener('resize', this.resize)
     },
     refresh() {
       this.chartsDoAction(c => {
-        if (c._data && c._data.chart) {
+        if (c._data && c._data.chart && c.refresh) {
           c.refresh()
         }
       })
@@ -153,4 +205,7 @@ export default {
 
 <style lang="scss" >
 @import './style/index.scss';
+.dv-boarder-chart {
+  padding: 1rem 0.2rem 0 0.2rem;
+}
 </style>
