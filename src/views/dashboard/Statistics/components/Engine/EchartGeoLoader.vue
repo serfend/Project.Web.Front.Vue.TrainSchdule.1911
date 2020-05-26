@@ -16,9 +16,11 @@ export default {
   }),
   methods: {
     async refresh() {
+      this.$emit('update:complete', false)
       if (this.fileLoad == null) return this.$message.error('配置获取失败')
       var geoJson = await this.fileLoad('china-200524.json')
       echarts.registerMap('china', geoJson)
+      this.$emit('update:complete', true)
     }
   }
 }
