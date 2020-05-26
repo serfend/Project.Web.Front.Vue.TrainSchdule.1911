@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      title: '休假天数',
+      title: '加载中',
       chart: null,
       refresher: null,
       nowIndex: 0
@@ -73,26 +73,21 @@ export default {
     },
     refresh() {
       this.chart.showLoading()
-      var series = []
       if (!this.data || !this.data[this.nowIndex]) return
-      var s = {
-        name: '未命名',
-        type: 'bar',
-        data: [],
-        itemStyle: {
-          barBorderRadius: 5
-        },
-        ...this.data[this.nowIndex]
-      }
-      this.title = s.name
-      series.push(s)
-
+      var series = this.data[this.nowIndex].data.map(d => {
+        return {
+          name: '未命名',
+          type: 'bar',
+          data: [],
+          itemStyle: {
+            barBorderRadius: 5
+          },
+          ...d
+        }
+      })
+      this.title = this.data[this.nowIndex].name
       var option = {
-        color: [
-          this.color.length === 0
-            ? '#ff8888'
-            : this.color[this.nowIndex % this.color.length]
-        ],
+        color: this.color,
         tooltip: {
           trigger: 'axis',
           axisPointer: {

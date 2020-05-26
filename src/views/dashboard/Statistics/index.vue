@@ -10,11 +10,11 @@
       <section v-if="company" class="mainbox">
         <div class="column">
           <dv-border-box-11
-            :title="$refs.vacationDayStatistics?$refs.vacationDayStatistics._data.title:'加载中'"
+            :title="$refs.vacationApplyStatistics?$refs.vacationApplyStatistics._data.title:'加载中'"
             class="panel bar"
           >
             <VacationStatisticsBar
-              ref="vacationDayStatistics"
+              ref="vacationApplyStatistics"
               height="100%"
               class="dv-boarder-chart"
               :color="color"
@@ -23,7 +23,14 @@
             />
           </dv-border-box-11>
           <dv-border-box-11 title="数据区域" class="panel line">
-            <div class="chart" />
+            <VacationStatisticsPie
+              ref="vacationMemberStatisticsPie"
+              height="100%"
+              class="dv-boarder-chart"
+              :color="color"
+              :companies="companies"
+              :data="vacationMember"
+            />
           </dv-border-box-11>
           <dv-border-box-11 title="数据区域" class="panel pie">
             <div class="chart" />
@@ -83,7 +90,7 @@ import MembersCounter from './components/NumberCounter/MembersCounter'
 import VacationMap3D from './components/Geo/VacationMap3D'
 
 import VacationStatisticsBar from './components/Bar/VacationStatisticsBar'
-
+import VacationStatisticsPie from './components/Bar/VacationStatisticsPie'
 import { requestFile, download } from '@/api/file'
 import { getUserCompany } from '@/api/userinfo'
 
@@ -95,7 +102,8 @@ export default {
     StatisticsDataDriver,
     MembersCounter,
     VacationMap3D,
-    VacationStatisticsBar
+    VacationStatisticsBar,
+    VacationStatisticsPie
   },
   data: () => ({
     loading: '未初始化',
@@ -114,20 +122,42 @@ export default {
       result = Object.values(cs)
       return result
     },
-    vacationDay() {
+    lastItem() {
       var result = []
-      result.push({
-        name: '休假天数',
-        data: [7, 2, 6, 2, 4, 5, 3, 1, 9]
+      if (
+        !this.data ||
+        !this.data.labelData ||
+        !this.data.labelData.data_week
+      ) {
+        return result
+      }
+      var target = this.data.labelData.data_week
+      result = Object.values(target).map(i => {
+        var allItem = Object.values(i)
+        if (allItem.length === 0) return []
+        var lastItem = allItem[allItem.length - 1]
+        return lastItem
       })
-      result.push({
-        name: '休假次数',
-        data: [5, 3, 6, 2, 4, 1, 9, 7, 2]
+      return result
+    },
+    vacationDay() {
+      var lastItem = this.lastItem
+      var array = lastItem.map(i => {
+        var ic = i.includeChildLevelStatistics
+        return [ic.applySumDayCount, ic.applyMembersCount, ic.applyCount]
       })
-      result.push({
-        name: '休假人数',
-        data: [2, 4, 6, 1, 9, 5, 3, 7, 2]
-      })
+      const series = ['休假天数', '休假人数', '休假次数']
+      var result = []
+      for (var i = 0; i < series.length; i++) {
+        result.push({
+          name: series[i],
+          data: [
+            { name: '已通过', data: array.map(item => item[i].access) },
+            { name: '审批中', data: array.map(item => item[i].auditing) },
+            { name: '被驳回', data: array.map(item => item[i].deny) }
+          ]
+        })
+      }
       return result
     }
   },
