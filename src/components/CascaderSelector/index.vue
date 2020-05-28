@@ -4,6 +4,7 @@
     v-model="staticValue"
     :props="props"
     :show-all-levels="true"
+    expand-trigger="hover"
     :placeholder="placeholder===null?'未选择':placeholder"
     style="width:100%"
     clearable
