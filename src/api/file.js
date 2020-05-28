@@ -85,6 +85,25 @@ export function requestFile(filepath, filename) {
 }
 
 /**
+ * 删除指定文件
+ *
+ * @export
+ * @param {*} filepath
+ * @param {*} filename
+ * @param {*} clientKey
+ * @returns
+ */
+export function deleteFile(filepath, filename, clientKey) {
+  return request.delete('file/remove', {
+    params: {
+      path: filepath,
+      filename,
+      clientKey
+    }
+  })
+}
+
+/**
  * 获取当前的文件下载/上传状态
  * 有效期30分钟
  * @export

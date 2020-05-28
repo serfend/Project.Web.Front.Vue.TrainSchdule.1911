@@ -35,14 +35,15 @@
           <el-form-item label="名称">{{ fileInfo.name }}</el-form-item>
           <el-form-item label="大小">{{ fileInfo.length }}</el-form-item>
           <el-form-item label="创建时间">{{ fileInfo.create }}</el-form-item>
-          <el-form-item label="验证码">{{ fileInfo.clientKey }}</el-form-item>
-
+          <el-form-item label="验证码">
+            <el-input v-model="fileInfo.clientKey" />
+          </el-form-item>
           <div>
             <el-button
               :disabled="!fileInfo.id"
               :loading="fileDownloading"
               type="info"
-              style="width:100%;margin-bottom:1em"
+              class="file-handle-btn"
               icon="el-icon-document-copy"
               @click="clipBoard(fileInfo.id,`${fileInfo.path}_${fileInfo.name}`,$event)"
             >复制链接</el-button>
@@ -52,10 +53,20 @@
               :disabled="!fileInfo.id"
               :loading="fileDownloading"
               type="success"
-              style="width:100%"
+              class="file-handle-btn"
               icon="el-icon-download"
               @click="download(fileInfo.id,`${fileInfo.path}_${fileInfo.name}`)"
             >下载文件</el-button>
+          </div>
+          <div>
+            <el-button
+              :disabled="!fileInfo.clientKey||fileInfo.clientKey.length!=36"
+              :loading="fileDownloading"
+              type="danger"
+              class="file-handle-btn"
+              icon="el-icon-delete"
+              @click="deleteFile(fileInfo.path,fileInfo.name,fileInfo.clientKey)"
+            >删除文件{{ !fileInfo.clientKey||fileInfo.clientKey.length==36?'':'(需要授权码)' }}</el-button>
           </div>
         </el-card>
       </el-col>
@@ -108,7 +119,13 @@
 import clipboard from '@/utils/clipboard'
 import AuthCode from '@/components/AuthCode'
 import Explorer from './Explorer'
-import { upload, requestFile, status, getClientKey } from '@/api/file'
+import {
+  upload,
+  requestFile,
+  status,
+  getClientKey,
+  deleteFile
+} from '@/api/file'
 export default {
   name: 'FileEngine',
   components: { AuthCode, Explorer },
@@ -164,6 +181,11 @@ export default {
   methods: {
     fileSelect(file) {
       this.file.fileName = file
+    },
+    deleteFile(filepath, filename, clientkey) {
+      deleteFile(filepath, filename, clientkey).then(() => {
+        this.$message.success('删除成功')
+      })
     },
     downloadUrl(fileId) {
       return `${process.env.VUE_APP_BASE_API}/file/download?fileid=${fileId}`
@@ -227,5 +249,9 @@ export default {
 .row {
   width: 400px;
   margin: 10px;
+}
+.file-handle-btn {
+  width: 100%;
+  margin-bottom: 1em;
 }
 </style>
