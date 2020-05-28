@@ -171,9 +171,12 @@ export default {
   watch: {
     uid: {
       handler(val) {
-        this.lastLogUpdate = new Date(
-          localStorage.getItem(`log.lastupdate@${this.uid}`)
-        )
+        var t = new Date(localStorage.getItem(`log.lastupdate@${this.uid}`))
+        if (t) {
+          this.lastLogUpdate = t
+        } else {
+          this.lastLogUpdate = new Date()
+        }
         this.tableData = []
       },
       immediate: true
