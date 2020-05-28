@@ -20,7 +20,7 @@ const applicationRouter = {
       meta: {
         title: 'application.new',
         // verify: 'on',
-        icon: '测试申请'
+        icon: 'newapply'
       }
     },
     {
@@ -40,7 +40,7 @@ const applicationRouter = {
       meta: {
         title: 'application.audit',
         verify: 'on',
-        icon: '提案审批'
+        icon: 'auditapply'
       }
     },
     {
@@ -50,7 +50,7 @@ const applicationRouter = {
       meta: {
         title: 'application.detail',
         verify: 'on',
-        icon: '提案审批'
+        icon: 'menu-outoforder'
       },
       hidden: true
     }

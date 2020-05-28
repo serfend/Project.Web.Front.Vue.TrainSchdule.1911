@@ -46,14 +46,14 @@ export default {
           {
             label: '注册账号',
             description: '注册和审批新账号窗口',
-            svg: '注册',
+            svg: 'registernew',
             // icon: '/favicon.png',
             href: '/register?isRegister=true'
           },
           {
             label: '我要休假',
             description: '个人提交休假申请窗口',
-            svg: '测试申请',
+            svg: 'newapply',
             href: '/application/newApply'
           },
           {
@@ -67,11 +67,11 @@ export default {
             label: '休假审批',
             description: '查询批假情况和审批单位休假窗口',
             // icon: '/favicon.png',
-            svg: '提案审批',
+            svg: 'auditapply',
             href: '/application/queryAndAuditApplies'
           },
           {
-            label: '统计情况',
+            label: '统计信息',
             description: '各单位休假情况统计驾驶舱',
             // icon: '/favicon.png',
             svg: 'dashboard',
