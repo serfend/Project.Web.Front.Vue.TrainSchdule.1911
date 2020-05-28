@@ -29,10 +29,7 @@
           <el-link slot="reference" type="primary">获取当前账号授权码</el-link>
         </el-popover>
       </div>
-      <div v-if="$store.state.user.name&&authKeyUrl">
-        <el-tag type="success">已登录无需使用授权码哦~</el-tag>
-      </div>
-      <div v-else>
+      <div v-if="!$store.state.user.name||!authKeyUrl">
         <el-alert title="当前未登录,登录后显示授权码" type="error" center />
       </div>
     </div>

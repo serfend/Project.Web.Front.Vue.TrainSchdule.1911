@@ -46,9 +46,7 @@ export default {
   props: {
     authCheckMethod: {
       type: Function,
-      default() {
-        return checkAuthCode
-      }
+      default: checkAuthCode
     }
   },
   data() {
@@ -95,20 +93,20 @@ export default {
       this.collaspseIsOpen = e.length > 0
     },
     checkCode() {
-      var fn = this.authCheckMethod
       return new Promise((res, rej) => {
         if (!this.innerForm.authByUserId) {
           this.$message.error('请输入id')
           return rej('id未输入')
         }
-        return fn(this.innerForm.authByUserId, this.innerForm.code)
+        const fn = this.authCheckMethod
+        fn(this.innerForm.authByUserId, this.innerForm.code)
           .then(() => {
             this.$emit('update:status', true)
-            return res()
+            res()
           })
           .catch(err => {
             this.$emit('update:status', false)
-            return rej(err)
+            rej(err)
           })
       })
     }
