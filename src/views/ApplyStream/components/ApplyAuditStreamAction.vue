@@ -236,7 +236,7 @@
         <el-form-item label="审批人数量">
           <el-input-number v-model="newNode.auditMembersCount" placeholder="需要多少人审批" />
         </el-form-item>
-        <AuthCode :form.sync="newNode.auth" :auth-check-method="checkAuthCode" />
+        <AuthCode :form.sync="newNode.auth" />
         <el-button-group style="width:100%">
           <el-button
             v-loading="newNode.loading"
@@ -267,7 +267,6 @@ import { companyChild } from '@/api/company'
 import { getUserIdByRealName } from '@/api/userinfo'
 import CascaderSelector from '@/components/CascaderSelector'
 import AuthCode from '@/components/AuthCode'
-import { checkAuthCode } from '@/api/account'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
 import UserFormItem from '@/components/User/UserFormItem'
@@ -316,7 +315,6 @@ export default {
   methods: {
     format,
     companyChild,
-    checkAuthCode,
     companySelectChange(val) {
       this.companySelect.name = val
       if (this.newNode.companies.indexOf(this.companySelect.code) > -1) {

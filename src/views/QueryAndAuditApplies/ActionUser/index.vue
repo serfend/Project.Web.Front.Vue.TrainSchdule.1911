@@ -2,7 +2,7 @@
   <div>
     <el-dialog :visible.sync="authFormShow" title="敏感操作授权">
       <el-form ref="authForm" :model="authForm">
-        <AuthCode :form.sync="authForm.auth" :auth-check-method="checkAuthCode" />
+        <AuthCode :form.sync="authForm.auth" />
         <el-form-item>
           <el-button-group style="width:100%">
             <el-button type="info" style="width:50%" @click=" authFormShow = false ">取消</el-button>
@@ -47,7 +47,6 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
-import { checkAuthCode } from '@/api/account'
 import { exportApplyDetail } from '@/api/static'
 import { deleteApply, doAction } from '@/api/apply'
 export default {
@@ -82,7 +81,6 @@ export default {
     }
   },
   methods: {
-    checkAuthCode,
     exportApplyDetail,
     hendleExecute(method, row) {
       if (this.onLoading === true) {

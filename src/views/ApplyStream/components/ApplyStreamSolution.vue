@@ -269,7 +269,7 @@
             @close="handleAuditMembersSelectClosed(tag)"
           >{{ newRule.auditMembersRealName[tag] }}</el-tag>
         </el-form-item>
-        <AuthCode :form.sync="newRule.auth" :auth-check-method="checkAuthCode" />
+        <AuthCode :form.sync="newRule.auth" />
         <el-button-group style="width:100%">
           <el-button
             v-loading="newRule.loading"
@@ -294,7 +294,6 @@ import { companyChild } from '@/api/company'
 import { getUserIdByRealName } from '@/api/userinfo'
 import CascaderSelector from '@/components/CascaderSelector'
 import AuthCode from '@/components/AuthCode'
-import { checkAuthCode } from '@/api/account'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
 import UserFormItem from '@/components/User/UserFormItem'
@@ -343,7 +342,6 @@ export default {
   },
   methods: {
     format,
-    checkAuthCode,
     companyChild,
     companySelectChange(val) {
       this.companySelect.name = val

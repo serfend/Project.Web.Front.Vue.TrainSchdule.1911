@@ -20,7 +20,7 @@
             @change="multiAuditUpdateAll"
           />
         </el-form-item>
-        <AuthCode :form.sync="auditForm.auth" :auth-check-method="checkAuthCode" />
+        <AuthCode :form.sync="auditForm.auth" />
       </el-form>
       <span slot="footer">
         <el-button-group style="width:100%">
@@ -78,7 +78,6 @@
 import AuthCode from '@/components/AuthCode'
 import { datedifference } from '@/utils'
 import { audit } from '@/api/apply'
-import { checkAuthCode } from '@/api/account'
 export default {
   name: 'AuditApplyMutilDialog',
   components: {
@@ -146,7 +145,6 @@ export default {
   },
   methods: {
     audit,
-    checkAuthCode,
     datedifference,
     SubmitMultiAuditForm() {
       this.$refs['auditForm'].validate(valid => {

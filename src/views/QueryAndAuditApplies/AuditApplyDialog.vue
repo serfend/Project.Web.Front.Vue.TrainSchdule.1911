@@ -14,7 +14,7 @@
         <el-form-item label="备注内容">
           <el-input v-model="auditForm.remark" placeholder="可选项" type="textarea" />
         </el-form-item>
-        <AuthCode :form.sync="auditForm.auth" :auth-check-method="checkAuthCode" />
+        <AuthCode :form.sync="auditForm.auth" />
       </el-form>
       <span slot="footer">
         <el-button @click="auditShow = false">取 消</el-button>
@@ -26,7 +26,6 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
-import { checkAuthCode } from '@/api/account'
 import { audit } from '@/api/apply'
 export default {
   name: 'AuditApplyDialog',
@@ -67,7 +66,6 @@ export default {
     }
   },
   methods: {
-    checkAuthCode,
     SubmitAuditForm() {
       const { action, remark, auth } = this.auditForm
       const list = [{ id: this.applyId, action, remark }]

@@ -106,7 +106,7 @@
             <span>{{ node.data.description }}</span>
           </div>
         </el-tree>
-        <AuthCode :form.sync="newSolution.auth" :auth-check-method="checkAuthCode" />
+        <AuthCode :form.sync="newSolution.auth" />
         <el-button-group style="width:100%">
           <el-button
             v-loading="newSolution.loading"
@@ -128,7 +128,6 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
-import { checkAuthCode } from '@/api/account'
 import { format } from 'timeago.js'
 import {
   addStreamSolution,
@@ -164,7 +163,6 @@ export default {
     }
   },
   methods: {
-    checkAuthCode,
     format,
     refresh() {
       this.$emit('refresh')

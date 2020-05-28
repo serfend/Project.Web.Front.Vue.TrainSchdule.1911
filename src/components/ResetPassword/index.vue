@@ -12,7 +12,7 @@
     <el-form-item label="确认密码" prop="confirmNewPassword">
       <el-input v-model="editPwd.confirmNewPassword" type="password" style="width:215px" />
     </el-form-item>
-    <AuthCode :form.sync="editPwd.auth" :auth-check-method="checkAuthCode" />
+    <AuthCode :form.sync="editPwd.auth" />
     <el-button
       type="success"
       style="width:100%"
@@ -24,8 +24,6 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
-import { checkAuthCode } from '@/api/account'
-
 import { accountPassword } from '@/api/account'
 export default {
   name: 'ResetPassword',
@@ -88,7 +86,6 @@ export default {
     }
   },
   methods: {
-    checkAuthCode,
     savePwd() {
       this.$refs['editPwd'].validate(valid => {
         if (valid) {

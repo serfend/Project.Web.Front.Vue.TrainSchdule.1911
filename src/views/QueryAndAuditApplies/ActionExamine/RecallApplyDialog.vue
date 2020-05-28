@@ -43,7 +43,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <AuthCode :form.sync="auditForm.auth" :auth-check-method="checkAuthCode" />
+      <AuthCode :form.sync="auditForm.auth" />
     </el-form>
     <span slot="footer">
       <el-button-group v-if="!innerIsOnlyToShowRecallMsg">
@@ -58,7 +58,6 @@
 <script>
 import { postRecallOrder, getRecallOrder } from '@/api/apply'
 import AuthCode from '@/components/AuthCode'
-import { checkAuthCode } from '@/api/account'
 export default {
   name: 'RecallApplyDialog',
   components: { AuthCode },
@@ -133,7 +132,6 @@ export default {
     }
   },
   methods: {
-    checkAuthCode,
     stampReturnValidator(r, val, cb) {
       if (new Date(val) >= new Date(this.auditForm.recallData.rawStampReturn)) {
         return cb(new Error('召回时间不得晚于正常归队时间'))
