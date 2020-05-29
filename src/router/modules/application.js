@@ -30,7 +30,7 @@ const applicationRouter = {
       meta: {
         title: 'application.my',
         verify: 'on',
-        icon: 'people_fill'
+        icon: 'principal'
       }
     },
     {

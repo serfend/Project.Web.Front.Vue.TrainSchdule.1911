@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import applicationRouter from './modules/application'
-import applicationSettingRouter from './modules/applicationSetting'
+import applicationSettingRouter from './modules/applicationSetting/index'
 
 import gameRouter from './modules/Game'
 

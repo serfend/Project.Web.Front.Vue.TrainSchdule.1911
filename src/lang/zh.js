@@ -50,8 +50,16 @@ var dict = {
     my: '我的假期',
     setting: {
       title: '设置选项',
-      auditStream: '审批流',
-      exportXls: '导出Excel'
+      application: {
+        title: '休假申请',
+        auditStream: '审批流',
+        exportXls: 'Excel模板'
+      },
+      users: {
+        title: '用户管理',
+        social: '家庭情况',
+        company: '单位情况'
+      }
     }
   },
   navbar: {
@@ -103,5 +111,7 @@ var dict = {
 }
 dict.tagsView = dict.settings
 dict.route = dict
-Object.keys(dict.navbar).forEach((k) => { dict.route[k] = dict.navbar[k] })
+Object.keys(dict.navbar).forEach((k) => {
+  dict.route[k] = dict.navbar[k]
+})
 export default dict

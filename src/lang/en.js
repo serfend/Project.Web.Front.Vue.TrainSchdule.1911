@@ -50,8 +50,16 @@ var dict = {
     my: 'mine vacation',
     setting: {
       title: 'setting options',
-      auditStream: 'audit stream',
-      exportXls: 'export Excel'
+      application: {
+        title: 'vacation apply',
+        auditStream: 'audit stream',
+        exportXls: 'export Excel model'
+      },
+      users: {
+        title: 'manage users',
+        social: 'social',
+        company: 'company'
+      }
     }
   },
   navbar: {
