@@ -127,9 +127,9 @@
 
 <script>
 import { detail, querySelf } from '@/api/apply'
-import { exportUserApplies } from '@/api/static'
+import { exportUserApplies } from '@/api/common/static'
 import { datedifference } from '@/utils'
-import { getUserAvatar } from '@/api/userinfo'
+import { getUserAvatar } from '@/api/user/userinfo'
 import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
 import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'

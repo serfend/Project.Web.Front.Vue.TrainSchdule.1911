@@ -19,7 +19,7 @@
 <script>
 import UserFormItem from '@/components/User/UserFormItem'
 import ContactMe from '@/components/ContactMe'
-import { loadDwz } from '@/api/dwz'
+import { loadDwz } from '@/api/common/dwz'
 export default {
   name: 'ShortUrl',
   components: { UserFormItem, ContactMe },

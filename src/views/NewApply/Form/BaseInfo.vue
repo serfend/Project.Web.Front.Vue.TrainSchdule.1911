@@ -62,7 +62,7 @@ import UserSelector from '@/components/User/UserSelector'
 import SettleFormItem from '@/components/SettleFormItem'
 import CardTooltipAlert from './FormHelper/CardTooltipAlert'
 import { postBaseInfo } from '@/api/apply'
-import { getUserAllInfo } from '@/api/usercompany'
+import { getUserAllInfo } from '@/api/user/usercompany'
 import { validPhone } from '@/utils/validate'
 export default {
   name: 'BaseInfo',

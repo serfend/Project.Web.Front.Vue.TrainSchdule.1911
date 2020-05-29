@@ -125,7 +125,7 @@ import {
   status,
   getClientKey,
   deleteFile
-} from '@/api/file'
+} from '@/api/common/file'
 export default {
   name: 'FileEngine',
   components: { AuthCode, Explorer },

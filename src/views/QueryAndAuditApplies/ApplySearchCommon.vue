@@ -182,11 +182,11 @@
 </template>
 
 <script>
-import { getUserIdByRealName } from '@/api/userinfo'
+import { getUserIdByRealName } from '@/api/user/userinfo'
 import { companyChild } from '@/api/company'
 import CascaderSelector from '@/components/CascaderSelector'
 import { queryList, queryMyAudit } from '@/api/apply'
-import { exportMultiApplies } from '@/api/static'
+import { exportMultiApplies } from '@/api/common/static'
 export default {
   Name: 'ApplySearchCommon',
   components: { CascaderSelector },

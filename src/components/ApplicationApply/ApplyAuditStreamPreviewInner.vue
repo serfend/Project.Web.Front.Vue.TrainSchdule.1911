@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { auditStream, getUserCompany } from '@/api/userinfo'
+import { auditStream, getUserCompany } from '@/api/user/userinfo'
 import { companiesManagers } from '@/api/company'
 import UserFormItem from '@/components/User/UserFormItem'
 export default {

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { download } from '@/api/file'
+import { download } from '@/api/common/file'
 import QrCodeGenerate from './QrCodeGenerate'
 export default {
   name: 'ContactMe',

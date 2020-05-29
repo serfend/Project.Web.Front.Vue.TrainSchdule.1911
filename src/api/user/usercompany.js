@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '@/utils/request'
 import {
   getUserBase,
   getUserCompany,
@@ -6,7 +6,7 @@ import {
   getUserSocial,
   getUserDiy,
   getUserApplication
-} from '../api/userinfo'
+} from '@/api/user/userinfo'
 
 /**
  * 获取我的管辖单位

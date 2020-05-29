@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { statistics } from '@/api/dwz'
+import { statistics } from '@/api/common/dwz'
 export default {
   name: 'ShortUrlStatistics',
   props: {

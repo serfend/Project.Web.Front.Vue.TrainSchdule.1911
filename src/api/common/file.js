@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '@/utils/request'
 
 export function upload(filepath, filename, filedata, lastuploadId) {
   var fd = new FormData()

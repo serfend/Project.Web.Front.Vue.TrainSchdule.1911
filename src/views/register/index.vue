@@ -170,8 +170,8 @@ import {
   getUsersVacationLimit,
   getUserAvatar,
   getUserIdByRealName
-} from '@/api/userinfo'
-import { getUserAllInfo } from '@/api/usercompany'
+} from '@/api/user/userinfo'
+import { getUserAllInfo } from '@/api/user/usercompany'
 import Pagination from '@/components/Pagination'
 
 export default {

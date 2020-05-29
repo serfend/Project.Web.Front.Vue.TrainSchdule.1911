@@ -264,7 +264,7 @@ import {
   buildFilter
 } from '@/api/applyAuditStream'
 import { companyChild } from '@/api/company'
-import { getUserIdByRealName } from '@/api/userinfo'
+import { getUserIdByRealName } from '@/api/user/userinfo'
 import CascaderSelector from '@/components/CascaderSelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'

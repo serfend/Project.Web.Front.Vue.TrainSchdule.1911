@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { qrCodeEncode } from '@/api/qrCode'
+import { qrCodeEncode } from '@/api/common/qrCode'
 import { fileToBase64 } from '@/utils/file'
 export default {
   name: 'QrCodeGenerate',

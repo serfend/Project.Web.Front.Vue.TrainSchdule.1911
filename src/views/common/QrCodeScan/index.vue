@@ -74,7 +74,7 @@
 <script>
 import ContactMe from '@/components/ContactMe'
 import { fileToBase64 } from '@/utils/file'
-import { qrCodeScan } from '@/api/qrCode'
+import { qrCodeScan } from '@/api/common/qrCode'
 export default {
   name: 'QrCodeScan',
   components: { ContactMe },

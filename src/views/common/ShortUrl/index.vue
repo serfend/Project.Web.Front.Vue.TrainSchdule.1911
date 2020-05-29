@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { createDwz, loadDwz, remove } from '@/api/dwz'
+import { createDwz, loadDwz, remove } from '@/api/common/dwz'
 import ShortUrl from './ShortUrl'
 import ShortUrlStatistics from './ShortUrlStatistics'
 import { parseTime } from '@/utils'

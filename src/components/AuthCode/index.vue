@@ -35,7 +35,7 @@ import AuthCodeAbout from './AuthCodeAbout'
 import CodeInput from './CodeInput'
 import UserSelector from '@/components/User/UserSelector'
 import { checkAuthCode } from '@/api/account'
-import { getUserIdByCid } from '@/api/userinfo'
+import { getUserIdByCid } from '@/api/user/userinfo'
 export default {
   name: 'AuthCode',
   components: {

@@ -77,7 +77,7 @@ import { validUsername } from '@/utils/validate'
 import { passwordCache, setLoginSetting, getLoginSetting } from '@/api/account'
 import LangSelect from '@/components/LangSelect'
 import { Message } from 'element-ui'
-import { getUserBase } from '@/api/userinfo'
+import { getUserBase } from '@/api/user/userinfo'
 export default {
   name: 'Login',
   components: { LangSelect },

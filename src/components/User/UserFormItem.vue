@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { getUserSummary } from '@/api/userinfo'
+import { getUserSummary } from '@/api/user/userinfo'
 import User from './index'
 export default {
   name: 'UserFormItem',

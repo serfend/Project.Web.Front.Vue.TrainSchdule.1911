@@ -47,7 +47,7 @@
 <script>
 import { parseTime } from '@/utils'
 import CascaderSelector from '@/components/CascaderSelector'
-import { locationChildren } from '@/api/static'
+import { locationChildren } from '@/api/common/static'
 export default {
   name: 'SettleFormItem',
   components: { CascaderSelector },

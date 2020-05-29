@@ -43,7 +43,7 @@
 import { formatTime } from '@/utils'
 import { numberFormatter } from '@/filters'
 import SvgIcon from '@/components/SvgIcon'
-import { folderFiles, requestFolder } from '@/api/file'
+import { folderFiles, requestFolder } from '@/api/common/file'
 export default {
   name: 'Explorer',
   components: { SvgIcon },

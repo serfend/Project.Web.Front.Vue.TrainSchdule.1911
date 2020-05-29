@@ -43,7 +43,7 @@
 
 <script>
 import ContactMe from '@/components/ContactMe'
-import { getUserAvatar, getUserSocial } from '@/api/userinfo'
+import { getUserAvatar, getUserSocial } from '@/api/user/userinfo'
 export default {
   name: 'Duty',
   components: { ContactMe },

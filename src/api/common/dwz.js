@@ -1,5 +1,5 @@
-import request from '../utils/request'
-import { parseTime } from '../utils'
+import request from '@/utils/request'
+import { parseTime } from '@/utils'
 /**
  * 创建短网址
  *

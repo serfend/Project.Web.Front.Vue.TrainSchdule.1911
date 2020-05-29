@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { getUsersVacationLimit } from '@/api/userinfo'
+import { getUsersVacationLimit } from '@/api/user/userinfo'
 import VacationDescription from '@/components/Vacation/VacationDescription'
 export default {
   name: 'ApplyOverview',

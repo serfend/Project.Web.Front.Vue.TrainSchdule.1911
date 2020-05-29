@@ -20,7 +20,7 @@
 
 <script>
 import User from '@/components/User'
-import { getUserIdByRealName } from '@/api/userinfo'
+import { getUserIdByRealName } from '@/api/user/userinfo'
 export default {
   name: 'FindUserByRealName',
   components: { User },

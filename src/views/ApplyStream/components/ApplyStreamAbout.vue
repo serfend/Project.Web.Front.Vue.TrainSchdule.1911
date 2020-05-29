@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { download, requestFile } from '@/api/file'
+import { download, requestFile } from '@/api/common/file'
 export default {
   name: 'ApplyStreamAbout',
   data() {

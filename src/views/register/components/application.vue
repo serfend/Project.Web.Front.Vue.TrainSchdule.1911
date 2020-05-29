@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { getUserSummary } from '@/api/userinfo'
+import { getUserSummary } from '@/api/user/userinfo'
 export default {
   name: 'Application',
   props: {

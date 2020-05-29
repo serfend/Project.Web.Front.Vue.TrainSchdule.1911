@@ -48,7 +48,7 @@
 
 <script>
 import { cidValid } from '@/utils/validate'
-import { getUserIdByCid } from '@/api/userinfo'
+import { getUserIdByCid } from '@/api/user/userinfo'
 export default {
   name: 'Base',
   props: {

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { postUserAvatar } from '@/api/userinfo'
+import { postUserAvatar } from '@/api/user/userinfo'
 export default {
   components: {},
   props: {

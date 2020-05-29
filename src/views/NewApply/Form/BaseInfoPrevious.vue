@@ -78,8 +78,8 @@
 <script>
 import SettleFormItem from '@/components/SettleFormItem'
 import CardTooltipAlert from './FormHelper/CardTooltipAlert'
-import { getUserAllInfo } from '@/api/usercompany'
-import { getUserIdByCid, getUserIdByRealName } from '@/api/userinfo'
+import { getUserAllInfo } from '@/api/user/usercompany'
+import { getUserIdByCid, getUserIdByRealName } from '@/api/user/userinfo'
 import { postBaseInfo } from '@/api/apply'
 import { validPhone } from '@/utils/validate'
 export default {

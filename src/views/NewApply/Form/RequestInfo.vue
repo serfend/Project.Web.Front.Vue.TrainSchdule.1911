@@ -220,8 +220,8 @@ import { parseTime } from '@/utils'
 import CardTooltipAlert from './FormHelper/CardTooltipAlert'
 import VacationDescription from '@/components/Vacation/VacationDescription'
 import CascaderSelector from '@/components/CascaderSelector'
-import { locationChildren } from '@/api/static'
-import { getUsersVacationLimit } from '@/api/userinfo'
+import { locationChildren } from '@/api/common/static'
+import { getUsersVacationLimit } from '@/api/user/userinfo'
 export default {
   name: 'RequestInfo',
   components: { CardTooltipAlert, VacationDescription, CascaderSelector },

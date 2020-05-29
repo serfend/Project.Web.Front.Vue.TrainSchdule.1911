@@ -2,7 +2,7 @@ import {
   getUserSummary,
   getUserAvatar,
   getUsersVacationLimit
-} from '@/api/userinfo'
+} from '@/api/user/userinfo'
 import {
   login,
   logout
