@@ -1,5 +1,5 @@
 <template>
-  <ul class="tooltip-vacation">
+  <ul v-if="usersVacation" class="tooltip-vacation">
     <li>
       <b>全年假期长度：</b>
       <span>{{ usersVacation.yearlyLength }}</span>天
@@ -32,7 +32,9 @@ export default {
   props: {
     usersVacation: {
       type: Object,
-      default() { return {} }
+      default() {
+        return {}
+      }
     }
   }
 }

@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 
-
 /**
  * 获取用户的家庭情况变化记录
  *
@@ -8,8 +7,8 @@ import request from '@/utils/request'
  * @param {*} id
  * @returns
  */
-export function socialModefyRecord(id) {
-  return request.get('/users/socialModefyRecord', {
+export function getUserSocialRecord(id) {
+  return request.get('/users/social/userModefyRecord', {
     params: {
       id
     }
@@ -23,8 +22,8 @@ export function socialModefyRecord(id) {
  * @param {*} code
  * @returns
  */
-export function singleModefyRecord(code) {
-  return request.get('/users/singleSocialModefyRecord', {
+export function getSingle(code) {
+  return request.get('/users/social/modefyRecord', {
     params: {
       code
     }
@@ -38,9 +37,27 @@ export function singleModefyRecord(code) {
  * @param {GoogleAuth} auth
  * @returns
  */
-export function singleModefyRecord(record, auth) {
-  return request.post('/users/singleSocialModefyRecord', {
+export function modefySingle(record, auth) {
+  return request.post('/users/social/modefyRecord', {
     record,
     auth
+  })
+}
+
+/**
+ * 修改用户家庭情况
+ *
+ * @export
+ * @param {*} id
+ * @param {*} settle
+ * @param {*} auth
+ */
+export function modefySettle(id, settle, auth) {
+  return request.post('/users/social/settle', {
+    auth,
+    data: {
+      id,
+      settle
+    }
   })
 }

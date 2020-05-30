@@ -26,15 +26,12 @@ export default {
   },
   methods: {
     caculatevacationPercentage() {
-      if (this.usersVacation.yearlyLength === 0) return 100
+      if (!this.usersVacation.yearlyLength) return 100
+      var uv = this.usersVacation
+      const vl = this.thisTimeVacationLength
       var fn = parseInt
-      var result = Math.floor(
-        100 *
-        ((fn(this.usersVacation.yearlyLength) -
-          fn(this.usersVacation.leftLength) +
-          fn(this.thisTimeVacationLength)) /
-          fn(this.usersVacation.yearlyLength))
-      )
+      const spendLength = fn(uv.yearlyLength) - fn(uv.leftLength) + fn(vl)
+      var result = Math.floor(100 * (spendLength / fn(uv.yearlyLength)))
       if (result < 0) result = 0
       if (result > 100) result = 100
       return result
