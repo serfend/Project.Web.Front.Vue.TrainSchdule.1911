@@ -254,14 +254,18 @@ export default {
   watch: {
     nowSelectCompanyCode: {
       handler(val) {
-        this.loadWaitToAuthRegisterUsers()
-      },
-      immediate: true
+        if (val) {
+          this.loadWaitToAuthRegisterUsers()
+        }
+      }
     },
     MembersQuery: {
       handler(val) {
-        this.loadWaitToAuthRegisterUsers()
-      }, immediate: true, deep: true
+        if (val) {
+          this.loadWaitToAuthRegisterUsers()
+        }
+      },
+      deep: true
     }
   },
   mounted() {
@@ -302,11 +306,15 @@ export default {
         return this.$message.error('未选中用户')
       }
       var actionName = valid ? '认证' : '退回'
-      this.$confirm(`即将对用户${this.registerForm.Base.realName}(${this.waitToAuthRegisterUsersLoadId})的注册进行【${actionName}】操作`, `${actionName}提示`, {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        `即将对用户${this.registerForm.Base.realName}(${this.waitToAuthRegisterUsersLoadId})的注册进行【${actionName}】操作`,
+        `${actionName}提示`,
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
         const username = this.waitToAuthRegisterUsersLoadId
         this.waitToAuthRegisterUsersLoadId = ''
         authUserRegister(username, valid).then(() => {
@@ -376,12 +384,14 @@ export default {
           companyName: item.companyName,
           avatar: '',
           vacation: {},
-          accountAuthStatus:
-            item.inviteBy === null ? 0 : item.inviteBy === '00Invalid' ? -1 : 1 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
+          accountAuthStatus: this.checkUserValid(item.inviteBy)
         }
         return obj
       })
       return result
+    },
+    checkUserValid(val) {
+      return val === null ? 0 : val === '00Invalid' ? -1 : 1 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
     },
     queryMember(realName, cb) {
       if (realName === '') return cb([{}])
@@ -397,7 +407,7 @@ export default {
       })
     },
     handleCurrentChange(val) {
-      if (val === null) return
+      if (!val) return
       this.waitToAuthRegisterUsersLoadId = val.id
       this.submitLoading = true
       this.selectIsInvalidAccount = val.accountAuthStatus === 0
@@ -418,6 +428,8 @@ export default {
             },
             titleDate: data.duties.titleDate
           }
+          const { inviteBy } = data.application
+          this.selectIsInvalidAccount = this.checkUserValid(inviteBy)
         })
         .finally(() => (this.submitLoading = false))
     },
