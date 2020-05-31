@@ -32,7 +32,6 @@
 </template>
 
 <script>
-import path from 'path'
 import SvgIcon from '@/components/SvgIcon'
 import { generateTitle } from '@/utils/i18n'
 import { isExternal } from '@/utils/validate'
@@ -93,7 +92,7 @@ export default {
       if (isExternal(this.basePath)) {
         return this.basePath
       }
-      return path.resolve(this.basePath, routePath)
+      return `${this.basePath}/${routePath}`
     },
     generateTitle
   }

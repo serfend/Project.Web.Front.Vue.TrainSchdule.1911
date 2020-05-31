@@ -21,7 +21,6 @@
 // fuse is a lightweight fuzzy-search module
 // make search results more in line with expectations
 import Fuse from 'fuse.js'
-import path from 'path'
 import i18n from '@/lang'
 
 export default {
@@ -111,7 +110,7 @@ export default {
         if (router.hidden) { continue }
 
         const data = {
-          path: path.resolve(basePath, router.path),
+          path: `${basePath}/${router.path}`,
           title: [...prefixTitle]
         }
 

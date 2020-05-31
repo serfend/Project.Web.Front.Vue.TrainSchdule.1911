@@ -35,8 +35,6 @@
 <script>
 import ScrollPane from './ScrollPane'
 import { generateTitle } from '@/utils/i18n'
-import path from 'path'
-
 export default {
   components: { ScrollPane },
   data() {
@@ -82,7 +80,7 @@ export default {
       let tags = []
       routes.forEach(route => {
         if (route.meta && route.meta.affix) {
-          const tagPath = path.resolve(basePath, route.path)
+          const tagPath = `${basePath}/${route.path}`
           tags.push({
             fullPath: tagPath,
             path: tagPath,
@@ -239,7 +237,7 @@ export default {
         color: #fff;
         border-color: #42b983;
         &::before {
-          content: "";
+          content: '';
           background: #fff;
           display: inline-block;
           width: 8px;

@@ -3,7 +3,7 @@ import Export from './modules/Export'
 const route = {
   path: 'application',
   component: () => import('@/views/blank'),
-  name: 'UsersManage',
+  name: 'Application',
   meta: {
     title: 'application.setting.application.title',
     verify: 'on',

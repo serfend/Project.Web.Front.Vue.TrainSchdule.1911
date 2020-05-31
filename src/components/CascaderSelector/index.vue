@@ -4,7 +4,6 @@
     v-model="staticValue"
     :props="props"
     :show-all-levels="true"
-    expand-trigger="hover"
     :placeholder="placeholder===null?'未选择':placeholder"
     style="width:100%"
     clearable
@@ -45,6 +44,7 @@ export default {
         },
         lazy: true,
         checkStrictly: true,
+        expandTrigger: 'hover',
         lazyLoad(node, resolve) {
           if (node.root) node.value = 'root'
           this.getChild(node.value).then(data => {
