@@ -16,7 +16,7 @@ const systemRouter = {
     icon: 'setting'
   },
   children: [{
-    path: '/app',
+    path: 'app',
     component: () => import('@/views/blank'),
     meta: {
       title: 'default.app.title',
@@ -24,7 +24,7 @@ const systemRouter = {
     },
     children: [managerRouter, logRouter,
       {
-        path: '/app/iframePage',
+        path: 'iframePage',
         component: () => import('@/components/IFramePage'),
         name: 'IFramePage',
         hidden: true,
@@ -37,7 +37,7 @@ const systemRouter = {
 
     ]
   }, {
-    path: '/utils',
+    path: 'utils',
     component: () => import('@/views/blank'),
     meta: {
       title: 'default.utils.title',

@@ -1,7 +1,7 @@
 
 const qrCodeRouter =
 {
-  path: '/utils/qrCode',
+  path: 'qrCode',
   component: () => import('@/views/common/QrCodeScan/index'),
   name: 'QrCode',
   meta: {

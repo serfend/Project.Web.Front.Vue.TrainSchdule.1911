@@ -2,7 +2,7 @@ import Layout from '@/layout'
 import UsersManager from './modules/UserManager/index'
 import Application from './modules/Application/index'
 const applicationSettingRouter = {
-  path: '/applicationSetting',
+  path: 'setting',
   component: Layout,
   redirect: 'noRedirect',
   name: 'applicationSetting',

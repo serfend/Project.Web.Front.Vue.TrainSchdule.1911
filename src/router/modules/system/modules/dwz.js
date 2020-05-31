@@ -1,7 +1,7 @@
 
 const dwzRouter =
 {
-  path: '/app/dwz',
+  path: 'dwz',
   component: () => import('@/views/common/ShortUrl'),
   name: 'ShortUrlView',
   meta: {

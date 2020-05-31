@@ -1,7 +1,7 @@
 import Social from './modules/Social'
 import Company from './modules/Company'
 const route = {
-  path: 'users',
+  path: 'userManager',
   component: () => import('@/views/blank'),
   name: 'UsersManage',
   meta: {

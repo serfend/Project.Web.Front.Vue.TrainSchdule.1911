@@ -8,14 +8,14 @@ const commentsRouter =
     icon: 'community_line'
   }, children: [
     {
-      path: '/Comments/Notice',
+      path: 'Notice',
       component: () => import('@/views/Comments'),
       meta: {
         title: 'comments.notice.title',
         icon: 'dispose'
       }
     }, {
-      path: '/Comments/bbs',
+      path: 'bbs',
       component: () => import('@/views/Comments'),
       meta: {
         title: 'comments.bbs.title',

@@ -1,7 +1,7 @@
 
 const managerRouter =
 {
-  path: '/app/manager',
+  path: 'manager',
   component: () => import('@/views/PageManager'),
   name: 'PageManager',
   meta: {
