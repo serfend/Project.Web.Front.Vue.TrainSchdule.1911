@@ -22,7 +22,10 @@
               :data="vacationDay"
             />
           </dv-border-box-11>
-          <dv-border-box-11 title="数据区域" class="panel line">
+          <dv-border-box-11
+            :title="$refs.vacationMemberStatisticsPie?$refs.vacationMemberStatisticsPie._data.title:'加载中'"
+            class="panel pie"
+          >
             <VacationStatisticsPie
               ref="vacationMemberStatisticsPie"
               height="100%"
@@ -91,8 +94,8 @@ import VacationMap3D from './components/Geo/VacationMap3D'
 
 import VacationStatisticsBar from './components/Bar/VacationStatisticsBar'
 import VacationStatisticsPie from './components/Bar/VacationStatisticsPie'
-import { requestFile, download } from '@/api/file'
-import { getUserCompany } from '@/api/userinfo'
+import { requestFile, download } from '@/api/common/file'
+import { getUserCompany } from '@/api/user/userinfo'
 
 export default {
   name: 'Statistics',
@@ -112,7 +115,7 @@ export default {
     company: null,
     data: null,
     lastUpdate: new Date(),
-    color: ['#ff6f4f', '#71ff80', '#3581ff']
+    color: ['#ff6f4f', '#71ff80', '#3581ff', '#cc337f', '#71ccb0', '#f581cc']
   }),
   computed: {
     companies() {
@@ -159,6 +162,9 @@ export default {
         })
       }
       return result
+    },
+    vacationMember() {
+      return []
     }
   },
   watch: {
