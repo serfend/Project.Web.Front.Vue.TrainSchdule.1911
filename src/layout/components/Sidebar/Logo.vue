@@ -4,16 +4,12 @@
     :class="{ collapse: collapse }"
     :style="{background:variables.logoBg,color:variables.logoText}"
   >
-    <transition name="sidebarLogoFade">
-      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <el-image v-if="logo" src="/favicon-32x32.png" class="sidebar-logo" />
-        <h1 v-else class="sidebar-title">{{ title }}</h1>
-      </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <el-image v-if="logo" src="/favicon-32x32.png" class="sidebar-logo" />
-        <h1 class="sidebar-title">{{ title }}</h1>
-      </router-link>
-    </transition>
+    <div class="sidebar-logo-link">
+      <el-image :src="logo" :preview-src-list="[logoMax]" class="sidebar-logo" />
+      <transition name="sidebarLogoFade">
+        <h1 v-show="!collapse" class="sidebar-title">{{ title }}</h1>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -31,7 +27,8 @@ export default {
   data() {
     return {
       title: this.$store.state.settings.title,
-      logo: '/favicon-32x32.png'
+      logo: '/favicon-64x64.ico',
+      logoMax: '/favicon.ico'
     }
   },
   computed: {
