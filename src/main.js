@@ -12,9 +12,6 @@ Vue.use(Element, {
   i18n: (key, value) => i18n.t(key, value)
 })
 
-import DataV from '@jiaminghi/data-view'
-Vue.use(DataV)
-
 import App from './App'
 import store from './store'
 import router from './router'
