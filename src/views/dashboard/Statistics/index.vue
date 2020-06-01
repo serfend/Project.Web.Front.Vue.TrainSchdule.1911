@@ -81,6 +81,7 @@
           :file-load="requestFile"
           :complete.sync="echartGeoComplete"
         />
+        <SettingEngine ref="setting" :setting.sync="setting" />
       </div>
     </div>
   </div>
@@ -93,6 +94,7 @@ import Square from './components/Square'
 import TimeCenter from './components/NumberCounter/TimeCenter'
 import StatisticsDataDriver from './components/Engine/StatisticsDataDriver'
 import EchartGeoLoader from './components/Engine/EchartGeoLoader'
+import SettingEngine from './components/Engine/SettingEngine'
 
 import MembersCounter from './components/NumberCounter/MembersCounter'
 // import VacationMap3D from './components/Geo/VacationMap3D'
@@ -109,6 +111,7 @@ export default {
     TimeCenter,
     EchartGeoLoader,
     StatisticsDataDriver,
+    SettingEngine,
     MembersCounter,
     // VacationMap3D,
     VacationStatisticsBar,
@@ -120,6 +123,9 @@ export default {
     removeLoading: false,
     company: null,
     data: null,
+    setting: [
+      { key: 'color', value: ['#ff6f4f', '#71ff80', '#3581ff'], label: '配色' }
+    ],
     lastUpdate: new Date(),
     color: ['#ff6f4f', '#71ff80', '#3581ff', '#cc337f', '#71ccb0', '#f581cc']
   }),
