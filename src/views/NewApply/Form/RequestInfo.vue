@@ -50,8 +50,8 @@
                 <el-form-item label="休假天数">
                   <el-input-number
                     v-model="formApply.vacationLength"
-                    :max="usersvacation.leftLength"
-                    :min="1"
+                    :max="formApply.vacationType=='正休'?usersvacation.leftLength:999"
+                    :min="0"
                     @change="handleChange"
                   />
                 </el-form-item>
