@@ -1,6 +1,8 @@
 <template class="mainbox">
   <div class="panel bar">
-    <slot name="title" />
+    <div class="h2-title">
+      <slot name="title" />
+    </div>
     <slot name="chart" />
     <div class="panel-footer" />
   </div>
@@ -12,5 +14,12 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.h2-title {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  margin: auto;
+}
 </style>

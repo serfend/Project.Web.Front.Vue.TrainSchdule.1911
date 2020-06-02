@@ -16,8 +16,7 @@
             <VacationStatisticsBar
               slot="chart"
               ref="vacationApplyStatistics"
-              height="3rem"
-              class="dv-boarder-chart"
+              height="100%"
               :color="color"
               :companies="companies"
               :data="vacationDay"
@@ -32,7 +31,6 @@
               slot="chart"
               ref="vacationMemberStatisticsPie"
               height="100%"
-              class="dv-boarder-chart"
               :color="color"
               :companies="companies"
               :data="vacationMember"
@@ -253,7 +251,4 @@ export default {
 
 <style lang="scss" >
 @import './style/index.scss';
-.dv-boarder-chart {
-  padding: 1rem 0.2rem 0 0.2rem;
-}
 </style>
