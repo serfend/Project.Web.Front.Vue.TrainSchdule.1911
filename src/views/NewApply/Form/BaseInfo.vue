@@ -11,7 +11,9 @@
               <UserSelector
                 :code.sync="form.id"
                 :default-info="form&&form.realName?form.realName:'未登录,请选择'"
+                style="display:inline"
               />
+              <el-link v-if="currentUser&&form.id!=currentUser.id" @click="setCurrentUser">使用当前登录</el-link>
             </el-form-item>
             <el-row>
               <el-col>
@@ -145,24 +147,26 @@ export default {
         }
       }
       if (fetch) {
-        setTimeout(() => {
-          this.setCurrentUser()
-        }, 100)
+        this.setCurrentUser()
       }
       return f
     },
     setCurrentUser(tryTime) {
+      if (!tryTime) tryTime = 3
+      tryTime--
       if (!this.currentUser || !this.currentUser.id) {
         if (tryTime > 0) {
           setTimeout(() => {
-            this.setCurrentUser(tryTime - 1)
+            this.setCurrentUser(tryTime)
           }, 500)
         } else {
           this.$message.warning('获取当前用户失败')
         }
         return
       }
-      this.form.id = this.currentUser.id
+      this.$nextTick(() => {
+        this.form.id = this.currentUser.id
+      })
     },
     fetchUserInfoesDerect() {
       this.onLoading = true
@@ -170,7 +174,6 @@ export default {
         .then(data => {
           const { base, company, duties, social } = data
           this.form.id = base.id
-          console.log(this.form.id)
           this.form.realName = base.base.realName
           this.form.company = company.company.code
           this.form.companyName = company.company.name

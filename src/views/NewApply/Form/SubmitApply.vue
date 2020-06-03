@@ -18,22 +18,15 @@
         <p>
           <b>发布</b>仅本人及上级操作，将会使休假申请进入审核中状态
         </p>
+        <div>
+          <el-button :disabled="disabled" type="success" @click="submitApply(0)">提交</el-button>
+          <el-button :disabled="disabled" type="success" @click="submitApply(1)">保存</el-button>
+        </div>
       </div>
-      <i slot="reference" class="el-icon-question" style="color:#999999;font-size:1em" />
+      <i slot="reference" class="el-icon-more-outline" style="color:#fff" />
     </el-popover>
-    <el-button v-loading="onLoading" :disabled="disabled" type="success" @click="submitApply(0)">仅提交</el-button>
-    <el-button
-      v-loading="onLoading"
-      :disabled="disabled"
-      type="success"
-      @click="submitApply(1)"
-    >提交并保存</el-button>
-    <el-button
-      v-loading="onLoading"
-      :disabled="disabled"
-      type="success"
-      @click="submitApply(2)"
-    >提交并发布</el-button>
+
+    <el-button :disabled="disabled" type="success" @click="submitApply(2)">发布</el-button>
     <el-button type="info" @click="createNew">新建申请</el-button>
     <el-button v-show="submitId" type="info" @click="skimDetail">查看详情</el-button>
   </div>
