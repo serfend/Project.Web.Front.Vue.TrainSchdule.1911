@@ -64,6 +64,7 @@ export default {
               types[v] = true
             })
             d.types = Object.keys(types)
+            if (!d.types || d.types.length === 0) d.types = ['无数据']
             this.$emit('update:appliesData', d)
             res(data)
           })
