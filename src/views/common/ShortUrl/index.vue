@@ -56,7 +56,7 @@
               <template slot-scope="scope">{{ scope.row.createBy }}</template>
             </el-table-column>
           </el-table>
-          <Pagination :pagesetting.sync="pages" :pages-total-count="pagesTotalCount" />
+          <Pagination :pagesetting.sync="pages" :total-count="pagesTotalCount" />
         </el-card>
       </el-col>
       <el-col :sm="24" :md="18" :lg="12">

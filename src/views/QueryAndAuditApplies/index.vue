@@ -5,7 +5,7 @@
       :loading.sync="appliesListIsLoading"
       :list.sync="appliesList"
       :pages.sync="pages"
-      :pages-total-count.sync="pagesTotalCount"
+      :total-count.sync="pagesTotalCount"
       :fullui.sync="fullSearchUI"
       @exportApplies="exportApplies"
     />
@@ -13,7 +13,7 @@
       ref="applicationlist"
       :list="appliesList"
       :pages.sync="pages"
-      :pages-total-count="pagesTotalCount"
+      :total-count="pagesTotalCount"
       :loading="appliesListIsLoading"
       @updated="requestUpdate"
     >
