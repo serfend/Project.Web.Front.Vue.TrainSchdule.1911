@@ -1,5 +1,5 @@
 <template>
-  <div :style="{height:height,width:width,opacity:0.8}" />
+  <div :style="{height:height,width:width}" />
 </template>
 
 <script>
@@ -24,6 +24,10 @@ export default {
     speed: {
       type: Number,
       default: 1
+    },
+    data: {
+      type: Array,
+      default: () => [] // [#typeName#:{from,to,value}]省份对应的坐标
     }
   },
   data() {
@@ -110,7 +114,7 @@ export default {
       var option = {
         geo3D: {
           map: 'china',
-          environment: '#01104D',
+          environment: 'auto',
           shading: 'realistic',
           // silent: true, 显示各省
           postEffect: {
@@ -131,7 +135,8 @@ export default {
           itemStyle: {
             color: '#339',
             borderWidth: 1,
-            borderColor: '#33f'
+            borderColor: '#33f',
+            opacity: 0.8
           },
           viewControl: {
             autoRotateDirection: this.rotateDirection,

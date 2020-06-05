@@ -63,7 +63,7 @@
     "timeago.js": "^4.0.2",
     "vue": "2.6.11",
     "vue-cookie": "^1.1.4",
-    "vue-count-to": "1.0.13",
+    "vue-count-to": "^1.0.13",
     "vue-i18n": "7.3.2",
     "vue-router": "3.2.0",
     "vue-splitpane": "1.0.4",

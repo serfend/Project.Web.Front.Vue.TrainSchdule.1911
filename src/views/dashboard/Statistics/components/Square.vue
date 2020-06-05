@@ -1,5 +1,5 @@
 <template class="mainbox">
-  <div class="panel bar">
+  <div class="panel">
     <div class="h2-title">
       <slot name="title" />
     </div>

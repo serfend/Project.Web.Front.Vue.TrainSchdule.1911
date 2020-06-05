@@ -1,0 +1,15 @@
+.float-panel {
+  background-color: #ffffff88;
+  opacity: 0.1;
+  transition: all 0.5s;
+  &:hover {
+    opacity: 0.8;
+    background-color: #ccccffff;
+  }
+}
+
+.float-column {
+  position: absolute;
+  width: 4rem;
+  right: 1%;
+}

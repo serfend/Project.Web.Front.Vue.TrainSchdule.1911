@@ -19,7 +19,6 @@
               height="100%"
               :color="color"
               :companies="companies"
-              :data="vacationDay"
             />
           </Square>
           <Square>
@@ -33,7 +32,6 @@
               height="100%"
               :color="color"
               :companies="companies"
-              :data="vacationMember"
             />
           </Square>
           <Square>
@@ -41,28 +39,26 @@
           </Square>
         </div>
         <div class="column">
-          <MembersCounter />
+          <MembersCounter :data="memberCount" />
           <!-- 地图模块 -->
           <div class="map">
             <div class="map1" />
             <div class="map2" />
             <div class="map3" />
-            <!-- <VacationMap3D
+            <VacationMap3D
               v-if="echartGeoComplete"
               ref="vacationMap"
               :height="'100%'"
               :file-load="requestFile"
-            />-->
+              :data="appliesData.new"
+            />
           </div>
         </div>
-        <div class="column">
-          <Square>
+        <div class="float-column">
+          <Square class="float-panel">
             <h2 slot="title">数据区域</h2>
           </Square>
-          <Square>
-            <h2 slot="title">数据区域</h2>
-          </Square>
-          <Square>
+          <Square class="float-panel">
             <h2 slot="title">数据区域</h2>
           </Square>
         </div>
@@ -73,6 +69,7 @@
           :loading.sync="loading"
           :company-code="company.code"
           :data.sync="data"
+          :applies-data.sync="appliesData"
         />
         <EchartGeoLoader
           ref="echartGeoDriver"
@@ -95,7 +92,7 @@ import EchartGeoLoader from './components/Engine/EchartGeoLoader'
 import SettingEngine from './components/Engine/SettingEngine'
 
 import MembersCounter from './components/NumberCounter/MembersCounter'
-// import VacationMap3D from './components/Geo/VacationMap3D'
+import VacationMap3D from './components/Geo/VacationMap3D'
 
 import VacationStatisticsBar from './components/Bar/VacationStatisticsBar'
 import VacationStatisticsPie from './components/Bar/VacationStatisticsPie'
@@ -111,7 +108,7 @@ export default {
     StatisticsDataDriver,
     SettingEngine,
     MembersCounter,
-    // VacationMap3D,
+    VacationMap3D,
     VacationStatisticsBar,
     VacationStatisticsPie
   },
@@ -121,6 +118,7 @@ export default {
     removeLoading: false,
     company: null,
     data: null,
+    appliesData: null,
     setting: [
       { key: 'color', value: ['#ff6f4f', '#71ff80', '#3581ff'], label: '配色' }
     ],
@@ -135,46 +133,44 @@ export default {
       result = Object.values(cs)
       return result
     },
-    lastItem() {
+    memberCount() {
       var result = []
-      if (
-        !this.data ||
-        !this.data.labelData ||
-        !this.data.labelData.data_week
-      ) {
-        return result
-      }
-      var target = this.data.labelData.data_week
-      result = Object.values(target).map(i => {
-        var allItem = Object.values(i)
-        if (allItem.length === 0) return []
-        var lastItem = allItem[allItem.length - 1]
-        return lastItem
+      if (!this.appliesData) return result
+      this.appliesData.types.forEach((v, i, arr) => {
+        var item = [
+          { title: '京内新增', prev: 0, value: 0, color: '#0f0', filter: v },
+          { title: '京内完成', prev: 0, value: 0, color: '#00f', filter: v },
+          { title: '京外新增', prev: 0, value: 0, color: '#ff0', filter: v },
+          { title: '京外完成', prev: 0, value: 0, color: '#f0f', filter: v },
+          { title: '新增天数', prev: 0, value: 0, color: '#f0f', filter: v },
+          { title: '完成天数', prev: 0, value: 0, color: '#f0f', filter: v }
+        ]
+        var newa = this.appliesData.new[v]
+        if (newa) {
+          newa.forEach((v2, i2, arr2) => {
+            if (v2.to === 11) {
+              item[0].value += v2.value
+            } else {
+              item[2].value += v2.value
+            }
+            item[4].value += v2.day
+          })
+        }
+        var complete = this.appliesData.complete[v]
+        if (complete) {
+          complete.forEach((v2, i2, arr2) => {
+            if (v2.to === 11) {
+              item[1].value += v2.value
+            } else {
+              item[3].value += v2.value
+            }
+            item[5].value += v2.day
+          })
+        }
+        result = result.concat(item)
       })
+      console.log('caculate')
       return result
-    },
-    vacationDay() {
-      var lastItem = this.lastItem
-      var array = lastItem.map(i => {
-        var ic = i.includeChildLevelStatistics
-        return [ic.applySumDayCount, ic.applyMembersCount, ic.applyCount]
-      })
-      const series = ['休假天数', '休假人数', '休假次数']
-      var result = []
-      for (var i = 0; i < series.length; i++) {
-        result.push({
-          name: series[i],
-          data: [
-            { name: '已通过', data: array.map(item => item[i].access) },
-            { name: '审批中', data: array.map(item => item[i].auditing) },
-            { name: '被驳回', data: array.map(item => item[i].deny) }
-          ]
-        })
-      }
-      return result
-    },
-    vacationMember() {
-      return []
     }
   },
   watch: {

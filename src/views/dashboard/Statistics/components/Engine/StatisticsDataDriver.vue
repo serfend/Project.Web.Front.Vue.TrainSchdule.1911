@@ -5,8 +5,9 @@
   >{{ companyCode }} load {{ loading?'pending':`${dataLength} items` }}</div>
 </template>
 <script>
-import { details, summary } from '@/api/statistics'
+import { details, summary, appliesNew, appliesComplete } from '@/api/statistics'
 import { companyChild } from '@/api/company'
+import { groupByFiled } from '@/utils/data-handle'
 export default {
   name: 'StatisticsDataDriver',
   props: {
@@ -33,12 +34,40 @@ export default {
     },
     refresh() {
       this.showLoading(1, '加载统计')
-      return this.initParentCompany(this.companyCode).then(data => {
-        this.$emit('update:data', data)
+      var actions = []
+      actions.push(this.initParentCompany(this.companyCode))
+      actions.push(this.initAppliesCount(this.companyCode))
+      return Promise.all(actions).then(() => {
         this.showLoading(1, '加载完成')
         setTimeout(() => {
           this.showLoading(1, false)
         }, 1000)
+      })
+    },
+    initAppliesCount(companyCode) {
+      var days_7ago = new Date(new Date() - 7 * 86400000)
+      return new Promise((res, rej) => {
+        var action = []
+        action.push(appliesNew(companyCode, days_7ago, new Date()))
+        action.push(appliesComplete(companyCode, days_7ago, new Date()))
+        Promise.all(action)
+          .then(data => {
+            var d = {
+              new: groupByFiled(data[0].list, 'type'),
+              complete: groupByFiled(data[1].list, 'type')
+            }
+            var types = {}
+            Object.keys(d.new).forEach((v, i, arr) => {
+              types[v] = true
+            })
+            Object.keys(d.complete).forEach((v, i, arr) => {
+              types[v] = true
+            })
+            d.types = Object.keys(types)
+            this.$emit('update:appliesData', d)
+            res(data)
+          })
+          .catch(e => rej(e))
       })
     },
     initParentCompany(companyCode) {
@@ -68,7 +97,8 @@ export default {
               { pageIndex: 0, pageSize: -1 }
             ).then(de => {
               var r = this.initData(de)
-              res(r)
+              this.$emit('update:data', r)
+              res()
             })
           })
           .catch(e => {
