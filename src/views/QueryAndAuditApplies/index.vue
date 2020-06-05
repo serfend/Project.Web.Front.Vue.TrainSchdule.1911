@@ -7,6 +7,7 @@
       :pages.sync="pages"
       :pages-total-count.sync="pagesTotalCount"
       :fullui.sync="fullSearchUI"
+      @exportApplies="exportApplies"
     />
     <ApplicationList
       ref="applicationlist"
@@ -29,6 +30,7 @@
 import ApplySearchCommon from './ApplySearchCommon'
 import ApplicationList from './ApplicationList'
 import ActionExamine from './ActionExamine'
+import { exportMultiApplies } from '@/api/common/static'
 import ActionUser from './ActionUser'
 export default {
   name: 'QueryAndAuditApplies',
@@ -48,8 +50,12 @@ export default {
   watch: {
     pages: {
       handler(val) {
-        localStorage.setItem('queryAndAuditApplies', JSON.stringify({ pages: val }))
-      }, deep: true
+        localStorage.setItem(
+          'queryAndAuditApplies',
+          JSON.stringify({ pages: val })
+        )
+      },
+      deep: true
     }
   },
 
@@ -62,6 +68,12 @@ export default {
     }
   },
   methods: {
+    exportApplies() {
+      exportMultiApplies(
+        '休假人员统计表.xlsx',
+        this.appliesList.map(i => i.id)
+      )
+    },
     detailUrl(id) {
       var t = `/#/application/applydetail?id=${id}`
       return t

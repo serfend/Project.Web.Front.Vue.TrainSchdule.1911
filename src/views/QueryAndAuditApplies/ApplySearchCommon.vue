@@ -173,7 +173,7 @@
               style="width:40%"
               :loading="onLoading"
               @click="exportAppliesNowFilter"
-            >筛选并导出</el-button>
+            >导出当前查询</el-button>
           </el-button-group>
         </el-col>
       </el-row>
@@ -186,7 +186,6 @@ import { getUserIdByRealName } from '@/api/user/userinfo'
 import { companyChild } from '@/api/company'
 import CascaderSelector from '@/components/CascaderSelector'
 import { queryList, queryMyAudit } from '@/api/apply'
-import { exportMultiApplies } from '@/api/common/static'
 export default {
   Name: 'ApplySearchCommon',
   components: { CascaderSelector },
@@ -335,12 +334,7 @@ export default {
       }
     },
     exportAppliesNowFilter() {
-      var f = this.createQueryPost()
-      f.pages = {
-        pageIndex: 0,
-        pageSize: 999
-      }
-      exportMultiApplies('休假人员统计表.xlsx', f)
+      this.$emit('exportApplies')
     },
     clearForm() {
       this.$refs.queryForm.resetFields()

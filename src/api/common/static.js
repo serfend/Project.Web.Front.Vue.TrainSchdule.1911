@@ -27,7 +27,9 @@ export function locationChildren(code) {
   return request({
     url: '/static/locationChildren',
     method: 'get',
-    params: { code }
+    params: {
+      code
+    }
   })
 }
 
@@ -53,12 +55,14 @@ export function location(code) {
  *
  * @export
  * @param {*} templete
- * @param {*} query
+ * @param {*} applyId
  */
-export function exportSingleApply(templete, query) {
+export function exportSingleApply(templete, applyId) {
   return request.post('static/exportApply', {
     templete,
-    query
+    query: {
+      value: applyId
+    }
   }).then(data => {
     downloadUrl(data.requestUrl)
   })
@@ -68,12 +72,14 @@ export function exportSingleApply(templete, query) {
  *
  * @export
  * @param {*} templete
- * @param {*} query
+ * @param {*} applies
  */
-export function exportMultiApplies(templete, query) {
+export function exportMultiApplies(templete, applies) {
   return request.post('static/exportApplies', {
     templete,
-    query
+    query: {
+      arrays: applies
+    }
   }).then(data => {
     downloadUrl(data.requestUrl)
   })
@@ -95,7 +101,8 @@ export function downloadUrl(url) {
 export function exportUserApplies(dutiesType, applies) {
   var templete = '干部休假登记卡.xlsx'
   switch (dutiesType) {
-    case 1: templete = '人员休假登记卡.xlsx'
+    case 1:
+      templete = '人员休假登记卡.xlsx'
   }
   return exportMultiApplies(templete, {
     Arrays: applies
@@ -112,7 +119,8 @@ export function exportUserApplies(dutiesType, applies) {
 export function exportApplyDetail(dutiesType, id) {
   var templete = '干部请假单.xlsx'
   switch (dutiesType) {
-    case 1: templete = '人员请假单.xlsx'
+    case 1:
+      templete = '人员请假单.xlsx'
   }
   return exportSingleApply(templete, {
     Value: id
