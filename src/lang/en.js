@@ -59,7 +59,8 @@ var dict = {
         title: 'manage users',
         social: 'social',
         company: 'company'
-      }
+      },
+      updateRecord: 'release record'
     }
   },
   navbar: {

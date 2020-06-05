@@ -59,7 +59,8 @@ var dict = {
         title: '用户管理',
         social: '家庭情况',
         company: '单位情况'
-      }
+      },
+      updateRecord: '发布记录'
     }
   },
   navbar: {

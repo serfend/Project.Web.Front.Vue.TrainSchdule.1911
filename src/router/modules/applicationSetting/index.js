@@ -1,6 +1,7 @@
 import Layout from '@/layout'
 import UsersManager from './modules/UserManager/index'
 import Application from './modules/Application/index'
+import Version from './modules/Version'
 const applicationSettingRouter = {
   path: '/setting',
   component: Layout,
@@ -10,7 +11,7 @@ const applicationSettingRouter = {
     title: 'application.setting.title',
     icon: 'workset'
   },
-  children: [Application, UsersManager]
+  children: [Application, UsersManager, Version]
 }
 
 export default applicationSettingRouter
