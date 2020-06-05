@@ -26,7 +26,7 @@ export function getUpdateRecord(pageIndex, pageSize) {
  */
 export function modifyUpdateRecord(model, auth) {
   var list = []
-  if (typeof model === typeof []) {
+  if (model.length) {
     list = model
   } else {
     list = [model]

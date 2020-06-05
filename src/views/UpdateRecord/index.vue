@@ -95,6 +95,7 @@ export default {
     submitMuti() {
       this.$confirm('确定修改吗？').then(() => {
         var m = JSON.parse(this.mutiInput)
+        console.log(m)
         modifyUpdateRecord(m, this.auth).then(() => {
           this.$message.success('批量修改完成')
         })
