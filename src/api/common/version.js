@@ -21,12 +21,20 @@ export function getUpdateRecord(pageIndex, pageSize) {
  * 创建编辑删除
  *
  * @export
- * @param {*} model 当IsRemove=true表示删除，以Version为主键
+ * @param {*} model 当IsRemove=true表示删除，以Version为主键，可以为Object也可以为Array
  * @returns
  */
 export function modifyUpdateRecord(model, auth) {
+  var list = []
+  if (typeof model === typeof []) {
+    list = model
+  } else {
+    list = [model]
+  }
   return request.post('common/updateVersion', {
-    data: model,
+    data: {
+      list
+    },
     auth
   })
 }

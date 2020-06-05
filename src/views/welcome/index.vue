@@ -5,7 +5,19 @@
         <el-row v-if="showTitle" type="flex">
           <div>
             <span style="color:#ffffff;font-size:2em">{{ $store.state.settings.title }}</span>
-            <span style="color:#aaaaaa;font-size:0.8em">{{ $store.state.settings.version }}</span>
+            <el-popover trigger="hover">
+              <div>
+                <h2>{{ $store.state.settings.version }}</h2>
+                <span>{{ $store.state.settings.create }}</span>
+                <p v-for="l in $store.state.settings.description.split('\n')" :key="l">{{ l }}</p>
+              </div>
+              <el-link
+                slot="reference"
+                type="info"
+                href="#/about/version"
+                style="font-size:0.8em"
+              >{{ $store.state.settings.version }}</el-link>
+            </el-popover>
           </div>
         </el-row>
         <el-divider v-if="showTitle" />

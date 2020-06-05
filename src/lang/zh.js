@@ -108,6 +108,11 @@ var dict = {
   },
   errorLog: {
     title: '错误日志'
+  },
+  about: {
+    version: {
+      title: '发布记录'
+    }
   }
 }
 dict.tagsView = dict.settings

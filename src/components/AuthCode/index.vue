@@ -1,8 +1,5 @@
 <template>
-  <el-collapse
-    style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"
-    @change="collaspseOpen"
-  >
+  <el-collapse style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
     <el-collapse-item title="授权人">
       <template slot="title">
         <AuthCodeAbout />
@@ -89,9 +86,6 @@ export default {
     }, 1000)
   },
   methods: {
-    collaspseOpen(e) {
-      this.collaspseIsOpen = e.length > 0
-    },
     checkCode() {
       return new Promise((res, rej) => {
         if (!this.innerForm.authByUserId) {

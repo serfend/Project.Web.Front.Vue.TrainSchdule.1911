@@ -1,5 +1,8 @@
 import variables from '@/styles/element-variables.scss'
 import defaultSettings from '@/settings'
+import {
+  getUpdateRecord
+} from '@/api/common/version'
 
 const {
   showSettings,
@@ -12,6 +15,8 @@ const {
 const state = {
   title: title,
   version: 'beta',
+  description: '',
+  create: new Date(),
   theme: variables.theme,
   variables: variables,
   showSettings: showSettings,
@@ -36,6 +41,22 @@ const actions = {
     commit
   }, data) {
     commit('CHANGE_SETTING', data)
+  },
+  initProject({
+    commit,
+    state
+  }) {
+    return new Promise((resolve, reject) => {
+      getUpdateRecord(0, 1).then(data => {
+        if (data.list && data.list.length > 0) {
+          const version = data.list[0]
+          state.version = version.version
+          state.description = version.description
+          state.create = version.create
+        }
+        resolve()
+      }).catch(e => reject())
+    })
   }
 }
 

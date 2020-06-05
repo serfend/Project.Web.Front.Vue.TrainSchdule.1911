@@ -130,7 +130,6 @@ export default {
       this.singleActiveShadow = `0 1px 7px rgba(${this.rgb}, ${rate})`
     },
     userClick(isDown) {
-      this.$emit('update:listenUserInput', true)
       if (!isDown) {
         var userClickActiveDate = new Date()
         this.userClickActiveDate = userClickActiveDate
@@ -145,6 +144,7 @@ export default {
     },
     focusOn(isFocus) {
       this.isActive = isFocus
+      this.$emit('update:listenUserInput', isFocus)
     },
     reset() {
       this.showText = ''

@@ -11,7 +11,16 @@ const applicationSettingRouter = {
     title: 'application.setting.title',
     icon: 'workset'
   },
-  children: [Application, UsersManager, Version]
+  children: [Application, UsersManager, Version, {
+    path: '/about/version',
+    component: () => import('@/views/UpdateRecord/VersionDisplay'),
+    hidden: true,
+    name: 'versionDisplay',
+    meta: {
+      title: 'about.version.title',
+      icon: 'fanhuima'
+    }
+  }]
 }
 
 export default applicationSettingRouter
