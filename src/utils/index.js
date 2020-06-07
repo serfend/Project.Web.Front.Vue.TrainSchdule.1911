@@ -33,18 +33,8 @@ export function parseTime(time, cFormat) {
   }
   if (time === null) return null
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
-  let date
-  if (typeof time === 'object') {
-    date = time
-  } else {
-    if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
-      time = parseInt(time)
-    }
-    if ((typeof time === 'number') && (time.toString().length === 10)) {
-      time = time * 1000
-    }
-    date = new Date(time)
-  }
+  var date = toDate(time)
+
   const formatObj = {
     y: date.getFullYear(),
     m: date.getMonth() + 1,
@@ -69,16 +59,32 @@ export function parseTime(time, cFormat) {
 }
 
 /**
+ * 将任意时间转换为时间
+ *
+ * @export
+ * @param {*} time
+ * @returns
+ */
+export function toDate(time) {
+  if (typeof time === 'object') {
+    return time
+  } else {
+    if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
+      time = parseInt(time)
+    }
+    if ((typeof time === 'number') && (time.toString().length === 10)) {
+      time = time * 1000
+    }
+    return new Date(time)
+  }
+}
+/**
  * @param {number} time
  * @param {string} option
  * @returns {string}
  */
 export function formatTime(time, option) {
-  if (('' + time).length === 10) {
-    time = parseInt(time) * 1000
-  } else {
-    time = +time
-  }
+  time = toDate(time)
   const d = new Date(time)
   const now = Date.now()
 
@@ -87,12 +93,11 @@ export function formatTime(time, option) {
   if (diff < 30) {
     return '刚刚'
   } else if (diff < 3600) {
-    // less 1 hour
-    return Math.ceil(diff / 60) + '分钟前'
+    return `${Math.ceil(diff / 60)}分钟前`
   } else if (diff < 3600 * 24) {
-    return Math.ceil(diff / 3600) + '小时前'
-  } else if (diff < 3600 * 24 * 2) {
-    return '1天前'
+    return `${Math.ceil(diff / 3600)}小时前`
+  } else if (diff < 3600 * 24 * 8) {
+    return `${Math.ceil(diff / 86400)}天前`
   }
   return parseTime(time, option)
 }

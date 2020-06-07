@@ -8,7 +8,7 @@
             <el-popover trigger="hover">
               <div>
                 <h2>{{ $store.state.settings.version }}</h2>
-                <span>{{ $store.state.settings.create }}</span>
+                <span>{{ formatTime($store.state.settings.create) }}</span>
                 <p v-for="l in $store.state.settings.description.split('\n')" :key="l">{{ l }}</p>
               </div>
               <el-link
@@ -43,6 +43,7 @@
 <script>
 import AppIcon from '@/components/AppIcon'
 import Footer from './Footer'
+import { formatTime } from '@/utils'
 export default {
   name: 'Welcome',
   components: { AppIcon, Footer },
@@ -114,6 +115,7 @@ export default {
     }
   },
   methods: {
+    formatTime,
     lintTo(item) {
       if (item.callback) {
         item.callback()
