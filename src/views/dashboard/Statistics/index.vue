@@ -39,11 +39,7 @@
           </Square>
         </div>
         <div class="column">
-          <MembersCounter
-            v-if="setting.dateRange"
-            :data="memberCount"
-            :date-range="[setting.dateRange.value.start.value,setting.dateRange.value.end.value]"
-          />
+          <MembersCounter v-if="setting.dateRange" :data="memberCount" />
           <!-- 地图模块 -->
           <div class="map">
             <div class="map1" />
@@ -73,6 +69,7 @@
           :loading.sync="loading"
           :company-code="company?company.code:null"
           :data.sync="data"
+          :date-range="{start:setting.dateRange.value.start.value,end:setting.dateRange.value.end.value}"
           :applies-data.sync="appliesData"
         />
         <EchartGeoLoader
@@ -127,7 +124,9 @@ export default {
   computed: {
     company() {
       if (this.setting && this.setting.company && this.setting.company.value) {
-        return this.setting.company.value
+        var i = this.setting.company.value
+        if (i.name) i.name = i.name.replace('*', '')
+        return i
       } else {
         return null
       }
@@ -192,8 +191,10 @@ export default {
     },
     company: {
       handler(val) {
-        var t = this.$refs.dataDriver
-        if (t) t.refresh()
+        setTimeout(() => {
+          var t = this.$refs.dataDriver
+          if (t) t.refresh()
+        }, 500)
       }
     }
   },

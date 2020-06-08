@@ -134,25 +134,26 @@ export default {
   },
   methods: {
     updateValue() {
-      if (this.loading) return
-      var val = this.innerData
-      var changedItem = {}
-      for (var item of val) {
-        changedItem[item.key] = Object.assign({}, item)
-        if (
-          changedItem[item.key].__setting &&
-          changedItem[item.key].__setting.useParent
-        ) {
-          changedItem[item.key].value = this.setting.default
+      this.$nextTick(() => {
+        if (this.loading) return
+        var val = this.innerData
+        var changedItem = {}
+        for (var item of val) {
+          changedItem[item.key] = Object.assign({}, item)
+          if (
+            changedItem[item.key].__setting &&
+            changedItem[item.key].__setting.useParent
+          ) {
+            changedItem[item.key].value = this.setting.default
+          }
         }
-      }
-      changedItem.__setting = {
-        useParent: this.setting.useParent,
-        default: this.setting.default,
-        type: this.setting.type
-      }
-      console.log(changedItem)
-      this.$emit('changed', changedItem)
+        changedItem.__setting = {
+          useParent: this.setting.useParent,
+          default: this.setting.default,
+          type: this.setting.type
+        }
+        this.$emit('changed', changedItem)
+      })
     }
   }
 }
