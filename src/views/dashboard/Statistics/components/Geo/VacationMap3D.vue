@@ -26,8 +26,8 @@ export default {
       default: 1
     },
     data: {
-      type: Array,
-      default: () => [] // [#typeName#:{from,to,value}]省份对应的坐标
+      type: Object,
+      default: () => {} // {#typeName#:{from,to,value}}省份对应的坐标
     }
   },
   data() {
