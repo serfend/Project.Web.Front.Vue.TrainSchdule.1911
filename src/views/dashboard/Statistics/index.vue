@@ -17,7 +17,7 @@
               slot="chart"
               ref="vacationApplyStatistics"
               height="100%"
-              :color="color"
+              :color="setting?setting.color.value.memberCard.value:null"
               :companies="companies"
             />
           </Square>
@@ -26,11 +26,11 @@
               v-if="$refs.vacationMemberStatisticsPie"
               slot="title"
             >{{ $refs.vacationMemberStatisticsPie._data.title }}</h2>
-            <VacationStatisticsPie
+            <VacationStatisticsLine
               slot="chart"
               ref="vacationMemberStatisticsPie"
               height="100%"
-              :color="color"
+              :color="setting?setting.color.value.memberCard.value:null"
               :companies="companies"
             />
           </Square>
@@ -39,19 +39,23 @@
           </Square>
         </div>
         <div class="column">
-          <MembersCounter :data="memberCount" />
+          <MembersCounter
+            v-if="setting.dateRange"
+            :data="memberCount"
+            :date-range="[setting.dateRange.value.start.value,setting.dateRange.value.end.value]"
+          />
           <!-- 地图模块 -->
           <div class="map">
             <div class="map1" />
             <div class="map2" />
             <div class="map3" />
-            <VacationMap3D
+            <!--<VacationMap3D
               v-if="echartGeoComplete"
               ref="vacationMap"
               :height="'100%'"
               :file-load="requestFile"
-              :data="appliesData.new"
-            />
+              :data="appliesData?appliesData.new:null"
+            />-->
           </div>
         </div>
         <div class="float-column">
@@ -63,11 +67,11 @@
           </Square>
         </div>
       </section>
-      <div v-if="company" style="display:flex;position:fixed;bottom:0;">
+      <div style="display:flex;position:fixed;bottom:0;">
         <StatisticsDataDriver
           ref="dataDriver"
           :loading.sync="loading"
-          :company-code="company.code"
+          :company-code="company?company.code:null"
           :data.sync="data"
           :applies-data.sync="appliesData"
         />
@@ -90,15 +94,14 @@ import TimeCenter from './components/NumberCounter/TimeCenter'
 import StatisticsDataDriver from './components/Engine/StatisticsDataDriver'
 import EchartGeoLoader from './components/Engine/EchartGeoLoader'
 import SettingEngine from './components/Engine/SettingEngine'
+import { setting } from './components/Engine/setting'
 
 import MembersCounter from './components/NumberCounter/MembersCounter'
-import VacationMap3D from './components/Geo/VacationMap3D'
+// import VacationMap3D from './components/Geo/VacationMap3D'
 
 import VacationStatisticsBar from './components/Bar/VacationStatisticsBar'
-import VacationStatisticsPie from './components/Bar/VacationStatisticsPie'
+import VacationStatisticsLine from './components/Bar/VacationStatisticsLine'
 import { requestFile, download } from '@/api/common/file'
-import { getUserCompany } from '@/api/user/userinfo'
-
 export default {
   name: 'Statistics',
   components: {
@@ -108,24 +111,27 @@ export default {
     StatisticsDataDriver,
     SettingEngine,
     MembersCounter,
-    VacationMap3D,
+    // VacationMap3D,
     VacationStatisticsBar,
-    VacationStatisticsPie
+    VacationStatisticsLine
   },
   data: () => ({
     loading: '未初始化',
     echartGeoComplete: false,
     removeLoading: false,
-    company: null,
     data: null,
     appliesData: null,
-    setting: [
-      { key: 'color', value: ['#ff6f4f', '#71ff80', '#3581ff'], label: '配色' }
-    ],
-    lastUpdate: new Date(),
-    color: ['#ff6f4f', '#71ff80', '#3581ff', '#cc337f', '#71ccb0', '#f581cc']
+    setting: setting,
+    lastUpdate: new Date()
   }),
   computed: {
+    company() {
+      if (this.setting && this.setting.company && this.setting.company.value) {
+        return this.setting.company.value
+      } else {
+        return null
+      }
+    },
     companies() {
       var result = []
       if (!this.data || !this.data.companyDic) return result
@@ -183,6 +189,12 @@ export default {
           }, 500)
         }
       }
+    },
+    company: {
+      handler(val) {
+        var t = this.$refs.dataDriver
+        if (t) t.refresh()
+      }
     }
   },
   mounted() {
@@ -191,7 +203,6 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
   },
-
   methods: {
     requestFile(file) {
       return requestFile('/dataview', file).then(data => {
@@ -200,19 +211,7 @@ export default {
     },
     async init() {
       this.loading = '初始化'
-      await getUserCompany(null, true)
-        .then(data => {
-          this.company = data.company
-        })
-        .catch(e => {
-          if (e.status === 12120) {
-            this.$router.push('/application/myapply')
-          }
-        })
       this.$nextTick(() => {
-        this.$refs.dataDriver.refresh().then(() => {
-          this.refresh()
-        })
         this.$refs.echartGeoDriver.refresh()
       })
       window.addEventListener('resize', this.resize)
