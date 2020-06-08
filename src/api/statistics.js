@@ -1,4 +1,7 @@
 import request from '../utils/request'
+import {
+  parseTime
+} from '@/utils'
 
 export function details(companies, ids, pages) {
   return request.post('vacationStatistics/DetailsList', {
@@ -33,8 +36,8 @@ export function appliesNew(companyCode, from, to) {
   return request.get('vacationStatistics/appliesTargetNew', {
     params: {
       companyCode,
-      from,
-      to
+      from: parseTime(from),
+      to: parseTime(to)
     }
   })
 }
@@ -52,8 +55,8 @@ export function appliesComplete(companyCode, from, to) {
   return request.get('vacationStatistics/appliesTargetComplete', {
     params: {
       companyCode,
-      from,
-      to
+      from: parseTime(from),
+      to: parseTime(to)
     }
   })
 }
