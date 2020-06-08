@@ -74,6 +74,7 @@ export default {
     handleItemChange(val) {
       var v = val[val.length - 1]
       this.$emit('update:code', v)
+      // event of selectChange should delay for a perior due to a bug of metaphysics
       setTimeout(() => {
         this.$emit('select-change', this.$refs.elcascader.inputValue)
       }, 50)

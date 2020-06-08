@@ -207,9 +207,8 @@
         </el-form-item>
 
         <el-form-item label="单位">
-          <CascaderSelector
+          <CompanySelector
             :code.sync="companySelect.code"
-            :child-getter-method="companyChild"
             :placeholder="companySelect.name"
             @select-change="companySelectChange"
           />
@@ -290,9 +289,8 @@
 </template>
 
 <script>
-import { companyChild } from '@/api/company'
 import { getUserIdByRealName } from '@/api/user/userinfo'
-import CascaderSelector from '@/components/CascaderSelector'
+import CompanySelector from '@/components/Company/CompanySelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
@@ -311,7 +309,7 @@ export default {
     DutyFormItem,
     UserFormItem,
     AuthCode,
-    CascaderSelector
+    CompanySelector
   },
   props: {
     data: {
@@ -342,7 +340,6 @@ export default {
   },
   methods: {
     format,
-    companyChild,
     companySelectChange(val) {
       this.companySelect.name = val
       if (this.newRule.companies.indexOf(this.companySelect.code) > -1) {

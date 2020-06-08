@@ -161,12 +161,12 @@
           />
         </el-form-item>
         <el-form-item label="单位" style="width:400px">
-          <CascaderSelector
+          <CompanySelector
             :code.sync="companySelect.code"
-            :child-getter-method="companyChild"
             :placeholder="companySelect.name"
             @select-change="companySelectChange"
           />
+
           <el-tag
             v-for="tag in newNode.companies"
             :key="tag"
@@ -263,9 +263,8 @@ import {
   deleteStreamNode,
   buildFilter
 } from '@/api/applyAuditStream'
-import { companyChild } from '@/api/company'
 import { getUserIdByRealName } from '@/api/user/userinfo'
-import CascaderSelector from '@/components/CascaderSelector'
+import CompanySelector from '@/components/Company/CompanySelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
@@ -276,7 +275,7 @@ export default {
   components: {
     CompanyFormItem,
     DutyFormItem,
-    CascaderSelector,
+    CompanySelector,
     AuthCode,
     UserFormItem
   },
@@ -314,7 +313,6 @@ export default {
   },
   methods: {
     format,
-    companyChild,
     companySelectChange(val) {
       this.companySelect.name = val
       if (this.newNode.companies.indexOf(this.companySelect.code) > -1) {

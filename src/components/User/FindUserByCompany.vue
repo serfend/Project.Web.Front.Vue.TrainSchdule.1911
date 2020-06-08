@@ -1,10 +1,6 @@
 <template>
   <div>
-    <cascader-selector
-      :code.sync="nowSelectCompanyCode"
-      placeholder="选择需要检查的单位"
-      :child-getter-method="companyChild"
-    />
+    <CompanySelector :code.sync="nowSelectCompanyCode" placeholder="选择需要检查的单位" />
     <el-collapse
       v-model="nowCollapseSelectUserId"
       accordion
@@ -22,13 +18,13 @@
 </template>
 
 <script>
-import CascaderSelector from '@/components/CascaderSelector'
+import CompanySelector from '@/components/Company/CompanySelector'
 import User from '@/components/User'
-import { getMembers, companyChild } from '@/api/company'
+import { getMembers } from '@/api/company'
 
 export default {
   name: 'FindUserByCompany',
-  components: { CascaderSelector, User },
+  components: { CompanySelector, User },
   data() {
     return {
       nowSelectCompanyCode: '',
@@ -52,7 +48,6 @@ export default {
     }
   },
   methods: {
-    companyChild,
     mapUser(li) {
       return {
         description: li.companyName + li.dutiesName,

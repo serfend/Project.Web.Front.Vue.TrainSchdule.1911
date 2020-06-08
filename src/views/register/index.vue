@@ -72,10 +72,9 @@
               >刷新待认证人员</el-button>
             </el-col>
             <el-col :span="9">
-              <cascader-selector
+              <CompanySelector
                 :code.sync="nowSelectCompanyCode"
                 placeholder="选择需要检查的单位"
-                :child-getter-method="companyChild"
               />
             </el-col>
             <el-col :span="9">
@@ -162,10 +161,10 @@ import Company from './components/Company'
 import Social from './components/Social'
 import Auth from '@/components/AuthCode'
 import User from '@/components/User'
-import CascaderSelector from '@/components/CascaderSelector'
+import CompanySelector from '@/components/Company/CompanySelector'
 import VacationDescriptionContent from '@/components/Vacation/VacationDescription'
 import { regnew, authUserRegister, modefyUser } from '@/api/account'
-import { getMembers, companyChild } from '@/api/company'
+import { getMembers } from '@/api/company'
 import {
   getUsersVacationLimit,
   getUserAvatar,
@@ -177,7 +176,7 @@ import Pagination from '@/components/Pagination'
 export default {
   name: 'Register',
   components: {
-    CascaderSelector,
+    CompanySelector,
     LangSelect,
     Pagination,
     Base,
@@ -277,7 +276,6 @@ export default {
   methods: {
     modefyUser,
     regnew,
-    companyChild,
     createForm() {
       return {
         Base: {},

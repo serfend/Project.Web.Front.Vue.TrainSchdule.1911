@@ -68,10 +68,9 @@
         />
       </el-form-item>
       <el-form-item v-show="adminQuery" label="来自单位">
-        <cascader-selector
+        <CompanySelector
           :code.sync="queryForm.createCompany"
           :placeholder="queryForm.createCompanyName"
-          :child-getter-method="companyChild"
         />
       </el-form-item>
       <el-form-item v-show="!adminQuery" label="我的审核">
@@ -183,12 +182,11 @@
 
 <script>
 import { getUserIdByRealName } from '@/api/user/userinfo'
-import { companyChild } from '@/api/company'
-import CascaderSelector from '@/components/CascaderSelector'
+import CompanySelector from '@/components/Company/CompanySelector'
 import { queryList, queryMyAudit } from '@/api/apply'
 export default {
   Name: 'ApplySearchCommon',
-  components: { CascaderSelector },
+  components: { CompanySelector },
   props: {
     list: {
       type: Array,
@@ -311,7 +309,6 @@ export default {
     this.queryFormStartRecord = true
   },
   methods: {
-    companyChild,
     queryMember(realName, cb) {
       if (!realName) return cb([{}])
       getUserIdByRealName(realName).then(data => {
