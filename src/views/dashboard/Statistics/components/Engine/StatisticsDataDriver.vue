@@ -14,6 +14,13 @@ export default {
     companyCode: {
       type: String,
       default: null
+    },
+    dateRange: {
+      type: Object,
+      default: () => ({
+        start: new Date(new Date() - 7 * 86400000),
+        end: new Date()
+      })
     }
   },
   data: () => ({
@@ -30,26 +37,32 @@ export default {
         rank = i - 1
       }
       this.loadingArray = this.loadingArray.splice(0, rank)
-      this.$emit('update:loading', this.loadingArray.join(' '))
+      var oinfo = this.loadingArray.join(' ')
+      if (!oinfo && this.loading) oinfo = '...'
+      this.$emit('update:loading', oinfo)
     },
     refresh() {
+      this.loading = true
       this.showLoading(1, '加载统计')
       var actions = []
-      actions.push(this.initParentCompany(this.companyCode))
-      actions.push(this.initAppliesCount(this.companyCode))
+      actions.push(this.initParentCompany())
+      actions.push(this.initAppliesCount())
       return Promise.all(actions).then(() => {
         this.showLoading(1, '加载完成')
+        this.loading = false
         setTimeout(() => {
           this.showLoading(1, false)
         }, 1000)
       })
     },
-    initAppliesCount(companyCode) {
-      var days_7ago = new Date(new Date() - 7 * 86400000)
+    initAppliesCount() {
+      var companyCode = this.companyCode
+      this.showLoading(2, '加载休假去向')
       return new Promise((res, rej) => {
-        var action = []
-        action.push(appliesNew(companyCode, days_7ago, new Date()))
-        action.push(appliesComplete(companyCode, days_7ago, new Date()))
+        var action = [
+          appliesNew(companyCode, this.dateRange.start, this.dateRange.end),
+          appliesComplete(companyCode, this.dateRange.start, this.dateRange.end)
+        ]
         Promise.all(action)
           .then(data => {
             var d = {
@@ -69,9 +82,13 @@ export default {
             res(data)
           })
           .catch(e => rej(e))
+          .finally(() => {
+            this.showLoading(2, false)
+          })
       })
     },
-    initParentCompany(companyCode) {
+    initParentCompany() {
+      var companyCode = this.companyCode
       return companyChild(companyCode).then(data => {
         var targets = [companyCode].concat(data.list.map(i => i.code))
         return this.initCompanies(targets)
@@ -81,7 +98,6 @@ export default {
       return new Promise((res, rej) => {
         var statisticsDic = {}
         var cmpStr = companies.join('##')
-        this.loading = true
         this.showLoading(2, '各单位信息')
         return summary(cmpStr)
           .then(data => {
@@ -104,9 +120,6 @@ export default {
           })
           .catch(e => {
             rej(e)
-          })
-          .finally(() => {
-            this.loading = false
           })
       })
     },

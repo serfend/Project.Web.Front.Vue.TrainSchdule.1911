@@ -2,18 +2,20 @@
   <div>
     <div v-show="!showDialog" class="display-item" @click="showSetting">设置</div>
     <el-dialog :visible.sync="showDialog" title="设置" append-to-body>
-      <el-form v-if="innerSetting">施工中</el-form>
+      <MagicForm v-if="innerSetting" v-model="innerSetting" />
       <el-alert v-else type="error">设置选项未初始化</el-alert>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import MagicForm from '@/components/MagicForm'
 export default {
   name: 'SettingEngine',
+  components: { MagicForm },
   props: {
     setting: {
-      type: Array,
+      type: Object,
       default() {
         return null
       }
@@ -27,10 +29,16 @@ export default {
     setting: {
       handler(val) {
         if (val) {
-          this.innerSetting = this.setting
+          this.innerSetting = val
         }
       },
       immediate: true
+    },
+    innerSetting: {
+      handler(val) {
+        this.$emit('update:setting', this.innerSetting)
+      },
+      deep: true
     }
   },
   methods: {

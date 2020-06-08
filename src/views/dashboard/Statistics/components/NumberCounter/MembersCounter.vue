@@ -1,12 +1,9 @@
 <template>
   <!-- no模块制作 -->
-  <div class="no" @mouseenter="filterSelectShow=true" @mouseleave="filterSelectShow=false">
-    <el-select v-show="filterSelectShow" v-model="filter" class="filter-select">
-      <el-option v-for="i in filters" :key="i" :value="i" :label="i" />
-    </el-select>
+  <div class="no">
     <div class="no-hd">
       <ul>
-        <li v-for="i in formatedList" :key="i.title" :style="{color:i.color}">
+        <li v-for="i in formatedList" :key="i.title" :style="{color:i.color}" class="counter">
           <CountTo :start-val="i.prev" :end-val="i.value" />
         </li>
       </ul>
@@ -38,8 +35,6 @@ export default {
     color: ['#ff0', '#f0f', '#0ff', '#0f0', '#f00'],
     list: [],
     filter: null,
-    filters: [],
-    filterSelectShow: false,
     refresher: null
   }),
   computed: {
@@ -53,9 +48,8 @@ export default {
       handler(val) {
         if (val) {
           this.list = val
-          this.resetDict()
-          if (!this.filter && this.filters.length > 0) {
-            this.filter = this.filters[0]
+          if (!this.filter && this.list.length > 0) {
+            this.filter = this.list[0].filter
           }
         }
       },
@@ -69,18 +63,6 @@ export default {
     refresh() {
       if (this.refresher) clearTimeout(this.refresher)
       this.refresher = setTimeout(this.refresh, 15000)
-    },
-    resetDict() {
-      var tmpDict = {}
-      var filters = []
-      for (var i = 0; i < this.list.length; i++) {
-        var f = this.list[i].filter
-        if (!tmpDict[f]) {
-          filters.push(f)
-          tmpDict[f] = true
-        }
-      }
-      this.filters = filters
     },
     updateItem(title, value, color) {
       var r = this.findItem(title)
@@ -122,5 +104,11 @@ export default {
   position: absolute;
   opacity: 0.5;
   z-index: 1;
+}
+.counter {
+  transition: all 0.5s;
+  &:hover {
+    background-color: #ffffff3f;
+  }
 }
 </style>
