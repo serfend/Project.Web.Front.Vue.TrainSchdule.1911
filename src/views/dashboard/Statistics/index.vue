@@ -91,7 +91,7 @@ import TimeCenter from './components/NumberCounter/TimeCenter'
 import StatisticsDataDriver from './components/Engine/StatisticsDataDriver'
 import EchartGeoLoader from './components/Engine/EchartGeoLoader'
 import SettingEngine from './components/Engine/SettingEngine'
-import { setting } from './components/Engine/setting'
+import { setting, getProp, modify } from './components/Engine/setting'
 
 import MembersCounter from './components/NumberCounter/MembersCounter'
 // import VacationMap3D from './components/Geo/VacationMap3D'
@@ -123,13 +123,16 @@ export default {
   }),
   computed: {
     company() {
-      if (this.setting && this.setting.company && this.setting.company.value) {
-        var i = this.setting.company.value
+      var i = getProp(this.setting, ['company'])
+      if (i) {
         if (i.name) i.name = i.name.replace('*', '')
         return i
       } else {
         return null
       }
+    },
+    memberType() {
+      return getProp(this.setting, ['memberType'])
     },
     companies() {
       var result = []
@@ -141,6 +144,7 @@ export default {
     memberCount() {
       var result = []
       if (!this.appliesData) return result
+
       this.appliesData.types.forEach((v, i, arr) => {
         var item = [
           { title: '京内新增', prev: 0, value: 0, color: '#0f0', filter: v },
@@ -186,6 +190,20 @@ export default {
             this.removeLoading = true
             this.refresh()
           }, 500)
+        }
+      }
+    },
+    appliesData: {
+      handler(val) {
+        if (val) {
+          modify(this.setting.memberType, item => {
+            item.__setting.props.option = val.types.map(i => {
+              return {
+                label: i,
+                value: i
+              }
+            })
+          })
         }
       }
     },

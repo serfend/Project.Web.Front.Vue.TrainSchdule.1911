@@ -4,7 +4,7 @@
       <component :is="setting.type" v-model="setting.default" />
     </el-form-item>
     <el-collapse>
-      <el-form-item v-for="i in innerData" :key="i.key" :alias="i.key" :label="i.label">
+      <el-form-item v-for="i in innerData" :key="i.key" :label="i.label">
         <el-collapse-item>
           <el-tooltip slot="title" content="启用后将跟随父级默认值">
             <el-switch
@@ -16,6 +16,8 @@
             :is="i.type"
             v-show="!i.__setting||(i.__setting&&!i.__setting.useParent)"
             v-model="i.value"
+            :alias="i.key"
+            v-bind="i.__setting&&i.__setting.props?i.__setting.props:$props"
           />
         </el-collapse-item>
       </el-form-item>
@@ -74,7 +76,8 @@ export default {
     setting: {
       useParent: false,
       default: null,
-      type: null
+      type: null,
+      attrs: null
     },
     loading: false
   }),
@@ -98,34 +101,29 @@ export default {
       handler(val) {
         if (this.innerData) return
         this.loading = true
-        setTimeout(() => {
-          val = val || {}
-          if (val.__setting) {
-            this.setting = {}
-            this.setting.useParent = val.__setting.useParent
-            this.setting.default = val.__setting.default
-            this.setting.type = val.__setting.type
-            delete val.__setting
-          }
-          var list = Object.keys(val)
-          this.innerData = list.map(i => {
-            var item = Object.assign({ key: i }, val[i])
-            if (!item.type) {
-              var isObj =
-                Object.prototype.toString.call(item.value) === '[object Object]'
-              if (isObj) {
-                item.type = 'MagicForm'
-              } else {
-                throw new Error(
-                  `form item invalid:${item.key} is leaf node but its type not defined`
-                )
-              }
+        val = val || {}
+        if (val.__setting) {
+          this.setting = val.__setting
+          delete val.__setting
+        }
+        var list = Object.keys(val)
+        this.innerData = list.map(i => {
+          var item = Object.assign({ key: i }, val[i])
+          if (!item.type) {
+            var isObj =
+              Object.prototype.toString.call(item.value) === '[object Object]'
+            if (isObj) {
+              item.type = 'MagicForm'
+            } else {
+              throw new Error(
+                `form item invalid:${item.key} is leaf node but its type not defined`
+              )
             }
-            return item
-          })
-          this.$nextTick(() => {
-            this.loading = false
-          })
+          }
+          return item
+        })
+        setTimeout(() => {
+          this.loading = false
         }, 500)
       },
       deep: true,
@@ -140,11 +138,16 @@ export default {
         var changedItem = {}
         for (var item of val) {
           changedItem[item.key] = Object.assign({}, item)
-          if (
-            changedItem[item.key].__setting &&
-            changedItem[item.key].__setting.useParent
-          ) {
-            changedItem[item.key].value = this.setting.default
+          var setting = changedItem[item.key].__setting
+          if (setting) {
+            if (setting.useParent) {
+              changedItem[item.key].value = this.setting.default
+            }
+            if (setting.freezing) {
+              console.log('freezing')
+              return
+            }
+            console.log('update', setting)
           }
         }
         changedItem.__setting = {
@@ -152,6 +155,7 @@ export default {
           default: this.setting.default,
           type: this.setting.type
         }
+        console.log(this.alias, 'update value')
         this.$emit('changed', changedItem)
       })
     }
