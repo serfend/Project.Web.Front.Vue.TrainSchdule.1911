@@ -4,7 +4,7 @@
 
 <script>
 import echarts from 'echarts'
-
+import { createLinerSeries } from '../../js/linerGradient'
 export default {
   name: 'VacationStatisticsLine',
   props: {
@@ -41,7 +41,7 @@ export default {
   },
   data() {
     return {
-      title: '加载中',
+      title: '休假情况趋势',
       chart: null,
       refresher: null,
       nowIndex: 0
@@ -76,17 +76,38 @@ export default {
       var base = +new Date(2020, 0, 0)
       var oneDay = 24 * 3600 * 1000
       var date = []
-
-      var data = [Math.random() * 300]
-
-      for (var i = 1; i < 180; i++) {
+      var sTitle = ['已休假人数', '休假满60%人数', '休满假人数', '休假中人数']
+      var sTlength = sTitle.length
+      var totalMemberCount = 3221
+      var data = [[0], [0], [0], [totalMemberCount / 12]]
+      var highDay = [67, 168, 304] // 休假高峰
+      var rand = 0.3
+      for (let i = 1; i < 360; i++) {
         var now = new Date((base += oneDay))
         date.push(
           [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/')
         )
-        data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]))
+        var k = highDay.reduce((prev, cur, index) => {
+          return Math.min(Math.abs(cur - i), prev)
+        })
+        k = 365 - k
+        for (var j = 0; j < sTlength; j++) {
+          var t =
+            (Math.random() * ((sTlength - j - 1) * 2 - rand * 2) + rand) / 100
+          t = t * Math.pow(k / 365, 2)
+          var leftMember = totalMemberCount - data[j][i - 1]
+          if ((j === 1 || j === 2) && i < 30) t = t * (i / 30)
+          data[j].push(t * leftMember + data[j][i - 1])
+        }
       }
 
+      var series = []
+      for (let i = 0; i < sTlength; i++) {
+        var iData = data[i].map(d => Math.round(d))
+        var iColor = this.color[i % this.color.length]
+        var item = createLinerSeries(sTitle[i], iColor, iData)
+        series.push(item)
+      }
       var option = {
         title: {
           show: false
@@ -94,16 +115,35 @@ export default {
         tooltip: {
           trigger: 'axis'
         },
+        legend: {
+          type: 'scroll',
+          bottom: 0,
+          inactiveColor: '#aaa',
+          textStyle: { color: '#fff' }
+        },
         dataZoom: [
           {
+            type: 'slider',
+            show: true,
+            start: 94,
+            end: 100,
+            bottom: '10%',
+            height: '7%',
+            textStyle: {
+              color: '#fff'
+            }
+          },
+          {
             type: 'inside',
-            start: 0,
+            start: 94,
             end: 100
           }
         ],
+        grid: [{ x: '13%', bottom: '25%', width: '80%', height: '60%' }],
         xAxis: [
           {
             type: 'category',
+            boundaryGap: false,
             // x轴更换数据
             data: date,
             // 文本颜色为rgba(255,255,255,.6)  文字大小为 12
@@ -124,6 +164,9 @@ export default {
         yAxis: [
           {
             type: 'value',
+            min: function(value) {
+              return value.min - 20
+            },
             axisTick: { show: false },
             axisLine: {
               lineStyle: {
@@ -144,98 +187,7 @@ export default {
             }
           }
         ],
-        series: [
-          {
-            name: '已休假人数',
-            type: 'line',
-            smooth: true,
-            // 单独修改当前线条的样式
-            lineStyle: {
-              color: '#0184d5',
-              width: '2'
-            },
-            // 填充颜色设置
-            areaStyle: {
-              color: new echarts.graphic.LinearGradient(
-                0,
-                0,
-                0,
-                1,
-                [
-                  {
-                    offset: 0,
-                    color: 'rgba(1, 132, 213, 0.4)' // 渐变色的起始颜色
-                  },
-                  {
-                    offset: 0.8,
-                    color: 'rgba(1, 132, 213, 0.1)' // 渐变线的结束颜色
-                  }
-                ],
-                false
-              ),
-              shadowColor: 'rgba(0, 0, 0, 0.1)'
-            },
-            // 设置拐点
-            symbol: 'circle',
-            // 拐点大小
-            symbolSize: 8,
-            // 开始不显示拐点， 鼠标经过显示
-            showSymbol: false,
-            // 设置拐点颜色以及边框
-            itemStyle: {
-              color: '#0184d5',
-              borderColor: 'rgba(221, 220, 107, .1)',
-              borderWidth: 12
-            },
-            data: data
-          },
-          {
-            name: '休假中人数',
-            type: 'line',
-            smooth: true,
-            lineStyle: {
-              normal: {
-                color: '#00d887',
-                width: 2
-              }
-            },
-            areaStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(
-                  0,
-                  0,
-                  0,
-                  1,
-                  [
-                    {
-                      offset: 0,
-                      color: 'rgba(0, 216, 135, 0.4)'
-                    },
-                    {
-                      offset: 0.8,
-                      color: 'rgba(0, 216, 135, 0.1)'
-                    }
-                  ],
-                  false
-                ),
-                shadowColor: 'rgba(0, 0, 0, 0.1)'
-              }
-            },
-            // 设置拐点 小圆点
-            symbol: 'circle',
-            // 拐点大小
-            symbolSize: 5,
-            // 设置拐点颜色以及边框
-            itemStyle: {
-              color: '#00d887',
-              borderColor: 'rgba(221, 220, 107, .1)',
-              borderWidth: 12
-            },
-            // 开始不显示拐点， 鼠标经过显示
-            showSymbol: false,
-            data: Array.from(data).reverse()
-          }
-        ]
+        series: series
       }
       this.chart.setOption(option)
     },

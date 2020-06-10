@@ -1,5 +1,5 @@
 {
-  "name": "Holies",
+  "name": "holies",
   "version": "1.2.101",
   "description": "A Normal Project for study",
   "author": "serfend<aserfend@gmail.com>",
@@ -46,7 +46,7 @@
     "core-js": "^2.6.11",
     "crypto-js": "^4.0.0",
     "dropzone": "5.5.1",
-    "echarts": "4.7.0",
+    "echarts": "4.8.0",
     "echarts-gl": "^1.1.1",
     "element-ui": "2.13.2",
     "file-saver": "2.0.1",
