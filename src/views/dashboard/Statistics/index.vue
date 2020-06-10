@@ -1,6 +1,6 @@
 <template>
   <div id="container" class="container">
-    <div v-loading="!removeLoading" class="container-bg">
+    <div v-loading="loading" class="container-bg">
       <div v-if="company" class="statistics-title">
         <h1 class="content">{{ company.name }}休假情况</h1>
         <TimeCenter />
@@ -56,10 +56,22 @@
         </div>
         <div class="float-column">
           <Square class="float-panel">
-            <h2 slot="title">数据区域</h2>
+            <h2 slot="title">新增去向分布</h2>
           </Square>
           <Square class="float-panel">
-            <h2 slot="title">数据区域</h2>
+            <h2 slot="title">在休去向分布</h2>
+          </Square>
+          <Square class="float-panel">
+            <h2 slot="title">归队去向分布</h2>
+          </Square>
+          <Square class="float-panel">
+            <h2 slot="title">新增来源分布</h2>
+          </Square>
+          <Square class="float-panel">
+            <h2 slot="title">在休来源分布</h2>
+          </Square>
+          <Square class="float-panel">
+            <h2 slot="title">归队来源分布</h2>
           </Square>
         </div>
       </section>
@@ -67,9 +79,10 @@
         <StatisticsDataDriver
           ref="dataDriver"
           :loading.sync="loading"
-          :company-code="company?company.code:null"
+          :company="company?company.code:null"
+          :companies="companies?companies.map(i=>i.code):null"
           :data.sync="data"
-          :date-range="{start:setting.dateRange.value.start.value,end:setting.dateRange.value.end.value}"
+          :date-range="dateRange"
           :applies-data.sync="appliesData"
         />
         <EchartGeoLoader
@@ -99,6 +112,8 @@ import MembersCounter from './components/NumberCounter/MembersCounter'
 import VacationStatisticsBar from './components/Bar/VacationStatisticsBar'
 import VacationStatisticsLine from './components/Bar/VacationStatisticsLine'
 import { requestFile, download } from '@/api/common/file'
+import { getUserCompany } from '@/api/user/userinfo'
+import { companyChild } from '@/api/company'
 export default {
   name: 'Statistics',
   components: {
@@ -113,9 +128,8 @@ export default {
     VacationStatisticsLine
   },
   data: () => ({
-    loading: '未初始化',
+    loading: false,
     echartGeoComplete: false,
-    removeLoading: false,
     data: null,
     appliesData: null,
     setting: setting,
@@ -123,7 +137,7 @@ export default {
   }),
   computed: {
     company() {
-      var i = getProp(this.setting, ['company'])
+      var i = getProp(this.setting, ['company', 'main'])
       if (i) {
         if (i.name) i.name = i.name.replace('*', '')
         return i
@@ -135,16 +149,18 @@ export default {
       return getProp(this.setting, ['memberType'])
     },
     companies() {
-      var result = []
-      if (!this.data || !this.data.companyDic) return result
-      var cs = this.data.companyDic
-      result = Object.values(cs)
-      return result
+      console.log('companies modify')
+      return getProp(this.setting, ['company', 'compare'])
+    },
+    dateRange() {
+      return {
+        start: getProp(this.setting, ['dateRange', 'start']),
+        end: getProp(this.setting, ['dateRange', 'end'])
+      }
     },
     memberCount() {
       var result = []
       if (!this.appliesData) return result
-
       this.appliesData.types.forEach((v, i, arr) => {
         var item = [
           { title: '京内新增', prev: 0, value: 0, color: '#0f0', filter: v },
@@ -178,20 +194,16 @@ export default {
         }
         result = result.concat(item)
       })
-      console.log('caculate')
       return result
     }
   },
   watch: {
-    loading: {
+    setting: {
       handler(val) {
-        if (!val) {
-          setTimeout(() => {
-            this.removeLoading = true
-            this.refresh()
-          }, 500)
-        }
-      }
+        const dataDriver = this.$refs.dataDriver
+        if (dataDriver) dataDriver.refresh()
+      },
+      deep: true
     },
     appliesData: {
       handler(val) {
@@ -205,14 +217,6 @@ export default {
             })
           })
         }
-      }
-    },
-    company: {
-      handler(val) {
-        setTimeout(() => {
-          var t = this.$refs.dataDriver
-          if (t) t.refresh()
-        }, 500)
       }
     }
   },
@@ -232,6 +236,30 @@ export default {
       this.loading = '初始化'
       this.$nextTick(() => {
         this.$refs.echartGeoDriver.refresh()
+        getUserCompany(null)
+          .then(data => {
+            var code = data.company.code
+            companyChild(code).then(child => {
+              modify(this.setting.company.value.compare, m => {
+                m = Object.assign(m, {
+                  value: child.list,
+                  __setting: {
+                    props: {
+                      'company-select-names': child.list.map(i => i.name)
+                    }
+                  }
+                })
+                this.setting.company.value.main.value = data.company
+              })
+            })
+          })
+          .catch(e => {
+            if (e.status === 12120) {
+              setTimeout(() => {
+                location.href = '/'
+              }, 2000)
+            }
+          })
       })
       window.addEventListener('resize', this.resize)
     },
