@@ -17,7 +17,6 @@
             v-show="!i.__setting||(i.__setting&&!i.__setting.useParent)"
             v-model="i.value"
             :alias="i.key"
-            :is-leaf-node="true"
             v-bind="i.__setting&&i.__setting.props?i.__setting.props:$props"
           />
         </el-collapse-item>
@@ -155,10 +154,10 @@ export default {
               changedItem[item.key].value = this.setting.default
             }
             if (setting.freezing) {
-              console.log('freezing')
+              // console.log('freezing')
               return
             }
-            console.log('update', setting)
+            // console.log('update', setting)
           }
         }
         changedItem.__setting = {

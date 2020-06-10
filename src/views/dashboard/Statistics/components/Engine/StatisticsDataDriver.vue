@@ -37,12 +37,12 @@ export default {
   computed: {
     updatedCompanies() {
       return debounce(() => {
-        this.initCompanies()
+        return this.initCompanies()
       }, 500)
     },
     updatedCompany() {
       return debounce(() => {
-        this.initAppliesCount()
+        return this.initAppliesCount()
       }, 500)
     }
   },
@@ -51,11 +51,12 @@ export default {
       console.log('request refresh')
       if (this.dataIsLoading) return
       this.dataIsLoading = true
-      this.updatedCompany()
-      this.updatedCompanies()
-      setTimeout(() => {
-        this.dataIsLoading = false
-      }, 10000)
+      Promise.all([this.updatedCompany(), this.updatedCompanies()]).then(() => {
+        this.showLoading(0, false)
+        setTimeout(() => {
+          this.dataIsLoading = false
+        }, 3000)
+      })
     },
     showLoading(rank, info) {
       this.loadingArray[rank - 1] = info
@@ -69,7 +70,7 @@ export default {
       if (!oinfo && this.loading) oinfo = '...'
       if (oinfo === this.prevOinfo) return
       this.prevOinfo = oinfo
-      console.log('loading modify', oinfo)
+      // console.log('loading modify', oinfo)
       this.$emit('update:loading', oinfo)
     },
     initAppliesCount() {

@@ -241,7 +241,7 @@ export function debounce(func, wait, immediate) {
   let timeout, args, context, timestamp, result
   // var id = Math.round(Math.random() * 10000)
   // console.log('debounce build', id)
-  const later = () => {
+  const later = (res, rej) => {
     // 据上一次触发时间间隔
     const last = +new Date() - timestamp
     // 上次被包装函数被调用时间间隔 last 小于设定时间间隔 wait
@@ -253,6 +253,7 @@ export function debounce(func, wait, immediate) {
       if (!immediate) {
         // console.log('debounce exec', id)
         result = func.apply(context, args)
+        if (res) res(result)
         if (!timeout) context = args = null
       }
     }
@@ -262,15 +263,20 @@ export function debounce(func, wait, immediate) {
     context = this
     timestamp = +new Date()
     const callNow = immediate && !timeout
-    // console.log('debounce request', id)
-    // 如果延时不存在，重新设定延时
-    if (!timeout) timeout = setTimeout(later, wait)
-    if (callNow) {
-      result = func.apply(context, args)
-      context = args = null
-    }
-
-    return result
+    return new Promise((res, rej) => {
+      // console.log('debounce request', id)
+      // 如果延时不存在，重新设定延时
+      if (!timeout) {
+        timeout = setTimeout(() => {
+          later(res, rej)
+        }, wait)
+      }
+      if (callNow) {
+        result = func.apply(context, args)
+        context = args = null
+        res(result)
+      }
+    })
   }
 }
 

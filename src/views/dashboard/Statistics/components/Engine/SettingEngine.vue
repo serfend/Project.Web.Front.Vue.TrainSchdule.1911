@@ -18,6 +18,7 @@
 <script>
 import { saveSetting, loadSetting } from './setting'
 import MagicForm from '@/components/MagicForm'
+import { debounce } from '@/utils'
 export default {
   name: 'SettingEngine',
   components: { MagicForm },
@@ -36,6 +37,13 @@ export default {
     settings: ['default'],
     lastUpdate: new Date()
   }),
+  computed: {
+    updatedSetting() {
+      return debounce(() => {
+        this.$emit('update:setting', this.innerSetting)
+      }, 500)
+    }
+  },
   watch: {
     settings: {
       handler(val) {
@@ -62,12 +70,7 @@ export default {
     },
     innerSetting: {
       handler(val) {
-        var lastUpdate = new Date()
-        this.lastUpdate = lastUpdate
-        setTimeout(() => {
-          if (this.lastUpdate !== lastUpdate) return
-          this.$emit('update:setting', this.innerSetting)
-        }, 5000)
+        this.updatedSetting()
       },
       deep: true
     }

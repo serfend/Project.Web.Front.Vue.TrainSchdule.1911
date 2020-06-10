@@ -149,7 +149,6 @@ export default {
       return getProp(this.setting, ['memberType'])
     },
     companies() {
-      console.log('companies modify')
       return getProp(this.setting, ['company', 'compare'])
     },
     dateRange() {
@@ -236,32 +235,38 @@ export default {
       this.loading = '初始化'
       this.$nextTick(() => {
         this.$refs.echartGeoDriver.refresh()
-        getUserCompany(null)
-          .then(data => {
-            var code = data.company.code
-            companyChild(code).then(child => {
-              modify(this.setting.company.value.compare, m => {
-                m = Object.assign(m, {
-                  value: child.list,
-                  __setting: {
-                    props: {
-                      'company-select-names': child.list.map(i => i.name)
-                    }
-                  }
-                })
-                this.setting.company.value.main.value = data.company
-              })
-            })
-          })
-          .catch(e => {
-            if (e.status === 12120) {
-              setTimeout(() => {
-                location.href = '/'
-              }, 2000)
-            }
-          })
+        this.reloadUserCompany().then(() => {
+          this.reloadChildCompanies()
+        })
       })
       window.addEventListener('resize', this.resize)
+    },
+    reloadChildCompanies() {
+      return companyChild(this.company.code).then(child => {
+        modify(this.setting.company.value.compare, m => {
+          m = Object.assign(m, {
+            value: child.list,
+            __setting: {
+              props: {
+                'company-select-names': child.list.map(i => i.name)
+              }
+            }
+          })
+        })
+      })
+    },
+    reloadUserCompany() {
+      return getUserCompany(null)
+        .then(data => {
+          this.setting.company.value.main.value = data.company
+        })
+        .catch(e => {
+          if (e.status === 12120) {
+            setTimeout(() => {
+              location.href = '/'
+            }, 2000)
+          }
+        })
     },
     refresh() {
       this.chartsDoAction(c => {
