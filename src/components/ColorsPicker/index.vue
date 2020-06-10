@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-color-picker v-if="Object.prototype.toString.call(innerData)==='[object String]'" />
+    <el-color-picker
+      v-if="Object.prototype.toString.call(innerData)==='[object String]'"
+      v-model="innerData"
+    />
     <div v-else style="display:flex;">
       <div v-for="(item,index) in innerData" :key="index" class="color-selector">
         <el-color-picker v-model="innerData[index]" />
