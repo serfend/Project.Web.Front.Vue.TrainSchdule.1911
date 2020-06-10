@@ -1,8 +1,5 @@
 <template>
   <el-form>
-    <el-form-item v-if="setting&&setting.type" label="默认值">
-      <component :is="setting.type" v-model="setting.default" />
-    </el-form-item>
     <el-collapse>
       <el-form-item v-for="i in innerData" :key="i.key" :label="i.label">
         <el-collapse-item>
@@ -12,11 +9,15 @@
               v-model="i.__setting.useParent"
             />
           </el-tooltip>
+          <el-form-item v-if="i.__setting&&i.__setting.type" label="默认值">
+            <component :is="i.__setting.type" v-model="i.__setting.default" />
+          </el-form-item>
           <component
             :is="i.type"
             v-show="!i.__setting||(i.__setting&&!i.__setting.useParent)"
             v-model="i.value"
             :alias="i.key"
+            :is-leaf-node="true"
             v-bind="i.__setting&&i.__setting.props?i.__setting.props:$props"
           />
         </el-collapse-item>
@@ -69,6 +70,12 @@ export default {
     alias: {
       type: String,
       default: null
+    },
+    // leaf node will not emit change when setting modify
+    // only root node will
+    isLeafNode: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -132,6 +139,10 @@ export default {
   },
   methods: {
     updateValue() {
+      if (this.isLeafNode) {
+        console.log('leaf not change')
+        return
+      }
       this.$nextTick(() => {
         if (this.loading) return
         var val = this.innerData
@@ -155,7 +166,6 @@ export default {
           default: this.setting.default,
           type: this.setting.type
         }
-        console.log(this.alias, 'update value')
         this.$emit('changed', changedItem)
       })
     }
