@@ -2,17 +2,21 @@
   <div
     v-loading="loading"
     class="display-item"
-  >{{ companyCode }} load {{ loading?'pending':`${dataLength} items` }}</div>
+  >{{ company }} load {{ loading?'pending':`${dataLength} items` }}</div>
 </template>
 <script>
 import { details, summary, appliesNew, appliesComplete } from '@/api/statistics'
-import { companyChild } from '@/api/company'
 import { groupByFiled } from '@/utils/data-handle'
+import { debounce } from '@/utils'
 export default {
   name: 'StatisticsDataDriver',
   props: {
-    companyCode: {
+    company: {
       type: String,
+      default: null
+    },
+    companies: {
+      type: Array,
       default: null
     },
     dateRange: {
@@ -26,9 +30,33 @@ export default {
   data: () => ({
     loading: false,
     loadingArray: [],
-    dataLength: 0
+    dataLength: 0,
+    prevOinfo: null,
+    dataIsLoading: false
   }),
+  computed: {
+    updatedCompanies() {
+      return debounce(() => {
+        this.initCompanies()
+      }, 500)
+    },
+    updatedCompany() {
+      return debounce(() => {
+        this.initAppliesCount()
+      }, 500)
+    }
+  },
   methods: {
+    refresh() {
+      console.log('request refresh')
+      if (this.dataIsLoading) return
+      this.dataIsLoading = true
+      this.updatedCompany()
+      this.updatedCompanies()
+      setTimeout(() => {
+        this.dataIsLoading = false
+      }, 10000)
+    },
     showLoading(rank, info) {
       this.loadingArray[rank - 1] = info
       if (!info) {
@@ -39,29 +67,18 @@ export default {
       this.loadingArray = this.loadingArray.splice(0, rank)
       var oinfo = this.loadingArray.join(' ')
       if (!oinfo && this.loading) oinfo = '...'
+      if (oinfo === this.prevOinfo) return
+      this.prevOinfo = oinfo
+      console.log('loading modify', oinfo)
       this.$emit('update:loading', oinfo)
     },
-    refresh() {
-      this.loading = true
-      this.showLoading(1, '加载统计')
-      var actions = []
-      actions.push(this.initParentCompany())
-      actions.push(this.initAppliesCount())
-      return Promise.all(actions).then(() => {
-        this.showLoading(1, '加载完成')
-        this.loading = false
-        setTimeout(() => {
-          this.showLoading(1, false)
-        }, 1000)
-      })
-    },
     initAppliesCount() {
-      var companyCode = this.companyCode
+      var company = this.company
       this.showLoading(2, '加载休假去向')
       return new Promise((res, rej) => {
         var action = [
-          appliesNew(companyCode, this.dateRange.start, this.dateRange.end),
-          appliesComplete(companyCode, this.dateRange.start, this.dateRange.end)
+          appliesNew(company, this.dateRange.start, this.dateRange.end),
+          appliesComplete(company, this.dateRange.start, this.dateRange.end)
         ]
         Promise.all(action)
           .then(data => {
@@ -87,19 +104,14 @@ export default {
           })
       })
     },
-    initParentCompany() {
-      var companyCode = this.companyCode
-      return companyChild(companyCode).then(data => {
-        var targets = [companyCode].concat(data.list.map(i => i.code))
-        return this.initCompanies(targets)
-      })
-    },
-    initCompanies(companies) {
+    initCompanies() {
       return new Promise((res, rej) => {
         var statisticsDic = {}
-        var cmpStr = companies.join('##')
+        console.log('init companies data', this.companies)
+        if (!this.companies) return res()
+        var cmpStr = this.companies.join('##')
         this.showLoading(2, '各单位信息')
-        return summary(cmpStr)
+        summary(cmpStr)
           .then(data => {
             this.dataLength = data.list.length
             for (var s in data.list) {
@@ -108,8 +120,8 @@ export default {
               }
             }
             this.showLoading(2, '详细信息')
-            return details(
-              companies,
+            details(
+              this.companies,
               data.list.map(i => i.id),
               { pageIndex: 0, pageSize: -1 }
             ).then(de => {
