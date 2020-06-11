@@ -3,24 +3,43 @@ import {
   parseTime
 } from '@/utils'
 
-export function details(companies, ids, pages) {
-  return request.post('vacationStatistics/DetailsList', {
-    companyid: {
-      arrays: companies
-    },
-    id: {
-      arrays: ids
-    },
-    pages
-  })
+/**
+ * 删除指定单位新增休假的情况
+ *
+ * @export
+ * @param {*} companyCode
+ * @param {DateTime} from
+ * @param {DateTime} to
+ * @returns
+ */
+export function removeAppliesNew(companyCode, from, to) {
+  return appliesStatistics(companyCode, from, to, 'delete', 'appliesTargetNew')
 }
 
-export function summary(company) {
-  return request.get('vacationStatistics/summary', {
-    params: {
-      companiesCode: company
-    }
-  })
+/**
+ * 删除指定单位完成休假的情况
+ *
+ * @export
+ * @param {*} companyCode
+ * @param {DateTime} from
+ * @param {DateTime} to
+ * @returns
+ */
+export function removeAppliesComplete(companyCode, from, to) {
+  return appliesStatistics(companyCode, from, to, 'delete', 'appliesTargetComplete')
+}
+
+/**
+ * 删除指定单位休假情况
+ *
+ * @export
+ * @param {*} companyCode
+ * @param {*} from
+ * @param {*} to
+ * @returns
+ */
+export function removeAppliesProcess(companyCode, from, to) {
+  return appliesStatistics(companyCode, from, to, 'delete', 'appliesProcessRecord')
 }
 
 /**
@@ -32,14 +51,8 @@ export function summary(company) {
  * @param {DateTime} to
  * @returns
  */
-export function appliesNew(companyCode, from, to) {
-  return request.get('vacationStatistics/appliesTargetNew', {
-    params: {
-      companyCode,
-      from: parseTime(from),
-      to: parseTime(to)
-    }
-  })
+export function getAppliesNew(companyCode, from, to) {
+  return appliesStatistics(companyCode, from, to, 'get', 'appliesTargetNew')
 }
 
 /**
@@ -51,8 +64,25 @@ export function appliesNew(companyCode, from, to) {
  * @param {DateTime} to
  * @returns
  */
-export function appliesComplete(companyCode, from, to) {
-  return request.get('vacationStatistics/appliesTargetComplete', {
+export function getAppliesComplete(companyCode, from, to) {
+  return appliesStatistics(companyCode, from, to, 'get', 'appliesTargetComplete')
+}
+
+/**
+ * 获取指定单位休假情况
+ *
+ * @export
+ * @param {*} companyCode
+ * @param {*} from
+ * @param {*} to
+ * @returns
+ */
+export function getAppliesProcess(companyCode, from, to) {
+  return appliesStatistics(companyCode, from, to, 'get', 'appliesProcessRecord')
+}
+
+export function appliesStatistics(companyCode, from, to, action, path) {
+  return request[action](`vacationStatistics/${path}`, {
     params: {
       companyCode,
       from: parseTime(from),

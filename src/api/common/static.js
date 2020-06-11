@@ -54,8 +54,8 @@ export function location(code) {
  *导出单个申请
  *
  * @export
- * @param {*} templete
- * @param {*} applyId
+ * @param {String} templete
+ * @param {String} applyId
  */
 export function exportSingleApply(templete, applyId) {
   return request.post('static/exportApply', {
@@ -71,8 +71,8 @@ export function exportSingleApply(templete, applyId) {
  *导出多个申请
  *
  * @export
- * @param {*} templete
- * @param {*} applies
+ * @param {String} templete
+ * @param {Array} applies
  */
 export function exportMultiApplies(templete, applies) {
   return request.post('static/exportApplies', {
@@ -104,9 +104,7 @@ export function exportUserApplies(dutiesType, applies) {
     case 1:
       templete = '人员休假登记卡.xlsx'
   }
-  return exportMultiApplies(templete, {
-    Arrays: applies
-  })
+  return exportMultiApplies(templete, applies)
 }
 
 /**
@@ -122,7 +120,5 @@ export function exportApplyDetail(dutiesType, id) {
     case 1:
       templete = '人员请假单.xlsx'
   }
-  return exportSingleApply(templete, {
-    Value: id
-  })
+  return exportSingleApply(templete, id)
 }
