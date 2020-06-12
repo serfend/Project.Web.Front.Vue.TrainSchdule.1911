@@ -3,14 +3,14 @@
   <div class="no">
     <div class="no-hd">
       <ul>
-        <li v-for="i in formatedList" :key="i.title" :style="{color:i.color}" class="counter">
+        <li v-for="(i,index) in formatedList" :key="index" :style="{color:i.color}" class="counter">
           <CountTo :start-val="i.prev" :end-val="i.value" />
         </li>
       </ul>
     </div>
     <div class="no-bd">
       <ul>
-        <li v-for="i in formatedList" :key="i.title">{{ i.title }}</li>
+        <li v-for="(i,index) in formatedList" :key="index">{{ i.title }}</li>
       </ul>
     </div>
   </div>
@@ -34,13 +34,11 @@ export default {
   data: () => ({
     color: ['#ff0', '#f0f', '#0ff', '#0f0', '#f00'],
     list: [],
-    filter: null,
     refresher: null
   }),
   computed: {
     formatedList() {
-      var newList = this.list.filter(i => i.filter === this.filter)
-      return newList
+      return this.list.filter(i => i && i.title)
     }
   },
   watch: {
@@ -48,9 +46,6 @@ export default {
       handler(val) {
         if (val) {
           this.list = val
-          if (!this.filter && this.list.length > 0) {
-            this.filter = this.list[0].filter
-          }
         }
       },
       immediate: true
