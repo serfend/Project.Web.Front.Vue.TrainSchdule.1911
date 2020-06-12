@@ -48,7 +48,7 @@
               <el-slider
                 v-model="formApply.vacationLength"
                 show-input
-                :max="formApply.vacationType=='正休'?usersvacation.leftLength:999"
+                :max="maxVacationLength"
                 :min="0"
                 @input="handleChange"
               />
@@ -186,12 +186,32 @@ export default {
       },
       benefitList: [],
       lawvacations: [],
-      submitId: '',
+      submitId: null,
       isHover: false,
-      anyChanged: false
+      anyChanged: false,
+      nowMaxLength: 30
     }
   },
   computed: {
+    maxVacationLength() {
+      const isPrimary = this.formApply.vacationType === '正休'
+      const leftLength = this.usersvacation.leftLength
+      return isPrimary ? leftLength : this.nowMaxLength
+    },
+    updatedApply() {
+      return debounce(() => {
+        const vl = this.formApply.vacationLength
+        const nm = this.nowMaxLength
+        if (vl > 0.7 * nm || (vl < 2 * nm && nm > 30)) {
+          this.updateMaxLen()
+        }
+      }, 500)
+    },
+    requireSubmit() {
+      return debounce(() => {
+        this.submitRequestInfo()
+      }, 500)
+    },
     updatedChange() {
       return debounce(this.updateChangeDirect, 500)
     },
@@ -219,6 +239,9 @@ export default {
       handler(val) {
         if (val && !this.onLoading) {
           this.anyChanged = true
+          this.$nextTick(() => {
+            this.updatedApply()
+          })
         }
       },
       deep: true
@@ -232,6 +255,12 @@ export default {
   },
   methods: {
     locationChildren,
+    updateMaxLen() {
+      let newLength = this.formApply.vacationLength * 1.5 + 1
+      if (newLength < 30) newLength = 30
+      if (newLength > 999) newLength = 999
+      this.nowMaxLength = Math.round(newLength / 5) * 5
+    },
     stampLeaveRuleCheck(field, invalid, cb) {
       const i = new Date(this.formApply[field.field]) < new Date('2000-1-1')
       if (i) return cb(new Error('离队时间不合法'))
@@ -239,10 +268,7 @@ export default {
     },
     leaveCard() {
       this.isHover = false
-      if (this.anyChanged) {
-        this.anyChanged = false
-        this.submitRequestInfo()
-      }
+      this.requireSubmit()
     },
     resetSettle(val) {
       if (val && val.self && val.self.address) {
@@ -298,8 +324,10 @@ export default {
      * 提交请求信息
      */
     submitRequestInfo() {
-      console.log('requestinfo submit?' + !this.onLoading)
       if (this.onLoading) return
+      if (this.anyChanged) this.anyChanged = false
+      const caculaingDate = this.caculaingDate()
+      if (caculaingDate.length <= 0) return
       const infoParam = Object.assign({ id: this.userid }, this.formApply)
       infoParam.vacationAdditionals = this.filtedBenefitList
       if (!this.checkParamValid(infoParam)) {
@@ -331,6 +359,15 @@ export default {
       this.updatedChange()
     },
     updateChangeDirect() {
+      const caculaingDate = this.caculaingDate()
+      if (caculaingDate.length <= 0) return
+      this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
+      getStampReturn(caculaingDate).then(data => {
+        this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
+        this.lawvacations = data.descriptions ? data.descriptions : []
+      })
+    },
+    caculaingDate() {
       if (!this.formApply.StampLeave) return
       const benefits = this.filtedBenefitList.reduce((prev, cur) => {
         return prev + cur.length
@@ -340,16 +377,11 @@ export default {
       const primary = parseInt(this.formApply.vacationLength)
       const onTrip = parseInt(this.formApply.OnTripLength)
       const others = ifPrimary ? onTrip + benefits : 0
-      const caculaingDate = {
+      return {
         start: this.formApply.StampLeave,
         length: primary + others,
         caculateLawvacation: ifPrimary && benefits === 0
       }
-      this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
-      getStampReturn(caculaingDate).then(data => {
-        this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
-        this.lawvacations = data.descriptions ? data.descriptions : []
-      })
     }
   }
 }
