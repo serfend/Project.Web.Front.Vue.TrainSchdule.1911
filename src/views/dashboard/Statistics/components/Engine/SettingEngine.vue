@@ -100,6 +100,8 @@ export default {
       this.settings = item.settings
       this.settingName = item.name
       this.$nextTick(() => this.updatedSettingName())
+    } else {
+      this.loadSetting()
     }
   },
   methods: {

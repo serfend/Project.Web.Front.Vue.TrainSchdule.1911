@@ -46,7 +46,6 @@
               ref="vacationMap"
               :height="'100%'"
               :file-load="requestFile"
-              :data="companyData?companyData.new:null"
             />
           </div>
         </div>
