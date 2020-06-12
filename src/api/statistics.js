@@ -2,7 +2,18 @@ import request from '../utils/request'
 import {
   parseTime
 } from '@/utils'
-
+/**
+ * 删除指定单位累积（1月1日以来）的情况
+ *
+ * @export
+ * @param {*} companyCode
+ * @param {DateTime} from
+ * @param {DateTime} to
+ * @returns
+ */
+export function removeAppliesDailyProcess(companyCode, from, to) {
+  return appliesStatistics(companyCode, from, to, 'delete', 'appliesDailyProcessRecord')
+}
 /**
  * 删除指定单位新增休假的情况
  *
@@ -79,6 +90,19 @@ export function getAppliesComplete(companyCode, from, to) {
  */
 export function getAppliesProcess(companyCode, from, to) {
   return appliesStatistics(companyCode, from, to, 'get', 'appliesProcessRecord')
+}
+
+/**
+ * 获取指定单位累积（1月1日以来）休假情况
+ *
+ * @export
+ * @param {*} companyCode
+ * @param {*} from
+ * @param {*} to
+ * @returns
+ */
+export function getAppliesDailyProcess(companyCode, from, to) {
+  return appliesStatistics(companyCode, from, to, 'get', 'appliesDailyProcessRecord')
 }
 
 export function appliesStatistics(companyCode, from, to, action, path) {
