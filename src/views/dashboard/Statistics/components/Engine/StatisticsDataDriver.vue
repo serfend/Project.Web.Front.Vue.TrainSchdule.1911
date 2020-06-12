@@ -5,9 +5,10 @@
   >{{ company }} load {{ loading?'pending':`${dataLength} items` }}</div>
 </template>
 <script>
-import { details, summary, appliesNew, appliesComplete } from '@/api/statistics'
 import { groupByFiled } from '@/utils/data-handle'
 import { debounce } from '@/utils'
+
+import { apiOption } from './dataDriverApiOption'
 export default {
   name: 'StatisticsDataDriver',
   props: {
@@ -25,6 +26,10 @@ export default {
         start: new Date(new Date() - 7 * 86400000),
         end: new Date()
       })
+    },
+    memberType: {
+      type: String,
+      default: null
     }
   },
   data: () => ({
@@ -44,14 +49,49 @@ export default {
       return debounce(() => {
         return this.initAppliesCount()
       }, 500)
+    },
+    refreshDebounceInner() {
+      return debounce(() => {
+        return this.refreshInner()
+      }, 500)
     }
   },
   methods: {
+    companyDataFilted(companyData) {
+      if (!companyData) return {}
+      const mType = this.memberType
+      const toKeys = {}
+      if (mType) toKeys[mType] = true
+      else {
+        for (var k of companyData.types) {
+          toKeys[k] = true
+        }
+      }
+      const result = { types: companyData.types }
+      const items = Object.keys(companyData).filter(i => i !== 'types')
+      for (var item of items) {
+        const itemObj = companyData[item]
+        let newItem = []
+        const itemObjTypes = Object.keys(itemObj)
+        for (k of itemObjTypes) {
+          if (toKeys[k]) {
+            newItem = newItem.concat(itemObj[k])
+          }
+        }
+        result[item] = newItem
+      }
+      return result
+    },
     refresh() {
-      console.log('request refresh')
+      return this.refreshDebounceInner()
+    },
+    refreshInner() {
       if (this.dataIsLoading) return
       this.dataIsLoading = true
-      Promise.all([this.updatedCompany(), this.updatedCompanies()]).then(() => {
+      const action = []
+      if (this.companies) action.push(this.updatedCompanies())
+      if (this.company) action.push(this.updatedCompany())
+      Promise.all(action).then(() => {
         this.showLoading(0, false)
         setTimeout(() => {
           this.dataIsLoading = false
@@ -61,12 +101,12 @@ export default {
     showLoading(rank, info) {
       this.loadingArray[rank - 1] = info
       if (!info) {
-        var i = 1
+        let i = 1
         while (this.loadingArray[i]) i++
         rank = i - 1
       }
       this.loadingArray = this.loadingArray.splice(0, rank)
-      var oinfo = this.loadingArray.join(' ')
+      let oinfo = this.loadingArray.join(' ')
       if (!oinfo && this.loading) oinfo = '...'
       if (oinfo === this.prevOinfo) return
       this.prevOinfo = oinfo
@@ -74,90 +114,60 @@ export default {
       this.$emit('update:loading', oinfo)
     },
     initAppliesCount() {
-      var company = this.company
-      this.showLoading(2, '加载休假去向')
+      const company = this.company
+      this.showLoading(2, '主单位信息')
+      const action = this.loadingCompany(company)
+      action.then(data => {
+        // console.log('company main load completed', data)
+        this.$emit('update:companyData', data)
+      })
+      return action
+    },
+    initCompanies() {
+      // console.log('init companies data', this.companies)
+      this.showLoading(2, '各单位信息')
+      const action = []
+      // const api = [['new', getAppliesNew]] // TODO 子层级可能不需要过多数据
+      for (let i = 0; i < this.companies.length; i++) {
+        action.push(this.loadingCompany(this.companies[i]))
+      }
+      return Promise.all(action).then(data => {
+        this.$emit('update:companiesData', data)
+      })
+    },
+    loadingCompany(company, apis) {
+      if (!apis) apis = apiOption
       return new Promise((res, rej) => {
-        var action = [
-          appliesNew(company, this.dateRange.start, this.dateRange.end),
-          appliesComplete(company, this.dateRange.start, this.dateRange.end)
-        ]
+        const start = this.dateRange.start
+        const end = this.dateRange.end
+        const action = []
+        const apiCollection = Object.keys(apis)
+        for (let i = 0; i < apiCollection.length; i++) {
+          action.push(apis[apiCollection[i]].api(company, start, end))
+        }
         Promise.all(action)
           .then(data => {
-            var d = {
-              new: groupByFiled(data[0].list, 'type'),
-              complete: groupByFiled(data[1].list, 'type')
+            const d = {}
+            for (let i = 0; i < apiCollection.length; i++) {
+              const name = apiCollection[i]
+              d[name] = groupByFiled(data[i].list, 'type')
             }
-            var types = {}
-            Object.keys(d.new).forEach((v, i, arr) => {
-              types[v] = true
-            })
-            Object.keys(d.complete).forEach((v, i, arr) => {
-              types[v] = true
+            const types = {}
+            Object.keys(d).forEach((dv, di, darr) => {
+              Object.keys(d[dv]).forEach((v, i, arr) => {
+                types[v] = true
+              })
             })
             d.types = Object.keys(types)
             if (!d.types || d.types.length === 0) d.types = ['无数据']
-            this.$emit('update:appliesData', d)
-            res(data)
+            const filtedData = this.companyDataFilted(d)
+            res(filtedData)
           })
           .catch(e => rej(e))
           .finally(() => {
             this.showLoading(2, false)
           })
       })
-    },
-    initCompanies() {
-      return new Promise((res, rej) => {
-        var statisticsDic = {}
-        console.log('init companies data', this.companies)
-        if (!this.companies) return res()
-        var cmpStr = this.companies.join('##')
-        this.showLoading(2, '各单位信息')
-        summary(cmpStr)
-          .then(data => {
-            this.dataLength = data.list.length
-            for (var s in data.list) {
-              if (!statisticsDic[data.list[s].id]) {
-                statisticsDic[data.list[s].id] = data.list[s]
-              }
-            }
-            this.showLoading(2, '详细信息')
-            details(
-              this.companies,
-              data.list.map(i => i.id),
-              { pageIndex: 0, pageSize: -1 }
-            ).then(de => {
-              var r = this.initData(de)
-              this.$emit('update:data', r)
-              res()
-            })
-          })
-          .catch(e => {
-            rej(e)
-          })
-      })
-    },
-    initData(data) {
-      const labelItem = ['year', 'season', 'month', 'week']
-      var result = {
-        labelData: {},
-        companyDic: {}
-      }
-      for (var d in data.list) {
-        var item = data.list[d]
-        for (var label in labelItem) {
-          if (item.statisticsId.toLowerCase().indexOf(labelItem[label]) > -1) {
-            var key = `data_${labelItem[label]}`
-            if (!result.labelData[key]) result.labelData[key] = {}
-            if (!result.labelData[key][item.company.code]) {
-              result.labelData[key][item.company.code] = {}
-            }
-            result.labelData[key][item.company.code][item.statisticsId] = item
-            result.companyDic[item.company.code] = item.company
-            break
-          }
-        }
-      }
-      return result
     }
   }
 }
