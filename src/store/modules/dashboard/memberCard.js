@@ -1,0 +1,39 @@
+export function memberCardDefault() {
+  return [{
+    title: '京内新增',
+    color: '#0f0',
+    collection: 'new',
+    filter: 'to===11',
+    binding: 'value'
+  }, {
+    title: '京内完成',
+    color: '#00f',
+    collection: 'complete',
+    filter: 'to===11',
+    binding: 'value'
+  }, {
+    title: '京外新增',
+    color: '#ff0',
+    collection: 'new',
+    filter: 'to!==11',
+    binding: 'value'
+  }, {
+    title: '京外完成',
+    color: '#f0f',
+    collection: 'complete',
+    filter: 'to!==11',
+    binding: 'value'
+  }, {
+    title: '新增天数',
+    color: '#f00',
+    collection: 'new',
+    filter: null,
+    binding: 'day'
+  }, {
+    title: '完成天数',
+    color: '#0ff',
+    collection: 'complete',
+    filter: null,
+    binding: 'day'
+  }]
+}
