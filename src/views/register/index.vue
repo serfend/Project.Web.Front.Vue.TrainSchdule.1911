@@ -72,10 +72,7 @@
               >刷新待认证人员</el-button>
             </el-col>
             <el-col :span="9">
-              <CompanySelector
-                :code.sync="nowSelectCompanyCode"
-                placeholder="选择需要检查的单位"
-              />
+              <CompanySelector :code.sync="nowSelectCompanyCode" placeholder="选择需要检查的单位" />
             </el-col>
             <el-col :span="9">
               <el-autocomplete
@@ -452,7 +449,7 @@ export default {
       // }
       submitMethod(submitForm)
         .then(data => {
-          this.$message.success('注册成功')
+          this.$message.success(regOrModefy ? '注册成功' : '修改成功')
         })
         .finally(() => {
           this.submitLoading = false
