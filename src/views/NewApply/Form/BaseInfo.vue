@@ -2,11 +2,11 @@
   <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
     <el-card v-loading="onLoading" header="基本信息" style="position:relative">
       <el-container>
-        <el-main :style="{filter:hideDetail?'blur(5px)':''}">
+        <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
             <template slot="content">若有误（含信息有变化），请到审核注册页面修改信息</template>
           </CardTooltipAlert>
-          <el-form ref="form" :model="form" label-width="120px">
+          <el-form ref="form" :model="form" label-width="10rem">
             <el-form-item label="申请人">
               <UserSelector
                 :code.sync="form.id"
@@ -44,12 +44,12 @@
         >
           <div
             class="mask"
-            :style="{filter:hideDetail?'':'blur(30px)',background:hideDetail?'#ffffff8f':''}"
+            :style="{filter:hideDetail?'':'blur(1rem)',background:hideDetail?'#ffffff8f':''}"
           >
             <svg-icon
               :style="{transition:'all 0.5s',opacity:hideDetail?1:0,transform:hideDetail?'rotate(-360deg)':''}"
               icon-class="certification_f"
-              style-normal="width:5em;height:5em;fill:#67C23A;color:#67C23A"
+              style-normal="width:5rem;height:5rem;fill:#67C23A;color:#67C23A"
             />
           </div>
         </el-aside>

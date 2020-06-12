@@ -7,7 +7,7 @@
           :submit-id.sync="formFinal.BaseInfoId"
           :userid.sync="userid"
           :self-settle.sync="selfSettle"
-          style="margin:20px 5px"
+          style="margin:2rem 1.25rem"
           @submited="baseInfoSubmit"
         />
       </el-col>
@@ -16,7 +16,7 @@
           v-show="nowStep>=1"
           ref="VacationPreview"
           :userid="userid"
-          style="margin:20px 5px"
+          style="margin:2rem 1.25rem"
         />
       </el-col>
       <el-col :xl="12" :lg="24">
@@ -26,7 +26,7 @@
           :submit-id.sync="formFinal.RequestId"
           :userid.sync="userid"
           :self-settle.sync="selfSettle"
-          style="margin:20px 5px"
+          style="margin:2rem 1.25rem"
           @submited="requestInfoSubmit"
         />
       </el-col>

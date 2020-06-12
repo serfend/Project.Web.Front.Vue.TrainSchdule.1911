@@ -246,7 +246,7 @@ export function debounce(func, wait, immediate) {
     const last = +new Date() - timestamp
     // 上次被包装函数被调用时间间隔 last 小于设定时间间隔 wait
     if (last < wait && last > 0) {
-      timeout = setTimeout(later, wait - last)
+      timeout = setTimeout(later, wait)
     } else {
       timeout = null
       // 如果设定为immediate===true，因为开始边界已经调用过了此处无需调用
