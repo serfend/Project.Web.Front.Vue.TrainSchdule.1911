@@ -9,33 +9,29 @@
       <section v-if="company" class="mainbox">
         <div class="column">
           <Square>
-            <h2
-              v-if="$refs.vacationApplyStatistics"
-              slot="title"
-            >{{ $refs.vacationApplyStatistics._data.title }}</h2>
             <VacationStatisticsBar
               slot="chart"
               ref="vacationApplyStatistics"
               height="100%"
               :color="setting?setting.color.value.memberCard.value:null"
               :companies="companies"
+              :data="accumulateData"
             />
           </Square>
           <Square>
-            <h2
+            <div
               v-if="$refs.vacationMemberStatisticsPie"
               slot="title"
-            >{{ $refs.vacationMemberStatisticsPie._data.title }}</h2>
+              style="color:#aaa;margin-left:0.25rem;font-size:0.25rem"
+            >{{ $refs.vacationMemberStatisticsPie._data.isRate?'比率':'数值' }}</div>
             <VacationStatisticsLine
               slot="chart"
               ref="vacationMemberStatisticsPie"
               height="100%"
               :color="setting?setting.color.value.memberCard.value:null"
               :companies="companies"
+              :data="trendData"
             />
-          </Square>
-          <Square>
-            <h2 slot="title">数据区域</h2>
           </Square>
         </div>
         <div class="column">
@@ -45,13 +41,13 @@
             <div class="map1" />
             <div class="map2" />
             <div class="map3" />
-            <!--<VacationMap3D
+            <VacationMap3D
               v-if="echartGeoComplete"
               ref="vacationMap"
               :height="'100%'"
               :file-load="requestFile"
-              :data="appliesData?appliesData.new:null"
-            />-->
+              :data="companyData?companyData.new:null"
+            />
           </div>
         </div>
         <div class="float-column">
@@ -83,7 +79,8 @@
           :companies="companies?companies.map(i=>i.code):null"
           :data.sync="data"
           :date-range="dateRange"
-          :applies-data.sync="appliesData"
+          :company-data.sync="companyData"
+          :companies-data.sync="companiesData"
         />
         <EchartGeoLoader
           ref="echartGeoDriver"
@@ -104,16 +101,18 @@ import TimeCenter from './components/NumberCounter/TimeCenter'
 import StatisticsDataDriver from './components/Engine/StatisticsDataDriver'
 import EchartGeoLoader from './components/Engine/EchartGeoLoader'
 import SettingEngine from './components/Engine/SettingEngine'
-import { setting, getProp, modify } from './components/Engine/setting'
+import { getProp, modify } from '@/utils/data-handle'
 
 import MembersCounter from './components/NumberCounter/MembersCounter'
-// import VacationMap3D from './components/Geo/VacationMap3D'
+import VacationMap3D from './components/Geo/VacationMap3D'
 
 import VacationStatisticsBar from './components/Bar/VacationStatisticsBar'
 import VacationStatisticsLine from './components/Bar/VacationStatisticsLine'
 import { requestFile, download } from '@/api/common/file'
 import { getUserCompany } from '@/api/user/userinfo'
 import { companyChild } from '@/api/company'
+import { apiOption } from './components/Engine/dataDriverApiOption'
+
 export default {
   name: 'Statistics',
   components: {
@@ -123,19 +122,28 @@ export default {
     StatisticsDataDriver,
     SettingEngine,
     MembersCounter,
-    // VacationMap3D,
+    VacationMap3D,
     VacationStatisticsBar,
     VacationStatisticsLine
   },
   data: () => ({
     loading: false,
     echartGeoComplete: false,
+    initStatus: 'wait init',
     data: null,
-    appliesData: null,
-    setting: setting,
+    companyData: null,
+    companiesData: null,
     lastUpdate: new Date()
   }),
   computed: {
+    setting: {
+      get() {
+        return this.$store.state.dashboard.setting
+      },
+      set(n) {
+        this.$store.state.dashboard.setting = n
+      }
+    },
     company() {
       var i = getProp(this.setting, ['company', 'main'])
       if (i) {
@@ -157,54 +165,122 @@ export default {
         end: getProp(this.setting, ['dateRange', 'end'])
       }
     },
-    memberCount() {
-      var result = []
-      if (!this.appliesData) return result
-      this.appliesData.types.forEach((v, i, arr) => {
-        var item = [
-          { title: '京内新增', prev: 0, value: 0, color: '#0f0', filter: v },
-          { title: '京内完成', prev: 0, value: 0, color: '#00f', filter: v },
-          { title: '京外新增', prev: 0, value: 0, color: '#ff0', filter: v },
-          { title: '京外完成', prev: 0, value: 0, color: '#f0f', filter: v },
-          { title: '新增天数', prev: 0, value: 0, color: '#f0f', filter: v },
-          { title: '完成天数', prev: 0, value: 0, color: '#f0f', filter: v }
-        ]
-        var newa = this.appliesData.new[v]
-        if (newa) {
-          newa.forEach((v2, i2, arr2) => {
-            if (v2.to === 11) {
-              item[0].value += v2.value
-            } else {
-              item[2].value += v2.value
-            }
-            item[4].value += v2.day
+    // 子单位累积数据，展示柱状图
+    accumulateData() {
+      const companiesData = this.companiesData
+      if (!companiesData || companiesData.length === 0) return []
+      const collectionNames = Object.keys(companiesData[0]).filter(
+        i => i !== 'types' && apiOption[i].chartShow[0]
+      )
+      return collectionNames.map(collect => {
+        const { props, accumulate } = apiOption[collect]
+        return {
+          name: apiOption[collect].name,
+          series: props.map(prop => {
+            const { key, name } = prop
+            const reducer = (prev, cur, curIndec, arr) => prev + cur[key]
+            const data = companiesData.map(cmp => {
+              const cmpCollect = cmp[collect]
+              if (!cmpCollect || cmpCollect.length === 0) return 0
+              return accumulate
+                ? cmpCollect.reduce(reducer, 0)
+                : cmpCollect[cmpCollect.length - 1][key]
+            })
+            return { name, data }
           })
         }
-        var complete = this.appliesData.complete[v]
-        if (complete) {
-          complete.forEach((v2, i2, arr2) => {
-            if (v2.to === 11) {
-              item[1].value += v2.value
-            } else {
-              item[3].value += v2.value
-            }
-            item[5].value += v2.day
-          })
-        }
-        result = result.concat(item)
       })
-      return result
+    },
+    // 主单位趋势数据，展示折线图
+    trendData() {
+      const companyData = this.companyData
+      if (!companyData) return []
+      const collectionNames = Object.keys(companyData).filter(
+        i => i !== 'types' && apiOption[i].chartShow[1]
+      )
+      // TODO 日后可以计算比率
+      const screens = collectionNames.map(collect => {
+        const { name, props, accumulate } = apiOption[collect]
+        const companyCollect = companyData[collect]
+        const primaryPropArr = props.filter(p => p.isPrimary)
+        const primaryProp =
+          primaryPropArr.length === 1 ? primaryPropArr[0].key : null
+        let primaryData = []
+        if (primaryProp) {
+          let prevData = 0
+          primaryData = companyCollect.map(data => {
+            if (accumulate) prevData = prevData + data[primaryProp]
+            else prevData = data[primaryProp]
+            return prevData
+          })
+        }
+        return {
+          name,
+          series: props.map(prop => {
+            const { name, key } = prop
+            let prevData = 0
+            const datas = companyCollect.map((data, index) => {
+              // 如果需要累积
+              if (accumulate) prevData = prevData + data[key]
+              else prevData = data[key]
+              const dateStr = new Date(data.target).toLocaleDateString()
+              const v = [data.target, prevData, dateStr]
+              if (primaryProp) {
+                const pData = primaryData[index]
+                v.push(pData > 0 ? v[1] / pData : 0)
+              }
+              return { name: data.target, value: v }
+            })
+            return { name, data: datas }
+          })
+        }
+      })
+      return screens
+    },
+    memberCardSetting() {
+      return getProp(this.setting, ['memberCard'])
+    },
+    // 去向数据，展示翻牌器
+    memberCount() {
+      const item = []
+      const items = this.companyData
+      if (!items) return item
+      const memberCard = this.memberCardSetting
+      for (var card of memberCard) {
+        const { title, color } = card
+        let value = 0
+        if (items[card.collection]) {
+          const collect = items[card.collection]
+          const filter = card.filter
+          if (filter) {
+            const expression = new Function('i', `return i.${filter}`)
+            for (var i of collect) {
+              if (expression(i)) value += i[card.binding]
+            }
+          } else value += i[card.binding]
+        }
+        item.push({ title, prev: 0, value, color })
+      }
+      return item
     }
   },
   watch: {
     setting: {
       handler(val) {
-        const dataDriver = this.$refs.dataDriver
-        if (dataDriver) dataDriver.refresh()
+        if (this.initStatus === 'inited') {
+          const dataDriver = this.$refs.dataDriver
+          if (dataDriver) {
+            dataDriver.refresh().then(() => {
+              this.refresh()
+            })
+          }
+        } else {
+          this.init()
+        }
       },
       deep: true
     },
-    appliesData: {
+    companyData: {
       handler(val) {
         if (val) {
           modify(this.setting.memberType, item => {
@@ -219,9 +295,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.init()
-  },
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
   },
@@ -232,14 +305,19 @@ export default {
       })
     },
     async init() {
-      this.loading = '初始化'
       this.$nextTick(() => {
+        if (this.initStatus !== 'wait init') return
+        this.initStatus = 'initing'
+        console.log('init main')
+        this.loading = '初始化'
+        window.addEventListener('resize', this.resize)
         this.$refs.echartGeoDriver.refresh()
         this.reloadUserCompany().then(() => {
-          this.reloadChildCompanies()
+          this.reloadChildCompanies().then(() => {
+            this.initStatus = 'inited'
+          })
         })
       })
-      window.addEventListener('resize', this.resize)
     },
     reloadChildCompanies() {
       return companyChild(this.company.code).then(child => {
@@ -256,17 +334,21 @@ export default {
       })
     },
     reloadUserCompany() {
-      return getUserCompany(null)
-        .then(data => {
-          this.setting.company.value.main.value = data.company
-        })
-        .catch(e => {
-          if (e.status === 12120) {
-            setTimeout(() => {
-              location.href = '/'
-            }, 2000)
-          }
-        })
+      return new Promise((res, rej) => {
+        getUserCompany(null)
+          .then(data => {
+            this.setting.company.value.main.value = data.company
+            this.$nextTick(() => res(data.company))
+          })
+          .catch(e => {
+            if (e.status === 12120) {
+              setTimeout(() => {
+                location.href = '/'
+              }, 2000)
+            }
+            rej(e)
+          })
+      })
     },
     refresh() {
       this.chartsDoAction(c => {
@@ -282,12 +364,12 @@ export default {
       })
     },
     chartsDoAction(method) {
-      var lastUpdate = new Date()
+      const lastUpdate = new Date()
       this.lastUpdate = lastUpdate
       setTimeout(() => {
         if (this.lastUpdate !== lastUpdate) return
         for (var component of Object.keys(this.$refs)) {
-          var c = this.$refs[component]
+          const c = this.$refs[component]
           method(c)
         }
       }, 500)
