@@ -1,5 +1,9 @@
 <template>
-  <div :style="{height:height,width:width}" />
+  <div
+    :style="{height:height,width:width}"
+    @mouseenter="userSelect = true"
+    @mouseleave="userSelect = false"
+  />
 </template>
 
 <script>
@@ -40,10 +44,10 @@ export default {
   },
   data() {
     return {
-      title: '加载中',
       chart: null,
       refresher: null,
-      nowIndex: 0
+      nowIndex: 0,
+      userSelect: false
     }
   },
   mounted() {
@@ -63,13 +67,17 @@ export default {
       this.refresher = null
     },
     async nextShowOfData() {
-      this.checkTimeOut()
-      if (this.data && this.data.length > 0) {
-        this.nowIndex++
-        if (this.nowIndex >= this.data.length) this.nowIndex = 0
-        this.refresh()
+      if (!this.userSelect) {
+        this.checkTimeOut()
+        if (this.data && this.data.length > 0) {
+          this.nowIndex++
+          if (this.nowIndex >= this.data.length) this.nowIndex = 0
+          this.refresh()
+        }
       }
-      this.refresher = setTimeout(this.nextShowOfData, 15000)
+      this.refresher = setTimeout(() => {
+        this.nextShowOfData()
+      }, 5000)
     },
     refresh() {
       this.chart.showLoading()
@@ -77,20 +85,28 @@ export default {
       this.chart.hideLoading()
     },
     setOpt() {
-      if (!this.data || !this.data[this.nowIndex]) return
-      var series = this.data[this.nowIndex].data.map(d => {
-        return {
-          name: '未命名',
-          type: 'bar',
-          data: [],
-          itemStyle: {
-            barBorderRadius: 5
+      if (!this.data) return
+      const nowGroup = this.data[this.nowIndex]
+      if (!nowGroup) return
+      const series = nowGroup.series.map(d => ({
+        name: '未命名',
+        type: 'bar',
+        data: [],
+        itemStyle: {
+          barBorderRadius: 5
+        },
+        ...d
+      }))
+      if (this.nowIndex === 0) this.chart.clear()
+      const option = {
+        title: {
+          text: `各单位情况 - ${nowGroup.name}`,
+          textStyle: {
+            color: '#fff'
           },
-          ...d
-        }
-      })
-      this.title = this.data[this.nowIndex].name
-      var option = {
+          textAlign: 'center',
+          left: '50%'
+        },
         color: this.color,
         tooltip: {
           trigger: 'axis',
@@ -99,12 +115,20 @@ export default {
             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
           }
         },
+        legend: {
+          type: 'scroll',
+          bottom: '0%',
+          textStyle: {
+            color: '#fff'
+          },
+          inactiveColor: '#aaa'
+        },
         // 修改图表的大小
         grid: {
-          left: '0%',
-          top: '0.0125rem',
-          right: '0%',
-          bottom: '4%',
+          left: '5%',
+          top: '20%',
+          right: '5%',
+          bottom: '10%',
           containLabel: true
         },
         xAxis: [
