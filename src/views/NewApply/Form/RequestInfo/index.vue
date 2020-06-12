@@ -105,9 +105,9 @@
               :rules="[{required:true,trigger:'blur'}]"
             >
               <cascader-selector
-                :placeholder="formApply.vacationPlaceName"
                 :code.sync="formApply.vacationPlace"
                 :child-getter-method="locationChildren"
+                :placeholder="vacationPlaceDefault&&vacationPlaceDefault.code==formApply.vacationPlace?vacationPlaceDefault.name:''"
                 style="width:30rem"
               />
             </el-form-item>
@@ -176,6 +176,7 @@ export default {
     return {
       onLoading: true,
       formApply: this.createNewRequest(),
+      vacationPlaceDefault: null,
       submitYear: new Date().getFullYear(),
       usersvacation: {
         yearlyLength: 0,
@@ -278,7 +279,9 @@ export default {
         const target = checkDic.find(i => i && i.code !== self.code)
         if (target) {
           this.formApply.vacationPlace = target.code
-          this.formApply.vacationPlaceName = target.name
+          const likely = Object.assign({}, target)
+          likely.name = `${likely.name}(已为您默认填写可能休假的地点)`
+          this.vacationPlaceDefault = likely
         }
       }
     },
