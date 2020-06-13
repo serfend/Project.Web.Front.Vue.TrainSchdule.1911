@@ -18,13 +18,14 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { debounce } from '@/utils'
 export default {
   name: 'MembersCounter',
   components: { CountTo },
   props: {
-    data: {
-      type: Array,
-      default: () => []
+    setting: {
+      type: Object,
+      default: null
     },
     autoplay: {
       type: Boolean,
@@ -34,21 +35,27 @@ export default {
   data: () => ({
     color: ['#ff0', '#f0f', '#0ff', '#0f0', '#f00'],
     list: [],
+    rawSetting: null,
     refresher: null
   }),
   computed: {
+    updatedItems() {
+      return debounce(() => {
+        this.updateItems()
+      }, 500)
+    },
     formatedList() {
       return this.list.filter(i => i && i.title)
     }
   },
   watch: {
-    data: {
+    setting: {
       handler(val) {
         if (val) {
-          this.list = val
+          this.rawSetting = val
+          this.updatedItems()
         }
-      },
-      immediate: true
+      }
     }
   },
   mounted() {
@@ -58,6 +65,26 @@ export default {
     refresh() {
       if (this.refresher) clearTimeout(this.refresher)
       this.refresher = setTimeout(this.refresh, 15000)
+    },
+    updateItems() {
+      const item = []
+      const items = this.rawSetting.data
+      if (!items) return item
+      const memberCard = this.rawSetting.setting
+      for (var card of memberCard) {
+        const { title, color } = card
+        let value = 0
+        if (items[card.collection]) {
+          const collect = items[card.collection]
+          const filter = card.filter
+          const expression = new Function('i', `return i.${filter}`)
+          for (var i of collect) {
+            if (!filter || expression(i)) value += i[card.binding]
+          }
+        }
+        item.push({ title, prev: 0, value, color })
+      }
+      this.list = item
     },
     updateItem(title, value, color) {
       var r = this.findItem(title)

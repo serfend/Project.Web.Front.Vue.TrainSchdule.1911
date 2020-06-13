@@ -35,7 +35,7 @@
           </Square>
         </div>
         <div class="column">
-          <MembersCounter v-if="setting.dateRange" :data="memberCount" />
+          <MembersCounter v-if="setting.dateRange" :setting="memberCardSetting" />
           <!-- 地图模块 -->
           <div class="map">
             <div class="map1" />
@@ -237,28 +237,10 @@ export default {
       return screens
     },
     memberCardSetting() {
-      return getProp(this.setting, ['memberCard'])
-    },
-    // 去向数据，展示翻牌器
-    memberCount() {
-      const item = []
-      const items = this.companyData
-      if (!items) return item
-      const memberCard = this.memberCardSetting
-      for (var card of memberCard) {
-        const { title, color } = card
-        let value = 0
-        if (items[card.collection]) {
-          const collect = items[card.collection]
-          const filter = card.filter
-          const expression = new Function('i', `return i.${filter}`)
-          for (var i of collect) {
-            if (!filter || expression(i)) value += i[card.binding]
-          }
-        }
-        item.push({ title, prev: 0, value, color })
+      return {
+        setting: getProp(this.setting, ['memberCard']),
+        data: this.companyData
       }
-      return item
     }
   },
   watch: {
