@@ -111,6 +111,7 @@ import { requestFile, download } from '@/api/common/file'
 import { getUserCompany } from '@/api/user/userinfo'
 import { companyChild } from '@/api/company'
 import { apiOption } from './components/Engine/dataDriverApiOption'
+import { groupByFiled } from '@/utils/data-handle'
 
 export default {
   name: 'Statistics',
@@ -171,11 +172,14 @@ export default {
       const collectionNames = Object.keys(companiesData[0]).filter(
         i => i !== 'types' && apiOption[i].chartShow[0]
       )
-      return collectionNames.map(collect => {
+      const rawData = collectionNames.map(collect => {
         const { props, accumulate } = apiOption[collect]
-        return {
-          name: apiOption[collect].name,
-          series: props.map(prop => {
+        const mutiScreenProps = groupByFiled(props, 'screen')
+        const screenPropsKeys = Object.keys(mutiScreenProps)
+        const spkLen = screenPropsKeys.length
+        const screens = screenPropsKeys.map(screenPropsKey => {
+          const screenProps = mutiScreenProps[screenPropsKey]
+          const series = screenProps.map(prop => {
             const { key, name } = prop
             const reducer = (prev, cur, curIndec, arr) => prev + cur[key]
             const data = companiesData.map(cmp => {
@@ -187,8 +191,13 @@ export default {
             })
             return { name, data }
           })
-        }
+          const cn = apiOption[collect].name
+          const name = spkLen === 1 ? cn : `${cn}(${screenPropsKey})`
+          return { name, series }
+        })
+        return screens
       })
+      return [].concat(...rawData)
     },
     // 主单位趋势数据，展示折线图
     trendData() {
@@ -198,24 +207,16 @@ export default {
         i => i !== 'types' && apiOption[i].chartShow[1]
       )
       const screens = collectionNames.map(collect => {
-        const { name, props, accumulate } = apiOption[collect]
+        const { props, accumulate } = apiOption[collect]
         const companyCollect = companyData[collect]
-        const primaryPropArr = props.filter(p => p.isPrimary)
-        const primaryProp =
-          primaryPropArr.length === 1 ? primaryPropArr[0].key : null
-        let primaryData = []
-        if (primaryProp) {
-          let prevData = 0
-          primaryData = companyCollect.map(data => {
-            if (accumulate) prevData = prevData + data[primaryProp]
-            else prevData = data[primaryProp]
-            return prevData
-          })
-        }
-        return {
-          name,
-          series: props.map(prop => {
-            const { name, key } = prop
+        const mutiScreenProps = groupByFiled(props, 'screen')
+        const screenPropsKeys = Object.keys(mutiScreenProps)
+        const spkLen = screenPropsKeys.length
+        const screensByPropScreen = screenPropsKeys.map(screenPropsKey => {
+          const screenProps = mutiScreenProps[screenPropsKey]
+          const seriesDict = {}
+          const series = screenProps.map((prop, index) => {
+            const { name, key, rateBy } = prop
             let prevData = 0
             const datas = companyCollect.map((data, index) => {
               // 如果需要累积
@@ -223,18 +224,28 @@ export default {
               else prevData = data[key]
               const dateStr = new Date(data.target).toLocaleDateString()
               const v = [data.target, prevData, dateStr]
-              if (primaryProp) {
-                const pData = primaryData[index]
-                v.push(pData > 0 ? (100 * v[1]) / pData : 0)
-              }
+              v.push(null) // 占位，用于填充百分比
               v.push(data.type) // 按不同类别进行分类
               return { name: data.target, value: v }
             })
-            return { name, data: datas }
+            seriesDict[key] = index
+            return { name, data: datas, key, rateBy }
           })
-        }
+          series.forEach(s => {
+            const { rateBy } = s
+            if (!rateBy) return
+            const cmpDatas = series[seriesDict[rateBy]].data
+            s.data.forEach((d, index) => {
+              d.value[3] = Math.round((10000 * d.value[1]) / cmpDatas[index].value[1]) / 100
+            })
+          })
+          const cn = apiOption[collect].name
+          const name = spkLen === 1 ? cn : `${cn}(${screenPropsKey})`
+          return { name, series }
+        })
+        return screensByPropScreen
       })
-      return screens
+      return [].concat(...screens)
     },
     memberCardSetting() {
       return {

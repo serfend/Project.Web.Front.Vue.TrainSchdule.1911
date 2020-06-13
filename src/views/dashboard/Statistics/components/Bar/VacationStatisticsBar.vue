@@ -72,7 +72,7 @@ export default {
         if (this.data && this.data.length > 0) {
           this.nowIndex++
           if (this.nowIndex >= this.data.length) this.nowIndex = 0
-          this.refresh(false)
+          this.refresh(true)
         }
       }
       this.refresher = setTimeout(() => {

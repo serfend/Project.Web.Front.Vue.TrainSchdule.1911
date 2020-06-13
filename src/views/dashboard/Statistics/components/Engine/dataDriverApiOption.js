@@ -1,27 +1,31 @@
 const dailyApiOption = [{
   key: 'applyMembersCount',
   name: '申请人数', // 图表展示项
-  caculateRate: true // 是否新增一个比率系列
+  rateBy: 'membersCount', // 如果需要百分比，则以哪个计算
+  screen: '人数' // 分配至哪个屏幕
 }, {
   key: 'completeVacationExpectDayCount',
   name: '应休天数',
-  caculateRate: true
+  screen: '天数'
 }, {
   key: 'completeVacationRealDayCount',
   name: '实休天数',
-  caculateRate: true
+  rateBy: 'completeVacationExpectDayCount',
+  screen: '天数'
 }, {
   key: 'completeYearlyVacationCount',
   name: '休满假数',
-  caculateRate: true
+  rateBy: 'membersCount',
+  screen: '人数'
 }, {
   key: 'membersCount',
   name: '总人数',
-  isPrimary: true
+  screen: '人数'
 }, {
   key: 'membersVacationDayLessThanP60',
   name: '休假低于60%数',
-  caculateRate: true
+  rateBy: 'membersCount',
+  screen: '人数'
 }]
 import {
   getAppliesNew,

@@ -74,12 +74,12 @@ export default {
           if (this.nowIndex >= this.data.length) {
             this.nowIndex = 0
           }
-          this.refresh()
+          this.refresh(true)
         }
       }
       this.refresher = setTimeout(this.nextShowOfData, 7500)
     },
-    refresh(directClear = false) {
+    refresh(directClear = true) {
       this.chart.showLoading()
       this.setOpt(directClear)
       this.chart.hideLoading()
@@ -119,9 +119,10 @@ export default {
             result.push(series[0].value[2])
             result.push('<br/>')
             for (var s of series) {
-              const per = Math.round(s.value[3] * 100) / 100
+              const per = s.value[3]
+              const label = `${s.seriesName}:${s.value[1]}`
               result.push(s.marker)
-              result.push(`${s.seriesName}:${s.value[1]}(${per}%)`)
+              result.push(per ? `${label}(${per}%)` : label)
               result.push('<br/>')
             }
             return result.join('')
