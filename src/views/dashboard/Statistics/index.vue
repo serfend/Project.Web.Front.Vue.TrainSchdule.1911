@@ -251,12 +251,10 @@ export default {
         if (items[card.collection]) {
           const collect = items[card.collection]
           const filter = card.filter
-          if (filter) {
-            const expression = new Function('i', `return i.${filter}`)
-            for (var i of collect) {
-              if (expression(i)) value += i[card.binding]
-            }
-          } else value += i[card.binding]
+          const expression = new Function('i', `return i.${filter}`)
+          for (var i of collect) {
+            if (!filter || expression(i)) value += i[card.binding]
+          }
         }
         item.push({ title, prev: 0, value, color })
       }
