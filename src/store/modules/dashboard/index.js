@@ -79,7 +79,8 @@ export function createSetting() {
       type: () => import('@/components/Selector'),
       __setting: {
         props: {
-          option: []
+          option: [],
+          clearable: true
         }
       }
     },

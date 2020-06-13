@@ -197,7 +197,6 @@ export default {
       const collectionNames = Object.keys(companyData).filter(
         i => i !== 'types' && apiOption[i].chartShow[1]
       )
-      // TODO 日后可以计算比率
       const screens = collectionNames.map(collect => {
         const { name, props, accumulate } = apiOption[collect]
         const companyCollect = companyData[collect]
