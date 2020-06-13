@@ -51,6 +51,15 @@ export function location(code) {
 }
 
 /**
+ * 获取中心时间配置
+ *
+ * @export
+ * @returns
+ */
+export function timeZone() {
+  return request.get('systemStatic/timeZone')
+}
+/**
  *导出单个申请
  *
  * @export

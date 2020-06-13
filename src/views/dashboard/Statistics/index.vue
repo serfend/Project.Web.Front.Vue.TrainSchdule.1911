@@ -3,7 +3,7 @@
     <div v-loading="loading" class="container-bg">
       <div v-if="company" class="statistics-title">
         <h1 class="content">{{ company.name }}休假情况</h1>
-        <TimeCenter />
+        <TimeCenter :time-sync-method="timeZone" />
       </div>
       <!-- 页面主体部分 -->
       <section v-if="company" class="mainbox">
@@ -97,6 +97,7 @@ import './js/flexible'
 import Square from './components/Square'
 
 import TimeCenter from './components/NumberCounter/TimeCenter'
+import { timeZone } from '@/api/common/static'
 import StatisticsDataDriver from './components/Engine/StatisticsDataDriver'
 import EchartGeoLoader from './components/Engine/EchartGeoLoader'
 import SettingEngine from './components/Engine/SettingEngine'
@@ -236,7 +237,9 @@ export default {
             if (!rateBy) return
             const cmpDatas = series[seriesDict[rateBy]].data
             s.data.forEach((d, index) => {
-              d.value[3] = Math.round((10000 * d.value[1]) / cmpDatas[index].value[1]) / 100
+              d.value[3] =
+                Math.round((10000 * d.value[1]) / cmpDatas[index].value[1]) /
+                100
             })
           })
           const cn = apiOption[collect].name
@@ -289,6 +292,7 @@ export default {
     window.removeEventListener('resize', this.resize)
   },
   methods: {
+    timeZone,
     requestFile(file) {
       return requestFile('/dataview', file).then(data => {
         return download(data.file.id)
