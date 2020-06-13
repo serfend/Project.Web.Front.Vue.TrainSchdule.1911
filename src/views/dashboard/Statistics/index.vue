@@ -225,8 +225,9 @@ export default {
               const v = [data.target, prevData, dateStr]
               if (primaryProp) {
                 const pData = primaryData[index]
-                v.push(pData > 0 ? v[1] / pData : 0)
+                v.push(pData > 0 ? (100 * v[1]) / pData : 0)
               }
+              v.push(data.type) // 按不同类别进行分类
               return { name: data.target, value: v }
             })
             return { name, data: datas }
@@ -249,7 +250,7 @@ export default {
           const dataDriver = this.$refs.dataDriver
           if (dataDriver) {
             dataDriver.refresh().then(() => {
-              this.refresh()
+              this.refresh(true)
             })
           }
         } else {

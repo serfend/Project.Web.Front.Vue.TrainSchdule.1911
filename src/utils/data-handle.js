@@ -7,11 +7,32 @@
  */
 export function groupByFiled(list, name) {
   return list.reduce((obj, item) => {
-    if (!obj[item[name]]) {
-      obj[item[name]] = []
-      obj[item[name]].push(item)
+    const key = item[name]
+    if (!obj[key]) {
+      obj[key] = []
+      obj[key].push(item)
     } else {
-      obj[item[name]].push(item)
+      obj[key].push(item)
+    }
+    return obj
+  }, {})
+}
+
+/**
+ * 按目标方法分组
+ *
+ * @export
+ * @param {*} list
+ * @param {*} cb
+ */
+export function groupByPredict(list, cb) {
+  return list.reduce((obj, item) => {
+    const key = cb(item)
+    if (!obj[key]) {
+      obj[key] = []
+      obj[key].push(item)
+    } else {
+      obj[key].push(item)
     }
     return obj
   }, {})

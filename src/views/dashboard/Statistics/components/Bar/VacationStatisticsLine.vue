@@ -9,6 +9,7 @@
 <script>
 import echarts from 'echarts'
 import { createLinerSeries } from '../../js/linerGradient'
+import { groupByPredict } from '@/utils/data-handle'
 export default {
   name: 'VacationStatisticsLine',
   props: {
@@ -78,17 +79,30 @@ export default {
       }
       this.refresher = setTimeout(this.nextShowOfData, 7500)
     },
-    refresh() {
+    refresh(directClear = false) {
+      this.chart.showLoading()
+      this.setOpt(directClear)
+      this.chart.hideLoading()
+    },
+    setOpt(directClear) {
       if (!this.data) return
       const nowGroup = this.data[this.nowIndex]
       if (!nowGroup) return
-      const series = nowGroup.series.map((s, i) => {
+      let series = nowGroup.series.map((s, i) => {
         const iColor = this.color[i % this.color.length]
         const { name, data } = s
-        const item = createLinerSeries(name, iColor, data)
-        return item
+        const groupByTypesData = groupByPredict(data, i => i.value[4]) // group by member type
+        const result = []
+        const keys = Object.keys(groupByTypesData)
+        for (var group of keys) {
+          const iName = keys.length <= 1 ? name : `${name}(${group})`
+          const item = createLinerSeries(iName, iColor, groupByTypesData[group])
+          result.push(item)
+        }
+        return result
       })
-      if (this.nowIndex === 0) this.chart.clear()
+      series = [].concat(...series)
+      if (directClear || this.nowIndex === 0) this.clear()
       var option = {
         title: {
           text: `本单位趋势 - ${nowGroup.name}`,
@@ -113,6 +127,17 @@ export default {
             return result.join('')
           }
         },
+        series: series
+      }
+      this.chart.setOption(option)
+    },
+    initChart() {
+      this.chart = echarts.init(this.$el)
+      this.initChartSkeleton()
+      this.nextShowOfData()
+    },
+    initChartSkeleton() {
+      this.chart.setOption({
         legend: {
           type: 'scroll',
           bottom: 0,
@@ -185,18 +210,12 @@ export default {
               }
             }
           }
-        ],
-        series: series
-      }
-      this.chart.setOption(option)
+        ]
+      })
     },
-    initChart() {
-      this.chart = echarts.init(this.$el)
+    clear() {
+      this.chart.clear()
       this.initChartSkeleton()
-      this.nextShowOfData()
-    },
-    initChartSkeleton() {
-      this.refresh()
     }
   }
 }

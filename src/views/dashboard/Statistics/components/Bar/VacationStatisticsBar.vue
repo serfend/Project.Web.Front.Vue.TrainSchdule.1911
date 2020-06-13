@@ -72,19 +72,19 @@ export default {
         if (this.data && this.data.length > 0) {
           this.nowIndex++
           if (this.nowIndex >= this.data.length) this.nowIndex = 0
-          this.refresh()
+          this.refresh(false)
         }
       }
       this.refresher = setTimeout(() => {
         this.nextShowOfData()
       }, 5000)
     },
-    refresh() {
+    refresh(directClear = true) {
       this.chart.showLoading()
-      this.setOpt()
+      this.setOpt(directClear)
       this.chart.hideLoading()
     },
-    setOpt() {
+    setOpt(directClear) {
       if (!this.data) return
       const nowGroup = this.data[this.nowIndex]
       if (!nowGroup) return
@@ -97,7 +97,7 @@ export default {
         },
         ...d
       }))
-      if (this.nowIndex === 0) this.chart.clear()
+      if (directClear || this.nowIndex === 0) this.chart.clear()
       const option = {
         title: {
           text: `各单位情况 - ${nowGroup.name}`,
