@@ -42,12 +42,7 @@ export default {
   computed: {
     updatedCompanies() {
       return debounce(() => {
-        return this.initCompanies()
-      }, 500)
-    },
-    updatedCompany() {
-      return debounce(() => {
-        return this.initAppliesCount()
+        return this.initCompaniesAndAppliesCount()
       }, 500)
     },
     refreshDebounceInner() {
@@ -89,8 +84,7 @@ export default {
       if (this.dataIsLoading) return
       this.dataIsLoading = true
       const action = []
-      if (this.companies) action.push(this.updatedCompanies())
-      if (this.company) action.push(this.updatedCompany())
+      action.push(this.updatedCompanies())
       Promise.all(action).then(() => {
         this.showLoading(0, false)
         setTimeout(() => {
@@ -113,22 +107,15 @@ export default {
       // console.log('loading modify', oinfo)
       this.$emit('update:loading', oinfo)
     },
-    initAppliesCount() {
-      const company = this.company
-      this.showLoading(2, '主单位信息')
-      const action = this.loadingCompany([company])
-      action.then(data => {
-        // console.log('company main load completed', data)
-        this.$emit('update:companyData', data[0])
-      })
-      return action
-    },
-    initCompanies() {
-      console.log('init companies data', this.companies)
-      this.showLoading(2, '各单位信息')
-      // const api = [['new', getAppliesNew]] // TODO 子层级可能不需要过多数据
-      return this.loadingCompany(this.companies).then(data => {
-        this.$emit('update:companiesData', data)
+    initCompaniesAndAppliesCount() {
+      this.showLoading(2, '单位信息')
+      const targets = [this.company].concat(this.companies)
+      this.loadingCompany(targets).then(data => {
+        const companyData = data.shift()
+        const companiesData = data
+        console.log(companyData, companiesData)
+        this.$emit('update:companyData', companyData)
+        this.$emit('update:companiesData', companiesData)
       })
     },
     loadingCompany(companies, apis) {
