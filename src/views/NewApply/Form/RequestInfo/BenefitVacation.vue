@@ -100,7 +100,11 @@ export default {
       this.list[this.nowIndex].length = item.length
     },
     addSingle() {
-      this.innerList.push({})
+      this.innerList.push({
+        name: '',
+        description: '填写福利假原因',
+        length: 0
+      })
     },
     removeSingle(index) {
       this.innerList.splice(index, 1)
