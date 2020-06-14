@@ -11,17 +11,22 @@
           <el-form label-width="6rem">
             <el-form-item label="福利假">
               <el-autocomplete
-                v-model="item.name"
+                v-model="innerList[index].name"
                 :fetch-suggestions="querySearch"
                 placeholder="选择/输入福利假"
                 @select="selectChange"
               />
             </el-form-item>
             <el-form-item label="休假天数">
-              <el-input-number v-model.number="item.length" :min="1" />
+              <el-input-number v-model.number="innerList[index].length" :min="1" />
             </el-form-item>
             <el-form-item label="福利假理由">
-              <el-input v-model="item.description" type="textarea" maxlength="30" show-word-limit />
+              <el-input
+                v-model="innerList[index].description"
+                type="textarea"
+                maxlength="30"
+                show-word-limit
+              />
             </el-form-item>
             <el-form-item>
               <el-button
@@ -85,7 +90,9 @@ export default {
   methods: {
     querySearch(key, cb) {
       if (!key) return cb(this.benefitList)
-      const results = this.benefitList.filter(i => i.value.indexOf(key) > -1)
+      var results = this.benefitList
+        .filter(i => i.value.indexOf(key) > -1)
+        .map(i => Object.assign({}, i))
       cb(results)
     },
     selectChange(item) {
