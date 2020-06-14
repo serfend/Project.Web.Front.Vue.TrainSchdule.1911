@@ -10,6 +10,7 @@
 import echarts from 'echarts'
 import { createLinerSeries } from '../../js/linerGradient'
 import { groupByPredict } from '@/utils/data-handle'
+import { debounce } from '@/utils'
 export default {
   name: 'VacationStatisticsLine',
   props: {
@@ -49,7 +50,29 @@ export default {
       chart: null,
       refresher: null,
       nowIndex: 0,
-      userSelect: false
+      userSelect: false,
+      series: [],
+      legend: {
+        dict: {}, // name-[index]
+        isEventing: false
+      }
+    }
+  },
+  computed: {
+    updatedData() {
+      return debounce(() => {
+        this.updateData()
+      }, 1000)
+    }
+  },
+  watch: {
+    data: {
+      handler(v) {
+        this.$nextTick(() => {
+          this.updatedData()
+        })
+      },
+      deep: true
     }
   },
   mounted() {
@@ -79,29 +102,50 @@ export default {
       }
       this.refresher = setTimeout(this.nextShowOfData, 7500)
     },
+    updateData() {
+      const groups = this.data
+      if (groups) {
+        this.series = groups.map(nowGroup => {
+          let series = nowGroup.series.map((s, i) => {
+            const iColor = this.color[i % this.color.length]
+            const { name, data } = s
+            const groupByTypesData = groupByPredict(data, i => i.value[4]) // group by member type
+            const result = []
+            const keys = Object.keys(groupByTypesData)
+            for (var group of keys) {
+              const iName = keys.length <= 1 ? name : `${name}(${group})`
+              const item = createLinerSeries(
+                iName,
+                iColor,
+                groupByTypesData[group]
+              )
+              result.push(item)
+            }
+            return result
+          })
+          series = [].concat(...series)
+          series.forEach(v => {
+            const key = this.removeBrucket(v.name)
+            if (key) {
+              const arr = this.legend.dict[key]
+              if (!arr) this.legend.dict[key] = []
+              this.legend.dict[key].push(v.name)
+            }
+          })
+          return { name: nowGroup.name, series }
+        })
+      }
+    },
     refresh(directClear = true) {
       this.chart.showLoading()
       this.setOpt(directClear)
       this.chart.hideLoading()
     },
     setOpt(directClear) {
-      if (!this.data) return
-      const nowGroup = this.data[this.nowIndex]
+      if (!this.series) return
+      const nowGroup = this.series[this.nowIndex]
       if (!nowGroup) return
-      let series = nowGroup.series.map((s, i) => {
-        const iColor = this.color[i % this.color.length]
-        const { name, data } = s
-        const groupByTypesData = groupByPredict(data, i => i.value[4]) // group by member type
-        const result = []
-        const keys = Object.keys(groupByTypesData)
-        for (var group of keys) {
-          const iName = keys.length <= 1 ? name : `${name}(${group})`
-          const item = createLinerSeries(iName, iColor, groupByTypesData[group])
-          result.push(item)
-        }
-        return result
-      })
-      series = [].concat(...series)
+
       if (directClear || this.nowIndex === 0) this.clear()
       var option = {
         title: {
@@ -128,12 +172,13 @@ export default {
             return result.join('')
           }
         },
-        series: series
+        series: nowGroup.series
       }
       this.chart.setOption(option)
     },
     initChart() {
       this.chart = echarts.init(this.$el)
+      this.chart.on('legendselectchanged', this.onLegendSelect)
       this.initChartSkeleton()
       this.nextShowOfData()
     },
@@ -213,6 +258,33 @@ export default {
           }
         ]
       })
+    },
+    onLegendSelect(opt) {
+      if (this.legend.isEventing) return
+      const name = opt.name
+      const rawName = this.removeBrucket(name)
+      if (!rawName) return
+      const arrToSwitch = this.legend.dict[rawName]
+      if (!arrToSwitch) return
+      this.legend.isEventing = true
+      arrToSwitch.forEach(v => {
+        if (v === name) return
+        this.chart.dispatchAction({
+          type: 'legendToggleSelect',
+          name: v
+        })
+      })
+      this.$nextTick(() => {
+        this.legend.isEventing = false
+      })
+    },
+    removeBrucket(name) {
+      const firstBracket = name.indexOf('(')
+      const hasFinalBracket = name.substr(name.length - 1, 1) === ')'
+      const isMuti = firstBracket > 0 && hasFinalBracket
+      if (!isMuti) return null
+      const rawName = name.substring(0, firstBracket)
+      return rawName
     },
     clear() {
       this.chart.clear()
