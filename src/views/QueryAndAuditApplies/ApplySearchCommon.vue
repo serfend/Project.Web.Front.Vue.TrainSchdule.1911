@@ -43,6 +43,7 @@
       size="small"
       @submit.native.prevent
     >
+      <AuthCode v-show="adminQuery" :form.sync="queryForm.auth" />
       <el-form-item v-show="fullui&&adminQuery" label="审核人">
         <el-autocomplete
           v-model="queryForm.auditBy"
@@ -181,12 +182,13 @@
 </template>
 
 <script>
+import AuthCode from '@/components/AuthCode'
 import { getUserIdByRealName } from '@/api/user/userinfo'
 import CompanySelector from '@/components/Company/CompanySelector'
 import { queryList, queryMyAudit } from '@/api/apply'
 export default {
   Name: 'ApplySearchCommon',
-  components: { CompanySelector },
+  components: { CompanySelector, AuthCode },
   props: {
     list: {
       type: Array,
@@ -237,7 +239,11 @@ export default {
         nowAuditBy: '',
         createFor: '',
         createCompany: '', // 申请单位
-        createCompanyName: ''
+        createCompanyName: '',
+        auth: {
+          authByUserId: '',
+          code: ''
+        }
       },
       queryFormStartRecord: false,
       innerPages: {
@@ -359,7 +365,6 @@ export default {
       var queryString = `${JSON.stringify(f)}${status}${actionStatus}`
       if (queryString === this.lastQueryString && !isUserAction) return
       this.lastQueryString = queryString
-
       const action = this.adminQuery
         ? queryList(f)
         : queryMyAudit(f.pages, status, actionStatus)
@@ -412,6 +417,7 @@ export default {
       } else {
         f.createFor = null
       }
+      f.auth = this.queryForm.auth
       return f
     },
     formatData_DateTime(datetime) {
