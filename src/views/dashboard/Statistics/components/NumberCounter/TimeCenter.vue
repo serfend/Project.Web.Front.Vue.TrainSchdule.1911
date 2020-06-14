@@ -55,7 +55,8 @@ export default {
       this.timeSyncMethod().then(data => {
         this.left = { name: null, value: null, now: null, ...data.left }
         this.right = { name: null, value: null, now: null, ...data.right }
-        this.lastUpdate = new Date()
+        this.lastUpdate = new Date() - 0
+        this.refreshOnce()
         this.refresher = setInterval(this.refreshOnce, interval)
       })
     },
@@ -65,8 +66,10 @@ export default {
     },
     getDate(beginDate, target) {
       if (!target) target = new Date()
-      target = new Date(beginDate) - 0 - (target - 0)
-      const time = new Date(target + (this.lastUpdate - 0))
+      const beginStamp = new Date(beginDate) - 0
+      const targetStamp = target - 0
+      const beginLocalStamp = this.lastUpdate
+      const time = new Date(beginStamp + targetStamp - beginLocalStamp)
       return parseTime(time, '{yyyy}-{mm}-{dd} {hh}:{ii}:{ss}')
     }
   }
