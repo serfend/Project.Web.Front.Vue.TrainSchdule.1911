@@ -57,55 +57,67 @@ export function removeAppliesProcess(companyCode, from, to) {
  * 获取指定单位新增休假的情况
  *
  * @export
- * @param {*} companyCode
+ * @param {Array:String} companies
  * @param {DateTime} from
  * @param {DateTime} to
  * @returns
  */
-export function getAppliesNew(companyCode, from, to) {
-  return appliesStatistics(companyCode, from, to, 'get', 'appliesTargetNew')
+export function getAppliesNew(companies, from, to) {
+  return appliesStatistics(companies, from, to, 'get', 'appliesTargetNew')
 }
 
 /**
  * 获取指定单位完成休假的情况
  *
  * @export
- * @param {*} companyCode
+ * @param {Array:String} companies
  * @param {DateTime} from
  * @param {DateTime} to
  * @returns
  */
-export function getAppliesComplete(companyCode, from, to) {
-  return appliesStatistics(companyCode, from, to, 'get', 'appliesTargetComplete')
+export function getAppliesComplete(companies, from, to) {
+  return appliesStatistics(companies, from, to, 'get', 'appliesTargetComplete')
 }
 
 /**
  * 获取指定单位休假情况
  *
  * @export
- * @param {*} companyCode
+ * @param {Array:String} companies
  * @param {*} from
  * @param {*} to
  * @returns
  */
-export function getAppliesProcess(companyCode, from, to) {
-  return appliesStatistics(companyCode, from, to, 'get', 'appliesProcessRecord')
+export function getAppliesProcess(companies, from, to) {
+  return appliesStatistics(companies, from, to, 'get', 'appliesProcessRecord')
 }
 
 /**
  * 获取指定单位累积（1月1日以来）休假情况
  *
  * @export
- * @param {*} companyCode
+ * @param {Array:String} companies
  * @param {*} from
  * @param {*} to
  * @returns
  */
-export function getAppliesDailyProcess(companyCode, from, to) {
-  return appliesStatistics(companyCode, from, to, 'get', 'appliesDailyProcessRecord')
+export function getAppliesDailyProcess(companies, from, to) {
+  return appliesStatistics(companies, from, to, 'get', 'appliesDailyProcessRecord')
 }
 
-export function appliesStatistics(companyCode, from, to, action, path) {
+/**
+ *
+ *
+ * @export
+ * @param {Array:String} companies
+ * @param {*} from
+ * @param {*} to
+ * @param {*} action
+ * @param {*} path
+ * @returns
+ */
+export function appliesStatistics(companies, from, to, action, path) {
+  const companyCode = Object.prototype.toString.call(companies) === '[object Array]' ? companies.join('##') : companies
   return request[action](`vacationStatistics/${path}`, {
     params: {
       companyCode,

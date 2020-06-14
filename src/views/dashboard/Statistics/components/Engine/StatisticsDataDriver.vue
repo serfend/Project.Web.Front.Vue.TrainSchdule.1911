@@ -116,26 +116,22 @@ export default {
     initAppliesCount() {
       const company = this.company
       this.showLoading(2, '主单位信息')
-      const action = this.loadingCompany(company)
+      const action = this.loadingCompany([company])
       action.then(data => {
         // console.log('company main load completed', data)
-        this.$emit('update:companyData', data)
+        this.$emit('update:companyData', data[0])
       })
       return action
     },
     initCompanies() {
-      // console.log('init companies data', this.companies)
+      console.log('init companies data', this.companies)
       this.showLoading(2, '各单位信息')
-      const action = []
       // const api = [['new', getAppliesNew]] // TODO 子层级可能不需要过多数据
-      for (let i = 0; i < this.companies.length; i++) {
-        action.push(this.loadingCompany(this.companies[i]))
-      }
-      return Promise.all(action).then(data => {
+      return this.loadingCompany(this.companies).then(data => {
         this.$emit('update:companiesData', data)
       })
     },
-    loadingCompany(company, apis) {
+    loadingCompany(companies, apis) {
       if (!apis) apis = apiOption
       return new Promise((res, rej) => {
         const start = this.dateRange.start
@@ -143,31 +139,35 @@ export default {
         const action = []
         const apiCollection = Object.keys(apis)
         for (let i = 0; i < apiCollection.length; i++) {
-          action.push(apis[apiCollection[i]].api(company, start, end))
+          action.push(apis[apiCollection[i]].api(companies, start, end))
         }
-        Promise.all(action)
-          .then(data => {
-            const d = {}
-            for (let i = 0; i < apiCollection.length; i++) {
-              const name = apiCollection[i]
-              d[name] = groupByFiled(data[i].list, 'type')
-            }
-            const types = {}
-            Object.keys(d).forEach((dv, di, darr) => {
-              Object.keys(d[dv]).forEach((v, i, arr) => {
-                types[v] = true
-              })
-            })
-            d.types = Object.keys(types)
-            if (!d.types || d.types.length === 0) d.types = ['无数据']
-            const filtedData = this.companyDataFilted(d)
-            res(filtedData)
-          })
-          .catch(e => rej(e))
-          .finally(() => {
-            this.showLoading(2, false)
-          })
+        Promise.all(action).then(apiResults => {
+          const result = []
+          for (let i = 0; i < companies.length; i++) {
+            const r = this.handleSingleCompany(apiResults, apiCollection, i)
+            result.push(r)
+          }
+          res(result) // List<FilterData>
+        })
       })
+    },
+    handleSingleCompany(data, apiCollection, indexOfCompany) {
+      const d = {}
+      for (let i = 0; i < apiCollection.length; i++) {
+        const name = apiCollection[i]
+        const singleCompanyData = data[i].list[indexOfCompany]
+        d[name] = groupByFiled(singleCompanyData.list, 'type')
+      }
+      const types = {}
+      Object.keys(d).forEach((dv, di, darr) => {
+        Object.keys(d[dv]).forEach((v, i, arr) => {
+          types[v] = true
+        })
+      })
+      d.types = Object.keys(types)
+      if (!d.types || d.types.length === 0) d.types = ['无数据']
+      const filtedData = this.companyDataFilted(d)
+      return filtedData
     }
   }
 }
