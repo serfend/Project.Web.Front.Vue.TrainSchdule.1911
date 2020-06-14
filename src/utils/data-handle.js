@@ -63,8 +63,9 @@ export function groupByLamada(array, f) {
  * @export
  * @param {*} item setting item
  * @param {*} callback what wants to do
+ * @param {*} freezingOffCallBack what wants to do while complete
  */
-export function modify(item, callback) {
+export function modify(item, callback, freezingOffCallBack) {
   if (!item) return
   if (!item.__setting) {
     item.__setting = {
@@ -75,6 +76,7 @@ export function modify(item, callback) {
     callback(item)
     setTimeout(() => {
       item.__setting.freezing = false
+      if (freezingOffCallBack) freezingOffCallBack()
     }, 1000)
   }, 50)
 }

@@ -62,6 +62,12 @@ export default {
     }
   },
   watch: {
+    showDialog: {
+      handler(val) {
+        if (!val) this.$emit('closed')
+        else this.$emit('opend')
+      }
+    },
     settings: {
       handler(val) {
         this.$nextTick(() => {

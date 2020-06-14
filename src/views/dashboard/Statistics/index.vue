@@ -86,7 +86,7 @@
           :file-load="requestFile"
           :complete.sync="echartGeoComplete"
         />
-        <SettingEngine ref="setting" :setting.sync="setting" />
+        <SettingEngine ref="setting" :setting.sync="setting" @closed="settingUpdated" />
       </div>
     </div>
   </div>
@@ -113,7 +113,7 @@ import { getUserCompany } from '@/api/user/userinfo'
 import { companyChild } from '@/api/company'
 import { apiOption } from './components/Engine/dataDriverApiOption'
 import { groupByFiled } from '@/utils/data-handle'
-
+import { debounce } from '@/utils'
 export default {
   name: 'Statistics',
   components: {
@@ -137,6 +137,11 @@ export default {
     lastUpdate: new Date()
   }),
   computed: {
+    updatedSetting() {
+      return debounce(() => {
+        this.settingUpdated()
+      }, 5000)
+    },
     setting: {
       get() {
         return this.$store.state.dashboard.setting
@@ -258,20 +263,14 @@ export default {
     }
   },
   watch: {
-    setting: {
+    initStatus: {
       handler(val) {
-        if (this.initStatus === 'inited') {
-          const dataDriver = this.$refs.dataDriver
-          if (dataDriver) {
-            dataDriver.refresh().then(() => {
-              this.refresh(true)
-            })
-          }
-        } else {
-          this.init()
+        if (val === 'inited') {
+          this.$nextTick(() => {
+            this.updatedSetting()
+          })
         }
-      },
-      deep: true
+      }
     },
     companyData: {
       handler(val) {
@@ -287,6 +286,9 @@ export default {
         }
       }
     }
+  },
+  mounted() {
+    this.init()
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
@@ -343,6 +345,15 @@ export default {
             rej(e)
           })
       })
+    },
+    settingUpdated() {
+      console.log('update setting')
+      const dataDriver = this.$refs.dataDriver
+      if (dataDriver) {
+        dataDriver.refresh().then(() => {
+          this.refresh(true)
+        })
+      }
     },
     refresh() {
       this.chartsDoAction(c => {

@@ -113,9 +113,11 @@ export default {
       this.loadingCompany(targets).then(data => {
         const companyData = data.shift()
         const companiesData = data
-        console.log(companyData, companiesData)
+        // console.log(companyData, companiesData)
+        setTimeout(() => {
+          this.$emit('update:companiesData', companiesData)
+        }, 5000)
         this.$emit('update:companyData', companyData)
-        this.$emit('update:companiesData', companiesData)
       })
     },
     loadingCompany(companies, apis) {
