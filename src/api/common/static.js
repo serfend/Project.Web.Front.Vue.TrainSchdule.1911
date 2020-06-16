@@ -43,10 +43,10 @@ export function locationChildren(code) {
  *    {int} list[i].code:110101
  */
 export function location(code) {
-  return request({
-    url: '/static/location',
-    method: 'get',
-    code
+  return request.get('/static/location', {
+    params: {
+      code
+    }
   })
 }
 
