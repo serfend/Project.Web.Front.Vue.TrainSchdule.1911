@@ -13,7 +13,7 @@
               slot="chart"
               ref="vacationApplyStatistics"
               height="100%"
-              :color="setting?setting.color.value.memberCard.value:null"
+              :color="color_main"
               :companies="companies"
               :data="accumulateData"
             />
@@ -28,7 +28,7 @@
               slot="chart"
               ref="vacationMemberStatisticsPie"
               height="100%"
-              :color="setting?setting.color.value.memberCard.value:null"
+              :color="color_main"
               :companies="companies"
               :data="trendData"
             />
@@ -42,10 +42,12 @@
             <div class="map2" />
             <div class="map3" />
             <VacationMap3D
-              v-if="echartGeoComplete"
+              v-if="echartGeoComplete&&memberCardSetting"
               ref="vacationMap"
-              :height="'100%'"
+              height="100%"
               :file-load="requestFile"
+              :color="color_card"
+              :data="memberCardSetting.data"
             />
           </div>
         </div>
@@ -140,7 +142,7 @@ export default {
     updatedSetting() {
       return debounce(() => {
         this.settingUpdated()
-      }, 5000)
+      }, 1000)
     },
     setting: {
       get() {
@@ -164,6 +166,12 @@ export default {
     },
     companies() {
       return getProp(this.setting, ['company', 'compare'])
+    },
+    color_card() {
+      return getProp(this.setting, ['color', 'memberCard'])
+    },
+    color_main() {
+      return getProp(this.setting, ['color', 'barChart'])
     },
     dateRange() {
       return {

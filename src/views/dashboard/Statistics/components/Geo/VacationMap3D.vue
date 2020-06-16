@@ -5,7 +5,10 @@
 <script>
 import echarts from 'echarts'
 import 'echarts-gl'
-import { geoCoordMap } from '../../js/variables'
+import { geoProvince } from '../../js/variables'
+import { debounce } from '@/utils'
+import { apiOption } from '../Engine/dataDriverApiOption'
+import { groupByFiled } from '@/utils/data-handle'
 export default {
   name: 'VacationMap3D',
   props: {
@@ -25,6 +28,10 @@ export default {
       type: Number,
       default: 1
     },
+    color: {
+      type: Array,
+      default: () => []
+    },
     data: {
       type: Object,
       default: () => {} // {#typeName#:{from,to,value}}省份对应的坐标
@@ -33,10 +40,24 @@ export default {
   data() {
     return {
       chart: null,
-      lines: [],
-      rotateDirection: 'cw',
-      startPlace: ['海淀', '昌平', '石家庄', '襄阳'],
-      refresher: null
+      series: []
+    }
+  },
+  computed: {
+    updatedData() {
+      return debounce(() => {
+        this.updateData()
+      }, 1000)
+    }
+  },
+  watch: {
+    data: {
+      handler(v) {
+        this.$nextTick(() => {
+          this.updatedData()
+        })
+      },
+      deep: true
     }
   },
   mounted() {
@@ -46,72 +67,72 @@ export default {
     if (!this.chart) {
       return
     }
-    this.checkTimeOut()
     this.chart.dispose()
     this.chart = null
   },
   methods: {
-    checkTimeOut() {
-      if (this.refresher) clearTimeout(this.refresher)
-      this.refresher = null
-    },
     initChart() {
       this.chart = echarts.init(this.$el)
       this.initChartSkeleton()
-      this.loadNewData(30)
     },
     async refresh() {
       this.chart.showLoading()
-      await this.nextShowOfData()
+      this.refreshData()
       this.chart.hideLoading()
     },
-    async nextShowOfData() {
-      this.checkTimeOut()
-      this.rotateDirection = this.rotateDirection === 'cw' ? 'ccw' : 'cw'
-      this.initChartSkeleton()
-      this.refresher = setTimeout(this.nextShowOfData, 15000)
-    },
-    async loadNewData(dataCount) {
-      if (!dataCount) dataCount = 1
-      var values = Object.values(geoCoordMap)
-      var targetRandom = values.length
-      this.lines.splice(0, dataCount * this.startPlace.length)
-      for (var count = 0; count < dataCount; count++) {
-        for (var i = 0; i < this.startPlace.length; i++) {
-          var startPlace = this.startPlace[i]
-          var itemIndex = Math.floor(Math.random() * targetRandom)
-          this.lines.push([
-            geoCoordMap[startPlace].concat(0),
-            values[itemIndex].concat(0)
-          ])
-        }
-      }
-      this.refreshData()
+    updateData() {
+      const list = Object.keys(this.data)
+        .filter(i => i !== 'types' && apiOption[i].chartShow[2])
+        .map(i => ({
+          key: i,
+          value: groupByFiled(this.data[i], 'type'),
+          name: apiOption[i].name
+        }))
+      const groupList = []
+      list.forEach((v, index_api) => {
+        const { name } = v
+        const keys = Object.keys(v.value)
+        keys.forEach((k, index_type) => {
+          const l = {
+            name: `${name}(${k})`,
+            type: 'lines3D',
+            coordinateSystem: 'geo3D',
+            effect: {
+              show: true,
+              trailWidth: 2,
+              trailOpacity: 0.5,
+              trailLength: 0.2,
+              constantSpeed: 10
+            },
+            blendMode: 'lighter',
+            lineStyle: {
+              width: 1,
+              opacity: 0.5,
+              color: this.color[
+                (index_api * this.data.types.length + index_type) %
+                  this.color.length
+              ]
+            },
+            data: v.value[k].map(line => [
+              geoProvince[line.from].location,
+              geoProvince[line.to].location
+            ])
+          }
+          groupList.push(l)
+        })
+      })
+      this.series = groupList
+      this.refresh()
     },
     refreshData() {
+      const series = this.series
+      // console.log(series)
       this.chart.setOption({
-        series: {
-          type: 'lines3D',
-          coordinateSystem: 'geo3D',
-          effect: {
-            show: true,
-            trailWidth: 1,
-            trailOpacity: 0.5,
-            trailLength: 0.2,
-            constantSpeed: 5,
-            trailColor: '#88f'
-          },
-          blendMode: 'lighter',
-          lineStyle: {
-            width: 0.2,
-            opacity: 0.05
-          },
-          data: this.lines
-        }
+        series: series
       })
     },
     initChartSkeleton() {
-      var option = {
+      const option = {
         geo3D: {
           map: 'china',
           environment: 'auto',
@@ -139,12 +160,20 @@ export default {
             opacity: 0.8
           },
           viewControl: {
-            autoRotateDirection: this.rotateDirection,
-            autoRotate: this.speed > 0,
-            autoRotateSpeed: this.speed,
+            // autoRotateDirection: this.rotateDirection,
+            // autoRotate: this.speed > 0,
+            // autoRotateSpeed: this.speed,
             damping: 0.8
           },
           regionHeight: 0.05
+        },
+        legend: {
+          right: '5%',
+          bottom: '10%',
+          orient: 'vertical',
+          textStyle: {
+            color: '#fff'
+          }
         },
         series: []
       }

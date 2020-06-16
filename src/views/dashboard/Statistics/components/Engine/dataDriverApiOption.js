@@ -45,7 +45,7 @@ export const apiOption = {
       name: '次数'
     }],
     accumulate: true, // 是否仅展示最后一条
-    chartShow: [true, false, false] // 在哪些图表上展示
+    chartShow: [true, false, true] // 在哪些图表上展示
   },
   complete: {
     name: '完成休假',
@@ -58,7 +58,7 @@ export const apiOption = {
       name: '次数'
     }],
     accumulate: true,
-    chartShow: [true, false, false]
+    chartShow: [true, false, true]
   },
   process: {
     name: '完成情况',

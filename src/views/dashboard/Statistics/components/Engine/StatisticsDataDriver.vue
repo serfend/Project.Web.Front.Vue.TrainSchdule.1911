@@ -108,16 +108,19 @@ export default {
       this.$emit('update:loading', oinfo)
     },
     initCompaniesAndAppliesCount() {
-      this.showLoading(2, '单位信息')
-      const targets = [this.company].concat(this.companies)
-      this.loadingCompany(targets).then(data => {
-        const companyData = data.shift()
-        const companiesData = data
-        // console.log(companyData, companiesData)
-        setTimeout(() => {
-          this.$emit('update:companiesData', companiesData)
-        }, 5000)
-        this.$emit('update:companyData', companyData)
+      return new Promise(res => {
+        this.showLoading(2, '单位信息')
+        const targets = [this.company].concat(this.companies)
+        this.loadingCompany(targets).then(data => {
+          const companyData = data.shift()
+          const companiesData = data
+          // console.log(companyData, companiesData)
+          setTimeout(() => {
+            this.$emit('update:companiesData', companiesData)
+            res()
+          }, 5000)
+          this.$emit('update:companyData', companyData)
+        })
       })
     },
     loadingCompany(companies, apis) {

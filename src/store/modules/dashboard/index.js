@@ -14,7 +14,7 @@ export function createSetting() {
       value: {
         memberCard: {
           value: ['#ff6f4f', '#71ff80', '#3581ff', '#cc337f', '#71ccb0', '#f581cc'], // 子设置
-          label: '用户卡片',
+          label: '地图序列',
           type: () => import('@/components/ColorsPicker'),
           __setting: {
             useParent: true // 是否继承父设置
@@ -83,12 +83,6 @@ export function createSetting() {
           clearable: true
         }
       }
-    },
-    // 统计地域
-    adminDivision: {
-      label: '地域区划',
-      value: '施工中,用于设置定义京内京外',
-      type: 'el-input'
     },
     memberCard: {
       label: '翻牌器设置',

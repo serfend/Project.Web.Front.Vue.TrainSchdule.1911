@@ -28,21 +28,15 @@ export default {
     },
     color: {
       type: Array,
-      default() {
-        return []
-      }
+      default: () => []
     },
     companies: {
       type: Array,
-      default() {
-        return []
-      }
+      default: () => []
     },
     data: {
       type: Array,
-      default() {
-        return []
-      }
+      default: () => []
     }
   },
   data() {
