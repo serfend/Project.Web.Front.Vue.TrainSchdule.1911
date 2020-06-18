@@ -18,7 +18,7 @@
           <template v-if="!loading" slot="description">
             <span v-for="u in s.membersFitToAudit" :key="u">
               <span
-                v-if="managers[s.firstMemberCompanyCode]&&!managers[s.firstMemberCompanyCode][u]&&userStatus[s.index]"
+                v-if="managers[s.firstMemberCompanyCode]&&managers[s.firstMemberCompanyCode].indexOf(u)===-1&&userStatus[s.index]"
               >
                 <UserFormItem :userid="u" :type="userStatus[s.index][u]" />
               </span>
@@ -35,6 +35,7 @@
 import { auditStream, getUserCompany } from '@/api/user/userinfo'
 import { companiesManagers } from '@/api/company'
 import UserFormItem from '@/components/User/UserFormItem'
+import { debounce } from '@/utils'
 export default {
   name: 'ApplyAuditStreamPreview',
   components: { UserFormItem },
@@ -57,15 +58,23 @@ export default {
     solutionName: null,
     streams: [],
     managers: {},
-    userStatus: [],
-    lastUpdate: new Date()
+    userStatus: []
   }),
+  computed: {
+    updatedStream() {
+      return debounce(() => {
+        this.streamModefy()
+      }, 500)
+    }
+  },
   watch: {
     auditStatus: {
       handler(val) {
         this.streams = val
         this.solutionName = '审批流'
-      }, deep: true, immediate: true
+      },
+      deep: true,
+      immediate: true
     },
     userid: {
       handler(val) {
@@ -87,43 +96,41 @@ export default {
     },
     streams: {
       handler(val) {
-        if (val) {
-          var lastUpdate = new Date()
-          this.lastUpdate = lastUpdate
-          setTimeout(() => {
-            if (lastUpdate !== this.lastUpdate) return
-            this.streamModefy(val)
-          }, 500)
-        }
-      }, deep: true, immediate: true
+        if (val) this.updatedStream()
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
     auditStream,
-    streamModefy(val) {
+    streamModefy() {
       this.loading = true
-      this.initUserStatus(val)
-      this.initCompanyManager(val)
+      this.initUserStatus()
+      this.initCompanyManager()
     },
-    initUserStatus(val) {
+    initUserStatus() {
       this.userStatus = []
-      for (var s of val) {
-        if (!this.userStatus[s.index]) this.userStatus[s.index] = {}
-        var dic = this.userStatus[s.index]
-        for (var u of s.membersFitToAudit) {
+      const streams = this.streams
+      for (let i = 0; i < streams.length; i++) {
+        const index = streams[i].index
+        if (!this.userStatus[index]) this.userStatus[index] = {}
+        const dic = this.userStatus[index]
+        for (var u of streams[i].membersFitToAudit) {
           dic[u] = 'primary'
         }
-        for (u of s.membersAcceptToAudit) {
+        for (u of streams[i].membersAcceptToAudit) {
           dic[u] = 'success'
         }
       }
     },
-    initCompanyManagerDirect(val) {
-      var waitToLoad = []
-      for (var s of val) {
-        waitToLoad.push(s.firstMemberCompanyCode)
+    initCompanyManagerDirect() {
+      const waitToLoad = []
+      const streams = this.streams
+      for (let i = 0; i < streams.length; i++) {
+        const mCode = streams[i].firstMemberCompanyCode
+        if (waitToLoad.indexOf(mCode) === -1) waitToLoad.push(mCode)
       }
-      waitToLoad = [...new Set(waitToLoad)]
       companiesManagers(waitToLoad).then(data => {
         for (var c of Object.keys(data.companies)) {
           if (data.companies[c].list) {
@@ -135,23 +142,27 @@ export default {
         this.loading = false
       })
     },
-    async initCompanyManager(val) {
-      var loadUserCompanyCodeActions = []
-      var loadUserCompanyCodeActionsIndex = []
-      for (var i = 0; i < val.length; i++) {
-        var s = val[i]
+    async initCompanyManager() {
+      const streams = this.streams
+      const loadUserCompanyCodeActions = []
+      const loadUserCompanyCodeActionsIndex = []
+      for (let i = 0; i < streams.length; i++) {
+        const s = streams[i]
         if (!s.firstMemberCompanyCode && s.membersFitToAudit.length > 0) {
-          loadUserCompanyCodeActions.push(getUserCompany(s.membersFitToAudit[0], true))
+          loadUserCompanyCodeActions.push(
+            getUserCompany(s.membersFitToAudit[0], true)
+          )
           loadUserCompanyCodeActionsIndex.push(i)
         }
       }
       if (loadUserCompanyCodeActions.length > 0) {
-        var datas = await Promise.all(loadUserCompanyCodeActions)
-        for (i = 0; i < datas.length; i++) {
-          val[loadUserCompanyCodeActionsIndex[i]].firstMemberCompanyCode = datas[i].company.code
+        const datas = await Promise.all(loadUserCompanyCodeActions)
+        for (let i = 0; i < datas.length; i++) {
+          streams[loadUserCompanyCodeActionsIndex[i]].firstMemberCompanyCode =
+            datas[i].company.code
         }
       } else {
-        this.initCompanyManagerDirect(val)
+        this.initCompanyManagerDirect()
       }
     }
   }
