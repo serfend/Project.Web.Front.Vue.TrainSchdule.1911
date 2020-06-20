@@ -1,5 +1,5 @@
 <template>
-  <el-footer height="2em" class="footer" :style="{opacity:show?1:0}">
+  <el-footer height="2rem" class="footer" :style="{opacity:show?1:0}">
     <el-popover placement="top" trigger="hover" @show="contactMeHasShow = true">
       <ContactMe v-if="contactMeHasShow" content="https://u.wechat.com/MKXY9nIvV-9oPgMNhB4cd58" />
       <el-link slot="reference" type="primary">联系我们</el-link>
@@ -10,7 +10,7 @@
         content="https://serfend.top/s/b4afa7"
         description="扫码反馈意见/问题"
       />
-      <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">用户反馈</el-link>
+      <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs/">用户反馈</el-link>
     </el-popover>
     <el-popover placement="top" trigger="hover" @show="policyHasShow = true">
       <ContactMe
@@ -18,7 +18,7 @@
         content="https://serfend.top/s/policy_vacation.md"
         description="扫码查看相关政策"
       />
-      <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs">相关政策</el-link>
+      <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs/">相关政策</el-link>
     </el-popover>
   </el-footer>
 </template>
@@ -47,16 +47,16 @@ export default {
   bottom: 0;
   transition: all 0.5s;
   background: #f5f6f53f;
-  border-top: 1px solid #ebebeb9f;
-  line-height: 1.5em;
-  font-size: 1em;
+  border-top: 0.1rem solid #ebebeb9f;
+  line-height: 1.5rem;
+  font-size: 1rem;
   .el-link {
-    font-size: 0.8em;
-    margin-left: 1em;
+    font-size: 0.8rem;
+    margin-left: 1rem;
   }
 }
 .footer:hover {
   background: #f5f6f5;
-  border-top: 1px solid #ebebeb;
+  border-top: 0.1rem solid #ebebeb;
 }
 </style>
