@@ -51,26 +51,6 @@
             />
           </div>
         </div>
-        <div class="float-column">
-          <Square class="float-panel">
-            <h2 slot="title">新增去向分布</h2>
-          </Square>
-          <Square class="float-panel">
-            <h2 slot="title">在休去向分布</h2>
-          </Square>
-          <Square class="float-panel">
-            <h2 slot="title">归队去向分布</h2>
-          </Square>
-          <Square class="float-panel">
-            <h2 slot="title">新增来源分布</h2>
-          </Square>
-          <Square class="float-panel">
-            <h2 slot="title">在休来源分布</h2>
-          </Square>
-          <Square class="float-panel">
-            <h2 slot="title">归队来源分布</h2>
-          </Square>
-        </div>
       </section>
       <div style="display:flex;position:fixed;bottom:0;">
         <StatisticsDataDriver
