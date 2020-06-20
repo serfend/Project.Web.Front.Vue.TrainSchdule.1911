@@ -1,6 +1,6 @@
 const commentsRouter =
 {
-  path: '/Comments',
+  path: 'Comments',
   component: () => import('@/views/blank'),
   name: 'comments',
   meta: {

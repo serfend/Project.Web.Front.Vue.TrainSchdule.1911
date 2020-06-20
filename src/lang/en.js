@@ -27,6 +27,12 @@ var dict = {
       },
       iframepage: {
         title: 'page'
+      },
+      memberRate: {
+        title: 'rate',
+        summary: {
+          title: 'rate summary'
+        }
       }
     },
     utils: {

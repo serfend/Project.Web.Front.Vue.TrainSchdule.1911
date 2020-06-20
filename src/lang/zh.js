@@ -27,6 +27,12 @@ var dict = {
       },
       iframepage: {
         title: '页面'
+      },
+      memberRate: {
+        title: '评比',
+        summary: {
+          title: '评比情况'
+        }
       }
     },
     utils: {
