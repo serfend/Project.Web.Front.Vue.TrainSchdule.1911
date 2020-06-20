@@ -133,13 +133,7 @@ export default {
       }
     },
     company() {
-      var i = getProp(this.setting, ['company', 'main'])
-      if (i) {
-        if (i.name) i.name = i.name.replace('*', '')
-        return i
-      } else {
-        return null
-      }
+      return getProp(this.setting, ['company', 'main'])
     },
     memberType() {
       return getProp(this.setting, ['memberType'])

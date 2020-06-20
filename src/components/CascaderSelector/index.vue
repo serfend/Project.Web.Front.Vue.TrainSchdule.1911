@@ -76,7 +76,14 @@ export default {
       this.$emit('update:code', v)
       // event of selectChange should delay for a perior due to a bug of metaphysics
       setTimeout(() => {
-        this.$emit('select-change', this.$refs.elcascader.inputValue)
+        let text = this.$refs.elcascader.inputValue
+        let lastIndex = -1
+        if (text) {
+          text = text.replace('*', '')
+          lastIndex = text.lastIndexOf('/')
+          text = text.substr(lastIndex + 1)
+        }
+        this.$emit('select-change', text)
       }, 50)
     }
   }
