@@ -42,7 +42,7 @@
                 <el-form-item label="假期天数">
                   <span>{{ `净假期${innerData.request.vacationLength}天 在途${innerData.request.onTripLength}天` }}</span>
                   <el-tooltip
-                    v-for="a in innerData.request.additialvacations"
+                    v-for="a in innerData.request.additialVacations"
                     :key="a.id"
                     :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`"
                   >

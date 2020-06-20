@@ -35,17 +35,18 @@
               </el-tooltip>
             </h3>
             <div v-if="detail.id">
-              <el-row>
-                <el-col :span="6">
-                  <el-form-item label="原因">{{ detail.request.reason }}</el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item label="路途">{{ detail.request.onTripLength }}天</el-form-item>
-                </el-col>
-                <el-col :span="10">
-                  <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
-                </el-col>
-              </el-row>
+              <el-form-item label="原因">{{ detail.request.reason }}</el-form-item>
+              <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
+              <el-form-item label="假期天数">
+                <span>{{ `净假期${detail.request.vacationLength}天 在途${detail.request.onTripLength}天` }}</span>
+                <el-tooltip
+                  v-for="a in detail.request.additialVacations"
+                  :key="a.id"
+                  :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`"
+                >
+                  <el-tag style="margin:10px">{{ `${a.length}天${a.name}` }}</el-tag>
+                </el-tooltip>
+              </el-form-item>
               <el-row>
                 <el-form-item
                   label="休假日期"
@@ -186,11 +187,14 @@ export default {
       this.loadDetail(this.id)
     },
     initstaticDataData() {
-      var now = new Date()
-      var start = this.detail.request.stampLeave
-      var end = this.detail.request.stampReturn
-      this.staticData.vacationLength = datedifference(end, start) + 1
-      this.staticData.vacationSpent = datedifference(now, start)
+      const now = new Date()
+      const start = this.detail.request.stampLeave
+      const end = this.detail.request.stampReturn
+      const vacationLength = datedifference(end, start) + 1
+      this.staticData.vacationLength = vacationLength
+      const vacationSpend = datedifference(now, start)
+      this.staticData.vacationSpent =
+        vacationSpend > vacationLength ? vacationLength : vacationSpend
       this.staticData.applyDetailName = `${this.detail.base.dutiesName}${
         this.detail.base.realName
       }的${datedifference(
@@ -219,7 +223,7 @@ export default {
       this.$store.push('/profile/index?id=' + this.detail.base.id)
     },
     downloadUserApplies() {
-      var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
+      const dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
       querySelf(null, this.detail.base.id).then(data => {
         if (data.list.length === 0) {
           return this.$message.error('当前用户无申请可导出')
