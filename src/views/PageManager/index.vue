@@ -1,6 +1,6 @@
 <template>
   <el-card>
-    <Welcome :list="list" :show-title="false" style="height:1080px" />
+    <Welcome :list="formatedList" :show-title="false" style="height:1080px" />
   </el-card>
 </template>
 
@@ -19,7 +19,7 @@ export default {
           description: 'Swagger界面查询后端支持的Api',
           svg: 'APIwendang',
           // icon: '/favicon.png',
-          href: '/app/iframePage?src=swagger'
+          href: 'swagger'
         },
         {
           id: '2',
@@ -33,7 +33,7 @@ export default {
             }
           },
           // icon: '/favicon.png',
-          href: '/app/iframePage?src=schdule'
+          href: 'schdule'
         },
         {
           id: '3',
@@ -41,7 +41,7 @@ export default {
           description: 'Apollo配置管理',
           svg: 'jiekou',
           // icon: '/favicon.png',
-          href: '/app/iframePage?src=apollo'
+          href: 'apollo'
         },
         {
           id: '4',
@@ -49,7 +49,7 @@ export default {
           description: '【需授权】数据库和缓存管理',
           svg: 'guidangxiangmu',
           // icon: '/favicon.png',
-          href: '/app/iframePage?src=database'
+          href: 'database'
         },
         {
           id: '5',
@@ -57,7 +57,7 @@ export default {
           description: '【未开放】单位休假情况统计分析',
           svg: 'APIjiankong',
           // icon: '/favicon.png',
-          href: '/app/iframePage'
+          href: ''
         },
         {
           id: '6',
@@ -65,7 +65,7 @@ export default {
           description: '【未开放】用户行为和系统运行数据分析',
           svg: 'HTTPcuowushuai',
           // icon: '/favicon.png',
-          href: '/app/iframePage'
+          href: ''
         },
         {
           id: '7',
@@ -73,7 +73,7 @@ export default {
           description: '【未开放】集群状态管理',
           svg: 'duoqudaojicheng',
           // icon: '/favicon.png',
-          href: '/app/iframePage'
+          href: ''
         },
         {
           id: '8',
@@ -81,7 +81,7 @@ export default {
           description: '【未开放】安全策略配置管理',
           svg: 'anquan',
           // icon: '/favicon.png',
-          href: '/app/iframePage'
+          href: ''
         },
         {
           id: '9',
@@ -89,9 +89,16 @@ export default {
           description: '【未开放】服务接口状态监控',
           svg: 'jichuguanli',
           // icon: '/favicon.png',
-          href: '/app/iframePage?src=database'
+          href: 'database'
         }
       ]
+    }
+  },
+  computed: {
+    formatedList() {
+      return this.list.map(i =>
+        Object.assign(i, { href: `/system/app/iframePage?src=${i.href}` })
+      )
     }
   }
 }

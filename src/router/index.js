@@ -2,11 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import applicationRouter from './modules/application'
 import applicationSettingRouter from './modules/applicationSetting/index'
-
 import gameRouter from './modules/Game'
-
 import systemRouter from './modules/system/index'
-
+import memberRateRouter from './modules/MemberRate'
 Vue.use(Router)
 
 /* Layout */
@@ -32,149 +30,138 @@ import Layout from '@/layout'
     activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
  */
-export const constantRoutes = [
-  {
-    path: '/dashboard',
-    component: () => import('@/views/dashboard/index'),
-    name: 'Dashboard',
-    meta: { title: 'dashboard', icon: 'dashboard' }
-  },
-  applicationRouter,
-  applicationSettingRouter,
-  gameRouter,
-  systemRouter,
-  {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path*',
-        component: () => import('@/views/redirect/index')
-      }
-    ]
-  },
-  {
-    path: '/markdown',
-    component: () => import('@/views/ApplyStream/components/ApplyStreamAbout'),
-    hidden: true
-  },
-  {
-    path: '/contactme',
-    component: () => import('@/components/ContactMe'),
-    hidden: true
-  },
-  {
-    path: '/qrCodeGenerate',
-    component: () => import('@/components/ContactMe/QrCodeGenerate'),
-    hidden: true
-  },
-  {
-    path: '/reg',
-    component: Layout,
-    children: [
-      {
-        path: '/register',
-        component: () => import('@/views/register/index')
-      },
-      {
-        path: '/forget',
-        component: () => import('@/views/ForgetPassword')
-      }
-    ],
-    hidden: true
-  },
-  {
-    path: '/auth-redirect',
-    component: () => import('@/views/login/auth-redirect'),
-    hidden: true
-  },
-  {
-    path: '/404',
-    component: () => import('@/views/error-page/404'),
-    hidden: true
-  },
-  {
-    path: '/401',
-    component: () => import('@/views/error-page/401'),
-    hidden: true
-  },
-  {
-    path: '',
-    hidden: true,
-    meta: {
-      verify: 'on'
-    },
-    component: () => import('@/views/welcome/index')
-  },
-  {
-    path: '/profile',
-    component: Layout,
-    redirect: '/profile/index',
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/profile/index'),
-        name: 'Profile',
-        meta: { title: 'profile', icon: 'user', noCache: true }
-      }
-    ]
+export const constantRoutes = [{
+  path: '/dashboard',
+  component: () => import('@/views/dashboard/index'),
+  name: 'Dashboard',
+  meta: {
+    title: 'dashboard',
+    icon: 'dashboard'
   }
-]
+}, applicationRouter, applicationSettingRouter, gameRouter, systemRouter, memberRateRouter, {
+  path: '/redirect',
+  component: Layout,
+  hidden: true,
+  children: [{
+    path: '/redirect/:path*',
+    component: () => import('@/views/redirect/index')
+  }]
+}, {
+  path: '/markdown',
+  component: () => import('@/views/ApplyStream/components/ApplyStreamAbout'),
+  hidden: true
+}, {
+  path: '/contactme',
+  component: () => import('@/components/ContactMe'),
+  hidden: true
+}, {
+  path: '/qrCodeGenerate',
+  component: () => import('@/components/ContactMe/QrCodeGenerate'),
+  hidden: true
+}, {
+  path: '/reg',
+  component: Layout,
+  children: [{
+    path: '/register',
+    component: () => import('@/views/register/index')
+  }, {
+    path: '/forget',
+    component: () => import('@/views/ForgetPassword')
+  }],
+  hidden: true
+}, {
+  path: '/auth-redirect',
+  component: () => import('@/views/login/auth-redirect'),
+  hidden: true
+}, {
+  path: '/404',
+  component: () => import('@/views/error-page/404'),
+  hidden: true
+}, {
+  path: '/401',
+  component: () => import('@/views/error-page/401'),
+  hidden: true
+}, {
+  path: '',
+  hidden: true,
+  meta: {
+    verify: 'on'
+  },
+  component: () => import('@/views/welcome/index')
+}, {
+  path: '/profile',
+  component: Layout,
+  redirect: '/profile/index',
+  hidden: true,
+  children: [{
+    path: 'index',
+    component: () => import('@/views/profile/index'),
+    name: 'Profile',
+    meta: {
+      title: 'profile',
+      icon: 'user',
+      noCache: true
+    }
+  }]
+}]
 
 /**
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = [
-  {
-    path: '/error',
-    component: Layout,
-    redirect: 'noRedirect',
+export const asyncRoutes = [{
+  path: '/error',
+  component: Layout,
+  redirect: 'noRedirect',
+  hidden: true,
+  name: 'ErrorPages',
+  meta: {
+    title: 'errorPages',
+    icon: '404'
+  },
+  children: [{
+    path: '401',
+    component: () => import('@/views/error-page/401'),
     hidden: true,
-    name: 'ErrorPages',
+    name: 'Page401',
     meta: {
-      title: 'errorPages',
-      icon: '404'
-    },
-    children: [
-      {
-        path: '401',
-        component: () => import('@/views/error-page/401'),
-        hidden: true,
-        name: 'Page401',
-        meta: { title: 'page401', noCache: true }
-      },
-      {
-        path: '404',
-        component: () => import('@/views/error-page/404'),
-        name: 'Page404',
-        hidden: true,
-        meta: { title: 'page404', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/error-log',
-    component: Layout,
-    children: [
-      {
-        path: 'log',
-        hidden: true,
-        component: () => import('@/views/error-log/index'),
-        name: 'ErrorLog',
-        meta: { title: 'errorLog.title', icon: 'bug' }
-      }
-    ]
-  },
-  // premissionRouter,
-  { path: '*', redirect: '/404', hidden: true }
-]
+      title: 'page401',
+      noCache: true
+    }
+  }, {
+    path: '404',
+    component: () => import('@/views/error-page/404'),
+    name: 'Page404',
+    hidden: true,
+    meta: {
+      title: 'page404',
+      noCache: true
+    }
+  }]
+}, {
+  path: '/error-log',
+  component: Layout,
+  children: [{
+    path: 'log',
+    hidden: true,
+    component: () => import('@/views/error-log/index'),
+    name: 'ErrorLog',
+    meta: {
+      title: 'errorLog.title',
+      icon: 'bug'
+    }
+  }]
+}, {
+  path: '*',
+  redirect: '/404',
+  hidden: true
+}]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({
+    y: 0
+  }),
   routes: constantRoutes
 })
 
