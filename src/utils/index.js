@@ -230,7 +230,25 @@ export function getTime(type) {
     return new Date(new Date().toDateString())
   }
 }
-
+/**
+ * 统一将颜色值使用16进制形式表示
+ * @name rgbToHex
+ * @grammar rgbToHex(value) => value
+ * @example
+ * rgb(255,255,255)  => "#ffffff"
+ */
+export function rgbToHex(value) {
+  if (/rgba?/.test(value)) {
+    const array = value.split(',')
+    value = '#'
+    for (let i = 0; array.length > i; i++) {
+      const color = parseInt(array[i].replace(/[^\d]/gi, ''), 10).toString(16)
+      value += color.length === 1 ? '0' + color : color
+    }
+    value = value.toUpperCase()
+  }
+  return value
+}
 /**
  * @param {Function} func
  * @param {number} wait
