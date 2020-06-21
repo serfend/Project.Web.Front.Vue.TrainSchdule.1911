@@ -94,7 +94,7 @@
           style="width: 100%"
           @current-change="handleCurrentChange"
         >
-          <el-table-column prop="avatar" label=" " width="80">
+          <el-table-column label="姓名" width="100">
             <template slot-scope="scope">
               <el-popover
                 placement="right-start"
@@ -102,11 +102,10 @@
                 @show="scope.row.userHasShow=true"
               >
                 <User :data="scope.row" :can-load-avatar="scope.row.userHasShow" />
-                <el-avatar slot="reference" shape="square" :size="50" :src="scope.row.avatar" />
+                <span slot="reference">{{ scope.row.realName }}</span>
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="realName" label="姓名" width="100" />
           <el-table-column prop="dutiesName" label="职务" width="150" />
           <el-table-column prop="vacation.yearlyLength" label="基础假" width="50" />
           <el-table-column prop="vacation.maxTripTimes" label="可休路途次数" width="50" />
@@ -119,10 +118,12 @@
           </el-table-column>
           <el-table-column prop="vacation.description" label="休假详情描述">
             <template slot-scope="scope">
-              <el-popover trigger="hover">
-                <VacationDescriptionContent :users-vacation="scope.row.vacation" />
-                <span slot="reference">{{ scope.row.vacation.description }}</span>
-              </el-popover>
+              <span slot="reference">{{ scope.row.vacation.description }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="vacation.description" label="休假率">
+            <template slot-scope="scope">
+              <VacationDescription :users-vacation="scope.row.vacation" />
             </template>
           </el-table-column>
         </el-table>
@@ -159,7 +160,7 @@ import Social from './components/Social'
 import Auth from '@/components/AuthCode'
 import User from '@/components/User'
 import CompanySelector from '@/components/Company/CompanySelector'
-import VacationDescriptionContent from '@/components/Vacation/VacationDescription'
+import VacationDescription from '@/components/Vacation/VacationDescription'
 import { regnew, authUserRegister, modefyUser } from '@/api/account'
 import { getMembers } from '@/api/company'
 import {
@@ -183,7 +184,7 @@ export default {
     // Diy,
     Auth,
     User,
-    VacationDescriptionContent
+    VacationDescription
   },
   data() {
     return {
@@ -425,6 +426,7 @@ export default {
           }
           const { inviteBy } = data.application
           this.selectIsInvalidAccount = this.checkUserValid(inviteBy)
+          this.nowSelectCompanyCode = data.company.company.code
         })
         .finally(() => (this.submitLoading = false))
     },

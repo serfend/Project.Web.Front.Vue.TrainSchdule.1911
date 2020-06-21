@@ -57,7 +57,9 @@ export default {
     },
     innerForm: {
       handler(val, oldVal) {
-        this.$emit('update:form', this.innerForm)
+        this.$nextTick(() => {
+          this.$emit('update:form', this.innerForm)
+        })
       },
       deep: true,
       immediate: true
