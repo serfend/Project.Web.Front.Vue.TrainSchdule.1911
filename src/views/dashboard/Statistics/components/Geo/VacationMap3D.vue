@@ -91,8 +91,10 @@ export default {
       const groupList = []
       list.forEach((v, index_api) => {
         const { name } = v
+        console.log(v)
         const keys = Object.keys(v.value)
         keys.forEach((k, index_type) => {
+          const needReverseLoacation = name.indexOf('完成') > -1
           const l = {
             name: `${name}(${k})`,
             type: 'lines3D',
@@ -102,7 +104,7 @@ export default {
               trailWidth: 2,
               trailOpacity: 0.5,
               trailLength: 0.2,
-              constantSpeed: 10
+              constantSpeed: 5
             },
             blendMode: 'lighter',
             lineStyle: {
@@ -113,10 +115,16 @@ export default {
                   this.color.length
               ]
             },
-            data: v.value[k].map(line => [
-              geoProvince[line.from].location,
-              geoProvince[line.to].location
-            ])
+            data: v.value[k].map(line => {
+              let from = geoProvince[line.from]
+              let to = geoProvince[line.to]
+              // 可能存在部分人填的是预料之外的值
+              if (!from) from = geoProvince['11']
+              if (!to) to = geoProvince['11']
+              return needReverseLoacation
+                ? [to.location, from.location]
+                : [from.location, to.location]
+            })
           }
           groupList.push(l)
         })
@@ -169,7 +177,7 @@ export default {
         },
         legend: {
           right: '5%',
-          bottom: '10%',
+          bottom: '20%',
           orient: 'vertical',
           textStyle: {
             color: '#fff'
