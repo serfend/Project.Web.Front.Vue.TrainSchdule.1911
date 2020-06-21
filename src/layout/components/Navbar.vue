@@ -17,7 +17,7 @@
       <el-popover
         v-model="userCardShow"
         placement="bottom-end"
-        trigger="click"
+        trigger="manual"
         @show="userCardShowing(true)"
         @hide="userCardShowing(false)"
       >
@@ -46,7 +46,11 @@
             </el-menu-item>
           </el-menu>
         </div>
-        <div slot="reference" class="avatar-container right-menu-item">
+        <div
+          slot="reference"
+          class="avatar-container right-menu-item"
+          @click="userCardShow=!userCardShow"
+        >
           <el-image
             class="user-avatar"
             :style="{transform:userCardIsShowing?'scale(0)':''}"
@@ -148,7 +152,7 @@ export default {
       }
     },
     handleReg(isToRegister) {
-      this.$router.push({ path: `/register?isRegister=${isToRegister}` })
+      this.$router.push({ path: `/register?isToRegister=${isToRegister}` })
     },
     async logout() {
       this.loading = true
