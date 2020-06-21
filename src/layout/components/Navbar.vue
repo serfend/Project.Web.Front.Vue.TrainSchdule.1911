@@ -152,7 +152,9 @@ export default {
       }
     },
     handleReg(isToRegister) {
-      this.$router.push({ path: `/register?isToRegister=${isToRegister}` })
+      this.$router.push({
+        path: `/register?${isToRegister ? 'isRegister=true' : ''}`
+      })
     },
     async logout() {
       this.loading = true
