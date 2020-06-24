@@ -89,7 +89,6 @@
         <el-table
           v-loading="tableLoading"
           :data="waitToAuthRegisterUsers"
-          :default-sort="{prop: 'accountAuthStatus', order: 'descending'}"
           highlight-current-row
           style="width: 100%"
           @current-change="handleCurrentChange"
