@@ -60,7 +60,7 @@
           <div class="row layout justify-space-between black--text">
             <span
               class="audit-process-person"
-            >{{ step.membersAcceptToAudit.length }}/{{ step.requireMembersAcceptCount }}</span>
+            >{{ step.membersAcceptToAudit.length }}/{{ getNeedAudit(step.requireMembersAcceptCount) }}</span>
             <span class="audit-process-handleStamp">{{ step.timeStamp }}</span>
           </div>
         </div>
@@ -111,6 +111,11 @@ export default {
     }
   },
   methods: {
+    getNeedAudit(requireAuditMemberCount) {
+      if (requireAuditMemberCount < 0) return '无需'
+      if (requireAuditMemberCount === 0) return '所有人'
+      return `${requireAuditMemberCount}人`
+    },
     GetHandleTimeAgo(step) {
       var arr = this.detail.response.filter(r => r.index === step.index)
       if (arr.length > 0) {

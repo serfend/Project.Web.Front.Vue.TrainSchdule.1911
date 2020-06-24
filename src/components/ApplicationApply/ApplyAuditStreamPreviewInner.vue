@@ -10,9 +10,9 @@
           <template slot="title">
             <div>{{ s.name }}</div>
             <el-tooltip
-              :content="`需要${s.firstMemberCompanyName}${s.requireMembersAcceptCount}人进行审批`"
+              :content="`需要${s.firstMemberCompanyName}${getNeedAudit(s.requireMembersAcceptCount)}进行审批`"
             >
-              <div>{{ s.firstMemberCompanyName }}({{ s.requireMembersAcceptCount }})</div>
+              <div>{{ s.firstMemberCompanyName }}({{ getNeedAudit(s.requireMembersAcceptCount) }})</div>
             </el-tooltip>
           </template>
           <template v-if="!loading" slot="description">
@@ -104,6 +104,11 @@ export default {
   },
   methods: {
     auditStream,
+    getNeedAudit(requireAuditMemberCount) {
+      if (requireAuditMemberCount < 0) return '无需'
+      if (requireAuditMemberCount === 0) return '所有人'
+      return `${requireAuditMemberCount}人`
+    },
     streamModefy() {
       this.loading = true
       this.initUserStatus()
