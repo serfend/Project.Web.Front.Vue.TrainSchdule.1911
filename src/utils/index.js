@@ -2,23 +2,52 @@
  * Created by jiachenpan on 16/11/18.
  */
 
+const getDateDelta = (s, e) => {
+  const yearDelta = e.getFullYear() - s.getFullYear()
+  const monthDelta = e.getMonth() - s.getMonth()
+  const dayDelta = e.getDate() - s.getDate()
+  return [yearDelta, monthDelta, dayDelta]
+}
+const getTimeDelta = (s, e, interval) => {
+  const dateSpan = e - s
+  return Math.floor(dateSpan / interval)
+}
+const DateIntervalOption = {
+  year: (s, e) => {
+    const delta = getDateDelta(s, e)
+    if (delta[0] <= 0) return delta[0]
+    if (delta[1] < 0 || (delta[1] === 0 && delta[2] < 0)) return delta[0] - 1
+    return delta[0]
+  },
+  month: (s, e) => {
+    const delta = getDateDelta(s, e)
+    const r = delta[0] * 12 + delta[1]
+    if (delta[2] < 0) return r - 1
+    return r
+  },
+  day: (s, e) => getTimeDelta(s, e, 24 * 3600000),
+  hour: (s, e) => getTimeDelta(s, e, 3600000),
+  minute: (s, e) => getTimeDelta(s, e, 60000),
+  second: (s, e) => getTimeDelta(s, e, 1)
+}
 /**
  *比较两个日期之间相差的天数
  *
  * @export
- * @param {*} start
- * @param {*} end
+ * @param {Date} end
+ * @param {Date} start
+ * @param {Enum:DateIntervalOption} interval
  * @returns
  */
-export function datedifference(start, end) {
+export function datedifference(end, start, interval = 'day') {
   // start和end是2006-12-18格式
-  var dateSpan, iDays
-  start = Date.parse(start)
-  end = Date.parse(end)
-  dateSpan = end - start
-  dateSpan = Math.abs(dateSpan)
-  iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
-  return iDays
+  if (!start) start = new Date()
+  if (!end) end = new Date()
+  start = new Date(start)
+  end = new Date(end)
+  const fn = DateIntervalOption[interval]
+  if (!fn) return -1
+  return fn(start, end)
 }
 
 /**
