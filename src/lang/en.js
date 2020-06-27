@@ -16,6 +16,9 @@ var dict = {
       log: {
         title: 'log'
       },
+      phyGrade: {
+        title: '体育成绩'
+      },
       file: {
         title: 'file'
       },

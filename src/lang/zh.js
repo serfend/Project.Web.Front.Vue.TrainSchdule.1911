@@ -16,6 +16,21 @@ var dict = {
       log: {
         title: '日志'
       },
+      phyGrade: {
+        title: '体育成绩',
+        rules: {
+          title: '规则设置'
+        },
+        detail: {
+          title: '成绩统计卡'
+        },
+        list: {
+          title: '单位详情'
+        },
+        statistics: {
+          title: '单位统计'
+        }
+      },
       file: {
         title: '文件'
       },
