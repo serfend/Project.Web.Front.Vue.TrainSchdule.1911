@@ -145,13 +145,18 @@ export function getUserIdByCid(cid, ignoreErr) {
  *通过真实姓名查询身份号
  *
  * @export
- * @param {*} realName
+ * @param {String} realName
+ * @param {int} pageIndex
+ * @param {int} pageSize
+ * @param {Boolean} ignoreErr
  * @returns
  */
-export function getUserIdByRealName(realName, ignoreErr) {
+export function getUserIdByRealName(realName, pageIndex, pageSize, ignoreErr) {
   return request.get('/account/GetUserIdByRealName', {
     params: {
-      realName
+      realName,
+      pageIndex,
+      pageSize
     },
     respondErrorIngore: ignoreErr
   })
@@ -199,7 +204,9 @@ export function getUserAvatar(id, avatarId, ignoreErr) {
 export function postUserAvatar(newAvatar, ignoreErr) {
   return request.post('/users/avatar', {
     url: newAvatar
-  }, { respondErrorIngore: ignoreErr })
+  }, {
+    respondErrorIngore: ignoreErr
+  })
 }
 
 /**
@@ -211,6 +218,8 @@ export function postUserAvatar(newAvatar, ignoreErr) {
  */
 export function auditStream(id) {
   return request.get('/users/auditStream', {
-    params: { id }
+    params: {
+      id
+    }
   })
 }
