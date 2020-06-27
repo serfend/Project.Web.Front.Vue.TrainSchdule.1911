@@ -1,12 +1,16 @@
 <template>
   <div>
-    <el-tooltip content="点击选择成员">
+    <el-tooltip>
+      <template slot="content">
+        <span>点击链接选择成员</span>
+        <span style="cursor:pointer" @click="clearSelect">清空</span>
+      </template>
       <el-link type="info" @click="dialogVisible=true">
         <span @mouseenter="forgetHasShow=true">{{ userRealName }}</span>
       </el-link>
     </el-tooltip>
     <el-dialog v-if="forgetHasShow" title="搜索成员" :visible.sync="dialogVisible" append-to-body>
-      <FindUserByRealName @change="selectUserChanged" />
+      <FindUserByRealName :avatar.sync="avatar" @change="selectUserChanged" />
     </el-dialog>
   </div>
 </template>
@@ -25,7 +29,8 @@ export default {
   data: () => ({
     forgetHasShow: false,
     dialogVisible: false,
-    userRealName: null
+    userRealName: null,
+    avatar: null
   }),
   watch: {
     defaultInfo: {
@@ -35,14 +40,25 @@ export default {
         }
       },
       immediate: true
+    },
+    avatar: {
+      handler(val) {
+        this.$emit('update:avatar', val)
+      }
     }
   },
   methods: {
+    clearSelect() {
+      this.userRealName = null
+      this.$emit('update:code', null)
+      this.$emit('change', null)
+    },
     selectUserChanged(u) {
       if (u) {
         this.userRealName = `${u.realName}(${u.id})`
       }
       this.$emit('update:code', u.id)
+      this.$emit('change', u)
     }
   }
 }

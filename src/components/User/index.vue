@@ -14,7 +14,7 @@
         </el-tag>
       </el-aside>
 
-      <el-popover :placement="direction" trigger="hover" @show="loadContactMe">
+      <el-popover v-loading="loading" :placement="direction" trigger="hover" @show="loadContactMe">
         <ContactMe
           v-if="contactMeHasShow"
           :content="contactUrl"
@@ -71,6 +71,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       avatar: '',
       userid: '',
       phone: '',
@@ -116,11 +117,20 @@ export default {
     refreshAvatar() {
       if (!this.canLoadAvatar) return
       if (!this.userid) return
-      getUserAvatar(this.userid).then(data => {
+      this.loading = true
+
+      const a1 = getUserAvatar(this.userid).then(data => {
         this.avatar = data.url
+        this.$emit('update:avatar', this.avatar)
+        this.$nextTick(() => {
+          this.$emit('avatar-load')
+        })
       })
-      getUserSocial(this.userid).then(data => {
+      const a2 = getUserSocial(this.userid).then(data => {
         this.phone = data.phone
+      })
+      Promise.all([a1, a2]).finally(() => {
+        this.loading = false
       })
     }
   }
