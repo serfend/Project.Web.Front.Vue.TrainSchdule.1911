@@ -11,15 +11,7 @@
       <el-input v-model="innerForm.realName" :style="{ width: '400px' }" />
     </el-form-item>
     <el-form-item label="性别">
-      <el-radio-group v-model="innerForm.gender" size="small">
-        <el-radio-button v-for="btn in genderButton" :key="btn.value" :label="btn.value" disabled>
-          <i
-            :class="btn.icon"
-            :style="{'background-color':btn.background,color:'#ffffff','border-radius':'1em'}"
-          />
-          {{ btn.name }}
-        </el-radio-button>
-      </el-radio-group>
+      <GenderBtn v-model="innerForm.gender" />
     </el-form-item>
     <el-form-item label="籍贯">
       <el-input v-model="innerForm.hometown" :style="{ width: '400px' }" />
@@ -49,8 +41,10 @@
 <script>
 import { cidValid } from '@/utils/validate'
 import { getUserIdByCid } from '@/api/user/userinfo'
+import GenderBtn from '@/components/User/GenderBtn'
 export default {
   name: 'Base',
+  components: { GenderBtn },
   props: {
     form: {
       type: Object,
@@ -75,27 +69,7 @@ export default {
           status: false,
           des: '用户已存在'
         }
-      },
-      genderButton: [
-        {
-          value: 1,
-          name: '男',
-          icon: 'el-icon-male',
-          background: '#46B6ef'
-        },
-        // {
-        //   value: 0,
-        //   name: '未知',
-        //   icon: 'el-icon-question',
-        //   background: '#777777'
-        // },
-        {
-          value: 2,
-          name: '女',
-          icon: 'el-icon-female',
-          background: '#f37e7d'
-        }
-      ]
+      }
     }
   },
   watch: {

@@ -53,20 +53,10 @@
         />
       </el-form-item>
       <el-form-item v-show="fullui&&adminQuery" label="当前审核人">
-        <el-autocomplete
-          v-model="queryForm.nowAuditBy"
-          :fetch-suggestions="queryMember"
-          style="width:100%"
-          placeholder="搜索成员"
-        />
+        <UserSelector :code.sync="queryForm.nowAuditBy" default-info="搜索成员" style="display:inline" />
       </el-form-item>
       <el-form-item v-show="fullui&&adminQuery" label="创建人">
-        <el-autocomplete
-          v-model="queryForm.createFor"
-          :fetch-suggestions="queryMember"
-          style="width:100%"
-          placeholder="搜索成员"
-        />
+        <UserSelector :code.sync="queryForm.createFor" default-info="搜索成员" style="display:inline" />
       </el-form-item>
       <el-form-item v-show="adminQuery" label="来自单位">
         <CompanySelector
@@ -183,12 +173,13 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
-import { getUserIdByRealName } from '@/api/user/userinfo'
 import CompanySelector from '@/components/Company/CompanySelector'
+import UserSelector from '@/components/User/UserSelector'
+
 import { queryList, queryMyAudit } from '@/api/apply'
 export default {
   Name: 'ApplySearchCommon',
-  components: { CompanySelector, AuthCode },
+  components: { CompanySelector, AuthCode, UserSelector },
   props: {
     list: {
       type: Array,
@@ -211,20 +202,20 @@ export default {
     return {
       myAuditActionDic: [
         {
-          code: 'Accept',
-          desc: '同意的'
-        },
-        {
-          code: 'Deny',
-          desc: '驳回的'
+          code: 'Received',
+          desc: '等待我审核的'
         },
         {
           code: 'UnReceive',
           desc: '未轮到我审核的'
         },
         {
-          code: 'Received',
-          desc: '等待我审核的'
+          code: 'Accept',
+          desc: '同意的'
+        },
+        {
+          code: 'Deny',
+          desc: '驳回的'
         }
       ],
       onLoading: false,
@@ -315,19 +306,6 @@ export default {
     this.queryFormStartRecord = true
   },
   methods: {
-    queryMember(realName, cb) {
-      if (!realName) return cb([{}])
-      getUserIdByRealName(realName).then(data => {
-        cb(
-          data.list.map(li => {
-            return {
-              value: li.companyName + li.dutiesName + li.realName,
-              id: li.id
-            }
-          })
-        )
-      })
-    },
     setFormRecord() {
       if (this.queryFormStartRecord) {
         localStorage.setItem(

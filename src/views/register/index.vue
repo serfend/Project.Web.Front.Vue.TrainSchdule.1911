@@ -63,27 +63,25 @@
 
       <el-card>
         <div slot="header">
-          <el-row>
-            <el-col :span="6">
-              <el-button
-                type="info"
-                :loading="submitLoading"
-                @click="loadWaitToAuthRegisterUsers"
-              >刷新待认证人员</el-button>
-            </el-col>
-            <el-col :span="9">
-              <CompanySelector :code.sync="nowSelectCompanyCode" placeholder="选择需要检查的单位" />
-            </el-col>
-            <el-col :span="9">
-              <el-autocomplete
-                v-model="nowSelectRealName"
-                :fetch-suggestions="queryMember"
-                style="width:100%"
-                placeholder="搜索成员"
-                @select="handleCurrentChange"
-              />
-            </el-col>
-          </el-row>
+          <el-button
+            type="info"
+            :loading="submitLoading"
+            style="margin:0 1rem 0 0"
+            @click="loadWaitToAuthRegisterUsers"
+          >刷新待认证人员</el-button>
+          <span>选择成员</span>
+          <UserSelector
+            :code.sync="nowSelectRealName"
+            default-info="未选择"
+            style="display:inline;margin:0 1rem 0 0"
+            @change="handleCurrentChange"
+          />
+          <span>选择单位</span>
+          <CompanySelector
+            :code.sync="nowSelectCompanyCode"
+            placeholder="选择需要检查的单位"
+            style="width:40%"
+          />
         </div>
 
         <el-table
@@ -158,15 +156,13 @@ import Company from './components/Company'
 import Social from './components/Social'
 import Auth from '@/components/AuthCode'
 import User from '@/components/User'
+import UserSelector from '@/components/User/UserSelector'
+
 import CompanySelector from '@/components/Company/CompanySelector'
 import VacationDescription from '@/components/Vacation/VacationDescription'
 import { regnew, authUserRegister, modefyUser } from '@/api/account'
 import { getMembers } from '@/api/company'
-import {
-  getUsersVacationLimit,
-  getUserAvatar,
-  getUserIdByRealName
-} from '@/api/user/userinfo'
+import { getUsersVacationLimit, getUserAvatar } from '@/api/user/userinfo'
 import { getUserAllInfo } from '@/api/user/usercompany'
 import Pagination from '@/components/Pagination'
 
@@ -183,7 +179,8 @@ export default {
     // Diy,
     Auth,
     User,
-    VacationDescription
+    VacationDescription,
+    UserSelector
   },
   data() {
     return {
@@ -387,19 +384,6 @@ export default {
     },
     checkUserValid(val) {
       return val === null ? 0 : val === '00Invalid' ? -1 : 1 // 通过邀请人判断当前用户，当邀请人为invalid，表示审核不通过，需要重新注册
-    },
-    queryMember(realName, cb) {
-      if (realName === '') return cb([{}])
-      getUserIdByRealName(realName).then(data => {
-        cb(
-          data.list.map(li => {
-            return {
-              value: li.companyName + li.dutiesName + li.realName,
-              id: li.id
-            }
-          })
-        )
-      })
     },
     handleCurrentChange(val) {
       if (!val) return

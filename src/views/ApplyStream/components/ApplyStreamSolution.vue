@@ -254,11 +254,11 @@
           />
         </el-form-item>
         <el-form-item label="休假申请来源">
-          <el-autocomplete
-            v-model="userSelect.code"
-            :fetch-suggestions="queryMember"
-            :placeholder="userSelect.realName?userSelect.realName:'搜索成员'"
-            @select="handleUserSelectChange"
+          <UserSelector
+            :code.sync="userSelect.code"
+            :default-info="userSelect.realName?userSelect.realName:'搜索成员'"
+            style="display:inline"
+            @change="handleUserSelectChange"
           />
           <el-tag
             v-for="tag in newRule.auditMembers"
@@ -289,12 +289,12 @@
 </template>
 
 <script>
-import { getUserIdByRealName } from '@/api/user/userinfo'
 import CompanySelector from '@/components/Company/CompanySelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
 import UserFormItem from '@/components/User/UserFormItem'
+import UserSelector from '@/components/User/UserSelector'
 import { format } from 'timeago.js'
 import {
   addStreamSolutionRule,
@@ -309,7 +309,8 @@ export default {
     DutyFormItem,
     UserFormItem,
     AuthCode,
-    CompanySelector
+    CompanySelector,
+    UserSelector
   },
   props: {
     data: {
@@ -438,19 +439,6 @@ export default {
         .finally(() => {
           this.newRule.loading = false
         })
-    },
-    queryMember(realName, cb) {
-      if (realName === '') return cb([{}])
-      getUserIdByRealName(realName).then(data => {
-        cb(
-          data.list.map(li => {
-            return {
-              value: li.companyName + li.dutiesName + li.realName,
-              id: li.id
-            }
-          })
-        )
-      })
     },
     buildNewSolutionRule() {
       var lastAuth = this.newRule ? this.newRule.auth : null

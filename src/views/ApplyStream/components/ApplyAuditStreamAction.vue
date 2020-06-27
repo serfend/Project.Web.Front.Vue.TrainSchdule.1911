@@ -218,12 +218,11 @@
           />
         </el-form-item>
         <el-form-item label="指定审核人">
-          <el-autocomplete
-            v-model="userSelect.code"
-            :fetch-suggestions="queryMember"
-            style="width:100%"
-            :placeholder="userSelect.realName?userSelect.realName:'搜索成员'"
-            @select="handleUserSelectChange"
+          <UserSelector
+            :code.sync="userSelect.code"
+            :default-info="userSelect.realName?userSelect.realName:'搜索成员'"
+            style="display:inline"
+            @change="handleUserSelectChange"
           />
           <el-tag
             v-for="tag in newNode.auditMembers"
@@ -263,12 +262,12 @@ import {
   deleteStreamNode,
   buildFilter
 } from '@/api/applyAuditStream'
-import { getUserIdByRealName } from '@/api/user/userinfo'
 import CompanySelector from '@/components/Company/CompanySelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
 import UserFormItem from '@/components/User/UserFormItem'
+import UserSelector from '@/components/User/UserSelector'
 import { format } from 'timeago.js'
 export default {
   name: 'ApplyAuditStreamAction',
@@ -277,7 +276,8 @@ export default {
     DutyFormItem,
     CompanySelector,
     AuthCode,
-    UserFormItem
+    UserFormItem,
+    UserSelector
   },
   props: {
     data: {
@@ -322,12 +322,12 @@ export default {
       this.newNode.companiesName[this.companySelect.code] = val
     },
     handleUserSelectChange(val) {
-      this.userSelect.realName = val.value
+      this.userSelect.realName = val.realName
       if (this.newNode.auditMembers.indexOf(val.id) > -1) {
-        return this.$message.error(`${val.value}已被选中`)
+        return this.$message.error(`${val.realName}已被选中`)
       }
       this.newNode.auditMembers.push(val.id)
-      this.newNode.auditMembersRealName[val.id] = val.value
+      this.newNode.auditMembersRealName[val.id] = val.realName
     },
     handleCompaniesSelectClose(tag) {
       this.newNode.companies.splice(this.newNode.companies.indexOf(tag), 1)
@@ -400,19 +400,6 @@ export default {
         .finally(() => {
           this.newNode.loading = false
         })
-    },
-    queryMember(realName, cb) {
-      if (realName === '') return cb([{}])
-      getUserIdByRealName(realName).then(data => {
-        cb(
-          data.list.map(li => {
-            return {
-              value: li.companyName + li.dutiesName + li.realName,
-              id: li.id
-            }
-          })
-        )
-      })
     },
     buildnewNode() {
       var lastAuth = this.newNode ? this.newNode.auth : null
