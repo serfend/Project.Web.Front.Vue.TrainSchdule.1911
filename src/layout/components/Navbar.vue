@@ -21,9 +21,19 @@
         @show="userCardShowing(true)"
         @hide="userCardShowing(false)"
       >
+        <el-link
+          type="info"
+          style="position:absulote;width:3rem;right:0;cursor:pointer"
+          @click="userCardShow=false"
+        >关闭</el-link>
         <Login v-if="!hasLogin&&loginFormHasShow" @login="hdlLogin" />
         <div v-else style="width:250px">
-          <UserSummary :showout="userCardIsShowing" :data="null" />
+          <UserSummary
+            :showout="userCardIsShowing"
+            :data="$store.state.user.data"
+            :avatar="$store.state.user.avatar"
+            :vacation="$store.state.user.vacation"
+          />
           <div class="menu-divider" />
           <el-menu style="border-right:none">
             <el-submenu index="1">
