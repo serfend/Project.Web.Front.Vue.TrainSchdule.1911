@@ -1,21 +1,13 @@
 <template>
   <div style="padding:10px">
-    <el-button icon="el-icon-back" @click="$router.back(-1)">返回</el-button>
-    <el-button icon="el-icon-download" type="success" @click="downloadUserApplies">导出休假登记卡</el-button>
-    <h2 style="padding-top:10px">
-      {{ staticData.applyDetailName }}
-      <el-tag
-        v-if="statusDic[detail.status] && staticData.vacationStart"
-        :color="statusDic[detail.status].color"
-        class="white--text"
-      >{{ statusDic[detail.status].desc }}</el-tag>
-    </h2>
-    <div v-if="detail&&detail.id">
-      <action-examine style="float:right" :row="detail" @updated="requestUpdate" />
-      <action-user style="float:right" :row="detail" @updated="requestUpdate" />
-    </div>
-    <div style="padding-top:20px">
-      <el-form type="flex" label-width="120px">
+    <el-link icon="el-icon-back" size="mini" @click="$router.back(-1)">返回</el-link>
+    <el-link icon="el-icon-download" size="mini" type="success" @click="downloadUserApplies">导出休假登记卡</el-link>
+    <span v-if="detail&&detail.id">
+      <action-examine :row="detail" style="display:inline" @updated="requestUpdate" />
+      <action-user :row="detail" style="display:inline" @updated="requestUpdate" />
+    </span>
+    <div style="padding-top:0.5rem">
+      <el-form type="flex" label-width="5rem">
         <div class="content-card">
           <el-card
             v-if="detail&&detail.id"
@@ -24,43 +16,17 @@
             :show-close="false"
             shadow="hover"
           >
-            <h3 slot="header">
-              本次休假
-              <el-tooltip
-                v-for="av in detail.request.additialvacations"
-                :key="av.id"
-                :content="`${av.description},开始于${av.start}`"
-              >
-                <el-tag type="success">{{ av.name }}{{ av.length }}天</el-tag>
-              </el-tooltip>
-            </h3>
+            <h3 slot="header">本次休假</h3>
             <div v-if="detail.id">
-              <el-form-item label="原因">{{ detail.request.reason }}</el-form-item>
-              <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
-              <el-form-item label="假期天数">
-                <span>{{ `净假期${detail.request.vacationLength}天 在途${detail.request.onTripLength}天` }}</span>
-                <el-tooltip
-                  v-for="a in detail.request.additialVacations"
-                  :key="a.id"
-                  :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`"
-                >
-                  <el-tag style="margin:10px">{{ `${a.length}天${a.name}` }}</el-tag>
-                </el-tooltip>
-              </el-form-item>
-              <el-row>
-                <el-form-item
-                  label="休假日期"
-                >{{ detail.request.stampLeave }} - {{ detail.request.stampReturn }}</el-form-item>
-              </el-row>
               <el-form-item v-if="staticData.vacationStart" label="休假情况">
-                <el-col :lg="2" :md="3" :sm="4">
-                  <el-tag>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</el-tag>
-                </el-col>
-                <el-row>
-                  <el-col :span="6">
+                <el-col :lg="6" :md="12" :sm="24">
+                  <el-tooltip effect="light">
+                    <template slot="content">
+                      <span>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</span>
+                    </template>
                     <el-progress :width="100" :percentage="staticData.vacationProgress" />
-                  </el-col>
-                </el-row>
+                  </el-tooltip>
+                </el-col>
               </el-form-item>
               <el-form-item v-else label="状态">
                 <el-tag
@@ -69,19 +35,30 @@
                   class="white--text"
                 >{{ statusDic[detail.status].desc }}</el-tag>
               </el-form-item>
-              <el-form-item label="休假地点">
-                <el-col
-                  :span="12"
-                >{{ detail.request.vacationPlace.name }}{{ detail.request.vacationPlaceName?`(${detail.request.vacationPlaceName})`:'' }}</el-col>
+              <el-form-item label="原因">{{ detail.request.reason?detail.request.reason:'未填写' }}</el-form-item>
+              <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
+              <el-form-item label="假期天数">
+                <span>{{ `净假期${detail.request.vacationLength}天 在途${detail.request.onTripLength}天` }}</span>
+                <el-tooltip
+                  v-for="a in detail.request.additialVacations"
+                  :key="a.id"
+                  :content="`开始于${parseTime(a.start)}的${a.length}天${a.name},${a.description}`"
+                >
+                  <el-tag size="mini" style="margin-left:10px">{{ `${a.length}天${a.name}` }}</el-tag>
+                </el-tooltip>
               </el-form-item>
-              <el-col :span="8">
-                <el-form-item
-                  label="交通工具"
-                >{{ detail.request.byTransportation===0?'火车':detail.request.byTransportation===1?'飞机':'其他' }}</el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="联系方式">{{ detail.social.phone }}</el-form-item>
-              </el-col>
+              <el-form-item label="休假日期">
+                <span>{{ parseTime(detail.request.stampLeave) }} - {{ parseTime(detail.request.stampReturn) }}</span>
+              </el-form-item>
+              <el-form-item label="休假地点">
+                <span>{{ detail.request.vacationPlace.name }}</span>
+                <span
+                  v-if="detail.request.vacationPlaceName"
+                >{{ `(${detail.request.vacationPlaceName})` }}</span>
+              </el-form-item>
+              <el-form-item label="交通工具">
+                <span>{{ detail.request.byTransportation===0?'火车':detail.request.byTransportation===1?'飞机':'其他' }}</span>
+              </el-form-item>
             </div>
           </el-card>
         </div>
@@ -103,20 +80,15 @@
             shadow="hover"
           >
             <h3 slot="header">申请人</h3>
-
-            <el-container style="background:#fff">
-              <el-aside width="padding:0;margin:0;background: rgb(255, 255, 255);width:350px">
+            <el-container>
+              <el-aside width="width:20rem">
                 <User :data="detail.base" :can-load-avatar="true" />
               </el-aside>
               <el-main>
-                <SettleFormItem :form.sync="detail.social.settle.self" disabled label="本人所在地" />
-                <SettleFormItem :form.sync="detail.social.settle.lover" disabled label="配偶所在地" />
-                <SettleFormItem :form.sync="detail.social.settle.parent" disabled label="父母所在地" />
-                <SettleFormItem
-                  :form.sync="detail.social.settle.loversParent"
-                  disabled
-                  label="配偶父母所在地"
-                />
+                <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
+                <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
+                <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
+                <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
               </el-main>
             </el-container>
           </el-card>
@@ -129,7 +101,7 @@
 <script>
 import { detail, querySelf } from '@/api/apply'
 import { exportUserApplies } from '@/api/common/static'
-import { datedifference } from '@/utils'
+import { datedifference, parseTime } from '@/utils'
 import { getUserAvatar } from '@/api/user/userinfo'
 import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
 import ActionUser from '../QueryAndAuditApplies/ActionUser'
@@ -170,6 +142,9 @@ export default {
   computed: {
     statusDic() {
       return this.$store.state.vacation.statusDic
+    },
+    settle() {
+      return this.detail.social.settle
     }
   },
   mounted() {
@@ -178,6 +153,9 @@ export default {
     this.requestUpdate()
   },
   methods: {
+    parseTime(date) {
+      return parseTime(new Date(date), '{y}年{m}月{d}日')
+    },
     datedifference,
     requestUpdate() {
       if (!this.id) {
@@ -236,13 +214,16 @@ export default {
     },
     loadDetail(id) {
       this.loading = true
-      detail(id).then(data => {
-        this.detail = data
-        this.detail.request = data.requestInfo
-        this.loading = false
-        this.getUserAvatar(data.base.id)
-        this.initstaticDataData()
-      })
+      detail(id)
+        .then(data => {
+          this.detail = data
+          this.detail.request = data.requestInfo
+          this.getUserAvatar(data.base.id)
+          this.initstaticDataData()
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }
