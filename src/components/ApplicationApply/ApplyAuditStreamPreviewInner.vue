@@ -4,6 +4,7 @@
       <el-steps
         :active="nowStep>=0?nowStep:(streams?streams.length:0)"
         :finish-status="nowStep>=0?'success':'finish'"
+        :space="300"
         align-center
       >
         <el-step v-for="s in streams" :key="s.index">
