@@ -65,7 +65,7 @@
         <template slot-scope="{row}">
           <el-dropdown>
             <span class="el-dropdown-link">
-              <span>{{ datedifference(row.request.stampLeave, row.request.stampReturn) + 1 }}天</span>
+              <span>{{ datedifference(row.request.stampReturn,row.request.stampLeave) + 1 }}天</span>
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -183,9 +183,7 @@ export default {
   watch: {
     list: {
       handler(val) {
-        this.formatedList = val.map(li =>
-          this.formatApplyItem(li)
-        )
+        this.formatedList = val.map(li => this.formatApplyItem(li))
       },
       deep: true
     }
@@ -201,21 +199,25 @@ export default {
       var stampLeave = new Date(item.request.stampLeave)
       item.checkIfIsReplentApply = stampLeave <= new Date(item.create)
       var nowYear = new Date().getFullYear()
-      var nowYearDes = stampLeave.getFullYear() !== nowYear
-        ? `${stampLeave.getFullYear()}年`
-        : ''
-      item.stampLeave = `${nowYearDes}${stampLeave.getMonth() + 1}月${stampLeave.getDate()}日`
+      var nowYearDes =
+        stampLeave.getFullYear() !== nowYear
+          ? `${stampLeave.getFullYear()}年`
+          : ''
+      item.stampLeave = `${nowYearDes}${stampLeave.getMonth() +
+        1}月${stampLeave.getDate()}日`
       var stampReturn = new Date(item.request.stampReturn)
-      var stampReturnYearDes = stampReturn.getFullYear() !== nowYear
-        ? `${stampReturn.getFullYear()}年`
-        : ''
-      item.stampReturn = `${stampReturnYearDes}${stampReturn.getMonth() + 1}月${stampReturn.getDate()}日`
+      var stampReturnYearDes =
+        stampReturn.getFullYear() !== nowYear
+          ? `${stampReturn.getFullYear()}年`
+          : ''
+      item.stampReturn = `${stampReturnYearDes}${stampReturn.getMonth() +
+        1}月${stampReturn.getDate()}日`
       return item
     },
     datedifference,
     countOtherTime(row) {
       return (
-        datedifference(row.stampLeave, row.stampReturn) -
+        datedifference(row.stampReturn, row.stampLeave) -
         row.onTripLength -
         row.vacationLength
       )

@@ -42,7 +42,7 @@
             />
             <el-tag>{{ r.apply.base.realName }}</el-tag>
             <el-tag>{{ r.apply.request.vacationPlace.name }}</el-tag>
-            <el-tag>{{ datedifference(r.apply.request.stampLeave, r.apply.request.stampReturn) + 1 }}天{{ r.apply.request.onTripLength>0?`(路途${r.apply.request.onTripLength}天)`:'(无路途)' }}</el-tag>
+            <el-tag>{{ datedifference(r.apply.request.stampReturn,r.apply.request.stampLeave) + 1 }}天{{ r.apply.request.onTripLength>0?`(路途${r.apply.request.onTripLength}天)`:'(无路途)' }}</el-tag>
           </template>
           <el-form style>
             <el-form-item label="批复内容">
@@ -58,7 +58,7 @@
             <el-form-item label="结束时间">{{ r.apply.request.stampReturn }}</el-form-item>
             <el-form-item
               label="总天数"
-            >{{ datedifference(r.apply.request.stampLeave, r.apply.request.stampReturn) + 1 }}天</el-form-item>
+            >{{ datedifference(r.apply.request.stampReturn,r.apply.request.stampLeave) + 1 }}天</el-form-item>
             <el-form-item
               label="路途"
             >{{ r.apply.request.onTripLength>0?`路途${r.apply.request.onTripLength}天`:'无路途' }}</el-form-item>
@@ -168,7 +168,7 @@ export default {
               var apply = applyraw.apply
               var from = apply.base.realName
               var r = apply.request
-              var vacationLen = datedifference(r.stampLeave, r.stampReturn) + 1
+              var vacationLen = datedifference(r.stampReturn, r.stampLeave) + 1
               item.msg = applyraw.action === 2 ? '驳回' : '通过'
               item.msg = `${item.msg}${from}的${vacationLen}天申请`
               item.msg += item.status === 0 ? '成功' : `失败:${item.message}`

@@ -45,12 +45,7 @@
     >
       <AuthCode v-show="adminQuery" :form.sync="queryForm.auth" />
       <el-form-item v-show="fullui&&adminQuery" label="审核人">
-        <el-autocomplete
-          v-model="queryForm.auditBy"
-          :fetch-suggestions="queryMember"
-          style="width:100%"
-          placeholder="搜索成员"
-        />
+        <UserSelector :code.sync="queryForm.auditBy" default-info="搜索成员" style="display:inline" />
       </el-form-item>
       <el-form-item v-show="fullui&&adminQuery" label="当前审核人">
         <UserSelector :code.sync="queryForm.nowAuditBy" default-info="搜索成员" style="display:inline" />
