@@ -38,7 +38,7 @@
       <div v-else>
         <el-tag>{{ parseTime(new Date(innerForm.date),'{yyyy}年{mm}月{dd}日') }}</el-tag>
         <span style="font-size:1.1em">{{ innerForm.address.name }}</span>
-        <span style="color:#aaaaaa;font-size:1em">{{ innerForm.addressDetail }}</span>
+        <div style="color:#aaa;font-size:1em">{{ innerForm.addressDetail }}</div>
       </div>
     </div>
   </el-form-item>
