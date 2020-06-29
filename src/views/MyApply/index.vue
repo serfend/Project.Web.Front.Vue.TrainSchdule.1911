@@ -11,20 +11,16 @@
     <el-row class="row">
       <el-card v-loading="loading">
         <el-steps direction="vertical">
-          <el-step v-for="i in list" :key="i.id">
+          <el-step v-for="i in iList" :key="i.id">
             <div slot="title">
-              <div v-if="i.create">
-                <span>{{ format(i.create) }}</span>
-                <el-tag
-                  v-if="statusDic[i.status]"
-                  :color="statusDic[i.status].color"
-                  class="white--text"
-                >{{ statusDic[i.status].desc }}</el-tag>
-                <el-switch v-model="i.show" />
-                <el-link :href="applyDetailUrl(i.id)">查看详情</el-link>
-              </div>
-              <div v-else-if="!haveNext">没有更多了</div>
-              <el-button v-else @click="load">加载更多...</el-button>
+              <span>{{ format(i.create) }}</span>
+              <el-tag
+                v-if="statusDic[i.status]"
+                :color="statusDic[i.status].color"
+                class="white--text"
+              >{{ statusDic[i.status].desc }}</el-tag>
+              <el-switch v-model="i.show" />
+              <el-link :href="applyDetailUrl(i.id)" target="_blank">查看详情</el-link>
             </div>
             <div slot="description">
               <ApplyCard
@@ -36,6 +32,8 @@
             </div>
           </el-step>
         </el-steps>
+        <div v-if="!haveNext">没有更多了</div>
+        <el-button v-else @click="load">加载更多...</el-button>
       </el-card>
     </el-row>
   </div>
@@ -50,14 +48,23 @@ import { querySelf } from '@/api/apply'
 export default {
   name: 'MyApply',
   components: { User, ApplyCard, ApplyOverview },
+  props: {
+    start: {
+      type: String,
+      default: `${new Date().getFullYear()}-01-01`
+    },
+    id: {
+      type: String,
+      default: null
+    },
+    autoExpand: {
+      type: Boolean,
+      default: true
+    }
+  },
   data() {
     return {
-      list: [
-        {
-          label: '',
-          id: 999
-        }
-      ],
+      innerList: [],
       lastPage: 0,
       haveNext: true,
       loading: false
@@ -69,6 +76,23 @@ export default {
     },
     statusDic() {
       return this.$store.state.vacation.statusDic
+    },
+    iList: {
+      set(val) {
+        this.innerList = val
+        this.$emit('update:list', this.innerList)
+      },
+      get() {
+        return this.innerList
+      }
+    }
+  },
+  watch: {
+    list: {
+      handler(val) {
+        this.innerList = val
+      },
+      deep: true
     }
   },
   mounted() {
@@ -84,10 +108,10 @@ export default {
     applyUpdate(index) {
       querySelf({ pageIndex: index, pageSize: 1 }).then(data => {
         if (data.list[0]) {
-          this.list[index] = Object.assign(this.list[index], data.list[0])
-          this.list[index].show = false
+          this.iList[index] = Object.assign(this.list[index], data.list[0])
+          this.iList[index].show = false
           setTimeout(() => {
-            this.list[index].show = true
+            this.iList[index].show = true
           }, 1000)
         }
       })
@@ -97,31 +121,23 @@ export default {
       if (this.haveNext) {
         this.loading = true
         var pages = { pageIndex: this.lastPage, pageSize: 5 }
-        querySelf(pages)
+        querySelf(pages, this.id, this.start)
           .then(data => {
             this.lastPage++
-            this.list.pop() // 删除队尾的提示
+            const newList = data.list.map((v, i) => {
+              v.itemIndex = i + pages.pageIndex * pages.pageSize
+              v.show = false
+              return v
+            })
             setTimeout(() => {
-              for (var i = 0; i < data.list.length; i++) {
-                var newItem = Object.assign(
-                  {
-                    itemIndex: i + pages.pageIndex * pages.pageSize,
-                    show: false
-                  },
-                  data.list[i]
-                )
-                this.list.push(newItem)
-              }
-              this.list.push({ label: '', id: 999 })
+              this.iList = this.iList.concat(newList)
               if (data.list.length < pages.pageSize) {
-                setTimeout(() => {
-                  this.$message.error('没有更多了')
-                }, 2000)
+                this.$message.error('没有更多了')
                 this.haveNext = false
               }
-              if (pages.pageIndex === 0) {
+              if (pages.pageIndex === 0 && this.autoExpand) {
                 setTimeout(() => {
-                  this.list[0].show = true
+                  this.iList[0].show = true
                 }, 1000)
               }
             }, 100)
