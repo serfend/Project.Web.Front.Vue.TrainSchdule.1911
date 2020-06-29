@@ -89,15 +89,17 @@
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
-            <el-form-item
-              v-show="lawvacations.length>0&&formApply.vacationType=='正休'"
-              label="法定节假日"
-            >
-              <el-tag
-                v-for="item in lawvacations"
-                :key="item.start"
+            <el-form-item v-if="lawVacations.length>0&&formApply.vacationType=='正休'" label="法定节假日">
+              <LawVacation
+                v-for="(item,i) in lawVacations"
+                :key="i"
+                v-model="lawVacations[i].useLength"
+                :max-length="item.length"
+                :name="item.name"
+                :description="item.description"
+                :start="item.start"
                 style="margin:0.2rem"
-              >{{ item.start|parseTime("{mm}月{dd}日") }} {{ item.name }}{{ item.length }} 天</el-tag>
+              />
             </el-form-item>
             <el-form-item
               label="休假目的地"
@@ -151,6 +153,7 @@ import CardTooltipAlert from '../FormHelper/CardTooltipAlert'
 import VacationDescription from '@/components/Vacation/VacationDescription'
 import CascaderSelector from '@/components/CascaderSelector'
 import BenefitVacation from './BenefitVacation'
+import LawVacation from './LawVacation'
 import { locationChildren } from '@/api/common/static'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
 import { debounce } from '@/utils'
@@ -160,7 +163,8 @@ export default {
     CardTooltipAlert,
     VacationDescription,
     CascaderSelector,
-    BenefitVacation
+    BenefitVacation,
+    LawVacation
   },
   props: {
     userid: {
@@ -186,7 +190,7 @@ export default {
         maxTripTimes: 0
       },
       benefitList: [],
-      lawvacations: [],
+      lawVacations: [],
       submitId: null,
       isHover: false,
       anyChanged: false,
@@ -367,7 +371,11 @@ export default {
       this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
       getStampReturn(caculaingDate).then(data => {
         this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
-        this.lawvacations = data.descriptions ? data.descriptions : []
+        const des = data.descriptions ? data.descriptions : []
+        this.lawVacations = des.map(i => {
+          i.useLength = i.length
+          return i
+        })
       })
     },
     caculaingDate() {
