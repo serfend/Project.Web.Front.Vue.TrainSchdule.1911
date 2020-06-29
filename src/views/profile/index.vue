@@ -1,36 +1,28 @@
 <template>
-  <div class="app-container">
-    <div v-if="user">
-      <el-row>
-        <el-col>
-          <user-card :user="nowuser" @avatarRefresh="refreshUserAvatar" />
-        </el-col>
-        <el-col>
-          <el-card>
-            <el-tabs v-model="activeTab">
-              <el-tab-pane :label="$t('profile.activity')" name="activity">
-                <activity :data="useractions" />
-              </el-tab-pane>
-              <el-tab-pane :label="$t('profile.timeline')" name="timeline">施工中</el-tab-pane>
-              <el-tab-pane :label="$t('profile.account')" name="account">
-                <account :user="user" />
-              </el-tab-pane>
-            </el-tabs>
-          </el-card>
-        </el-col>
-      </el-row>
-    </div>
+  <div v-if="user" class="app-container">
+    <el-card>
+      <el-tabs v-model="activeTab">
+        <el-tab-pane :label="$t('profiles.activity')" name="activity">
+          <Activity :data="useractions" />
+        </el-tab-pane>
+        <el-tab-pane :label="$t('profiles.timeline')" name="timeline">
+          <Timeline />
+        </el-tab-pane>
+        <el-tab-pane :label="$t('profiles.account')" name="account">
+          <Account :user="user" />
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
   </div>
 </template>
 
 <script>
-import UserCard from './components/UserCard'
 import Activity from './components/Activity'
-// import Timeline from './components/Timeline'
+import Timeline from './components/Timeline'
 import Account from './components/Account'
 export default {
   name: 'Profile',
-  components: { UserCard, Activity, Account },
+  components: { Activity, Timeline, Account },
   data() {
     return {
       activeTab: 'activity',

@@ -102,7 +102,7 @@ var dict = {
     username: '用户名',
     password: '密码'
   },
-  profile: {
+  profiles: {
     activity: '@',
     timeline: '动态',
     account: '我的'

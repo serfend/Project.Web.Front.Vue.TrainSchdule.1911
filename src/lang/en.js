@@ -90,7 +90,7 @@ var dict = {
     username: 'username',
     password: 'password'
   },
-  profile: {
+  profiles: {
     activity: '@',
     timeline: 'timeline',
     account: 'mine'

@@ -41,11 +41,15 @@
                 <SvgIcon icon-class="principal" />
                 <span>账号</span>
               </template>
-              <el-menu-item index="1" @click="isToShowPasswordModefier=true">
+              <el-menu-item index="1" @click="$router.push(`/user/profile`)">
+                <SvgIcon icon-class="namecard" />
+                <span>个人信息</span>
+              </el-menu-item>
+              <el-menu-item index="2" @click="isToShowPasswordModefier=true">
                 <SvgIcon icon-class="scan_namecard" />
                 <span>修改密码</span>
               </el-menu-item>
-              <el-menu-item index="2" @click="handleReg(false)">
+              <el-menu-item index="3" @click="handleReg(false)">
                 <SvgIcon icon-class="newapplication_" />
                 <span>授权注册</span>
               </el-menu-item>
