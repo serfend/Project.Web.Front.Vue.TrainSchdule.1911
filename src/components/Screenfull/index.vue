@@ -23,10 +23,7 @@ export default {
   methods: {
     click() {
       if (!screenfull.enabled) {
-        this.$message({
-          message: 'you browser can not work',
-          type: 'warning'
-        })
+        this.$message.warning('不支持全屏')
         return false
       }
       screenfull.toggle()
@@ -52,7 +49,7 @@ export default {
 .screenfull-svg {
   display: inline-block;
   cursor: pointer;
-  fill: #5a5e66;;
+  fill: #5a5e66;
   width: 20px;
   height: 20px;
   vertical-align: 10px;

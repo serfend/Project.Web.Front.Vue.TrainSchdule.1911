@@ -62,12 +62,11 @@ export default {
   watch: {
     pagesetting: {
       handler(val) {
-        this.innerPages = {
-          pageIndex: val.pageIndex + 1,
-          pageSize: val.pageSize
-        }
+        this.innerPages.pageIndex = val.pageIndex + 1
+        this.innerPages.pageSize = val.pageSize
       },
-      deep: true, immediate: true
+      deep: true,
+      immediate: true
     }
   },
   methods: {
