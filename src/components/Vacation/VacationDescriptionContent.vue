@@ -1,7 +1,7 @@
 <template>
   <ul v-if="usersVacation" class="tooltip-vacation">
     <li>
-      <b>全年假期长度：</b>
+      <b>全年假期天数：</b>
       <span>{{ usersVacation.yearlyLength }}</span>天
     </li>
     <li>
@@ -9,25 +9,38 @@
       <span>{{ usersVacation.nowTimes }}</span>次
     </li>
     <li>
-      <b>剩余假期长度：</b>
+      <b>剩余假期天数：</b>
       <span>{{ usersVacation.leftLength }}</span>天
     </li>
     <li>
-      <b>全年最多可休路途次数：</b>
+      <b>全年可休路途：</b>
       <span>{{ usersVacation.maxTripTimes }}</span>次
     </li>
     <li>
-      <b>当前已休路途次数:</b>
+      <b>当前已休路途：</b>
       <span>{{ usersVacation.onTripTimes }}</span>次
     </li>
     <li>
-      <b>休假描述:</b>
-      <span>{{ usersVacation.description || `暂无说明` }}</span>
+      <b>备注：</b>
+      <span>{{ usersVacation.description || '暂无' }}</span>
+    </li>
+    <li>
+      <b>已休的福利假：</b>
+      <el-tooltip effect="light" placement="right">
+        <div slot="content">
+          <span
+            v-for="(v,i) in usersVacation.additionals"
+            :key="i"
+          >{{ parseTime(v.start) }}:{{ v.name }} {{ v.length }}天</span>
+        </div>
+        <span>{{ usersVacation.additionals.reduce((prev,cur)=>prev+cur.length,0) }}天</span>
+      </el-tooltip>
     </li>
   </ul>
 </template>
 
 <script>
+import { parseTime } from '@/utils'
 export default {
   props: {
     usersVacation: {
@@ -35,6 +48,11 @@ export default {
       default() {
         return {}
       }
+    }
+  },
+  methods: {
+    parseTime(val) {
+      return parseTime(val, '{y}年{m}月{d}日')
     }
   }
 }
