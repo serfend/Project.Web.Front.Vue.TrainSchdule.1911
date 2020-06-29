@@ -15,7 +15,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-tooltip content="点击下载休假单">
+    <el-tooltip content="点击下载休假单" placement="left">
       <el-dropdown
         v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
         split-button
@@ -31,11 +31,10 @@
               :confirm-button-text="actionDic[item].alias"
               @onConfirm="hendleExecute(item,row)"
             >
-              <el-button
+              <el-link
                 slot="reference"
                 :type="actionDic[item].type"
-                size="mini"
-              >{{ actionDic[item].alias }}</el-button>
+              >{{ actionDic[item].alias }}</el-link>
             </el-popconfirm>
           </el-dropdown-item>
         </el-dropdown-menu>

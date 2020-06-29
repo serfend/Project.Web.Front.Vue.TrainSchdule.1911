@@ -33,7 +33,7 @@
       />
     </el-form-item>
     <!--<el-form-item label="党团时间">
-      <el-date-picker v-model="innerForm.time_Party" format="yyyy年MM月dd" value-format="yyyy-MM-dd" />
+      <el-date-picker v-model="innerForm.time_Party" format="yyyy年MM月dd日" value-format="yyyy-MM-dd" />
     </el-form-item>-->
   </div>
 </template>

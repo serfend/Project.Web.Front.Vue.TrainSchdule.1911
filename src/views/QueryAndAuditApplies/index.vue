@@ -18,7 +18,7 @@
       @updated="requestUpdate"
     >
       <template slot="action" slot-scope="{row}">
-        <el-link type="info" :href="detailUrl(row.id)">查看详情</el-link>
+        <el-link type="info" :href="detailUrl(row.id)" target="_blank">查看详情</el-link>
         <action-examine :row="row" @updated="requestUpdate" />
         <action-user :row="row" @updated="requestUpdate" />
       </template>
@@ -79,7 +79,7 @@ export default {
       return t
     },
     requestUpdate() {
-      this.$refs.queryAppliesForm.searchData()
+      this.$refs.queryAppliesForm.searchData(true)
     }
   }
 }

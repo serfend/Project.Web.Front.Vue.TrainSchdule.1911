@@ -293,7 +293,7 @@ export default {
     }
   },
   mounted() {
-    var tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
+    const tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
     var tmp = JSON.parse(tmpItem)
     if (tmp) {
       this.queryForm = tmp
@@ -310,7 +310,11 @@ export default {
       }
     },
     exportAppliesNowFilter() {
+      this.onLoading = true
       this.$emit('exportApplies')
+      setTimeout(() => {
+        this.onLoading = false
+      }, 5000)
     },
     clearForm() {
       this.$refs.queryForm.resetFields()
@@ -323,7 +327,7 @@ export default {
       this.searchData()
     },
     searchData(isUserAction) {
-      var lastUpdate = new Date()
+      const lastUpdate = new Date()
       this.lastUpdate = lastUpdate
       setTimeout(() => {
         if (this.lastUpdate !== lastUpdate) return
@@ -331,11 +335,11 @@ export default {
       }, 500)
     },
     searchDataDirect(isUserAction) {
-      var f = this.createQueryPost()
+      const f = this.createQueryPost()
       // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
-      var status = this.queryForm.status
-      var actionStatus = this.queryForm.actionStatus
-      var queryString = `${JSON.stringify(f)}${status}${actionStatus}`
+      const status = this.queryForm.status
+      const actionStatus = this.queryForm.actionStatus
+      const queryString = `${JSON.stringify(f)}${status}${actionStatus}`
       if (queryString === this.lastQueryString && !isUserAction) return
       this.lastQueryString = queryString
       const action = this.adminQuery
@@ -353,7 +357,7 @@ export default {
         })
     },
     createQueryPost() {
-      var f = {
+      const f = {
         pages: Object.assign({}, this.innerPages)
       }
       f.create = this.formatData_DateTime(this.queryForm.createTime)

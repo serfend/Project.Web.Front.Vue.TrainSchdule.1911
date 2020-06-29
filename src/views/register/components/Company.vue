@@ -8,29 +8,34 @@
       />
     </el-form-item>
     <el-form-item prop="duties" label="职务">
-      <el-tooltip content="需选用下拉框中的建议">
+      <el-tooltip content="需选用下拉框中的建议" placement="right">
         <el-autocomplete
           v-model="innerForm.duties.name"
           class="inline-input"
           :fetch-suggestions="dutiesQuery"
-          placeholder="请输入职务名称"
+          placeholder="请输入并选中职务名称"
           @select="handleDutiesSelect"
         />
       </el-tooltip>
     </el-form-item>
     <el-form-item prop="title" label="职务等级">
-      <el-tooltip content="需选用下拉框中的建议">
+      <el-tooltip content="需选用下拉框中的建议" placement="right">
         <el-autocomplete
           v-model="innerForm.title.name"
           class="inline-input"
           :fetch-suggestions="companyTitleQuery"
-          placeholder="请输入职务等级"
+          placeholder="请输入并选中职务等级"
           @select="handleDutiesSelect"
         />
       </el-tooltip>
     </el-form-item>
     <el-form-item prop="titleDate" label="职务等级时间">
-      <el-date-picker v-model="innerForm.titleDate" format="yyyy年MM月dd" value-format="yyyy-MM-dd" />
+      <el-date-picker
+        v-model="innerForm.titleDate"
+        placeholder="职务等级生效时间"
+        format="yyyy年MM月dd日"
+        value-format="yyyy-MM-dd"
+      />
     </el-form-item>
   </div>
 </template>

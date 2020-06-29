@@ -35,7 +35,7 @@
             <el-collapse-item v-for="(s,i) in form.subjects" :key="i" :name="i">
               <template slot="title">
                 <el-tag class="title-item" :type="s.status">{{ s.description }}({{ s.grade }})</el-tag>
-                <h3>{{ s.alias }}</h3>
+                <h3>{{ s.alias }} 成绩:{{ s.rawValue }}</h3>
               </template>
               <Subject v-model="form.subjects[i]" :age="age" @gradechange="onCaculateGrade" />
             </el-collapse-item>

@@ -12,23 +12,26 @@
       <el-table-column type="selection" />
       <el-table-column label="基本">
         <template slot-scope="{row}">
-          <el-row>
+          <div>
             <el-tag
               v-if="row.request.vacationType"
               effect="dark"
               size="mini"
               :type="row.request.vacationType==='正休'?'':'danger'"
             >{{ row.request.vacationType }}</el-tag>
+            <el-link :href="`#/user/profile?id=${row.userBase.id}`">{{ row.userBase.realName }}</el-link>
+            <el-tooltip content="用户原姓名">
+              <span v-if="row.userBase.realName!=row.base.realName">({{ row.base.realName }})</span>
+            </el-tooltip>
+          </div>
+          <div>
             <span
-              style="font-size:10px;margin:2px;color:#3f3f3f"
-            >{{ row.base.companyName }} {{ row.base.dutiesName }}</span>
-          </el-row>
-          <el-row>
-            <span>{{ row.base.realName }}</span>
-          </el-row>
+              :style="{'font-size':'10px',margin:'2px',color:'#3f3f3f'}"
+            >{{ getCDdes(row.userBase) }}</span>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="当前审批">
+      <el-table-column align="center" label="审批流程">
         <template slot-scope="{row}">
           <ApplyAuditStreamPreview
             slot="content"
@@ -65,7 +68,9 @@
         <template slot-scope="{row}">
           <el-dropdown>
             <span class="el-dropdown-link">
-              <span>{{ datedifference(row.request.stampReturn,row.request.stampLeave) + 1 }}天</span>
+              <span
+                :style="{color:row.request.additialVacations&&row.request.additialVacations.length>0?'#3a3':'#333'}"
+              >{{ datedifference(row.request.stampReturn,row.request.stampLeave) + 1 }}天</span>
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -76,7 +81,7 @@
                 v-show="row.request.additialVacations.length>0"
                 :key="additial.name"
               >
-                <el-tooltip :content="additial.description">
+                <el-tooltip :content="additial.description" placement="left">
                   <el-tag>{{ additial.name }} {{ additial.length }}天</el-tag>
                 </el-tooltip>
               </el-dropdown-item>
@@ -110,10 +115,10 @@
     />
     <el-button
       v-show="!multiAuditFormShow&&list.length>1"
-      style="width:100%"
+      style="width:100%;font-size:1rem;letter-spacing:1.5rem"
       type="success"
       @click="showMutilAudit"
-    >批量审批</el-button>
+    >审批当前选中项</el-button>
     <Pagination
       :pagesetting.sync="pagesetting"
       :total-count="pagesTotalCount"
@@ -190,6 +195,9 @@ export default {
   },
   methods: {
     format,
+    getCDdes(row) {
+      return `${row.companyName} ${row.dutiesName}`
+    },
     formatApplyItem(li) {
       const { ...item } = li
       const statusObj = this.statusOptions[item.status]

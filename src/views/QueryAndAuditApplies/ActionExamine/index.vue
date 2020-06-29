@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <span>
     <RecallApplyDialog
       v-if="showRecall"
       :show.sync="showRecall"
@@ -25,7 +25,7 @@
       size="mini"
       @click="recallApply(true)"
     >召回信息</el-link>
-  </div>
+  </span>
 </template>
 
 <script>

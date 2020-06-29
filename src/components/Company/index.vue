@@ -8,21 +8,21 @@
       <div v-else-if="innerInfo.managers.length==1">
         <el-link
           icon="el-icon-s-custom"
-          :target="`/#/profile/${innerInfo.managers[0].id}`"
+          :target="`#/user/profile?id=${innerInfo.managers[0].id}`"
         >{{ innerInfo.managers[0].realName }}</el-link>
       </div>
       <el-dropdown v-else>
         <span class="el-dropdown-link">
           <el-link
             icon="el-icon-s-custom"
-            :target="`/#/profile/${innerInfo.managers[0].id}`"
+            :target="`#/user/profile?id=${innerInfo.managers[0].id}`"
           >{{ innerInfo.managers[0].realName }}</el-link>
           等{{ innerInfo.managers.length }}人
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="u in innerInfo.managers" :key="u.id" icon="el-icon-s-custom">
-            <el-link icon="el-icon-s-custom" :target="`/#/profile/${u.id}`">{{ u.realName }}</el-link>
+            <el-link icon="el-icon-s-custom" :target="`#/user/profile?id=${u.id}`">{{ u.realName }}</el-link>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
