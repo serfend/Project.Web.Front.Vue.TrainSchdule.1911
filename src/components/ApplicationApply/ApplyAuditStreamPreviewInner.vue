@@ -4,26 +4,27 @@
       <el-steps
         :active="nowStep>=0?nowStep:(streams?streams.length:0)"
         :finish-status="nowStep>=0?'success':'finish'"
-        :space="300"
         align-center
       >
         <el-step v-for="s in streams" :key="s.index">
           <template slot="title">
-            <div>{{ s.name }}</div>
+            <div style="white-space:nowrap">{{ s.name }}</div>
             <el-tooltip
               :content="`需要${s.firstMemberCompanyName}${getNeedAudit(s.requireMembersAcceptCount)}进行审批`"
             >
-              <div>{{ s.firstMemberCompanyName }}({{ getNeedAudit(s.requireMembersAcceptCount) }})</div>
+              <div
+                style="white-space:nowrap"
+              >{{ s.firstMemberCompanyName }}({{ getNeedAudit(s.requireMembersAcceptCount) }})</div>
             </el-tooltip>
           </template>
           <template v-if="!loading" slot="description">
-            <span v-for="u in s.membersFitToAudit" :key="u">
+            <div v-for="u in s.membersFitToAudit" :key="u">
               <span
                 v-if="managers[s.firstMemberCompanyCode]&&managers[s.firstMemberCompanyCode].indexOf(u)===-1&&userStatus[s.index]"
               >
                 <UserFormItem :userid="u" :type="userStatus[s.index][u]" />
               </span>
-            </span>
+            </div>
           </template>
         </el-step>
       </el-steps>
