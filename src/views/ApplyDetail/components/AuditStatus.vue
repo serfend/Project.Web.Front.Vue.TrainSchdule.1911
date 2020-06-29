@@ -1,6 +1,6 @@
 <template>
   <el-card v-if="detail" v-loading="loading" shadow="hover">
-    <h3 slot="header">{{ `审批进度(${detail.auditSolution})` }}</h3>
+    <h3 slot="header">{{ `审批进度(${detail.auditSolution||'审批流程'})` }}</h3>
     <el-steps v-if="detail.steps" :space="200" :active="nowActiveAudit" finish-status="success">
       <el-step v-for="step in detail.steps" :key="step.id">
         <el-tooltip slot="description" effect="light">
@@ -14,11 +14,16 @@
               <span v-else>{{ rec.auditingUserRealName }}</span>
               <el-tag
                 :type="rec.status===4?'success':rec.status===8?'danger':'info'"
-                style="float:right"
               >{{ rec.status===4?'通过':rec.status===8?'驳回':'未处理' }}</el-tag>
               <el-tooltip v-if="rec.remark" effect="light" style="margin-left:0.5rem">
                 <div slot="content" class="audit-process-remark">
-                  <el-input v-model="rec.remark" placeholder="审批备注" readonly type="textarea" />
+                  <el-input
+                    v-model="rec.remark"
+                    placeholder="审批备注"
+                    autosize
+                    readonly
+                    type="textarea"
+                  />
                 </div>
                 <el-link type="success">留言</el-link>
               </el-tooltip>
@@ -49,13 +54,15 @@
             </div>
             <div v-else-if="detail.status<30">未收到审批</div>
             <div v-else>审批已结束</div>
+
             <div class="audit-process-companyName grey--text row layout justify-start align-center">
               <i class="el-icon-office-building black--text title mr-1" />
-              <span>{{ step.firstMemberCompanyName }}</span>
-              <el-link
-                v-if="detail.response.filter(i=>i.index===step.index && i.remark).length>0"
-                type="success"
-              >有留言</el-link>
+              <el-badge
+                is-dot
+                :hidden="detail.response.filter(i=>i.index===step.index && i.remark).length==0"
+              >
+                <span>{{ step.firstMemberCompanyName }}</span>
+              </el-badge>
             </div>
             <div class="row layout justify-space-between black--text">
               <span
