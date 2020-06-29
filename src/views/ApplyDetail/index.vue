@@ -1,23 +1,23 @@
 <template>
   <div style="padding:10px">
-    <el-link icon="el-icon-back" size="mini" @click="$router.back(-1)">返回</el-link>
     <el-link icon="el-icon-download" size="mini" type="success" @click="downloadUserApplies">导出休假登记卡</el-link>
     <span v-if="detail&&detail.id">
       <action-examine :row="detail" style="display:inline" @updated="requestUpdate" />
       <action-user :row="detail" style="display:inline" @updated="requestUpdate" />
     </span>
     <div style="padding-top:0.5rem">
-      <el-form type="flex" label-width="5rem">
+      <el-form type="flex" label-width="8rem">
         <div class="content-card">
-          <el-card
-            v-if="detail&&detail.id"
-            v-loading="loading"
-            :visible.sync="innerShow"
-            :show-close="false"
-            shadow="hover"
-          >
+          <el-card v-if="detail&&detail.id" v-loading="loading" shadow="hover">
             <h3 slot="header">本次休假</h3>
             <div v-if="detail.id">
+              <el-form-item label="类别">
+                <el-tag
+                  v-if="detail.request.vacationType"
+                  effect="dark"
+                  :type="detail.request.vacationType==='正休'?'':'danger'"
+                >{{ detail.request.vacationType }}</el-tag>
+              </el-form-item>
               <el-form-item v-if="staticData.vacationStart" label="休假情况">
                 <el-col :lg="6" :md="12" :sm="24">
                   <el-tooltip effect="light">
@@ -66,31 +66,18 @@
           <AuditStatus :loading="loading" :data="detail" />
         </div>
         <div class="content-card">
-          <el-card v-loading="loading" :visible.sync="innerShow" :show-close="false" shadow="hover">
-            <h3 slot="header">历史休假情况(未开放)</h3>
-          </el-card>
-        </div>
-        <div class="content-card">
-          <el-card
-            v-if="detail&&detail.id"
-            v-loading="loading"
-            label="家庭信息"
-            :visible.sync="innerShow"
-            :show-close="false"
-            shadow="hover"
-          >
-            <h3 slot="header">申请人</h3>
-            <el-container>
-              <el-aside width="width:20rem">
-                <User :data="detail.base" :can-load-avatar="true" />
-              </el-aside>
-              <el-main>
-                <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
-                <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
-                <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
-                <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
-              </el-main>
-            </el-container>
+          <el-card v-if="detail&&detail.id">
+            <h3 slot="header">申请人信息</h3>
+            <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
+            <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
+            <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
+            <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
+            <MyApply
+              :id="detail.base.id"
+              :list.sync="selfHistory"
+              :start="null"
+              :auto-expand="false"
+            />
           </el-card>
         </div>
       </el-form>
@@ -99,15 +86,15 @@
 </template>
 
 <script>
-import { detail, querySelf } from '@/api/apply'
+import { detail } from '@/api/apply'
 import { exportUserApplies } from '@/api/common/static'
 import { datedifference, parseTime } from '@/utils'
-import { getUserAvatar } from '@/api/user/userinfo'
 import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
 import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'
 import AuditStatus from './components/AuditStatus'
-import User from '@/components/User'
+import MyApply from '@/views/MyApply'
+import { debounce } from '../../utils'
 export default {
   name: 'ApplyDetail',
   components: {
@@ -115,7 +102,7 @@ export default {
     ActionExamine,
     ActionUser,
     AuditStatus,
-    User
+    MyApply
   },
   props: {
     show: {
@@ -126,10 +113,9 @@ export default {
   data() {
     return {
       id: null,
-      avatar: null,
       detail: {},
-      innerShow: false,
       loading: false,
+      selfHistory: [],
       staticData: {
         vacationLength: 0,
         vacationSpent: 0,
@@ -140,6 +126,11 @@ export default {
     }
   },
   computed: {
+    requestUpdate() {
+      return debounce(() => {
+        this.updateDetail()
+      }, 500)
+    },
     statusDic() {
       return this.$store.state.vacation.statusDic
     },
@@ -157,7 +148,7 @@ export default {
       return parseTime(new Date(date), '{y}年{m}月{d}日')
     },
     datedifference,
-    requestUpdate() {
+    updateDetail() {
       if (!this.id) {
         this.$message.error('未选择休假申请')
         return this.$router.push('/application/queryAndAuditApplies')
@@ -192,38 +183,27 @@ export default {
         )
       }
     },
-    getUserAvatar(id) {
-      getUserAvatar(id).then(data => {
-        this.avatar = data.url
-      })
-    },
-    handleClickAvatar() {
-      this.$store.push('/profile/index?id=' + this.detail.base.id)
-    },
     downloadUserApplies() {
       const dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
-      querySelf(null, this.detail.base.id).then(data => {
-        if (data.list.length === 0) {
-          return this.$message.error('当前用户无申请可导出')
-        }
-        exportUserApplies(
-          dutiesRawType,
-          data.list.map(i => i.id)
-        )
-      })
+      const his = this.selfHistory
+      if (!his || his.length === 0) {
+        return this.$message.warning('当前无申请可导出')
+      }
+      exportUserApplies(
+        dutiesRawType,
+        his.map(i => i.id)
+      )
     },
     loadDetail(id) {
       this.loading = true
-      detail(id)
-        .then(data => {
-          this.detail = data
-          this.detail.request = data.requestInfo
-          this.getUserAvatar(data.base.id)
-          this.initstaticDataData()
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      const loadDetail = detail(id).then(data => {
+        this.detail = data
+        this.detail.request = data.requestInfo
+        this.initstaticDataData()
+      })
+      loadDetail.finally(() => {
+        this.loading = false
+      })
     }
   }
 }
@@ -255,10 +235,5 @@ export default {
 }
 .pull-right {
   float: right !important;
-}
-.avatar-32 {
-  width: 32px;
-  height: 32px;
-  border-radius: 10%;
 }
 </style>
