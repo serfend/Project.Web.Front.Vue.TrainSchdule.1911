@@ -6,11 +6,11 @@
         <span style="cursor:pointer" @click="clearSelect">清空</span>
       </template>
       <el-link type="info" @click="dialogVisible=true">
-        <span @mouseenter="forgetHasShow=true">{{ userRealName }}</span>
+        <span @mouseenter="forgetHasShow=true">{{ userRealName?userRealName:defaultInfo }}</span>
       </el-link>
     </el-tooltip>
     <el-dialog v-if="forgetHasShow" title="搜索成员" :visible.sync="dialogVisible" append-to-body>
-      <FindUserByRealName :avatar.sync="avatar" @change="selectUserChanged" />
+      <FindUserByRealName v-model="nowUserCode" :avatar.sync="avatar" @change="selectUserChanged" />
     </el-dialog>
   </div>
 </template>
@@ -20,10 +20,18 @@ import FindUserByRealName from '@/components/User/FindUserByRealName'
 export default {
   name: 'UserSelector',
   components: { FindUserByRealName },
+  model: {
+    prop: 'code',
+    event: 'change'
+  },
   props: {
+    code: {
+      type: String,
+      default: null
+    },
     defaultInfo: {
       type: String,
-      default: '未选中'
+      default: '搜索成员'
     }
   },
   data: () => ({
@@ -32,15 +40,17 @@ export default {
     userRealName: null,
     avatar: null
   }),
-  watch: {
-    defaultInfo: {
-      handler(val) {
-        if (val) {
-          this.userRealName = val
-        }
+  computed: {
+    nowUserCode: {
+      get() {
+        return this.code
       },
-      immediate: true
-    },
+      set(val) {
+        this.$emit('update:code', val)
+      }
+    }
+  },
+  watch: {
     avatar: {
       handler(val) {
         this.$emit('update:avatar', val)
@@ -50,14 +60,14 @@ export default {
   methods: {
     clearSelect() {
       this.userRealName = null
-      this.$emit('update:code', null)
+      this.nowUserCode = null
       this.$emit('change', null)
     },
     selectUserChanged(u) {
       if (u) {
         this.userRealName = `${u.realName}(${u.id})`
       }
-      this.$emit('update:code', u.id)
+      this.nowUserCode = u.id
       this.$emit('change', u)
     }
   }

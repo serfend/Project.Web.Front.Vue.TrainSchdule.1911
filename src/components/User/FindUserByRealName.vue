@@ -33,6 +33,16 @@ import { debounce } from '@/utils'
 export default {
   name: 'FindUserByRealName',
   components: { User },
+  model: {
+    prop: 'code',
+    event: 'change'
+  }, // TODO support auto load user from father-component
+  props: {
+    code: {
+      type: String,
+      default: null
+    }
+  },
   data: () => ({
     loading: false,
     nowSelectRealName: '',
@@ -78,7 +88,6 @@ export default {
       this.$emit('change', u)
       if (u.avatar) this.$emit('update:avatar', u.avatar)
       else u.canLoadAvatar = true
-
       this.$message.success(`已选择:${u.realName}(${u.id})`)
     },
     handleUserSelectByRealnameChange() {
