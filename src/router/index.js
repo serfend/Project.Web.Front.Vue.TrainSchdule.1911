@@ -5,6 +5,7 @@ import applicationSettingRouter from './modules/applicationSetting/index'
 import gameRouter from './modules/Game'
 import systemRouter from './modules/system/index'
 import memberRateRouter from './modules/MemberRate'
+import user from './modules/user'
 Vue.use(Router)
 
 /* Layout */
@@ -30,7 +31,7 @@ import Layout from '@/layout'
     activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
  */
-export const constantRoutes = [{
+export const constantRoutes = [user, {
   path: '/dashboard',
   component: () => import('@/views/dashboard/index'),
   name: 'Dashboard',
@@ -88,21 +89,6 @@ export const constantRoutes = [{
     verify: 'on'
   },
   component: () => import('@/views/welcome/index')
-}, {
-  path: '/profile',
-  component: Layout,
-  redirect: '/profile/index',
-  hidden: true,
-  children: [{
-    path: 'index',
-    component: () => import('@/views/profile/index'),
-    name: 'Profile',
-    meta: {
-      title: 'profile',
-      icon: 'user',
-      noCache: true
-    }
-  }]
 }]
 
 /**
