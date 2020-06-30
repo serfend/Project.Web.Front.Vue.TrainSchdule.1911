@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { download, requestFile } from '@/api/common/file'
+import { loadDocument } from '@/utils/file'
 export default {
   name: 'ApplyStreamAbout',
   data() {
@@ -34,29 +34,10 @@ export default {
   },
   methods: {
     refreshDoc() {
-      var self = this
-      requestFile(this.path, this.fileName)
-        .then(data => {
-          if (data.file.isRemoved) {
-            self.value = `文件:${this.path}/${this.fileName} 已于${data.file.removeDate}被移除`
-            return
-          }
-          download(data.file.id).then(data => {
-            var reader = new FileReader()
-            reader.onload = function(event) {
-              var content = reader.result
-              self.value = content
-            }
-            // it seem sometimes occur that data is just simply `string`
-            if (typeof data === 'string') {
-              self.value = data
-            } else {
-              reader.readAsText(data)
-            }
-          })
-        })
+      loadDocument(this.path, this.fileName)
+        .then(i => (this.value = i))
         .catch(e => {
-          self.value = `读取${self.path}/${self.fileName}异常:${e.message}`
+          this.$message.error(e)
         })
     }
   }
