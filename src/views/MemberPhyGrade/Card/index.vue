@@ -84,6 +84,9 @@
               <i class="el-icon-question" />
             </el-tooltip>
           </el-form-item>
+          <el-form-item v-for="(s,i) in form.subjects" :key="i" :label="s.alias">
+            <el-input v-model="form.subjects[i].rawValue" :placeholder="`${s.alias}成绩`" />
+          </el-form-item>
         </el-form>
       </el-card>
     </el-col>

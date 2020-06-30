@@ -5,7 +5,7 @@
       v-if="data"
       v-model="nowIndex"
       :min="0"
-      :max="scorePair.length"
+      :max="scorePair.length-1"
       :format-tooltip="format"
     />
   </div>
@@ -95,6 +95,7 @@ export default {
   methods: {
     format(val) {
       const item = this.scorePair[val]
+      if (!item) return `无${val}的标准`
       return `标准:${item[0]} 得分:${item[1]}`
     }
   }
