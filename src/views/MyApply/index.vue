@@ -2,10 +2,15 @@
   <div>
     <el-row class="row">
       <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-        <User :data="currentUser" :can-load-avatar="true" />
+        <UserFormItem
+          :data="id?null:currentUser"
+          :userid="id"
+          :direct-show-card="true"
+          :can-load-avatar="true"
+        />
       </el-col>
-      <el-col v-if="currentUser" :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
-        <ApplyOverview :userid="currentUser.id" />
+      <el-col v-if="id||currentUser" :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
+        <ApplyOverview :userid="id||currentUser.id" />
       </el-col>
     </el-row>
     <el-row class="row">
@@ -41,13 +46,13 @@
 
 <script>
 import { format } from 'timeago.js'
-import User from '@/components/User'
+import UserFormItem from '@/components/User/UserFormItem'
 import ApplyCard from './components/ApplyCard'
 import ApplyOverview from './components/ApplyOverview'
 import { querySelf } from '@/api/apply'
 export default {
   name: 'MyApply',
-  components: { User, ApplyCard, ApplyOverview },
+  components: { UserFormItem, ApplyCard, ApplyOverview },
   props: {
     start: {
       type: String,

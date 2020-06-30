@@ -29,11 +29,6 @@ export default {
       usersvacation: null
     }
   },
-  computed: {
-    currentUser() {
-      return this.$store.state.user.data
-    }
-  },
   watch: {
     userid: {
       handler(val) {
