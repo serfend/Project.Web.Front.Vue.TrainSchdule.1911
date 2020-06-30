@@ -8,7 +8,7 @@
     />
     <div class="userinfo">
       <div class="username">{{ data.realName }}</div>
-      <el-tag class="userduties" size="mini">{{ data.dutiesName }}</el-tag>
+      <el-tag class="userduties">{{ data.dutiesName }}</el-tag>
     </div>
     <div v-if="vacation" style="width:100%">
       <div style="height:0.7em" />

@@ -18,19 +18,19 @@
         <el-table-column label="说明">
           <template slot-scope="scope">{{ scope.row.description }}</template>
         </el-table-column>
-        <el-table-column label="流程">
+        <el-table-column label="流程" width="100rem">
           <template slot-scope="scope">
             <el-tooltip>
               <div slot="content">
                 <el-steps direction="vertical">
-                  <el-step v-for="s in scope.row.nodes" :key="s.key" style="width:300px">
+                  <el-step v-for="s in scope.row.nodes" :key="s.key" style="width:20rem">
                     <div slot="title" style="color:#ffc300">{{ s.name }}</div>
                     <div slot="description">
                       创建于
                       {{ format(s.create,'zh_CN') }}
                       需要
                       {{ s.auditMembersCount==0?'所有人':(s.auditMembersCount+'人') }}审核
-                      <div style="color:#ffffff;font-size:1em">{{ s.description }}</div>
+                      <div style="color:#ffffff;font-size:1rem">{{ s.description }}</div>
                     </div>
                   </el-step>
                 </el-steps>
@@ -39,16 +39,14 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200px">
+        <el-table-column label="操作" width="300rem">
           <template slot-scope="scope">
             <el-button
-              size="mini"
               type="warning"
               icon="el-icon-edit-outline"
               @click="showSolutionDialog('edit',scope.row)"
             >编辑</el-button>
             <el-button
-              size="mini"
               type="info"
               icon="el-icon-circle-close"
               @click="showSolutionDialog('delete',scope.row)"
@@ -97,12 +95,7 @@
           :expand-on-click-node="false"
         >
           <div slot-scope="{node}" class="custom-tree-node">
-            <el-tag
-              size="mini"
-              closable
-              effect="plain"
-              @close="handleSelectNodeClose(node)"
-            >{{ node.label }}</el-tag>
+            <el-tag closable effect="plain" @close="handleSelectNodeClose(node)">{{ node.label }}</el-tag>
             <span>{{ node.data.description }}</span>
           </div>
         </el-tree>

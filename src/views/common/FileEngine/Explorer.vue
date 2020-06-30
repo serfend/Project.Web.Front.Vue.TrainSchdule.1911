@@ -34,7 +34,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-button v-if="foldersHasNextPage||filesHasNextPage" size="mini" @click="loadNextPage">加载更多</el-button>
+    <el-button v-if="foldersHasNextPage||filesHasNextPage" @click="loadNextPage">加载更多</el-button>
     <span v-else>没有更多了</span>
   </div>
 </template>
@@ -87,10 +87,13 @@ export default {
   watch: {
     path: {
       handler(val) {
-        if (!val) { val = '' }
+        if (!val) {
+          val = ''
+        }
         this.nowPath = val
         this.refresh()
-      }, immediate: true
+      },
+      immediate: true
     }
   },
   mounted() {
@@ -122,18 +125,26 @@ export default {
       if (this.foldersHasNextPage) {
         pages = this.folders.pages
         pages.pageIndex++
-        requestFolder(this.nowPath, pages).then((data) => {
-          this.folders.array = this.folders.array.concat(data.folders)
-          pages.totalCount = data.totalCount
-          if (!this.foldersHasNextPage) this.loadNextPage()
-        }).finally(() => { this.loading = false })
+        requestFolder(this.nowPath, pages)
+          .then(data => {
+            this.folders.array = this.folders.array.concat(data.folders)
+            pages.totalCount = data.totalCount
+            if (!this.foldersHasNextPage) this.loadNextPage()
+          })
+          .finally(() => {
+            this.loading = false
+          })
       } else if (this.filesHasNextPage) {
         pages = this.folderFiles.pages
         pages.pageIndex++
-        folderFiles(this.nowPath, pages).then((data) => {
-          this.folderFiles.array = this.folderFiles.array.concat(data.files)
-          pages.totalCount = data.totalCount
-        }).finally(() => { this.loading = false })
+        folderFiles(this.nowPath, pages)
+          .then(data => {
+            this.folderFiles.array = this.folderFiles.array.concat(data.files)
+            pages.totalCount = data.totalCount
+          })
+          .finally(() => {
+            this.loading = false
+          })
       } else {
         this.$message.error('无更多的项目')
         this.loading = false

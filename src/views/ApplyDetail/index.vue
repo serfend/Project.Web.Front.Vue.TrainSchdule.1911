@@ -1,6 +1,6 @@
 <template>
   <div style="padding:10px">
-    <el-link icon="el-icon-download" size="mini" type="success" @click="downloadUserApplies">导出休假登记卡</el-link>
+    <el-link icon="el-icon-download" type="success" @click="downloadUserApplies">导出休假登记卡</el-link>
     <span v-if="detail&&detail.id">
       <action-examine :row="detail" style="display:inline" @updated="requestUpdate" />
       <action-user :row="detail" style="display:inline" @updated="requestUpdate" />
@@ -44,7 +44,7 @@
                   :key="a.id"
                   :content="`开始于${parseTime(a.start)}的${a.length}天${a.name},${a.description}`"
                 >
-                  <el-tag size="mini" style="margin-left:10px">{{ `${a.length}天${a.name}` }}</el-tag>
+                  <el-tag style="margin-left:10px">{{ `${a.length}天${a.name}` }}</el-tag>
                 </el-tooltip>
               </el-form-item>
               <el-form-item label="休假日期">

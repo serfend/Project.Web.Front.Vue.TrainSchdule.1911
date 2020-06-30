@@ -10,7 +10,7 @@
           title="确定要删除这个翻牌器吗"
           @onConfirm="confirmDelete"
         >
-          <i slot="reference" class="el-icon-delete delete-btn" size="mini" />
+          <i slot="reference" class="el-icon-delete delete-btn" />
         </el-popconfirm>
         <el-color-picker v-model="data.color" />
       </el-col>

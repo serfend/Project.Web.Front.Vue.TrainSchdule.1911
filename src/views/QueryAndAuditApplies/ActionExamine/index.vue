@@ -19,12 +19,7 @@
       @click="showAudit=true"
     >审批</el-link>
     <el-link v-if="CheckIfShowRecall(row)" type="warning" @click="recallApply(false)">召回</el-link>
-    <el-link
-      v-else-if="row.recallId!==null"
-      type="primary"
-      size="mini"
-      @click="recallApply(true)"
-    >召回信息</el-link>
+    <el-link v-else-if="row.recallId!==null" type="primary" @click="recallApply(true)">召回信息</el-link>
   </span>
 </template>
 

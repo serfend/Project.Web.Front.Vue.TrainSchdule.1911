@@ -12,7 +12,7 @@
                 <el-radio :label="1">1天</el-radio>
                 <el-radio :label="7">7天</el-radio>
                 <el-radio :label="3650">永久</el-radio>
-                <el-date-picker v-model="expire" size="mini" type="datetime" placeholder="自定义" />
+                <el-date-picker v-model="expire" type="datetime" placeholder="自定义" />
               </el-radio-group>
             </el-form-item>
             <el-form-item label="自定id">

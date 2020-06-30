@@ -19,7 +19,6 @@
       <el-dropdown
         v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
         split-button
-        size="mini"
         trigger="click"
         @click="exportApply(row)"
       >
@@ -31,15 +30,12 @@
               :confirm-button-text="actionDic[item].alias"
               @onConfirm="hendleExecute(item,row)"
             >
-              <el-link
-                slot="reference"
-                :type="actionDic[item].type"
-              >{{ actionDic[item].alias }}</el-link>
+              <el-link slot="reference" :type="actionDic[item].type">{{ actionDic[item].alias }}</el-link>
             </el-popconfirm>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-button v-else icon="el-icon-download" size="mini" @click="exportApply(row)">下载</el-button>
+      <el-button v-else icon="el-icon-download" @click="exportApply(row)">下载</el-button>
     </el-tooltip>
   </div>
 </template>

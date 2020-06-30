@@ -9,12 +9,7 @@
         <el-color-picker v-model="innerData[index]" />
         <i class="el-icon-close delete-btn" @click="innerData.splice(index,1)" />
       </div>
-      <el-button
-        icon="el-icon-plus"
-        size="mini"
-        style="height:36px"
-        @click="innerData.push('#000000')"
-      />
+      <el-button icon="el-icon-plus" style="height:36px" @click="innerData.push('#000000')" />
     </div>
   </div>
 </template>

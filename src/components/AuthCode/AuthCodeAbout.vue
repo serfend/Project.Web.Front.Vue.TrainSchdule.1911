@@ -23,7 +23,6 @@
           <el-button
             type="info"
             icon="el-icon-document-copy"
-            size="mini"
             @click="clipBoard(authKeyUrl,$event)"
           >复制密钥链接</el-button>
           <el-link slot="reference" type="primary">获取当前账号授权码</el-link>

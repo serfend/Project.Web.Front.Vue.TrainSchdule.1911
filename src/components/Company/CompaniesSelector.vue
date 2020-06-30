@@ -13,7 +13,7 @@
         />
         <i class="el-icon-close delete-btn" @click="removeItem(index)" />
       </div>
-      <el-button icon="el-icon-plus" size="mini" style="height:36px" @click="addNew" />
+      <el-button icon="el-icon-plus" style="height:36px" @click="addNew" />
     </div>
   </div>
 </template>

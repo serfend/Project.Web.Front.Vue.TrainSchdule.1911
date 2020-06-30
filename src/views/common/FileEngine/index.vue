@@ -94,7 +94,6 @@
                 <el-button
                   type="info"
                   icon="el-icon-document-copy"
-                  size="mini"
                   @click="clipBoard(i.fileInfo.id,`${i.fileInfo.path}_${i.fileInfo.name}`,$event)"
                 >复制链接</el-button>
               </el-row>

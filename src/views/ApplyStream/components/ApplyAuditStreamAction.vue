@@ -118,16 +118,14 @@
             <UserFormItem v-else :data="scope.row.auditMembers[0]" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200px">
+        <el-table-column label="操作" width="300rem">
           <template slot-scope="scope">
             <el-button
-              size="mini"
               type="warning"
               icon="el-icon-edit-outline"
               @click="showNodeDialoag('edit',scope.row)"
             >编辑</el-button>
             <el-button
-              size="mini"
               type="info"
               icon="el-icon-circle-close"
               @click="showNodeDialoag('delete',scope.row)"

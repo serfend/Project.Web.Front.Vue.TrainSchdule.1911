@@ -8,7 +8,6 @@
         <el-image :src="avatar" :preview-src-list="[avatar]" class="avatar" />
         <el-tag
           :style="{ 'background-color':innerData.gender==2?'#ee6666':'#60c3e9',color:'#ffffff',display:'grid','justify-items':'center','margin-top':'1em'}"
-          size="mini"
         >
           <div>{{ innerData.dutiesName }}</div>
         </el-tag>
@@ -21,7 +20,7 @@
           :description="`微信或手机通讯录扫码，获取${innerData.realName}的联系方式`"
         />
         <el-main slot="reference" class="miniForm">
-          <el-form label-width="3em" size="mini">
+          <el-form label-width="3em">
             <h2>{{ innerData.realName }}</h2>
             <el-form-item label="id">
               <div style="color:#cccccc">{{ innerData.id }}</div>
