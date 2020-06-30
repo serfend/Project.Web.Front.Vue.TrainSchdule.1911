@@ -1,16 +1,14 @@
 <template>
-  <el-popover :placement="placement" width="200" trigger="hover" @show="isActive=true">
-    <User :data="innerData" :can-load-avatar="isActive" />
-    <el-tag
-      v-show="innerData.realName"
-      slot="reference"
-      class="user-item"
-      v-bind="$attrs"
-    >
-      <i class="el-icon-user-solid" />
-      {{ innerData.realName }}
-    </el-tag>
-  </el-popover>
+  <div>
+    <User v-if="directShowCard" :data="innerData" :can-load-avatar="true" />
+    <el-popover v-else :placement="placement" width="200" trigger="hover" @show="isActive=true">
+      <User :data="innerData" :can-load-avatar="isActive" />
+      <el-tag v-show="innerData.realName" slot="reference" class="user-item" v-bind="$attrs">
+        <i class="el-icon-user-solid" />
+        {{ innerData.realName }}
+      </el-tag>
+    </el-popover>
+  </div>
 </template>
 
 <script>
@@ -35,6 +33,10 @@ export default {
     placement: {
       type: String,
       default: 'right'
+    },
+    directShowCard: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -57,6 +59,7 @@ export default {
     userid: {
       handler(val) {
         if (val) {
+          console.log('user-id', val)
           this.loadUser(val)
         }
       },
