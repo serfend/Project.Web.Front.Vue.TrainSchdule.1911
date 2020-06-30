@@ -7,8 +7,8 @@ var dict = {
     system: {
       title: 'system',
       clipboard: {
-        success: '复制成功',
-        fail: '复制失败'
+        success: 'copy success',
+        fail: 'copy fail'
       }
     },
     app: {
@@ -17,7 +17,19 @@ var dict = {
         title: 'log'
       },
       phyGrade: {
-        title: '体育成绩'
+        title: 'physical grade',
+        rules: {
+          title: 'rule config'
+        },
+        detail: {
+          title: 'grade card'
+        },
+        list: {
+          title: 'grade list'
+        },
+        statistics: {
+          title: 'company statistics'
+        }
       },
       file: {
         title: 'file'
@@ -49,6 +61,36 @@ var dict = {
           title: 'scan'
         }
       }
+    }
+  },
+  form: {
+    company: {
+      title: 'company',
+      auditBy: 'approve company',
+      createBy: 'from company',
+      involved: 'involved company'
+    },
+    user: {
+      title: 'user',
+      auditBy: 'approve by',
+      createBy: 'create by',
+      from: 'from'
+    },
+    grade: {
+      phy: {
+        standard: {
+          title: 'standard'
+        },
+        subject: {
+          title: 'subject'
+        },
+        about: {
+          title: 'about'
+        }
+      }
+    },
+    date: {
+      title: 'date'
     }
   },
   application: {

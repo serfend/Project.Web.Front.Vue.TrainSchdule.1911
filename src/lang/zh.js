@@ -25,7 +25,7 @@ var dict = {
           title: '成绩统计卡'
         },
         list: {
-          title: '单位详情'
+          title: '成绩单'
         },
         statistics: {
           title: '单位统计'
@@ -61,6 +61,36 @@ var dict = {
           title: '扫描'
         }
       }
+    }
+  },
+  form: {
+    company: {
+      title: '单位',
+      auditBy: '审核单位',
+      createBy: '来自单位',
+      involved: '涉及单位'
+    },
+    user: {
+      title: '成员',
+      auditBy: '审核人',
+      createBy: '创建人',
+      from: '来源人'
+    },
+    grade: {
+      phy: {
+        standard: {
+          title: '标准'
+        },
+        subject: {
+          title: '科目'
+        },
+        about: {
+          title: '关于'
+        }
+      }
+    },
+    date: {
+      title: '日期'
     }
   },
   application: {
