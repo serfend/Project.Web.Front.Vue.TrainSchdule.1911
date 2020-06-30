@@ -140,9 +140,11 @@ export default {
     }
   },
   mounted() {
-    if (!this.hasLogin && !this.$store.state.user.isUserLogout) {
-      this.userCardShow = true
-    }
+    setTimeout(() => {
+      if (!this.hasLogin && !this.$store.state.user.isUserLogout) {
+        this.userCardShow = true
+      }
+    }, 500)
   },
   methods: {
     toggleSideBar() {
