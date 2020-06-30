@@ -290,7 +290,7 @@ export default {
         this.loading = '初始化'
         window.addEventListener('resize', this.resize)
         this.$refs.echartGeoDriver.refresh()
-        this.reloadUserCompany().then(() => {
+        this.reloadUserCompany(this.$route.query.companyCode).then(() => {
           this.reloadChildCompanies().then(() => {
             this.initStatus = 'inited'
           })
@@ -311,21 +311,33 @@ export default {
         })
       })
     },
-    reloadUserCompany() {
+    reloadUserCompany(companyCode) {
       return new Promise((res, rej) => {
-        getUserCompany(null)
-          .then(data => {
-            this.setting.company.value.main.value = data.company
-            this.$nextTick(() => res(data.company))
+        const hdlCompany = company => {
+          this.setting.company.value.main.value = company
+          this.$nextTick(() => res(company))
+        }
+        if (!companyCode) {
+          getUserCompany(null)
+            .then(data => {
+              hdlCompany(data.company)
+            })
+            .catch(e => {
+              if (e.status === 12120) {
+                setTimeout(() => {
+                  location.href = '/'
+                }, 2000)
+              }
+              rej(e)
+            })
+        } else {
+          const qCompany =
+            companyCode.substr(0, companyCode.length - 1) || 'root'
+          companyChild(qCompany).then(data => {
+            const company = data.list.filter(i => i.code === companyCode)[0]
+            hdlCompany(company)
           })
-          .catch(e => {
-            if (e.status === 12120) {
-              setTimeout(() => {
-                location.href = '/'
-              }, 2000)
-            }
-            rej(e)
-          })
+        }
       })
     },
     settingUpdated() {

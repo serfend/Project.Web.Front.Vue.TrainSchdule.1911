@@ -16,18 +16,21 @@
             <el-tag
               v-if="row.request.vacationType"
               effect="dark"
-              size="mini"
               :type="row.request.vacationType==='正休'?'':'danger'"
             >{{ row.request.vacationType }}</el-tag>
-            <el-link :href="`#/user/profile?id=${row.userBase.id}`">{{ row.userBase.realName }}</el-link>
+            <el-link
+              :href="`#/user/profile?id=${row.userBase.id}`"
+              target="_blank"
+            >{{ row.userBase.realName }}</el-link>
             <el-tooltip content="用户原姓名">
               <span v-if="row.userBase.realName!=row.base.realName">({{ row.base.realName }})</span>
             </el-tooltip>
           </div>
-          <div>
-            <span
-              :style="{'font-size':'10px',margin:'2px',color:'#3f3f3f'}"
-            >{{ getCDdes(row.userBase) }}</span>
+          <div :style="{'font-size':'0.8rem',margin:'2px',color:'#3f3f3f'}">
+            <el-link
+              :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
+              target="_blank"
+            >{{ getCDdes(row.userBase,row.base) }}</el-link>
           </div>
         </template>
       </el-table-column>
@@ -195,8 +198,19 @@ export default {
   },
   methods: {
     format,
-    getCDdes(row) {
-      return `${row.companyName} ${row.dutiesName}`
+    getCDdes(row, prevRow) {
+      const cn = row.companyName
+      const prevCn = prevRow.companyName
+      const dn = row.dutiesName
+      const prevDn = prevRow.dutiesName
+      const result = [cn, dn]
+      if (cn !== prevCn || dn !== prevDn) {
+        result.push('(')
+        result.push(prevCn)
+        result.push(prevDn)
+        result.push(')')
+      }
+      return result.join(' ')
     },
     formatApplyItem(li) {
       const { ...item } = li
