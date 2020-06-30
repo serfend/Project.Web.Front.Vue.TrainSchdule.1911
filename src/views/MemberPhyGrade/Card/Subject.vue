@@ -1,19 +1,13 @@
 <template>
-  <div v-if="data">
-    <el-table :data="[scorePair]">
-      <el-table-column v-for="(p,i) in scorePair" :key="i" :label="p[0]?p[0]:null">
-        <template slot-scope="scope">
-          <span
-            :style="{color:scope.row[i][1]==currentStandard.baseStandard?'#88f':'#ccc'}"
-          >{{ scope.row[i][1] }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-form label-width="5rem">
-      <el-form-item label="成绩">
-        <el-input v-model="rawValue" :placeholder="`${data.alias}成绩`" />
-      </el-form-item>
-    </el-form>
+  <div>
+    <el-input v-model="rawScore" placeholder="输入成绩" />
+    <el-slider
+      v-if="data"
+      v-model="nowIndex"
+      :min="0"
+      :max="scorePair.length"
+      :format-tooltip="format"
+    />
   </div>
 </template>
 
@@ -32,12 +26,24 @@ export default {
     age: {
       type: Number,
       default: 0
+    },
+    rawValue: {
+      type: String,
+      default: null
     }
   },
   data: () => ({
-    rawValue: ''
+    nowIndex: 0
   }),
   computed: {
+    rawScore: {
+      get() {
+        return this.rawValue
+      },
+      set(val) {
+        this.$emit('update:rawValue', val)
+      }
+    },
     currentStandard() {
       const age = this.age
       const standards = this.data.standards
@@ -72,7 +78,7 @@ export default {
   watch: {
     data: {
       handler(val) {
-        this.rawValue = this.standardRawValue
+        this.rawScore = this.standardRawValue
       },
       immediate: true
     },
@@ -84,6 +90,12 @@ export default {
         })
       },
       immediate: true
+    }
+  },
+  methods: {
+    format(val) {
+      const item = this.scorePair[val]
+      return `标准:${item[0]} 得分:${item[1]}`
     }
   }
 }

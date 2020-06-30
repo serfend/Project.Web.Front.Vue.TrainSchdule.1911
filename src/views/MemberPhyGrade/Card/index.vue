@@ -23,23 +23,29 @@
               </div>
             </el-col>
           </el-row>
-          <el-alert :style="{'background-color':genderData.background,transition:'all 0.5s ease'}">
+          <el-card :style="{'background-color':genderData.background,transition:'all 0.5s ease'}">
             <i :class="genderData.icon" style="color:#fff" />
             <span style="color:#fff;font-size:1rem;margin-right:0.5rem">{{ age }}周岁</span>
             <span
               v-show="form.user.time_birthDay"
               style="color:#fff;font-size:0.8rem"
             >距离生日{{ toNextBirth }}天</span>
-          </el-alert>
-          <el-collapse v-model="nowSubject">
-            <el-collapse-item v-for="(s,i) in form.subjects" :key="i" :name="i">
-              <template slot="title">
-                <el-tag class="title-item" :type="s.status">{{ s.description }}({{ s.grade }})</el-tag>
-                <h3>{{ s.alias }} 成绩:{{ s.rawValue }}</h3>
-              </template>
-              <Subject v-model="form.subjects[i]" :age="age" @gradechange="onCaculateGrade" />
-            </el-collapse-item>
-          </el-collapse>
+          </el-card>
+          <div v-for="(s,i) in form.subjects" :key="i" style="margin-top:1rem">
+            <el-tag class="title-item" :type="s.status">{{ s.description }}({{ s.grade }})</el-tag>
+
+            <el-popover trigger="hover">
+              <Subject
+                v-model="form.subjects[i]"
+                :age="age"
+                :raw-value.sync="form.subjects[i].rawValue"
+                @gradechange="onCaculateGrade"
+              />
+              <span slot="reference">
+                <span class="subject-link">{{ s.alias }} 成绩:{{ s.rawValue }}</span>
+              </span>
+            </el-popover>
+          </div>
         </div>
       </el-card>
     </el-col>
@@ -312,5 +318,11 @@ export default {
 <style lang="scss" scoped>
 .title-item {
   margin-right: 0.2rem;
+}
+.subject-link {
+  cursor: pointer;
+  &:hover {
+    color: #00f;
+  }
 }
 </style>
