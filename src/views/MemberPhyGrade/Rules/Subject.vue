@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     checkStandard(row) {
-      this.$emit('update:subject', Object.assign({ ageRange: [0, 0] }, row))
+      this.$emit('update:subject', row)
     },
     refresh() {
       this.loading = true

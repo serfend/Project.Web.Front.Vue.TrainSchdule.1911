@@ -67,8 +67,8 @@ export default {
       if (!value) return
       this.iSubject = JSON.parse(JSON.stringify(value))
       this.iSubject.standards = this.iSubject.standards.map(i => {
-        i.ageRange = [i.minAge,i.maxAge]
-        return {...i}
+        i.ageRange = [i.minAge, i.maxAge]
+        return { ...i }
       })
     }
   },
@@ -89,7 +89,7 @@ export default {
       item.maxAge = item.ageRange[1]
       this.$set(this.iSubject.standards, $index, item)
       this.$emit('update:subject', this.iSubject)
-    },
+    }
   }
 }
 </script>
