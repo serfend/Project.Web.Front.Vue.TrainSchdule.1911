@@ -63,15 +63,13 @@ export default {
     iSubject: null
   }),
   watch: {
-    subject: {
-      handler(val) {
-        this.iSubject = val
-        if (val === null) return
-        this.iSubject.standards = this.iSubject.standards.map(i => {
-          i.ageRange = [i.minAge, i.maxAge]
-          return { ...i }
-        })
-      }
+    subject(value) {
+      if (!value) return
+      this.iSubject = JSON.parse(JSON.stringify(value))
+      this.iSubject.standards = this.iSubject.standards.map(i => {
+        i.ageRange = [i.minAge,i.maxAge]
+        return {...i}
+      })
     }
   },
   methods: {
@@ -89,8 +87,9 @@ export default {
       const item = row
       item.minAge = item.ageRange[0]
       item.maxAge = item.ageRange[1]
+      this.$set(this.iSubject.standards, $index, item)
       this.$emit('update:subject', this.iSubject)
-    }
+    },
   }
 }
 </script>
