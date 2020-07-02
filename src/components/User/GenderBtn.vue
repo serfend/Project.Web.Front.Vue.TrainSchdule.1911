@@ -60,7 +60,8 @@ export default {
     gender: {
       handler(val) {
         this.innerGender = val
-      }
+      },
+      immediate: true
     },
     innerGender: {
       handler(val) {
