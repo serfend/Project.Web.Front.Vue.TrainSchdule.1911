@@ -38,6 +38,6 @@ jobs:
     - name: npm install, build
       run: |
         npm install
-        npm run build:stage
+        npm run dev
       env:
         CI: true
