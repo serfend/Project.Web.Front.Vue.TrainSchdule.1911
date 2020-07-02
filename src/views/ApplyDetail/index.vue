@@ -11,15 +11,14 @@
           <el-card v-if="detail&&detail.id" v-loading="loading" shadow="hover">
             <h3 slot="header">本次休假</h3>
             <div v-if="detail.id">
-              <el-form-item label="类别">
+              <el-form-item label="基本">
                 <el-tag
                   v-if="detail.request.vacationType"
                   effect="dark"
                   :type="detail.request.vacationType==='正休'?'':'danger'"
                 >{{ detail.request.vacationType }}</el-tag>
-              </el-form-item>
-              <el-form-item v-if="staticData.vacationStart" label="休假情况">
-                <el-col :lg="6" :md="12" :sm="24">
+
+                <el-col v-if="staticData.vacationStart" :lg="6" :md="12" :sm="24">
                   <el-tooltip effect="light">
                     <template slot="content">
                       <span>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</span>
@@ -27,13 +26,13 @@
                     <el-progress :width="100" :percentage="staticData.vacationProgress" />
                   </el-tooltip>
                 </el-col>
-              </el-form-item>
-              <el-form-item v-else label="状态">
-                <el-tag
-                  v-if="statusDic[detail.status]"
-                  :color="statusDic[detail.status].color"
-                  class="white--text"
-                >{{ statusDic[detail.status].desc }}</el-tag>
+                <span v-else>
+                  <el-tag
+                    v-if="statusDic[detail.status]"
+                    :color="statusDic[detail.status].color"
+                    class="white--text"
+                  >{{ statusDic[detail.status].desc }}</el-tag>
+                </span>
               </el-form-item>
               <el-form-item label="原因">{{ detail.request.reason?detail.request.reason:'未填写' }}</el-form-item>
               <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
@@ -68,16 +67,22 @@
         <div class="content-card">
           <el-card v-if="detail&&detail.id">
             <h3 slot="header">申请人信息</h3>
-            <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
-            <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
-            <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
-            <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
+
             <MyApply
               :id="detail.base.id"
               :list.sync="selfHistory"
               :start="null"
               :auto-expand="false"
-            />
+            >
+              <template slot="inner">
+                <el-card>
+                  <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
+                  <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
+                  <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
+                  <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
+                </el-card>
+              </template>
+            </MyApply>
           </el-card>
         </div>
       </el-form>

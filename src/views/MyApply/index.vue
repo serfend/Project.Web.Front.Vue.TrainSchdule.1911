@@ -1,16 +1,21 @@
 <template>
   <div>
     <el-row class="row">
-      <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-        <UserFormItem
-          :data="id?null:currentUser"
-          :userid="id"
-          :direct-show-card="true"
-          :can-load-avatar="true"
-        />
+      <el-col :span="$slots.inner?16:24">
+        <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+          <UserFormItem
+            :data="id?null:currentUser"
+            :userid="id"
+            :direct-show-card="true"
+            :can-load-avatar="true"
+          />
+        </el-col>
+        <el-col v-if="id||currentUser" :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
+          <ApplyOverview :userid="id||currentUser.id" />
+        </el-col>
       </el-col>
-      <el-col v-if="id||currentUser" :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
-        <ApplyOverview :userid="id||currentUser.id" />
+      <el-col v-if="$slots.inner" :span="8">
+        <slot name="inner" />
       </el-col>
     </el-row>
     <el-row class="row">
