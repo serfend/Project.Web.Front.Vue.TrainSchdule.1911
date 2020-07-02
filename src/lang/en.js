@@ -19,7 +19,16 @@ var dict = {
       phyGrade: {
         title: 'physical grade',
         rules: {
-          title: 'rule config'
+          title: 'rule config',
+          about: {
+            title: 'about'
+          },
+          subject: {
+            title: 'subject'
+          },
+          standard: {
+            title: 'standard'
+          }
         },
         detail: {
           title: 'grade card'

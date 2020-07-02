@@ -19,7 +19,16 @@ var dict = {
       phyGrade: {
         title: '体育成绩',
         rules: {
-          title: '规则设置'
+          title: '规则设置',
+          about: {
+            title: '说明'
+          },
+          subject: {
+            title: '科目'
+          },
+          standard: {
+            title: '标准'
+          }
         },
         detail: {
           title: '成绩统计卡'
