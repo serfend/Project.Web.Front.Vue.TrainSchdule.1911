@@ -293,8 +293,7 @@ export default {
       this.onUserChanging = false
       getSubjects(null, null, this.submitU)
         .then(data => {
-          const items = data.list[0]
-          this.form.subjects = items.map(i => {
+          this.form.subjects = data.map(i => {
             i.description = singleRankingOpt[1].description
             i.status = singleRankingOpt[1].status
             i.grade = 0

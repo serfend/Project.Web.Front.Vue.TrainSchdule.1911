@@ -1,14 +1,18 @@
 <template>
   <el-card style="margin:0 2% 0 2%">
     <el-tabs v-model="activeName">
-      <el-tab-pane :label="$t('form.grade.phy.about.title')">
+      <el-tab-pane :label="$t('form.grade.phy.about.title')" name="about">
         <About />
       </el-tab-pane>
-      <el-tab-pane :label="$t('form.grade.phy.subject.title')">
-        <span>施工中</span>
+      <el-tab-pane :label="$t('form.grade.phy.subject.title')" name="subject">
+        <Subject :subject.sync="subject" @standardUpdate="standardUpdate" />
       </el-tab-pane>
-      <el-tab-pane :label="$t('form.grade.phy.standard.title')">
-        <span>施工中</span>
+      <el-tab-pane
+        :label="$t('form.grade.phy.standard.title')"
+        name="standard"
+        :disabled="!subject"
+      >
+        <Standard :subject.sync="subject" />
       </el-tab-pane>
     </el-tabs>
   </el-card>
@@ -16,12 +20,27 @@
 
 <script>
 import About from './About'
+import Subject from './Subject'
+import Standard from './Standard'
 export default {
   name: 'Rules',
-  components: { About },
+  components: { About, Subject, Standard },
   data: () => ({
-    activeName: null
-  })
+    activeName: 'about',
+    subject: null
+  }),
+  watch: {
+    subject: {
+      handler(val) {
+        this.activeName = 'standard'
+      }
+    }
+  },
+  methods: {
+    standardUpdate(val) {
+      console.log(val)
+    }
+  }
 }
 </script>
 

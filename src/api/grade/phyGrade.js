@@ -36,11 +36,18 @@ export function getSubjectByName(name) {
  * @param {String} names 科目名，以|分割
  * @param {String} group 科目分组名称
  * @param {UserBase,String} user 当为String时则会从系统中查询实际用户，否则使用本身{realName,gender,time_birthday}
+ * @param {Page} pages
  */
-export function getSubjects(names = null, group = null, user) {
+export function getSubjects(names = null, group = null, user, pages) {
   const g = buildGradeSubject(names, null, group)
-  const q = buildGradeQuery([g], user)
-  return request.post(`${api}subjects`, q)
+  const q = buildGradeQuery([g], user, pages)
+  return new Promise((res, rej) => {
+    request.post(`${api}subjects`, q).then(
+      data => {
+        res(data.list[0])
+      }
+    ).catch(e => rej(e))
+  })
 }
 
 /**
@@ -71,18 +78,22 @@ export function getResults(list) {
  * @param {GradeRaw} grades
  * @param {UserBase,String} user 当为String时则会从系统中查询实际用户，否则使用本身{realName,gender,time_birthday}
  * @param {Boolean} needCaculateGrade 是否需要计算成绩
+ * @param {Page} pages 是否需要计算成绩
  * @returns
  */
-export function buildGradeQuery(grades, user, needCaculateGrade = false) {
+export function buildGradeQuery(grades, user, needCaculateGrade = false, pages = null) {
   const type = Object.prototype.toString.call(user)
   const item = {}
   if (type === '[object String]') {
     item.username = user
+  } else if (!user) {
+    item.user = null
   } else item.user = user
   return {
     subjects: grades,
     needCaculateGrade,
-    user: item
+    user: item,
+    pages
   }
 }
 
