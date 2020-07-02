@@ -18,6 +18,7 @@
             show-stops
             :min="getAgeRange(scope.row.minAge,0)"
             :max="getAgeRange(scope.row.minAge,1)"
+            @change="handleAgeChange(scope)"
           />
         </template>
       </el-table-column>
@@ -58,31 +59,18 @@ export default {
     }
   },
   data: () => ({
-    form: {}
+    form: {},
+    iSubject: null
   }),
-  computed: {
-    iSubject: {
-      get() {
-        const s = this.subject
-        if (!s) return null
-        s.standards = s.standards.map(i => {
+  watch: {
+    subject: {
+      handler(val) {
+        this.iSubject = val
+        if (val === null) return
+        this.iSubject.standards = this.iSubject.standards.map(i => {
           i.ageRange = [i.minAge, i.maxAge]
-          return i
+          return { ...i }
         })
-        console.log('get', s.standards[0].ageRange)
-
-        return s
-      },
-      set(val) {
-        const s = val
-        // debugger
-        s.standards = s.standards.map(i => {
-          i.minAge = i.ageRange[0]
-          i.maxAge = i.ageRange[1]
-          return i
-        })
-        console.log(s)
-        this.$emit('subject', s)
       }
     }
   },
@@ -97,15 +85,11 @@ export default {
           return 60
       }
     },
-    handleAgeChange(v, row) {
-      console.log(arguments)
-      console.log(v)
-      const index = row.$index
-      const standard = Object.assign(this.subject.standards[index], {
-        maxAge: v[1],
-        minAge: v[0]
-      })
-      this.$emit('standardUpdate', standard)
+    handleAgeChange({ row, $index }) {
+      const item = row
+      item.minAge = item.ageRange[0]
+      item.maxAge = item.ageRange[1]
+      this.$emit('update:subject', this.iSubject)
     }
   }
 }
