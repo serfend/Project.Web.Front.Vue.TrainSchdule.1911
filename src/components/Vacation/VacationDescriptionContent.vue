@@ -26,7 +26,7 @@
     </li>
     <li>
       <b>已休的福利假：</b>
-      <el-tooltip effect="light" placement="right">
+      <el-tooltip v-if="usersVacation.additionals" effect="light" placement="right">
         <div slot="content">
           <span
             v-for="(v,i) in usersVacation.additionals"
@@ -35,6 +35,7 @@
         </div>
         <span>{{ usersVacation.additionals.reduce((prev,cur)=>prev+cur.length,0) }}天</span>
       </el-tooltip>
+      <span v-else>无</span>
     </li>
   </ul>
 </template>
