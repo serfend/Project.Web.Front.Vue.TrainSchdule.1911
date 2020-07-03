@@ -57,7 +57,7 @@
           ref="dataDriver"
           :loading.sync="loading"
           :company="company?company.code:null"
-          :companies="companies?companies.map(i=>i.code):null"
+          :companies="companies?companies:null"
           :data.sync="data"
           :date-range="dateRange"
           :company-data.sync="companyData"
