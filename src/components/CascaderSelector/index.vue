@@ -5,7 +5,7 @@
     :props="props"
     :show-all-levels="true"
     :placeholder="placeholder===null?'未选择':placeholder"
-    style="width:100%"
+    :style="{width:'100%',color:code?'#00f':'#ccc'}"
     clearable
     :disabled="disabled"
     @change="handleItemChange"
@@ -25,8 +25,12 @@ export default {
       default: ''
     },
     code: {
-      type: String,
+      type: [String, Array],
       default: ''
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     },
     childGetterMethod: {
       type: Function,
@@ -44,6 +48,7 @@ export default {
         },
         lazy: true,
         checkStrictly: true,
+        multiple: this.multiple,
         expandTrigger: 'hover',
         lazyLoad(node, resolve) {
           if (node.root) node.value = 'root'
@@ -63,28 +68,38 @@ export default {
   watch: {
     code: {
       handler(v) {
-        if (this.staticValue[this.staticValue.length - 1] !== v) {
-          this.staticValue = []
+        if (this.staticValue !== v) {
+          this.staticValue = v
         }
       },
       immediate: true
     }
   },
   methods: {
+    handleCodeChange(val) {
+      if (this.multiple) {
+        this.$emit('update:code', val)
+      } else {
+        const v = val[val.length - 1]
+        this.$emit('update:code', v)
+      }
+    },
     handleItemChange(val) {
-      var v = val[val.length - 1]
-      this.$emit('update:code', v)
-      // event of selectChange should delay for a perior due to a bug of metaphysics
-      setTimeout(() => {
-        let text = this.$refs.elcascader.inputValue
-        let lastIndex = -1
-        if (text) {
-          text = text.replace('*', '')
-          lastIndex = text.lastIndexOf('/')
-          text = text.substr(lastIndex + 1)
-        }
-        this.$emit('select-change', text)
-      }, 50)
+      this.handleCodeChange(val)
+      if (!this.multiple) {
+        // event of selectChange should delay for a perior due to a bug of metaphysics
+        // only while use none multiple,can emit name
+        setTimeout(() => {
+          let text = this.$refs.elcascader.inputValue
+          let lastIndex = -1
+          if (text) {
+            text = text.replace('*', '')
+            lastIndex = text.lastIndexOf('/')
+            text = text.substr(lastIndex + 1)
+          }
+          this.$emit('select-change', text)
+        }, 50)
+      }
     }
   }
 }

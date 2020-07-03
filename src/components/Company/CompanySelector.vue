@@ -36,7 +36,8 @@ export default {
     companyCode: {
       handler(val) {
         this.$nextTick(() => {
-          this.$emit('update:code', val)
+          const code = val[val.length - 1]
+          this.$emit('update:code', code)
         })
       }
     }
