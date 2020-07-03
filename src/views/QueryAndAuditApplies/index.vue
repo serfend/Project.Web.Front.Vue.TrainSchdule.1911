@@ -58,15 +58,6 @@ export default {
       deep: true
     }
   },
-
-  mounted() {
-    var item = JSON.parse(localStorage.getItem('queryAndAuditApplies'))
-    if (item) {
-      if (item.pages) {
-        this.pages = item.pages
-      }
-    }
-  },
   methods: {
     exportApplies() {
       exportMultiApplies(
