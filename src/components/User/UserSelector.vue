@@ -6,7 +6,10 @@
         <span style="cursor:pointer" @click="clearSelect">清空</span>
       </template>
       <el-link type="info" @click="dialogVisible=true">
-        <span @mouseenter="forgetHasShow=true">{{ userRealName?userRealName:defaultInfo }}</span>
+        <span
+          :style="{color:code?'#00f':'#aaa'}"
+          @mouseenter="forgetHasShow=true"
+        >{{ userRealName?userRealName:defaultInfo }}</span>
       </el-link>
     </el-tooltip>
     <el-dialog v-if="forgetHasShow" title="搜索成员" :visible.sync="dialogVisible" append-to-body>
