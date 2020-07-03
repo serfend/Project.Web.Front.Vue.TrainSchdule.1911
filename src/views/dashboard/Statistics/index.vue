@@ -270,7 +270,9 @@ export default {
     }
   },
   mounted() {
-    this.init()
+    setTimeout(() => {
+      this.init()
+    }, 2000)
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
