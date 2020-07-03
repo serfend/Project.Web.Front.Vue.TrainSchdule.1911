@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card style="margin:0 0 20px 0">
+    <el-card style="margin:0 0 2rem 0">
       <el-tooltip effect="light" content="仅单位的管理和数据分析人员需进行条件查询，其他人员默认将查询到本人可审批的申请">
         <el-switch
           v-model="adminQuery"
@@ -19,14 +19,6 @@
           inactive-text="简要查询"
         />
       </el-tooltip>
-      <el-switch
-        v-show="currentUserId&&adminQuery"
-        v-model="onlySeeSelfApplies"
-        style="margin:0px 20px"
-        active-text="仅自己"
-        inactive-text="查看全部"
-        @change="seeSelfChange"
-      />
       <el-button
         type="success"
         :icon="onLoading?'el-icon-loading':'el-icon-refresh-right'"
@@ -54,10 +46,13 @@
         <UserSelector :code.sync="queryForm.createFor" default-info="搜索成员" style="display:inline" />
       </el-form-item>
       <el-form-item v-show="adminQuery" label="来自单位">
-        <CompanySelector
-          :code.sync="queryForm.createCompany"
-          :placeholder="queryForm.createCompanyName"
-        />
+        <CompaniesSelector v-model="queryForm.createCompany" />
+      </el-form-item>
+      <el-form-item v-show="adminQuery" label="单位类别">
+        <el-input v-model="queryForm.companyType" />
+      </el-form-item>
+      <el-form-item v-show="adminQuery" label="职务类别">
+        <el-input v-model="queryForm.dutiesType" />
       </el-form-item>
       <el-form-item v-show="!adminQuery" label="我的审核">
         <el-select
@@ -168,13 +163,17 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
-import CompanySelector from '@/components/Company/CompanySelector'
+import CompaniesSelector from '@/components/Company/CompaniesSelector'
 import UserSelector from '@/components/User/UserSelector'
 
-import { queryList, queryMyAudit } from '@/api/apply'
+import {
+  queryList,
+  queryMyAudit,
+  createQueryApplyModel
+} from '@/api/apply/query'
 export default {
   Name: 'ApplySearchCommon',
-  components: { CompanySelector, AuthCode, UserSelector },
+  components: { CompaniesSelector, AuthCode, UserSelector },
   props: {
     list: {
       type: Array,
@@ -214,18 +213,19 @@ export default {
         }
       ],
       onLoading: false,
-      lastUpdate: '',
+      lastUpdate: new Date(),
       queryForm: {
         createTime: null,
         stampLeaveTime: null,
         stampReturnTime: null,
         status: [], // 状态
         actionStatus: 'Received', // 我的状态
-        auditBy: '',
-        nowAuditBy: '',
-        createFor: '',
-        createCompany: '', // 申请单位
-        createCompanyName: '',
+        auditBy: null,
+        nowAuditBy: null,
+        createFor: null,
+        createCompany: [], // 申请单位
+        dutiesType: null,
+        companyType: null,
         auth: {
           authByUserId: '',
           code: ''
@@ -238,8 +238,7 @@ export default {
       },
       lastQueryString: '',
       adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
-      innerfullui: false,
-      onlySeeSelfApplies: false // 仅查询当前用户的申请
+      innerfullui: false
     }
   },
   computed: {
@@ -319,13 +318,6 @@ export default {
     clearForm() {
       this.$refs.queryForm.resetFields()
     },
-
-    seeSelfChange() {
-      if (this.onlySeeSelfApplies) {
-        this.queryForm.auditBy = ''
-      }
-      this.searchData()
-    },
     searchData(isUserAction) {
       const lastUpdate = new Date()
       this.lastUpdate = lastUpdate
@@ -335,7 +327,11 @@ export default {
       }, 500)
     },
     searchDataDirect(isUserAction) {
-      const f = this.createQueryPost()
+      const f = createQueryApplyModel(
+        this.queryForm,
+        this.innerPages,
+        this.queryForm.auth
+      )
       // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
       const status = this.queryForm.status
       const actionStatus = this.queryForm.actionStatus
@@ -355,57 +351,6 @@ export default {
         .finally(() => {
           this.onLoading = false
         })
-    },
-    createQueryPost() {
-      const f = {
-        pages: Object.assign({}, this.innerPages)
-      }
-      f.create = this.formatData_DateTime(this.queryForm.createTime)
-      f.stampLeave = this.formatData_DateTime(this.queryForm.stampLeaveTime)
-      f.stampReturn = this.formatData_DateTime(this.queryForm.stampReturnTime)
-      if (this.queryForm.status && this.queryForm.status.length > 0) {
-        f.status = {
-          arrays: this.queryForm.status
-        }
-      } else {
-        f.status = null
-      }
-      if (this.queryForm.auditBy) {
-        f.auditBy = { value: this.queryForm.auditBy } // 审核人
-      } else {
-        f.auditBy = null
-      }
-
-      if (this.queryForm.nowAuditBy) {
-        f.nowAuditBy = { value: this.queryForm.nowAuditBy } // 审核人
-      } else {
-        f.nowAuditBy = null
-      }
-
-      if (this.queryForm.createCompany) {
-        f.createCompany = { value: this.queryForm.createCompany } // 申请单位
-      } else {
-        f.createCompany = null
-      }
-      if (this.onlySeeSelfApplies) {
-        f.createFor = { value: this.currentUserId }
-      } else if (this.queryForm.createFor) {
-        f.createFor = { value: this.queryForm.createFor }
-      } else {
-        f.createFor = null
-      }
-      f.auth = this.queryForm.auth
-      return f
-    },
-    formatData_DateTime(datetime) {
-      if (datetime && datetime[0]) {
-        return {
-          start: datetime[0],
-          end: datetime[1]
-        }
-      } else {
-        return null
-      }
     }
   }
 }
