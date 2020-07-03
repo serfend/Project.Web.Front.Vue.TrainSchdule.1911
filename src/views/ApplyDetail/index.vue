@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import { detail } from '@/api/apply'
+import { detail } from '@/api/apply/query'
 import { exportUserApplies } from '@/api/common/static'
 import { datedifference, parseTime } from '@/utils'
 import ActionExamine from '../QueryAndAuditApplies/ActionExamine'

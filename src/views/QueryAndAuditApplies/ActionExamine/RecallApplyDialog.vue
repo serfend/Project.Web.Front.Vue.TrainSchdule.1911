@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { postRecallOrder, getRecallOrder } from '@/api/apply'
+import { postRecallOrder, getRecallOrder } from '@/api/apply/recall'
 import AuthCode from '@/components/AuthCode'
 import UserFormItem from '@/components/User/UserFormItem'
 export default {

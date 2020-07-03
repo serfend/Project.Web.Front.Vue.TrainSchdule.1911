@@ -43,7 +43,7 @@
 <script>
 import AuthCode from '@/components/AuthCode'
 import { exportApplyDetail } from '@/api/common/static'
-import { deleteApply, doAction } from '@/api/apply'
+import { deleteApply, doAction } from '@/api/apply/handle'
 export default {
   name: 'ActionUser',
   components: {

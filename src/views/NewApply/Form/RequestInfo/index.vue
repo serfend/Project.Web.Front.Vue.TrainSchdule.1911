@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import { postRequestInfo, getStampReturn } from '@/api/apply'
+import { postRequestInfo, getStampReturn } from '@/api/apply/create'
 import { parseTime } from '@/utils'
 import CardTooltipAlert from '../FormHelper/CardTooltipAlert'
 import VacationDescription from '@/components/Vacation/VacationDescription'

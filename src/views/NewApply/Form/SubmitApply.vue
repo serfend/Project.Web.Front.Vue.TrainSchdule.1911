@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import { submitApply, doAction } from '@/api/apply'
-
+import { doAction } from '@/api/apply/handle'
+import { submitApply } from '@/api/apply/create'
 export default {
   name: 'SubmitApply',
   props: {

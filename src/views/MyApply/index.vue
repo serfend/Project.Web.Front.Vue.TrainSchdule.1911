@@ -54,7 +54,7 @@ import { format } from 'timeago.js'
 import UserFormItem from '@/components/User/UserFormItem'
 import ApplyCard from './components/ApplyCard'
 import ApplyOverview from './components/ApplyOverview'
-import { querySelf } from '@/api/apply'
+import { querySelf } from '@/api/apply/query'
 export default {
   name: 'MyApply',
   components: { UserFormItem, ApplyCard, ApplyOverview },
