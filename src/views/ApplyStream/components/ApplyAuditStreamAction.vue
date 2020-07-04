@@ -48,7 +48,8 @@
                 </el-tooltip>
               </div>
               <el-tooltip v-else>
-                <div slot="content">所有单位都将默认使用此方案</div>不限
+                <div slot="content">所有单位都将默认使用此方案</div>
+                <span>不限</span>
               </el-tooltip>
             </div>
             <el-dropdown v-else-if="scope.row.companies.length>1">
@@ -159,19 +160,15 @@
           />
         </el-form-item>
         <el-form-item label="单位" style="width:400px">
-          <CompanySelector
-            :code.sync="companySelect.code"
-            :placeholder="companySelect.name"
-            @select-change="companySelectChange"
-          />
+          <CompaniesSelector v-model="newNode.companies" />
 
           <el-tag
-            v-for="tag in newNode.companies"
-            :key="tag"
+            v-for="(tag,index) in newNode.companies"
+            :key="index"
             closable
             :disable-transitions="false"
             @close="handleCompaniesSelectClose(tag)"
-          >{{ newNode.companiesName[tag] }}</el-tag>
+          >{{ tag.name }}</el-tag>
         </el-form-item>
         <el-form-item label="长度">
           <el-select v-model="newNode.companyCodeLength" multiple placeholder="单位代码的位数">
@@ -260,7 +257,7 @@ import {
   deleteStreamNode,
   buildFilter
 } from '@/api/applyAuditStream'
-import CompanySelector from '@/components/Company/CompanySelector'
+import CompaniesSelector from '@/components/Company/CompaniesSelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
@@ -272,7 +269,7 @@ export default {
   components: {
     CompanyFormItem,
     DutyFormItem,
-    CompanySelector,
+    CompaniesSelector,
     AuthCode,
     UserFormItem,
     UserSelector
@@ -305,20 +302,11 @@ export default {
       ],
       newNodeDialogShow: false,
       newNode: this.buildnewNode(),
-      companySelect: {},
       userSelect: {}
     }
   },
   methods: {
     format,
-    companySelectChange(val) {
-      this.companySelect.name = val
-      if (this.newNode.companies.indexOf(this.companySelect.code) > -1) {
-        return this.$message.error(`${val}已被选中`)
-      }
-      this.newNode.companies.push(this.companySelect.code)
-      this.newNode.companiesName[this.companySelect.code] = val
-    },
     handleUserSelectChange(val) {
       this.userSelect.realName = val.realName
       if (this.newNode.auditMembers.indexOf(val.id) > -1) {
@@ -328,7 +316,9 @@ export default {
       this.newNode.auditMembersRealName[val.id] = val.realName
     },
     handleCompaniesSelectClose(tag) {
-      this.newNode.companies.splice(this.newNode.companies.indexOf(tag), 1)
+      const companies = this.newNode.companies.map(i => i.code)
+      const code = tag.code
+      this.newNode.companies.splice(companies.indexOf(code), 1)
     },
     handleAuditMembersSelectClosed(tag) {
       this.newNode.auditMembers.splice(
@@ -344,11 +334,6 @@ export default {
       this.newNode.mode = mode
       if (target) {
         Object.assign(this.newNode, target)
-        this.newNode.companiesName = {}
-        this.newNode.companies.forEach(i => {
-          this.newNode.companiesName[i.code] = i.name
-        })
-        this.newNode.companies = this.newNode.companies.map(i => i.code)
 
         this.newNode.dutiesName = {}
         this.newNode.duties.forEach(i => {
@@ -415,7 +400,6 @@ export default {
         dutyIsMajor: 0,
         dutyTags: [],
         companies: [],
-        companiesName: {},
         companyRefer: '',
         companyTags: [],
         companyCodeLength: [],

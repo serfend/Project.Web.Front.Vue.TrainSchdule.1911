@@ -303,12 +303,7 @@ export default {
       return companyChild(this.company.code).then(child => {
         modify(this.setting.company.value.compare, m => {
           m = Object.assign(m, {
-            value: child.list,
-            __setting: {
-              props: {
-                'company-select-names': child.list.map(i => i.name)
-              }
-            }
+            value: child.list
           })
         })
       })

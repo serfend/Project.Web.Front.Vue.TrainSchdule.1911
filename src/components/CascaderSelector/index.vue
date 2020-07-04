@@ -5,7 +5,7 @@
     :props="props"
     :show-all-levels="true"
     :placeholder="placeholder===null?'未选择':placeholder"
-    :style="{width:'100%',color:code?'#00f':'#ccc'}"
+    :style="{width:'100%',color:data&&data.length>0?'#00f':'#ccc'}"
     clearable
     :disabled="disabled"
     @change="handleItemChange"
@@ -15,17 +15,21 @@
 <script>
 export default {
   name: 'CascaderSelector',
+  model: {
+    prop: 'data',
+    event: 'change'
+  },
   props: {
+    data: {
+      type: [Array, Object],
+      default: null
+    },
     disabled: {
       type: Boolean,
       default: false
     },
     placeholder: {
       type: String,
-      default: ''
-    },
-    code: {
-      type: [String, Array],
       default: ''
     },
     multiple: {
@@ -65,41 +69,15 @@ export default {
       }
     }
   },
-  watch: {
-    code: {
-      handler(v) {
-        if (this.staticValue !== v) {
-          this.staticValue = v
-        }
-      },
-      immediate: true
-    }
-  },
   methods: {
-    handleCodeChange(val) {
-      if (this.multiple) {
-        this.$emit('update:code', val)
-      } else {
-        const v = val[val.length - 1]
-        this.$emit('update:code', v)
-      }
-    },
     handleItemChange(val) {
-      this.handleCodeChange(val)
-      if (!this.multiple) {
-        // event of selectChange should delay for a perior due to a bug of metaphysics
-        // only while use none multiple,can emit name
-        setTimeout(() => {
-          let text = this.$refs.elcascader.inputValue
-          let lastIndex = -1
-          if (text) {
-            text = text.replace('*', '')
-            lastIndex = text.lastIndexOf('/')
-            text = text.substr(lastIndex + 1)
-          }
-          this.$emit('select-change', text)
-        }, 50)
-      }
+      const nodes = this.$refs.elcascader.getCheckedNodes()
+      const items = nodes.map(i => ({
+        value: i.value,
+        label: i.label
+      }))
+      const data = this.multiple ? items : items[0]
+      this.$emit('change', data)
     }
   }
 }

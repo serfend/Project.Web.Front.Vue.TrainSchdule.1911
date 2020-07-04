@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CompanySelector :code.sync="nowSelectCompanyCode" placeholder="选择需要检查的单位" />
+    <CompanySelector v-model="company" placeholder="选择单位" />
     <el-collapse
       v-model="nowCollapseSelectUserId"
       accordion
@@ -27,16 +27,16 @@ export default {
   components: { CompanySelector, User },
   data() {
     return {
-      nowSelectCompanyCode: '',
+      company: null,
       usersByCompany: [],
       nowCollapseSelectUserId: ''
     }
   },
   watch: {
-    nowSelectCompanyCode: {
+    company: {
       handler(val) {
         if (val) {
-          getMembers({ code: val, page: 0, pageSize: 999 }).then(data => {
+          getMembers({ code: val.code, page: 0, pageSize: 999 }).then(data => {
             this.usersByCompany = data.list.map(li => {
               li.canLoadAvatar = false
               return li

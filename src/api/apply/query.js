@@ -48,7 +48,7 @@ export function queryList(data, ignoreErr) {
     auditBy: String,
     nowAuditBy: String,
     createFor: String,
-    createCompany: Array:String, // 申请单位
+    createCompany: Array:Company, // 申请单位
     dutiesType: Array:String,
     companyType: Array:String
  * @param {Pages} pages

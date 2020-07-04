@@ -56,7 +56,7 @@
               </div>
               <el-tooltip v-else>
                 <div slot="content">所有单位都将默认使用此方案</div>
-                <el-tag>不限</el-tag>
+                <span>不限</span>
               </el-tooltip>
             </div>
             <el-dropdown v-else-if="scope.row.companies.length>1">
@@ -205,18 +205,14 @@
         </el-form-item>
 
         <el-form-item label="单位">
-          <CompanySelector
-            :code.sync="companySelect.code"
-            :placeholder="companySelect.name"
-            @select-change="companySelectChange"
-          />
+          <CompaniesSelector v-model="newRule.companies" />
           <el-tag
-            v-for="tag in newRule.companies"
-            :key="tag"
+            v-for="(tag,index) in newRule.companies"
+            :key="index"
             closable
             :disable-transitions="false"
             @close="handleCompaniesSelectClose(tag)"
-          >{{ newRule.companiesName[tag] }}</el-tag>
+          >{{ tag.name }}</el-tag>
         </el-form-item>
         <el-form-item label="长度">
           <el-select v-model="newRule.companyCodeLength" multiple placeholder="单位代码的位数">
@@ -287,7 +283,7 @@
 </template>
 
 <script>
-import CompanySelector from '@/components/Company/CompanySelector'
+import CompaniesSelector from '@/components/Company/CompaniesSelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
@@ -307,7 +303,7 @@ export default {
     DutyFormItem,
     UserFormItem,
     AuthCode,
-    CompanySelector,
+    CompaniesSelector,
     UserSelector
   },
   props: {
@@ -333,20 +329,11 @@ export default {
     return {
       newSolutionRuleDialogShow: false,
       newRule: this.buildNewSolutionRule(),
-      companySelect: {},
       userSelect: {}
     }
   },
   methods: {
     format,
-    companySelectChange(val) {
-      this.companySelect.name = val
-      if (this.newRule.companies.indexOf(this.companySelect.code) > -1) {
-        return this.$message.error(`${val}已被选中`)
-      }
-      this.newRule.companies.push(this.companySelect.code)
-      this.newRule.companiesName[this.companySelect.code] = val
-    },
     handleUserSelectChange(val) {
       this.userSelect.realName = val.value
       if (this.newRule.auditMembers.indexOf(val.id) > -1) {
@@ -356,7 +343,9 @@ export default {
       this.newRule.auditMembersRealName[val.id] = val.value
     },
     handleCompaniesSelectClose(tag) {
-      this.newRule.companies.splice(this.newRule.companies.indexOf(tag), 1)
+      const companies = this.newRule.companies.map(i => i.code)
+      const code = tag.code
+      this.newRule.companies.splice(companies.indexOf(code), 1)
     },
     handleAuditMembersSelectClosed(tag) {
       this.newRule.auditMembers.splice(
@@ -394,12 +383,6 @@ export default {
       this.newRule.mode = mode
       if (target) {
         Object.assign(this.newRule, target)
-        this.newRule.companiesName = {}
-        this.newRule.companies.forEach(i => {
-          this.newRule.companiesName[i.code] = i.name
-        })
-        this.newRule.companies = this.newRule.companies.map(i => i.code)
-
         this.newRule.dutiesName = {}
         this.newRule.duties.forEach(i => {
           this.newRule.dutiesName[i.code] = i.name
@@ -458,7 +441,6 @@ export default {
         dutyIsMajor: 0,
         dutyTags: [],
         companies: [],
-        companiesName: {},
         companyRefer: '',
         companyTags: [],
         companyCodeLength: [],

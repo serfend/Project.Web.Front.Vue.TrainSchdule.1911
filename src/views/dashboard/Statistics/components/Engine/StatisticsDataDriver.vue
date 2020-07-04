@@ -111,6 +111,10 @@ export default {
       return new Promise(res => {
         this.showLoading(2, '单位信息')
         const targets = [this.company].concat(this.companies)
+        targets.forEach((v, i) => {
+          if (v.code) targets[i] = v.code
+        })
+        console.log('load targets data', targets)
         this.loadingCompany(targets).then(data => {
           const companyData = data.shift()
           const companiesData = data

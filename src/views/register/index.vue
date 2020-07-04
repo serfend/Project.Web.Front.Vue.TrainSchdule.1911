@@ -77,11 +77,7 @@
             @change="handleCurrentChange"
           />
           <span>选择单位</span>
-          <CompanySelector
-            :code.sync="nowSelectCompanyCode"
-            placeholder="选择需要检查的单位"
-            style="width:40%"
-          />
+          <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width:40%" />
         </div>
 
         <el-table
@@ -236,7 +232,7 @@ export default {
       waitToAuthRegisterUsersLoadId: '',
       nowSelectRealName: '', // 通过姓名选择器选中的人员
       selectIsInvalidAccount: false,
-      nowSelectCompanyCode: ''
+      nowSelectCompany: null
     }
   },
   computed: {
@@ -245,7 +241,7 @@ export default {
     }
   },
   watch: {
-    nowSelectCompanyCode: {
+    nowSelectCompany: {
       handler(val) {
         if (val) {
           this.loadWaitToAuthRegisterUsers()
@@ -327,7 +323,7 @@ export default {
       this.tableLoading = true
       this.submitLoading = true
       getMembers({
-        code: this.nowSelectCompanyCode,
+        code: this.nowSelectCompany.code,
         page: this.MembersQuery.pageIndex,
         pageSize: this.MembersQuery.pageSize
       })
@@ -409,7 +405,7 @@ export default {
           }
           const { inviteBy } = data.application
           this.selectIsInvalidAccount = this.checkUserValid(inviteBy)
-          this.nowSelectCompanyCode = data.company.company.code
+          this.nowSelectCompany = data.company.company
         })
         .finally(() => (this.submitLoading = false))
     },

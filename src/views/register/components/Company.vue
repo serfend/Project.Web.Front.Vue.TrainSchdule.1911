@@ -1,11 +1,7 @@
 <template>
   <div>
     <el-form-item prop="company" label="单位" style="width:400px">
-      <cascader-selector
-        :code.sync="innerForm.company.code"
-        :child-getter-method="companyChild"
-        :placeholder="innerForm.company.name"
-      />
+      <CompanySelector v-model="innerForm.company" :placeholder="innerForm.company.name" />
     </el-form-item>
     <el-form-item prop="duties" label="职务">
       <el-tooltip content="需选用下拉框中的建议" placement="right">
@@ -41,12 +37,12 @@
 </template>
 
 <script>
-import CascaderSelector from '@/components/CascaderSelector'
+import CompanySelector from '@/components/Company/CompanySelector'
 import { companyChild, dutiesQuery, companyTitleQuery } from '@/api/company'
 export default {
   name: 'Company',
   components: {
-    CascaderSelector
+    CompanySelector
   },
   props: {
     form: {

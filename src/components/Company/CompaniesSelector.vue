@@ -1,7 +1,7 @@
 <template>
   <CascaderSelector
     ref="companyInnerSelector"
-    :code.sync="iCompaniesCode"
+    v-model="companySelectItem"
     :child-getter-method="companyChild"
     :multiple="true"
   />
@@ -14,34 +14,29 @@ export default {
   name: 'CompaniesSelector',
   components: { CascaderSelector },
   model: {
-    prop: 'companiesCode',
+    prop: 'companies',
     event: 'change'
   },
   props: {
-    companiesCode: {
-      type: [Array, String],
+    companies: {
+      type: Array,
       default: null
     }
   },
   data: () => ({
-    iCompaniesCode: null
+    companySelectItem: null
   }),
   watch: {
-    // can only return info , for reason that level was shift down when emit out
-    // companiesCode: {
-    //   handler(val) {
-    //     const c = this.companiesCode
-    //     const isString = Object.prototype.toString.call(c) === '[object Array]'
-    //     this.iCompaniesCode = isString ? c : [c]
-    //   },
-    //   deep: true
-    // },
-    iCompaniesCode: {
+    companySelectItem: {
       handler(val) {
-        const codes = val.map(i => i[i.length - 1])
-        this.$emit('change', codes)
-      },
-      deep: true
+        this.$emit(
+          'change',
+          val.map(i => ({
+            code: i.value,
+            name: i.label
+          }))
+        )
+      }
     }
   },
   methods: {

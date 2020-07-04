@@ -46,7 +46,7 @@
         <UserSelector :code.sync="queryForm.createFor" default-info="搜索成员" style="display:inline" />
       </el-form-item>
       <el-form-item v-show="adminQuery" label="来自单位">
-        <CompaniesSelector v-model="queryForm.createCompany" />
+        <CompaniesSelector v-model="queryFormCreateCompany" />
       </el-form-item>
       <el-form-item v-show="adminQuery" label="单位类别">
         <el-input v-model="queryForm.companyType" />
@@ -214,6 +214,7 @@ export default {
       ],
       onLoading: false,
       lastUpdate: new Date(),
+      queryFormCreateCompany: null,
       queryForm: {
         createTime: null,
         stampLeaveTime: null,
@@ -279,6 +280,11 @@ export default {
       },
       immediate: true,
       deep: true
+    },
+    queryFormCreateCompany: {
+      handler(val) {
+        this.queryForm.createCompany = val.map(i => i.code)
+      }
     },
     pages: {
       handler(val) {

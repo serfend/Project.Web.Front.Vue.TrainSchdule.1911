@@ -1,10 +1,9 @@
 <template>
   <CascaderSelector
     ref="companyInnerSelector"
-    :code.sync="companyCode"
+    v-model="companySelectItem"
     :child-getter-method="companyChild"
     :placeholder="companySelectName"
-    @select-change="companySelectChange"
   />
 </template>
 
@@ -29,29 +28,21 @@ export default {
     }
   },
   data: () => ({
-    companyCode: null,
+    companySelectItem: null,
     value: null
   }),
   watch: {
-    companyCode: {
+    companySelectItem: {
       handler(val) {
-        this.$nextTick(() => {
-          const code = val[val.length - 1]
-          this.$emit('update:code', code)
+        this.$emit('change', {
+          code: val.value,
+          name: val.label
         })
       }
     }
   },
   methods: {
-    companyChild,
-    companySelectChange(val) {
-      this.$nextTick(() => {
-        this.$emit('change', {
-          code: this.companyCode,
-          name: val
-        })
-      })
-    }
+    companyChild
   }
 }
 </script>

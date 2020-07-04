@@ -49,14 +49,14 @@ export function getStreamSolutionRule(name) {
  * MembersFilter ctor.
  *
  * @export
- * @param {Array} duties 职务列表
- * @param {Array} dutyTags 职务类型列表
+ * @param {Array:String} duties 职务列表
+ * @param {Array:String} dutyTags 职务类型列表
  * @param {int} dutyIsMajor 是否为主官 0:Both 1:仅非主官 2:仅主官
- * @param {Array} companies 单位
+ * @param {Array:Company} companies 单位
  * @param {String} companyRefer 单位跳转设置：Parent，Self
- * @param {Array} companyTags 单位筛选设置，可以设置为单位的Tag字段
- * @param {Array} companyCodeLength 单位筛选设置，可以设置为单位的Code字段长度
- * @param {Array} auditMembers 精确表示审核人，设置后前面项失效
+ * @param {Array:String} companyTags 单位筛选设置，可以设置为单位的Tag字段
+ * @param {Array:int} companyCodeLength 单位筛选设置，可以设置为单位的Code字段长度
+ * @param {Array:String} auditMembers 精确表示审核人，设置后前面项失效
  * @param {int} auditMembersCount 需要审核人数量 0表示全部
  * @returns
  */
@@ -65,7 +65,7 @@ export function buildFilter(data) {
     duties: data.duties,
     dutyTags: data.dutyTags,
     dutyIsMajor: data.dutyIsMajor,
-    companies: data.companies,
+    companies: data.companies.map(i => i.code),
     companyRefer: data.companyRefer,
     companyTags: data.companyTags,
     companyCodeLength: data.companyCodeLength,
@@ -86,7 +86,8 @@ export function buildFilter(data) {
  */
 export function addStreamNode(id, name, description, filter, auth) {
   return request.post('ApplyAuditStream/StreamNode', {
-    name, description,
+    name,
+    description,
     filter,
     auth
   })
@@ -106,7 +107,8 @@ export function addStreamNode(id, name, description, filter, auth) {
 export function editStreamNode(id, name, description, filter, auth) {
   return request.put('ApplyAuditStream/StreamNode', {
     id,
-    name, description,
+    name,
+    description,
     filter,
     auth
   })
@@ -124,7 +126,10 @@ export function editStreamNode(id, name, description, filter, auth) {
  */
 export function addStreamSolution(id, name, description, nodes, auth) {
   return request.post('ApplyAuditStream/StreamSolution', {
-    name, description, nodes, auth
+    name,
+    description,
+    nodes,
+    auth
   })
 }
 
@@ -141,7 +146,11 @@ export function addStreamSolution(id, name, description, nodes, auth) {
  */
 export function editStreamSolution(id, name, description, nodes, auth) {
   return request.put('ApplyAuditStream/StreamSolution', {
-    id, name, description, nodes, auth
+    id,
+    name,
+    description,
+    nodes,
+    auth
   })
 }
 
@@ -160,7 +169,13 @@ export function editStreamSolution(id, name, description, nodes, auth) {
  */
 export function addStreamSolutionRule(id, name, description, solutionName, priority, enable, filter, auth) {
   return request.post('ApplyAuditStream/StreamSolutionRule', {
-    name, description, solutionName, priority, enable, filter, auth
+    name,
+    description,
+    solutionName,
+    priority,
+    enable,
+    filter,
+    auth
   })
 }
 
@@ -180,7 +195,14 @@ export function addStreamSolutionRule(id, name, description, solutionName, prior
  */
 export function editStreamSolutionRule(id, name, description, solutionName, priority, enable, filter, auth) {
   return request.put('ApplyAuditStream/StreamSolutionRule', {
-    id, name, description, solutionName, priority, enable, filter, auth
+    id,
+    name,
+    description,
+    solutionName,
+    priority,
+    enable,
+    filter,
+    auth
   })
 }
 
@@ -199,7 +221,9 @@ export function queryStreamSolutionRule() {
 export function deleteStreamNode(name, authByUserid, code) {
   return request.delete('ApplyAuditStream/StreamNode', {
     params: {
-      name, authByUserid, code
+      name,
+      authByUserid,
+      code
     }
   })
 }
@@ -207,7 +231,9 @@ export function deleteStreamNode(name, authByUserid, code) {
 export function deleteStreamSolution(name, authByUserid, code) {
   return request.delete('ApplyAuditStream/StreamSolution', {
     params: {
-      name, authByUserid, code
+      name,
+      authByUserid,
+      code
     }
   })
 }
@@ -215,7 +241,9 @@ export function deleteStreamSolution(name, authByUserid, code) {
 export function deleteStreamSolutionRule(name, authByUserid, code) {
   return request.delete('ApplyAuditStream/StreamSolutionRule', {
     params: {
-      name, authByUserid, code
+      name,
+      authByUserid,
+      code
     }
   })
 }
