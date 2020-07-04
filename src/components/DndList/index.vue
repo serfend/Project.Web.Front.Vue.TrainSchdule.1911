@@ -72,7 +72,7 @@ export default {
       return this.list2.every(k => v.id !== k.id)
     },
     deleteEle(ele) {
-      for (const item of this.list1) {
+      for (var item of this.list1) {
         if (item.id === ele.id) {
           const index = this.list1.indexOf(item)
           this.list1.splice(index, 1)
@@ -84,7 +84,7 @@ export default {
       }
     },
     pushEle(ele) {
-      for (const item of this.list2) {
+      for (var item of this.list2) {
         if (item.id === ele.id) {
           const index = this.list2.indexOf(item)
           this.list2.splice(index, 1)
