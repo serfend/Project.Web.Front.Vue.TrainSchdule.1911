@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '@/utils/request'
 /**
  * 获取单位的子单位
  *
@@ -11,11 +11,23 @@ import request from '../utils/request'
  *      {string} list[i].code:""
  */
 export function companyChild(id) {
-  return request({
-    url: '/company/companyChild',
-    method: 'get',
+  return request.get('company/companyChild', {
     params: {
       id: id
+    }
+  })
+}
+
+/**
+ * 获取单位信息
+ *
+ * @export
+ * @param {*} id
+ */
+export function companyDetail(id) {
+  return request.get('company/detail', {
+    params: {
+      id
     }
   })
 }
@@ -55,11 +67,15 @@ export function companiesManagers(ids) {
  * @param {*} param0
  */
 export function getMembers({
-  code, page, pageSize
+  code,
+  page,
+  pageSize
 }) {
   return request.get('/company/members', {
     params: {
-      code, page, pageSize
+      code,
+      page,
+      pageSize
     }
   })
 }
@@ -106,4 +122,3 @@ export function companyTitleQuery(name) {
     }
   })
 }
-

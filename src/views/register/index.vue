@@ -3,7 +3,7 @@
     <div v-show="waitToAuthRegisterUsersLoadId!==''">
       <el-steps :active="nowStep" simple>
         <el-step
-          v-for="opt in stepOptions.filter(i=>!i.remove)"
+          v-for="opt in stepOptions.filter(i=>!i.removed)"
           :key="opt.index"
           :status="nowStep==opt.index?'success':''"
           :title="opt.name"
@@ -13,7 +13,7 @@
       <el-form label-position="right" label-width="120px">
         <el-collapse v-model="nowStep" accordion>
           <el-collapse-item
-            v-for="opt in stepOptions.filter(i=>!i.remove)"
+            v-for="opt in stepOptions.filter(i=>!i.removed)"
             :key="opt.index"
             :name="opt.index"
           >
@@ -148,7 +148,7 @@ import LangSelect from '@/components/LangSelect'
 import Base from './components/Base'
 import Application from './components/Application'
 import Company from './components/Company'
-// import Diy from './components/Diy'
+import Diy from './components/Diy'
 import Social from './components/Social'
 import Auth from '@/components/AuthCode'
 import User from '@/components/User'
@@ -172,7 +172,7 @@ export default {
     Application,
     Social,
     Company,
-    // Diy,
+    Diy,
     Auth,
     User,
     VacationDescription,
@@ -210,14 +210,14 @@ export default {
           icon: 'el-icon-s-home',
           component: 'Social'
         },
-        // {
-        //   name: '其他',
-        //   index: 5,
-        //   icon: 'el-icon-s-grid',
-        //   component: 'Diy'
-        // },
         {
-          name: '授权',
+          name: '其他(可不填)',
+          index: 5,
+          icon: 'el-icon-s-grid',
+          component: 'Diy'
+        },
+        {
+          name: '授权(可不填)',
           index: 6,
           icon: 'el-icon-s-check',
           component: 'Auth'
@@ -283,7 +283,7 @@ export default {
       this.refreshFormType()
     },
     refreshFormType() {
-      this.stepOptions[1].remove = !this.isToRegister
+      this.stepOptions[1].removed = !this.isToRegister
       if (this.isToRegister) {
         this.waitToAuthRegisterUsersLoadId = '0'
       }

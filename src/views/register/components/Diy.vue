@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form-item prop="about" label="个性签名">
+    <el-form-item label="个性签名">
       <el-input
         v-model="innerForm.about"
         :style="{ width: '400px' }"
@@ -9,6 +9,9 @@
         maxlength="50"
         show-word-limit
       />
+    </el-form-item>
+    <el-form-item label="头像">
+      <span>未开放设置</span>
     </el-form-item>
   </div>
 </template>

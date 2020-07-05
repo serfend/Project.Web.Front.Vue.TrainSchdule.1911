@@ -328,6 +328,7 @@ export default {
               rej(e)
             })
         } else {
+          // get current company entity
           const qCompany =
             companyCode.substr(0, companyCode.length - 1) || 'root'
           companyChild(qCompany).then(data => {

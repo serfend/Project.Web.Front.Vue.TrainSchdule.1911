@@ -4,7 +4,7 @@
     v-model="staticValue"
     :props="props"
     :show-all-levels="true"
-    :placeholder="placeholder===null?'未选择':placeholder"
+    :placeholder="placeholder||'未选择'"
     :style="{width:'100%',color:data&&data.length>0?'#00f':'#ccc'}"
     clearable
     :disabled="disabled"
@@ -30,7 +30,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default: ''
+      default: null
     },
     multiple: {
       type: Boolean,

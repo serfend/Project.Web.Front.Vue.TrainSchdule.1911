@@ -3,13 +3,14 @@
     ref="companyInnerSelector"
     v-model="companySelectItem"
     :child-getter-method="companyChild"
-    :placeholder="companySelectName"
+    :placeholder="placeholder"
   />
 </template>
 
 <script>
 import CascaderSelector from '@/components/CascaderSelector'
-import { companyChild } from '@/api/company'
+import { companyChild, companyDetail } from '@/api/company'
+import { debounce } from '@/utils'
 export default {
   name: 'CompanySelector',
   components: { CascaderSelector },
@@ -29,8 +30,20 @@ export default {
   },
   data: () => ({
     companySelectItem: null,
-    value: null
+    value: null,
+    showPlaceholder: null
   }),
+  computed: {
+    requireCheckName() {
+      return debounce(() => {
+        this.checkName()
+      }, 500)
+    },
+    placeholder() {
+      const cn = this.companySelectName
+      return cn || this.showPlaceholder
+    }
+  },
   watch: {
     companySelectItem: {
       handler(val) {
@@ -39,10 +52,31 @@ export default {
           name: val.label
         })
       }
+    },
+    data: {
+      handler() {
+        this.requireCheckName()
+      },
+      deep: true
+    },
+    placeholder: {
+      handler() {
+        this.requireCheckName()
+      },
+      immediate: true
     }
   },
   methods: {
-    companyChild
+    companyChild,
+    companyDetail,
+    checkName() {
+      const data = this.data
+      const val = this.placeholder
+      if (val || !data) return
+      companyDetail(data.code).then(d => {
+        this.showPlaceholder = data.name
+      })
+    }
   }
 }
 </script>
