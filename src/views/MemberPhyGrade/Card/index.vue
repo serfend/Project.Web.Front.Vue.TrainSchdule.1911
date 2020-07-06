@@ -245,6 +245,7 @@ export default {
     },
     datedifference,
     caculateGrade() {
+      console.log('caculate grade')
       const grades = this.form.subjects.map(i =>
         buildGradeSubject(i.name, i.rawValue)
       )

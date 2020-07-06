@@ -28,6 +28,9 @@ var dict = {
           },
           standard: {
             title: 'standard'
+          },
+          scorepair: {
+            title: 'judge score'
           }
         },
         detail: {
@@ -84,19 +87,6 @@ var dict = {
       auditBy: 'approve by',
       createBy: 'create by',
       from: 'from'
-    },
-    grade: {
-      phy: {
-        standard: {
-          title: 'standard'
-        },
-        subject: {
-          title: 'subject'
-        },
-        about: {
-          title: 'about'
-        }
-      }
     },
     date: {
       title: 'date'

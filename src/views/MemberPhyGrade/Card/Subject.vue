@@ -1,19 +1,19 @@
-<template>
-  <div>
-    <el-input v-model="rawScore" placeholder="输入成绩" />
-    <el-slider
-      v-if="data"
-      v-model="nowIndex"
-      :min="0"
-      :max="scorePair.length-1"
-      :format-tooltip="format"
-    />
-  </div>
-</template>
 
+<template>
+  <ScorePair
+    v-model="rawScore"
+    :score-pair.sync="currentStandard.gradePairs"
+    :score-pair-arr.sync="scorePair"
+    :expression-when-full-grade="currentStandard.expressionWhenFullGrade"
+    @change="handleScoreChange"
+  />
+</template>
 <script>
+import ScorePair from '../components/ScorePair'
+import { debounce } from '@/utils'
 export default {
   name: 'SinglePhySubject',
+  components: { ScorePair },
   model: {
     prop: 'data',
     event: 'change'
@@ -33,16 +33,14 @@ export default {
     }
   },
   data: () => ({
-    nowIndex: 0
+    scorePair: null,
+    rawScore: ''
   }),
   computed: {
-    rawScore: {
-      get() {
-        return this.rawValue
-      },
-      set(val) {
-        this.$emit('update:rawValue', val)
-      }
+    requireUpdateRawValue() {
+      return debounce(() => {
+        this.updateRawValue()
+      }, 500)
     },
     currentStandard() {
       const age = this.age
@@ -54,16 +52,6 @@ export default {
       }
       return null
     },
-    scorePair() {
-      const s = this.currentStandard
-      if (!s) return null
-      const list = s.gradePairs
-        .split('|')
-        .map(i => i.split(':'))
-        .sort((a, b) => a[1] - b[1])
-      list.push(['满分后', this.currentStandard.expressionWhenFullGrade])
-      return list
-    },
     standardRawValue() {
       const c = this.currentStandard
       if (!c) return null
@@ -73,30 +61,42 @@ export default {
       const r = s.filter(i => i[1] && i[1] === base)
       if (r.length === 0) return s[0][0]
       return r[0][0]
+    },
+    requireUpdateBase() {
+      return debounce(() => {
+        this.updateBase()
+      }, 1000)
     }
   },
   watch: {
     data: {
       handler(val) {
-        this.rawScore = this.standardRawValue
+        this.requireUpdateBase()
       },
       immediate: true
     },
     rawValue: {
       handler(val) {
-        this.$emit('update:data', Object.assign(this.data, { rawValue: val }))
-        this.$nextTick(() => {
-          this.$emit('gradechange', val)
-        })
+        this.requireUpdateRawValue()
       },
       immediate: true
     }
   },
   methods: {
-    format(val) {
-      const item = this.scorePair[val]
-      if (!item) return `无${val}的标准`
-      return `标准:${item[0]} 得分:${item[1]}`
+    updateRawValue(val) {
+      val = val === undefined ? this.rawValue : val
+      this.rawScore = val
+      this.$emit('update:data', Object.assign(this.data, { rawValue: val }))
+      this.$nextTick(() => {
+        this.$emit('gradechange', val)
+      })
+    },
+    updateBase() {
+      this.$emit('update:rawValue', this.standardRawValue)
+    },
+    handleScoreChange(val) {
+      this.$emit('update:rawValue', val)
+      this.updateRawValue(val)
     }
   }
 }

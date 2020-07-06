@@ -1,14 +1,14 @@
 <template>
   <el-card style="margin:0 2% 0 2%">
     <el-tabs v-model="activeName">
-      <el-tab-pane :label="$t('form.grade.phy.about.title')" name="about">
+      <el-tab-pane :label="$t('default.app.phyGrade.rules.about.title')" name="about">
         <About />
       </el-tab-pane>
-      <el-tab-pane :label="$t('form.grade.phy.subject.title')" name="subject">
+      <el-tab-pane :label="$t('default.app.phyGrade.rules.subject.title')" name="subject">
         <Subject :subject.sync="subject" @standardUpdate="standardUpdate" />
       </el-tab-pane>
       <el-tab-pane
-        :label="$t('form.grade.phy.standard.title')"
+        :label="$t('default.app.phyGrade.rules.standard.title')"
         name="standard"
         :disabled="!subject"
       >

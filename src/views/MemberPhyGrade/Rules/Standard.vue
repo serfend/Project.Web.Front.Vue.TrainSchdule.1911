@@ -34,7 +34,15 @@
       </el-table-column>
       <el-table-column label="评判分数" width="50rem">
         <template slot-scope="scope">
-          <el-link @click="checkStandard(scope.row)">查看</el-link>
+          <el-popover trigger="click">
+            <ScorePair
+              :score-pair.sync="scope.row.gradePairs"
+              :expression-when-full-grade.sync="scope.row.expressionWhenFullGrade"
+              :show-input="false"
+              :show-editor="true"
+            />
+            <el-link slot="reference">查看</el-link>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="200rem">
@@ -48,10 +56,11 @@
 </template>
 
 <script>
+import ScorePair from '../components/ScorePair'
 import GenderBtn from '@/components/User/GenderBtn'
 export default {
   name: 'Standard',
-  components: { GenderBtn },
+  components: { GenderBtn, ScorePair },
   props: {
     subject: {
       type: Object,
@@ -66,10 +75,12 @@ export default {
     subject(value) {
       if (!value) return
       this.iSubject = JSON.parse(JSON.stringify(value))
-      this.iSubject.standards = this.iSubject.standards.map(i => {
-        i.ageRange = [i.minAge, i.maxAge]
-        return { ...i }
-      })
+      this.iSubject.standards = this.iSubject.standards
+        .sort((a, b) => a.minAge - b.minAge)
+        .map(i => {
+          i.ageRange = [i.minAge, i.maxAge]
+          return { ...i }
+        })
     }
   },
   methods: {

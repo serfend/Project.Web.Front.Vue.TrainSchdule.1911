@@ -28,6 +28,9 @@ var dict = {
           },
           standard: {
             title: '标准'
+          },
+          scorepair: {
+            title: '评判分数'
           }
         },
         detail: {
@@ -84,19 +87,6 @@ var dict = {
       auditBy: '审核人',
       createBy: '创建人',
       from: '来源人'
-    },
-    grade: {
-      phy: {
-        standard: {
-          title: '标准'
-        },
-        subject: {
-          title: '科目'
-        },
-        about: {
-          title: '关于'
-        }
-      }
     },
     date: {
       title: '日期'
