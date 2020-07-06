@@ -24,3 +24,28 @@ export function getRecallOrder(id) {
     }
   })
 }
+
+/**
+ *
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function postExecuteStatus(data) {
+  return request.post('/apply/executeStatus', data)
+}
+/**
+ * 获取确认休假信息
+ *
+ * @export
+ * @param {*} id
+ * @returns
+ */
+export function getExecuteStatus(id) {
+  return request.get('/apply/executeStatus', {
+    params: {
+      id
+    }
+  })
+}

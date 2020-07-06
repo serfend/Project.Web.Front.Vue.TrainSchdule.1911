@@ -101,15 +101,13 @@
                 style="margin:0.2rem"
               />
             </el-form-item>
-            <el-form-item
-              label="休假目的地"
-              prop="vacationPlace"
-              :rules="[{required:true,trigger:'blur'}]"
-            >
-              <cascader-selector
-                :code.sync="formApply.vacationPlace"
+            <el-form-item label="休假目的地" :rules="[{required:true,trigger:'blur'}]">
+              <CascaderSelector
+                v-model="formApply.vacationPlace"
                 :child-getter-method="locationChildren"
-                :placeholder="vacationPlaceDefault&&vacationPlaceDefault.code==formApply.vacationPlace?vacationPlaceDefault.name:''"
+                :value-name="'code'"
+                :label-name="'name'"
+                :placeholder="vacationPlaceDefault&&vacationPlaceDefault.code==formApply.vacationPlace.code?vacationPlaceDefault.name:''"
                 style="width:30rem"
               />
             </el-form-item>
@@ -282,8 +280,8 @@ export default {
         const checkDic = social.map(i => i.address)
         const target = checkDic.find(i => i && i.code !== self.code)
         if (target) {
-          this.formApply.vacationPlace = target.code
           const likely = Object.assign({}, target)
+          this.formApply.vacationPlace = likely
           likely.name = `${likely.name}(已为您默认填写可能休假的地点)`
           this.vacationPlaceDefault = likely
         }
@@ -313,7 +311,7 @@ export default {
         vacationLength: 0,
         OnTripLength: 0,
         vacationType: '正休',
-        vacationPlace: '0',
+        vacationPlace: null,
         vacationPlaceName: '',
         reason: '',
         ByTransportation: '0',
@@ -321,11 +319,19 @@ export default {
       }
     },
     checkParamValid(params) {
+      console.log(params)
       const id = !params.id
-      const place = !params.vacationPlace || params.vacationPlace.length < 6
+      const place =
+        !params.vacationPlace ||
+        !params.vacationPlace.code ||
+        params.vacationPlace.code.replace(/(0+)$/g, '').length < 6
       const stamp =
         !params.StampLeave || new Date(params.StampLeave) < new Date('2000-1-1')
-      return !(id || place || stamp)
+      const result = []
+      if (id) result.push('基础信息未成功提交')
+      if (place) result.push('休假地点须精确到区县')
+      if (stamp) result.push('离队时间有误')
+      return result
     },
     /**
      * 提交请求信息
@@ -337,10 +343,14 @@ export default {
       if (caculaingDate.length <= 0) return
       const infoParam = Object.assign({ id: this.userid }, this.formApply)
       infoParam.vacationAdditionals = this.filtedBenefitList
-      if (!this.checkParamValid(infoParam)) {
+      const items = this.checkParamValid(infoParam)
+      if (items.length > 0) {
         this.anyChanged = false
+        console.log(items)
+        this.$message.error(items.join(' '))
         return
       }
+      infoParam.vacationPlace = infoParam.vacationPlace.code
       this.onLoading = true
 
       postRequestInfo(infoParam)

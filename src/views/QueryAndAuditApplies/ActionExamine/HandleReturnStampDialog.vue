@@ -1,14 +1,14 @@
 <template>
-  <el-dialog :visible.sync="innerShow" title="召回">
+  <el-dialog :visible.sync="innerShow" :title="`${displayName}休假`">
     <el-card v-loading="loading">
       <el-form ref="auditForm" label-width="6rem">
-        <el-form-item label="被召回人">
+        <el-form-item :label="`被${displayName}人`">
           <UserFormItem :userid="row.userBase.id" />
         </el-form-item>
-        <el-form-item v-show="isOnlyToShowRecallMsg" label="召回人">
-          <UserFormItem :userid="auditForm.authByUserId" />
+        <el-form-item :label="`${displayName}人`">
+          <UserSelector :code.sync="auditForm.handleBy" />
         </el-form-item>
-        <el-form-item v-show="isOnlyToShowRecallMsg" label="召回创建">
+        <el-form-item v-show="onlyView" :label="`${displayName}创建`">
           <el-date-picker
             v-model="auditForm.recallData.create"
             format="yyyy-MM-dd"
@@ -26,7 +26,7 @@
             style="width:100%"
           />
         </el-form-item>
-        <el-form-item label="召回截止">
+        <el-form-item :label="`${displayName}后时间`">
           <el-date-picker
             v-model="auditForm.stampReturn"
             format="yyyy-MM-dd"
@@ -41,28 +41,28 @@
       </el-form>
     </el-card>
     <span slot="footer">
-      <el-button-group v-if="!isOnlyToShowRecallMsg">
+      <el-button-group v-if="!onlyView">
         <el-button type="info" @click="$emit('update:show',false)">取 消</el-button>
-        <el-button type="warning" @click="SubmitRecall">召 回</el-button>
+        <el-button type="warning" @click="SubmitRecall">确 定</el-button>
       </el-button-group>
-      <el-button v-else @click="$emit('update:isOnlyToShowRecallMsg',false)">确 定</el-button>
+      <el-button v-else @click="$emit('update:onlyView',false)">取 消</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-import { postRecallOrder, getRecallOrder } from '@/api/apply/recall'
 import AuthCode from '@/components/AuthCode'
 import UserFormItem from '@/components/User/UserFormItem'
+import UserSelector from '@/components/User/UserSelector'
 export default {
-  name: 'RecallApplyDialog',
-  components: { AuthCode, UserFormItem },
+  name: 'HandleReturnStampDialog',
+  components: { AuthCode, UserFormItem, UserSelector },
   props: {
     show: {
       type: Boolean,
       default: false
     },
-    isOnlyToShowRecallMsg: {
+    onlyView: {
       type: Boolean,
       default: false
     },
@@ -71,21 +71,48 @@ export default {
       default() {
         return {}
       }
+    },
+    defaultStampReturn: {
+      type: [String, Date],
+      default: ''
+    },
+    defaultReason: {
+      type: String,
+      default: ''
+    },
+    displayName: {
+      type: String,
+      required: true
+    },
+    dataGetter: {
+      type: Function,
+      required: true
+    },
+    dataSetter: {
+      type: Function,
+      required: true
+    },
+    handleId: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
       loading: false,
       auditForm: {
-        auth: {},
-        recallData: {}
+        auth: {
+          authByUserId: null,
+          code: null
+        },
+        recallData: {},
+        stampReturn: null,
+        remark: null,
+        handleBy: null
       }
     }
   },
   computed: {
-    myUserid() {
-      return this.$store.state.user.userid
-    },
     innerShow: {
       get() {
         return this.show
@@ -96,10 +123,22 @@ export default {
     }
   },
   watch: {
+    defaultStampReturn: {
+      handler(val) {
+        this.auditForm.stampReturn = val
+      },
+      immediate: true
+    },
+    defaultReason: {
+      handler(val) {
+        this.auditForm.remark = val
+      },
+      immediate: true
+    },
     show: {
       handler(val) {
         if (val) {
-          if (this.isOnlyToShowRecallMsg) {
+          if (this.onlyView) {
             this.showRecallMsg()
           } else {
             this.recallApply()
@@ -115,13 +154,14 @@ export default {
         apply: this.auditForm.applyId,
         reason: this.auditForm.remark,
         returnStamp: this.auditForm.stampReturn,
-        recallBy: this.myUserid
+        handleBy: this.auditForm.handleBy
       }
-      postRecallOrder({
+      const fn = this.dataSetter
+      fn({
         data: model,
         Auth: this.auditForm.auth
       }).then(result => {
-        this.$notify.success('召回操作已提交')
+        this.$notify.success(`${this.displayName}操作已提交`)
         this.innerShow = false
         this.$emit('updated')
       })
@@ -130,6 +170,9 @@ export default {
       const row = this.row
       const sr = row.request.stampReturn
       this.auditForm.applyId = row.id
+      setTimeout(() => {
+        this.auditForm.handleBy = this.auditForm.auth.authByUserId
+      }, 2000)
       this.auditForm.recallData = {
         rawStampReturn: sr
       }
@@ -139,16 +182,16 @@ export default {
       const auditForm = this.auditForm
       auditForm.recallData.rawStampReturn = row.request.stampReturn
       this.loading = true
-      getRecallOrder(row.recallId)
+      const fn = this.dataGetter
+      fn(this.handleId)
         .then(res => {
-          const { create, returnStamp, reason, recallBy } = res
-          const { realName, id } = recallBy
+          const { create, returnStamp, reason, handleBy } = res
+          const { realName, id } = handleBy
           auditForm.recallData.create = create
           auditForm.stampReturn = returnStamp
           auditForm.remark = reason
-          auditForm.authByUserName = realName
-          auditForm.authByUserId = id
-          this.$notify.success(`${auditForm.authByUserName}召回的人员`)
+          auditForm.handleBy = id
+          this.$notify.success(`${realName}${this.displayName}的人员`)
         })
         .finally(() => {
           this.loading = false
