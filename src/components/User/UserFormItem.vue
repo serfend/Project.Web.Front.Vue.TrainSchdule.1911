@@ -59,7 +59,6 @@ export default {
     userid: {
       handler(val) {
         if (val) {
-          console.log('user-id', val)
           this.loadUser(val)
         }
       },

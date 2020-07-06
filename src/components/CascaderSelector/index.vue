@@ -32,6 +32,14 @@ export default {
       type: String,
       default: null
     },
+    valueName: {
+      type: String,
+      default: 'value'
+    },
+    labelName: {
+      type: String,
+      default: 'label'
+    },
     multiple: {
       type: Boolean,
       default: false
@@ -72,10 +80,12 @@ export default {
   methods: {
     handleItemChange(val) {
       const nodes = this.$refs.elcascader.getCheckedNodes()
-      const items = nodes.map(i => ({
-        value: i.value,
-        label: i.label
-      }))
+      const items = nodes.map(i => {
+        const item = {}
+        item[this.valueName] = i.value
+        item[this.labelName] = i.label
+        return item
+      })
       const data = this.multiple ? items : items[0]
       this.$emit('change', data)
     }

@@ -19,7 +19,9 @@
 </template>
 
 <script>
+import { getUserBase } from '@/api/user/userinfo'
 import FindUserByRealName from '@/components/User/FindUserByRealName'
+import { debounce } from '../../utils'
 export default {
   name: 'UserSelector',
   components: { FindUserByRealName },
@@ -44,6 +46,11 @@ export default {
     avatar: null
   }),
   computed: {
+    requireLoadUserName() {
+      return debounce(() => {
+        this.loadUserName()
+      }, 1000)
+    },
     nowUserCode: {
       get() {
         return this.code
@@ -57,6 +64,11 @@ export default {
     avatar: {
       handler(val) {
         this.$emit('update:avatar', val)
+      }
+    },
+    nowUserCode: {
+      handler(val) {
+        this.requireLoadUserName()
       }
     }
   },
@@ -72,6 +84,14 @@ export default {
       }
       this.nowUserCode = u.id
       this.$emit('change', u)
+    },
+    loadUserName() {
+      if (this.userRealName || !this.nowUserCode) return
+      getUserBase(this.nowUserCode).then(data => {
+        this.$nextTick(() => {
+          this.userRealName = data.base.realName
+        })
+      })
     }
   }
 }

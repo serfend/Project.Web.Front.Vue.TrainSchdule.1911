@@ -17,9 +17,11 @@
         </el-col>
         <el-col :lg="8" :md="16" :sm="12" :xs="24">
           <el-tooltip content="行政区划,填到区/县一级">
-            <cascader-selector
+            <CascaderSelector
+              v-model="innerForm.address"
+              :value-name="'code'"
+              :label-name="'name'"
               :placeholder="innerForm.address.name"
-              :code.sync="innerForm.address.code"
               :child-getter-method="locationChildren"
             />
           </el-tooltip>
