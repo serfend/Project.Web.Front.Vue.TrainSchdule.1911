@@ -46,7 +46,7 @@
         <UserSelector :code.sync="queryForm.createFor" default-info="搜索成员" style="display:inline" />
       </el-form-item>
       <el-form-item v-show="adminQuery" label="来自单位">
-        <CompaniesSelector v-model="queryFormCreateCompany" />
+        <CompaniesSelector v-model="queryForm.CreateCompanyItem" />
       </el-form-item>
       <el-form-item v-show="adminQuery" label="单位类别">
         <el-input v-model="queryForm.companyType" />
@@ -214,7 +214,7 @@ export default {
       ],
       onLoading: false,
       lastUpdate: new Date(),
-      queryFormCreateCompany: null,
+      onFormModifying: false,
       queryForm: {
         createTime: null,
         stampLeaveTime: null,
@@ -224,6 +224,7 @@ export default {
         auditBy: null,
         nowAuditBy: null,
         createFor: null,
+        CreateCompanyItem: null,
         createCompany: [], // 申请单位
         dutiesType: null,
         companyType: null,
@@ -275,16 +276,21 @@ export default {
     },
     queryForm: {
       handler(val) {
-        this.setFormRecord()
-        this.searchData()
+        if (this.onFormModifying) return
+        this.onFormModifying = true
+        this.$nextTick(() => {
+          const item = this.queryForm.CreateCompanyItem || []
+          const codes = item.map(i => i.code)
+          this.queryForm.createCompany = codes
+          setTimeout(() => {
+            this.onFormModifying = false
+          }, 500)
+          this.setFormRecord()
+          this.searchData()
+        })
       },
       immediate: true,
       deep: true
-    },
-    queryFormCreateCompany: {
-      handler(val) {
-        this.queryForm.createCompany = val.map(i => i.code)
-      }
     },
     pages: {
       handler(val) {

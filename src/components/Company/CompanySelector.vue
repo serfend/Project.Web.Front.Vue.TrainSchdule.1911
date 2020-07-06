@@ -3,13 +3,13 @@
     ref="companyInnerSelector"
     v-model="companySelectItem"
     :child-getter-method="companyChild"
-    :placeholder="placeholder"
+    :placeholder="showInfo.name||placeholder"
   />
 </template>
 
 <script>
 import CascaderSelector from '@/components/CascaderSelector'
-import { companyChild, companyDetail } from '@/api/company'
+import { companyChild } from '@/api/company'
 import { debounce } from '@/utils'
 export default {
   name: 'CompanySelector',
@@ -19,19 +19,19 @@ export default {
     event: 'change'
   },
   props: {
-    companySelectName: {
-      type: String,
-      default: null
-    },
     data: {
       type: Object,
+      default: null
+    },
+    placeholder: {
+      type: String,
       default: null
     }
   },
   data: () => ({
     companySelectItem: null,
     value: null,
-    showPlaceholder: null
+    showPlaceholder: []
   }),
   computed: {
     requireCheckName() {
@@ -39,8 +39,8 @@ export default {
         this.checkName()
       }, 500)
     },
-    placeholder() {
-      const cn = this.companySelectName
+    showInfo() {
+      const cn = this.data
       return cn || this.showPlaceholder
     }
   },
@@ -52,30 +52,18 @@ export default {
           name: val.label
         })
       }
-    },
-    data: {
-      handler() {
-        this.requireCheckName()
-      },
-      deep: true
-    },
-    placeholder: {
-      handler() {
-        this.requireCheckName()
-      },
-      immediate: true
     }
   },
   methods: {
     companyChild,
-    companyDetail,
     checkName() {
       const data = this.data
       const val = this.placeholder
       if (val || !data) return
-      companyDetail(data.code).then(d => {
-        this.showPlaceholder = data.name
-      })
+      // already implement name display , remove this
+      // companyDetail(data.code).then(d => {
+      //   this.showPlaceholder = data.name
+      // })
     }
   }
 }

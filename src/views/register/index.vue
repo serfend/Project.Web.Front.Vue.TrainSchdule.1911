@@ -363,18 +363,14 @@ export default {
       })
     },
     loadUserList(list) {
-      var result = list.map(item => {
-        var obj = {
+      const result = list.map(item => {
+        const obj = {
           userHasShow: false,
-          id: item.id,
-          realName: item.realName,
-          dutiesName: item.dutiesName,
-          companyName: item.companyName,
           avatar: '',
           vacation: {},
           accountAuthStatus: this.checkUserValid(item.inviteBy)
         }
-        return obj
+        return Object.assign(item, obj)
       })
       return result
     },
