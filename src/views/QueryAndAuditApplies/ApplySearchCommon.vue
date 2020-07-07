@@ -321,11 +321,7 @@ export default {
       }
     },
     exportAppliesNowFilter() {
-      this.onLoading = true
       this.$emit('exportApplies')
-      setTimeout(() => {
-        this.onLoading = false
-      }, 5000)
     },
     clearForm() {
       this.$refs.queryForm.resetFields()

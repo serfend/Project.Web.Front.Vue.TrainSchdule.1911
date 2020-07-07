@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
     <ApplySearchCommon
       ref="queryAppliesForm"
       :loading.sync="appliesListIsLoading"
@@ -37,6 +37,7 @@ export default {
   components: { ApplySearchCommon, ApplicationList, ActionExamine, ActionUser },
   data() {
     return {
+      loading: false,
       appliesList: [],
       appliesListIsLoading: false,
       pages: {
@@ -60,10 +61,13 @@ export default {
   },
   methods: {
     exportApplies() {
+      this.loading = true
       exportMultiApplies(
         '休假人员统计表.xlsx',
         this.appliesList.map(i => i.id)
-      )
+      ).finally(() => {
+        this.loading = false
+      })
     },
     detailUrl(id) {
       var t = `/#/application/applydetail?id=${id}`

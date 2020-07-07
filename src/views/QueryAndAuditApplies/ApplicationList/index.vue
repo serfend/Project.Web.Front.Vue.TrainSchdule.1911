@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-table
+      v-if="vacationTypesDic"
       ref="singleTable"
       v-loading="loading"
       :data="formatedList"

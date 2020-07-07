@@ -67,13 +67,16 @@ export function timeZone() {
  * @param {String} applyId
  */
 export function exportSingleApply(templete, applyId) {
-  return request.post('static/exportApply', {
-    templete,
-    query: {
-      value: applyId
-    }
-  }).then(data => {
-    downloadUrl(data.requestUrl)
+  return new Promise((res, rej) => {
+    request.post('static/exportApply', {
+      templete,
+      query: {
+        value: applyId
+      }
+    }).then(data => {
+      downloadUrl(data.requestUrl)
+      res(data)
+    }).catch(e => rej(e))
   })
 }
 /**
@@ -84,13 +87,16 @@ export function exportSingleApply(templete, applyId) {
  * @param {Array} applies
  */
 export function exportMultiApplies(templete, applies) {
-  return request.post('static/exportApplies', {
-    templete,
-    query: {
-      arrays: applies
-    }
-  }).then(data => {
-    downloadUrl(data.requestUrl)
+  return new Promise((res, rej) => {
+    request.post('static/exportApplies', {
+      templete,
+      query: {
+        arrays: applies
+      }
+    }).then(data => {
+      downloadUrl(data.requestUrl)
+      res(data)
+    }).catch(e => rej(e))
   })
 }
 

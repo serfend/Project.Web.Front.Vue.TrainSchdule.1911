@@ -18,6 +18,7 @@
     <el-tooltip content="点击下载休假单" placement="left">
       <el-dropdown
         v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
+        v-loading="loading"
         split-button
         trigger="click"
         @click="exportApply(row)"
@@ -35,7 +36,7 @@
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-button v-else icon="el-icon-download" @click="exportApply(row)">下载</el-button>
+      <el-button v-else v-loading="loading" icon="el-icon-download" @click="exportApply(row)">下载</el-button>
     </el-tooltip>
   </div>
 </template>
@@ -59,6 +60,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       activeName: '',
       authForm: {},
       authFormShow: false
@@ -78,9 +80,7 @@ export default {
   methods: {
     exportApplyDetail,
     hendleExecute(method, row) {
-      if (this.onLoading === true) {
-        return false
-      }
+      if (this.loading) return
       var params = row.id
       const fnName = method
       if (fnName === 'Delete') {
@@ -95,20 +95,23 @@ export default {
           auth: this.authForm.auth
         }
       }
-      this.onLoading = true
+      this.loading = true
       var fn =
         fnName === 'Delete' ? deleteApply(params) : doAction(fnName, params)
       fn.then(data => {
         this.$message.success(`${this.actionDic[method].alias}成功`)
       }).finally(() => {
-        this.onLoading = false
+        this.loading = false
         this.$emit('updated')
       })
     },
     exportApply(row) {
       var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
       var applyId = row.id
-      exportApplyDetail(dutiesRawType, applyId)
+      this.loading = true
+      exportApplyDetail(dutiesRawType, applyId).finally(() => {
+        this.loading = false
+      })
     }
   }
 }
