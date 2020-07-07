@@ -15,7 +15,7 @@
                 <el-tag
                   v-if="detail.request.vacationType"
                   effect="dark"
-                  :type="detail.request.vacationType==='正休'?'':'danger'"
+                  :type="detail.request.vacationType==='正休'?'primary':'danger'"
                 >{{ detail.request.vacationType }}</el-tag>
 
                 <el-col v-if="staticData.vacationStart" :lg="6" :md="12" :sm="24">

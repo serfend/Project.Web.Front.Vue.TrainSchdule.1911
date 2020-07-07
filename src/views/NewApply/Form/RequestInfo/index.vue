@@ -1,5 +1,10 @@
 <template>
-  <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
+  <div
+    v-if="nowVacationType"
+    :style="{transition:'all 0.5s'}"
+    @mouseenter="isHover=true"
+    @mouseleave="leaveCard"
+  >
     <el-card v-loading="onLoading" header="休假信息" style="position:relative">
       <el-container>
         <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
@@ -16,23 +21,21 @@
             <el-form-item label="全年休假完成率">
               <VacationDescription
                 :users-vacation="usersvacation"
-                :this-time-vacation-length="formApply.vacationType=='正休'?formApply.vacationLength:0"
+                :this-time-vacation-length="nowVacationType.primary?formApply.vacationLength:0"
               />
             </el-form-item>
             <el-form-item label="休假类型">
               <el-select v-model="formApply.vacationType">
-                <el-option label="正休" value="正休" />
-                <el-option label="事假" value="事假" />
-                <el-option label="病休" value="病休" />
-              </el-select>
-              <el-tooltip placement="top">
-                <div slot="content">如果您存在前期已休过假，但未记录的情况，申请将会被标记为【补充记录】</div>
-                <el-switch
-                  v-model="formApply.isArchitect"
-                  active-text="补充记录"
-                  inactive-text="新增申请"
-                  active-color="#ff9999"
+                <el-option
+                  v-for="(v,i) in vacationTypes"
+                  :key="i"
+                  :value="v.name"
+                  :label="v.alias"
                 />
+              </el-select>
+              <el-tooltip v-if="formApply.isArchitect" placement="top" effect="light">
+                <div slot="content">如果您存在前期已休过假，但未记录的情况，申请将会被标记为【补充记录】</div>
+                <el-tag type="danger">补充申请</el-tag>
               </el-tooltip>
             </el-form-item>
             <el-form-item label="休假原因">
@@ -53,7 +56,7 @@
                 @input="handleChange"
               />
             </el-form-item>
-            <el-form-item label="路途天数">
+            <el-form-item v-if="nowVacationType.canUseOnTrip" label="路途天数">
               <el-slider
                 v-model="formApply.OnTripLength"
                 show-input
@@ -62,7 +65,7 @@
                 @input="handleChange"
               />
             </el-form-item>
-            <el-form-item v-if="formApply.vacationType=='正休'" label="福利假">
+            <el-form-item v-if="nowVacationType.caculateBenefit" label="福利假">
               <BenefitVacation v-model="benefitList" @change="handleChange" />
             </el-form-item>
             <el-form-item
@@ -89,7 +92,10 @@
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
-            <el-form-item v-if="lawVacations.length>0&&formApply.vacationType=='正休'" label="法定节假日">
+            <el-form-item
+              v-if="lawVacations.length>0&&nowVacationType.caculateBenefit"
+              label="法定节假日"
+            >
               <LawVacation
                 v-for="(item,i) in lawVacations"
                 :key="i"
@@ -177,7 +183,7 @@ export default {
   data() {
     return {
       onLoading: true,
-      formApply: this.createNewRequest(),
+      formApply: null,
       vacationPlaceDefault: null,
       submitYear: new Date().getFullYear(),
       usersvacation: {
@@ -196,9 +202,26 @@ export default {
     }
   },
   computed: {
+    nowVacationType() {
+      const form = this.formApply
+      if (!form) return null
+      const s = this.vacationTypesDic[form.vacationType]
+      return s
+    },
+    vacationTypes() {
+      const types = this.vacationTypesDic
+      if (!types) return null
+      const keys = Object.keys(types)
+      return keys.map(i => types[i])
+    },
+    vacationTypesDic() {
+      return this.$store.state.vacation.vacationTypes
+    },
     maxVacationLength() {
-      const isPrimary = this.formApply.vacationType === '正休'
-      const leftLength = this.usersvacation.leftLength
+      const type = this.nowVacationType
+      if (!type) return 0
+      const isPrimary = type.primary
+      const leftLength = Math.min(this.usersvacation.leftLength, type.maxLength)
       return isPrimary ? leftLength : this.nowMaxLength
     },
     updatedApply() {
@@ -233,6 +256,17 @@ export default {
     }
   },
   watch: {
+    vacationTypes: {
+      handler(val) {
+        if (!val) return
+        this.$nextTick(() => {
+          if (!this.formApply) {
+            this.formApply = this.createNewRequest()
+          }
+          this.formApply.vacationType = val[0].name
+        })
+      }
+    },
     submitYear: {
       handler(val) {
         this.formApply.yearIndex = val
@@ -259,9 +293,12 @@ export default {
   methods: {
     locationChildren,
     updateMaxLen() {
+      const type = this.nowVacationType
+      if (!type) return
       let newLength = this.formApply.vacationLength * 1.5 + 1
-      if (newLength < 30) newLength = 30
-      if (newLength > 999) newLength = 999
+      const maxMin = Math.min(type.maxLength, 30)
+      if (newLength < maxMin) newLength = maxMin
+      if (newLength > type.maxLength) newLength = type.maxLength
       this.nowMaxLength = Math.round(newLength / 5) * 5
     },
     stampLeaveRuleCheck(field, invalid, cb) {
@@ -305,12 +342,13 @@ export default {
         })
     },
     createNewRequest() {
+      const type = this.vacationTypes
       return {
         StampLeave: parseTime(+new Date() + 86400000, '{y}-{m}-{d}'),
         StampReturn: '',
         vacationLength: 0,
         OnTripLength: 0,
-        vacationType: '正休',
+        vacationType: type ? type[0].name : '',
         vacationPlace: null,
         vacationPlaceName: '',
         reason: '',
@@ -337,23 +375,22 @@ export default {
      * 提交请求信息
      */
     submitRequestInfo() {
-      if (this.onLoading) return
-      if (this.anyChanged) this.anyChanged = false
+      if (this.onLoading || !this.anyChanged) return
+      this.anyChanged = false
       const caculaingDate = this.caculaingDate()
       if (caculaingDate.length <= 0) return
-      const infoParam = Object.assign({ id: this.userid }, this.formApply)
-      infoParam.vacationAdditionals = this.filtedBenefitList
-      const items = this.checkParamValid(infoParam)
+      const model = Object.assign({ id: this.userid }, this.formApply)
+      model.vacationAdditionals = this.filtedBenefitList
+      const items = this.checkParamValid(model)
       if (items.length > 0) {
         this.anyChanged = false
-        console.log(items)
         this.$message.error(items.join(' '))
         return
       }
-      infoParam.vacationPlace = infoParam.vacationPlace.code
+      model.vacationPlace = model.vacationPlace.code
       this.onLoading = true
 
-      postRequestInfo(infoParam)
+      postRequestInfo(model)
         .then(data => {
           this.$message.success('休假信息验证成功')
           this.submitId = data.id
@@ -394,14 +431,19 @@ export default {
         return prev + cur.length
       }, 0)
       // 正休假计算路途，如果存在福利假则不计算法定节假日
-      const ifPrimary = this.formApply.vacationType === '正休'
+      const type = this.nowVacationType
+      const trip = type.canUseOnTrip
+      const benefit = type.caculateBenefit
+
       const primary = parseInt(this.formApply.vacationLength)
       const onTrip = parseInt(this.formApply.OnTripLength)
-      const others = ifPrimary ? onTrip + benefits : 0
+      let total = primary
+      if (trip) total += onTrip
+      if (benefit) total += benefits
       return {
         start: this.formApply.StampLeave,
-        length: primary + others,
-        caculateLawvacation: ifPrimary && benefits === 0
+        length: total,
+        caculateLawvacation: benefit && benefits === 0
       }
     }
   }

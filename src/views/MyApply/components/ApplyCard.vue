@@ -34,7 +34,7 @@
                   <svg-icon v-if="data.request.byTransportation==0" icon-class="huoche" />
                   <svg-icon v-else-if="innerData.request.byTransportation==1" icon-class="feiji" />
                   <svg-icon v-else-if="innerData.request.byTransportation==2" icon-class="qiche" />
-                  <svg-icon v-else-if="innerData.request.byTransportation==-1" icon-class="feiji" />
+                  <svg-icon v-else-if="innerData.request.byTransportation==-1" icon-class="guide" />
                 </el-form-item>
                 <el-form-item
                   label="休假原因"

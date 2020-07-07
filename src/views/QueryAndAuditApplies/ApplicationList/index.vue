@@ -16,8 +16,8 @@
             <el-tag
               v-if="row.request.vacationType"
               effect="dark"
-              :type="row.request.vacationType==='正休'?'':'danger'"
-            >{{ row.request.vacationType }}</el-tag>
+              :type="vacationTypesDic[row.request.vacationType].primary?'':'danger'"
+            >{{ vacationTypesDic[row.request.vacationType].alias }}</el-tag>
             <el-link
               :href="`#/user/profile?id=${row.userBase.id}`"
               target="_blank"
@@ -77,7 +77,7 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>正休假{{ row.request.vacationLength }}天</el-dropdown-item>
+              <el-dropdown-item>{{ vacationTypesDic[row.request.vacationType].alias }}{{ row.request.vacationLength }}天</el-dropdown-item>
               <el-dropdown-item>路途{{ row.request.onTripLength }}天</el-dropdown-item>
               <el-dropdown-item
                 v-for="additial in row.request.additialVacations"
@@ -173,6 +173,9 @@ export default {
     }
   },
   computed: {
+    vacationTypesDic() {
+      return this.$store.state.vacation.vacationTypes
+    },
     pagesetting: {
       get() {
         return this.pages
