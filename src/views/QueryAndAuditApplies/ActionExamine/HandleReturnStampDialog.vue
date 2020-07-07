@@ -3,7 +3,7 @@
     <el-card v-loading="loading">
       <el-form ref="auditForm" label-width="6rem">
         <el-form-item :label="`被${displayName}人`">
-          <UserFormItem :userid="row.userBase.id" />
+          <UserFormItem :userid="row.userBase?row.userBase.id:row.base.id" />
         </el-form-item>
         <el-form-item :label="`${displayName}人`">
           <UserSelector :code.sync="auditForm.handleBy" />
