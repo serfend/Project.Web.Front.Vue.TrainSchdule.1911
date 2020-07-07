@@ -40,7 +40,16 @@ export default {
     AuthCodeAbout,
     UserSelector
   },
+  model: {
+    prop: 'data',
+    event: 'change'
+  },
   props: {
+    // auth model
+    data: {
+      type: Object,
+      default: null
+    },
     authCheckMethod: {
       type: Function,
       default: checkAuthCode
@@ -70,9 +79,11 @@ export default {
             })
             .finally(() => {
               this.$emit('update:form', val)
+              this.$emit('change', val)
             })
         } else {
           this.$emit('update:form', val)
+          this.$emit('change', val)
         }
       },
       deep: true
