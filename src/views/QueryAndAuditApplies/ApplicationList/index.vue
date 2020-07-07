@@ -48,7 +48,7 @@
         <template slot-scope="{row}">
           <el-row>
             <el-tooltip :content="`创建于:${row.create}`">
-              <span>{{ format(row.create, 'zh_CN') }}</span>
+              <span>{{ format(row.create) }}</span>
             </el-tooltip>
           </el-row>
           <el-row>
@@ -130,7 +130,7 @@
   </div>
 </template>
 <script>
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
 import Pagination from '@/components/Pagination'
@@ -200,7 +200,9 @@ export default {
     }
   },
   methods: {
-    format,
+    format(d) {
+      return formatTime(d)
+    },
     getCDdes(row, prevRow) {
       const cn = row.companyName
       const prevCn = prevRow.companyName

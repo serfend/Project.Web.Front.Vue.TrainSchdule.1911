@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 import UserFormItem from '@/components/User/UserFormItem'
 import ApplyCard from './components/ApplyCard'
 import ApplyOverview from './components/ApplyOverview'
@@ -113,7 +113,7 @@ export default {
       return `/#/application/applydetail?id=${id}`
     },
     format(val) {
-      return format(val, 'zh_CN')
+      return formatTime(val)
     },
     applyUpdate(index) {
       querySelf({ pageIndex: index, pageSize: 1 }).then(data => {

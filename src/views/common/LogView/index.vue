@@ -99,7 +99,7 @@
           </template>
         </el-table-column>
         <el-table-column label="日期" width="120">
-          <template slot-scope="scope">{{ format(scope.row.date, 'zh_CN') }}</template>
+          <template slot-scope="scope">{{ format(scope.row.date) }}</template>
         </el-table-column>
         <el-table-column label="内容">
           <template slot-scope="scope">{{ scope.row.description }}</template>
@@ -133,7 +133,7 @@ import {
   getReportDic,
   getUserActionOperationDic
 } from '@/api/account'
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 export default {
   name: 'LogView',
   data() {
@@ -192,7 +192,9 @@ export default {
   methods: {
     report,
     getReport,
-    format,
+    format(d) {
+      return formatTime(d)
+    },
     messageMap(keyName) {
       const l = this.tableData.map(i => {
         return {

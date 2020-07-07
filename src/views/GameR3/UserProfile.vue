@@ -28,7 +28,7 @@
 <script>
 import { userinfo, updateHandleInterval } from '@/api/game'
 import { signIn } from '@/api/account'
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 import { parseTime } from '@/utils'
 export default {
   name: 'UserProfile',
@@ -72,7 +72,7 @@ export default {
     formatDate(val) {
       if (val === 0) return '未领取过'
       var date = new Date(val)
-      return format(date, 'zh_CN')
+      return formatTime(date)
     },
     login() {
       signIn(this.userinfo.gameid).then(d => {

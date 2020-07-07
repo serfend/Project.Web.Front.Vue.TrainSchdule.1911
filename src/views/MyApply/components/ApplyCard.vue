@@ -66,7 +66,7 @@
 
 <script>
 import { parseTime, datedifference } from '@/utils'
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 import ActionUser from '@/views/QueryAndAuditApplies/ActionUser'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 export default {
@@ -129,7 +129,9 @@ export default {
       this.$emit('updated')
     },
     timeFormat(val) {
-      return `${parseTime(val, '{y}年{m}月{d}日')}(${format(val, 'zh_CN')})`
+      const f = parseTime(val)
+      const dis = formatTime(val)
+      return f === dis ? f : `${f}(${dis})`
     },
     formatPercent(val) {
       if (this.spent <= 0) return '未开始'

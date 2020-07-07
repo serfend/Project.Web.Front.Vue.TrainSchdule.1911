@@ -29,7 +29,7 @@
           <template slot-scope="scope">
             <el-tooltip effect="light">
               <div slot="content">
-                <h3>创建于{{ format(scope.row.create,'zh_CN') }}</h3>
+                <h3>创建于{{ format(scope.row.create) }}</h3>
                 <div>{{ scope.row.description }}</div>
               </div>
               <div>{{ scope.row.name }}</div>
@@ -289,7 +289,7 @@ import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
 import UserFormItem from '@/components/User/UserFormItem'
 import UserSelector from '@/components/User/UserSelector'
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 import {
   addStreamSolutionRule,
   editStreamSolutionRule,
@@ -333,7 +333,9 @@ export default {
     }
   },
   methods: {
-    format,
+    format(d) {
+      return formatTime(d)
+    },
     handleUserSelectChange(val) {
       this.userSelect.realName = val.value
       if (this.newRule.auditMembers.indexOf(val.id) > -1) {

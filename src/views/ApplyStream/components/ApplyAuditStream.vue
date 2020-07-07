@@ -27,7 +27,7 @@
                     <div slot="title" style="color:#ffc300">{{ s.name }}</div>
                     <div slot="description">
                       创建于
-                      {{ format(s.create,'zh_CN') }}
+                      {{ format(s.create) }}
                       需要
                       {{ s.auditMembersCount==0?'所有人':(s.auditMembersCount+'人') }}审核
                       <div style="color:#ffffff;font-size:1rem">{{ s.description }}</div>
@@ -121,7 +121,7 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 import {
   addStreamSolution,
   editStreamSolution,
@@ -156,7 +156,9 @@ export default {
     }
   },
   methods: {
-    format,
+    format(d) {
+      return formatTime(d)
+    },
     refresh() {
       this.$emit('refresh')
     },

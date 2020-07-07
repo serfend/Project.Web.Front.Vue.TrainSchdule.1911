@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 import GiftCode from './GiftCode'
 import { parseTime } from '@/utils'
 
@@ -95,7 +95,7 @@ export default {
   methods: {
     format(time) {
       var date = new Date(time)
-      return format(date, 'zh_CN')
+      return formatTime(date)
     },
     parseTime,
     refreshGiftCode(pageIndex) {
