@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-input v-if="showInput" v-model="rawScore" placeholder="输入成绩" @input="handleScoreChange" />
     <el-slider
       v-if="iScorePair"
       v-model="nowIndex"
       :min="0"
-      :max="iScorePair.length-1"
+      :max="(iScorePair.length-1)<0?0:(iScorePair.length-1)"
       :format-tooltip="format"
     />
     <div v-if="showEditor">
@@ -51,42 +51,56 @@ export default {
     }
   },
   data: () => ({
+    loading: false,
     nowIndex: 0,
-    rawScore: ''
+    rawScore: '',
+    iScorePair: []
   }),
   computed: {
-    iScorePair: {
-      get() {
-        const s = this.scorePair
-        if (!s) return []
-        const list = s
-          .split('|')
-          .map(i => i.split(':'))
-          .sort((a, b) => a[1] - b[1])
-        list.push(['满分后', this.expressionWhenFullGrade])
-        return list
-      },
-      set(val) {
-        let result
-        if (!val) result = ''
-        else {
-          result = val
-            .filter((v, i) => i < val.length)
-            .map(i => i.join(':'))
-            .join('|')
-        }
-        this.$emit('update:scorePair', result)
+    listScorePair() {
+      const s = this.scorePair
+      if (!s) return []
+      const list = s
+        .split('|')
+        .map(i => i.split(':'))
+        .sort((a, b) => a[1] - b[1])
+      list.push(['满分后', this.expressionWhenFullGrade])
+      return list
+    },
+    stringScorePair() {
+      const val = this.iScorePair
+      let result
+      if (!val) result = ''
+      else {
+        result = val
+          .filter((v, i) => i < val.length - 1)
+          .map(i => i.join(':'))
+          .join('|')
       }
+      return result
     }
   },
   watch: {
     scorePair: {
       handler(val) {
-        this.$nextTick(() => {
+        this.loading = true
+        setTimeout(() => {
+          this.iScorePair = this.listScorePair
           this.$emit('update:scorePairArr', this.iScorePair)
-        })
+          this.loading = false
+        }, 500)
       },
       immediate: true
+    },
+    iScorePair: {
+      handler(val) {
+        setTimeout(() => {
+          const s = this.stringScorePair
+          this.$emit('update:scorePair', s)
+        }, 500)
+      },
+      immediate: true,
+      deep: true
     },
     rawValue: {
       handler(val) {

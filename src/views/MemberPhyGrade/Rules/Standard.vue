@@ -1,5 +1,5 @@
 <template>
-  <el-card v-if="iSubject">
+  <el-card v-if="iSubject" v-loading="loading">
     <template slot="header">
       <h3>{{ iSubject.alias }}</h3>
       <el-button circle type="success" icon="el-icon-refresh" style="float:right" @click="refresh" />
@@ -32,26 +32,23 @@
           <el-input v-model="scope.row.expressionWhenFullGrade" />
         </template>
       </el-table-column>
-      <el-table-column label="评判分数" width="50rem">
+      <el-table-column label="操作" width="200rem">
         <template slot-scope="scope">
-          <el-popover trigger="click">
+          <el-popover v-model="scope.row.scorePairOpen" trigger="click">
             <ScorePair
+              v-if="scope.row.scorePairOpen"
               :score-pair.sync="scope.row.gradePairs"
               :expression-when-full-grade.sync="scope.row.expressionWhenFullGrade"
               :show-input="false"
               :show-editor="true"
             />
-            <el-link slot="reference">查看</el-link>
+            <el-link slot="reference" type="success">查看评判</el-link>
           </el-popover>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="200rem">
-        <template slot-scope="scope">
-          <el-button el-button type="warning" @click="edit(scope.row)">编辑</el-button>
           <el-button type="danger" @click="remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-button type="success" style="width:100%" @click="$emit('requireSave',iSubject)">保存</el-button>
   </el-card>
 </template>
 
@@ -62,6 +59,10 @@ export default {
   name: 'Standard',
   components: { GenderBtn, ScorePair },
   props: {
+    loading: {
+      type: Boolean,
+      default: false
+    },
     subject: {
       type: Object,
       default: null
@@ -74,8 +75,8 @@ export default {
   watch: {
     subject(value) {
       if (!value) return
-      this.iSubject = JSON.parse(JSON.stringify(value))
-      this.iSubject.standards = this.iSubject.standards
+      this.iSubject = value
+      this.iSubject.standards = value.standards
         .sort((a, b) => a.minAge - b.minAge)
         .map(i => {
           i.ageRange = [i.minAge, i.maxAge]
@@ -84,7 +85,13 @@ export default {
     }
   },
   methods: {
-    refresh() {},
+    refresh() {
+      this.$emit('requireRefresh', this.iSubject)
+    },
+    remove(item) {
+      const index = this.iSubject.standards.findIndex(i => i.id === item.id)
+      this.iSubject.standards.splice(index, 1)
+    },
     getAgeRange(val, minOrMax) {
       val = Math.round(val / 10) * 10
       switch (minOrMax) {

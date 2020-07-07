@@ -5,14 +5,19 @@
         <About />
       </el-tab-pane>
       <el-tab-pane :label="$t('default.app.phyGrade.rules.subject.title')" name="subject">
-        <Subject :subject.sync="subject" @standardUpdate="standardUpdate" />
+        <Subject ref="subject" :loading.sync="loading" :subject.sync="subject" />
       </el-tab-pane>
       <el-tab-pane
         :label="$t('default.app.phyGrade.rules.standard.title')"
         name="standard"
         :disabled="!subject"
       >
-        <Standard :subject.sync="subject" />
+        <Standard
+          :loading.sync="loading"
+          :subject.sync="subject"
+          @requireSave="requireSave"
+          @requireRefresh="requireRefresh"
+        />
       </el-tab-pane>
     </el-tabs>
   </el-card>
@@ -27,7 +32,8 @@ export default {
   components: { About, Subject, Standard },
   data: () => ({
     activeName: 'about',
-    subject: null
+    subject: null,
+    loading: false
   }),
   watch: {
     subject: {
@@ -37,8 +43,11 @@ export default {
     }
   },
   methods: {
-    standardUpdate(val) {
-      console.log(val)
+    requireSave(subject) {
+      this.$refs.subject.requireSave(subject)
+    },
+    requireRefresh(subject) {
+      this.$refs.subject.requireRefresh(subject)
     }
   }
 }

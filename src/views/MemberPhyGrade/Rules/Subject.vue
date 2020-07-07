@@ -1,9 +1,10 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
     <template slot="header">
       <h3>{{ $t('default.app.phyGrade.rules.subject.title') }}</h3>
       <el-button circle type="success" icon="el-icon-refresh" style="float:right" @click="refresh" />
     </template>
+    <AuthCode v-model="form.auth" />
     <el-table :data="form.subjects">
       <el-table-column label="id">
         <template slot-scope="scope">
@@ -37,15 +38,10 @@
           </el-select>
         </template>
       </el-table-column>
-
-      <el-table-column label="标准" width="80rem">
-        <template slot-scope="scope">
-          <el-link @click="checkStandard(scope.row)">查看</el-link>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" width="300rem">
         <template slot-scope="scope">
-          <el-button el-button type="success" @click="edit(scope.row)">保存</el-button>
+          <el-link type="success" @click="checkStandard(scope.row)">查看标准</el-link>
+          <el-button type="success" @click="requireSave(scope.row)">保存</el-button>
           <el-button type="danger" @click="remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -54,9 +50,11 @@
 </template>
 
 <script>
-import { getSubjects } from '@/api/grade/phyGrade'
+import AuthCode from '@/components/AuthCode'
+import { getSubjects, setSubject, getSubjectByName } from '@/api/grade/phyGrade'
 export default {
   name: 'Subject',
+  components: { AuthCode },
   data: () => ({
     loading: false,
     valueFormatOption: [
@@ -66,10 +64,40 @@ export default {
     ],
     form: { auth: { authByUserId: null, code: null }, subjects: [] }
   }),
+  watch: {
+    loading(val) {
+      this.$emit('update:loading', val)
+    }
+  },
   mounted() {
     this.refresh()
   },
   methods: {
+    requireRefresh(subject) {
+      this.loading = true
+      getSubjectByName(subject.name)
+        .then(data => {
+          const s = data.model
+          const index = this.form.subjects.findIndex(i => i.name === s.name)
+          this.form.subjects[index] = s
+          this.checkStandard(this.form.subjects[index])
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    requireSave(subject) {
+      this.loading = true
+      if (subject) {
+        setSubject(subject, this.form.auth)
+          .then(data => {
+            this.$message.success('已保存')
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      }
+    },
     checkStandard(row) {
       this.$emit('update:subject', row)
     },
@@ -82,6 +110,10 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    remove(item) {
+      const index = this.form.subjects.findIndex(i => i.id === item.id)
+      this.form.subjects.splice(index, 1)
     }
   }
 }
