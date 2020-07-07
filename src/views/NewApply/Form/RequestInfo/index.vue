@@ -65,7 +65,7 @@
                 @input="handleChange"
               />
             </el-form-item>
-            <el-form-item v-if="nowVacationType.caculateBenefit" label="福利假">
+            <el-form-item v-if="nowVacationType.caculateBenefit" label="其他假">
               <BenefitVacation v-model="benefitList" @change="handleChange" />
             </el-form-item>
             <el-form-item
@@ -205,7 +205,9 @@ export default {
     nowVacationType() {
       const form = this.formApply
       if (!form) return null
-      const s = this.vacationTypesDic[form.vacationType]
+      const dict = this.vacationTypesDic
+      if (!dict) return null
+      const s = dict[form.vacationType]
       return s
     },
     vacationTypes() {
@@ -385,6 +387,8 @@ export default {
       if (items.length > 0) {
         this.anyChanged = false
         this.$message.error(items.join(' '))
+        this.submitId = null
+        this.$emit('update:submitId', null)
         return
       }
       model.vacationPlace = model.vacationPlace.code

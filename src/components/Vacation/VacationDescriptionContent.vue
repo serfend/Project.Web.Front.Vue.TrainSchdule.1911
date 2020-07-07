@@ -25,7 +25,7 @@
       <span>{{ usersVacation.description || '暂无' }}</span>
     </li>
     <li>
-      <b>已休的福利假：</b>
+      <b>其他假期：</b>
       <el-tooltip v-if="usersVacation.additionals" effect="light" placement="right">
         <div slot="content">
           <span

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="innerList&&innerList.length>0">
-      <el-alert title="注意：当假期包含福利假时将无法享受法定节假日假期" type="warning" show-icon />
+      <el-alert title="注意：当假期包含其他假时将无法享受法定节假日假期" type="warning" show-icon />
       <el-collapse v-model="nowIndex" accordion>
         <el-collapse-item v-for="(item,index) in innerList" :key="index" :name="index">
           <template slot="title">
@@ -9,18 +9,18 @@
             <span v-else>无效的信息</span>
           </template>
           <el-form label-width="6rem">
-            <el-form-item label="福利假">
+            <el-form-item label="其他假">
               <el-autocomplete
                 v-model="innerList[index].name"
                 :fetch-suggestions="querySearch"
-                placeholder="选择/输入福利假"
+                placeholder="选择/输入其他假"
                 @select="selectChange"
               />
             </el-form-item>
             <el-form-item label="休假天数">
               <el-input-number v-model.number="innerList[index].length" :min="1" />
             </el-form-item>
-            <el-form-item label="福利假理由">
+            <el-form-item label="其他假理由">
               <el-input
                 v-model="innerList[index].description"
                 type="textarea"
@@ -102,7 +102,7 @@ export default {
     addSingle() {
       this.innerList.push({
         name: '',
-        description: '填写福利假原因',
+        description: '填写其他假原因',
         length: 0
       })
     },
