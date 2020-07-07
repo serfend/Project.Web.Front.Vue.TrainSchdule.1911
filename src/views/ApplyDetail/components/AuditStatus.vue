@@ -1,7 +1,12 @@
 <template>
   <el-card v-if="detail" v-loading="loading" shadow="hover">
     <h3 slot="header">{{ `审批进度(${detail.auditSolution||'审批流程'})` }}</h3>
-    <el-steps v-if="detail.steps" :space="200" :active="nowActiveAudit" finish-status="success">
+    <el-steps
+      v-if="detail.steps&&detail.steps.length>0"
+      :space="200"
+      :active="nowActiveAudit"
+      finish-status="success"
+    >
       <el-step v-for="step in detail.steps" :key="step.id">
         <el-tooltip slot="description" effect="light">
           <template slot="content">
@@ -80,12 +85,25 @@
         </el-tooltip>
       </el-step>
     </el-steps>
-    <div v-else>加载中</div>
+    <div v-else-if="detail.response">
+      <el-steps :space="200" :active="getStatus()" finish-status="success">
+        <el-step v-for="(v,i) in detail.response" :key="i">
+          <div slot="description">
+            <div>时间 {{ format(v.handleStamp) }}</div>
+            <div>状态 {{ v.status==0?'待接收':v.status===1?'待审核':v.status==4?'通过':'驳回' }}</div>
+            <div>备注 {{ v.remark }}</div>
+          </div>
+          <div slot="title">{{ v.auditingUserRealName||'未知' }}</div>
+        </el-step>
+      </el-steps>
+    </div>
+    <div v-else-if="!detail.steps">加载中</div>
+    <div v-else>加载失败</div>
   </el-card>
 </template>
 
 <script>
-import { format } from 'timeago.js'
+import { formatTime } from '@/utils'
 import UserFormItem from '@/components/User/UserFormItem'
 export default {
   name: 'AuditStatus',
@@ -129,7 +147,15 @@ export default {
   },
   methods: {
     format(date) {
-      return format(date, 'zh_CN')
+      return formatTime(date)
+    },
+    getStatus() {
+      const res = this.detail.response
+      if (!res || res.length === 0) return null
+      const r = res.findIndex(
+        i => i.status === 0 || i.status === 1 || i.status === 8
+      )
+      return r < 0 ? res.length : r
     },
     getNeedAudit(requireAuditMemberCount) {
       if (requireAuditMemberCount < 0) return '无需'
@@ -152,7 +178,8 @@ export default {
         const step = this.detail.steps[i]
         step.timeStamp = this.GetHandleTimeAgo(step)
       }
-      const desc = this.status.desc
+      const s = this.status || {}
+      const desc = s.desc
       if (desc === '已通过' && !this.detail.nowStep) {
         this.nowActiveAudit = this.detail.response.length
         return
