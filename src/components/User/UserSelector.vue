@@ -7,6 +7,7 @@
       </template>
       <el-link type="info" @click="dialogVisible=true">
         <span
+          v-loading="loading"
           :style="{color:code?'#00f':'#aaa'}"
           @mouseenter="forgetHasShow=true"
         >{{ userRealName?userRealName:defaultInfo }}</span>
@@ -21,7 +22,6 @@
 <script>
 import { getUserBase } from '@/api/user/userinfo'
 import FindUserByRealName from '@/components/User/FindUserByRealName'
-import { debounce } from '../../utils'
 export default {
   name: 'UserSelector',
   components: { FindUserByRealName },
@@ -40,17 +40,13 @@ export default {
     }
   },
   data: () => ({
+    loading: false,
     forgetHasShow: false,
     dialogVisible: false,
     userRealName: null,
     avatar: null
   }),
   computed: {
-    requireLoadUserName() {
-      return debounce(() => {
-        this.loadUserName()
-      }, 1000)
-    },
     nowUserCode: {
       get() {
         return this.code
@@ -68,7 +64,7 @@ export default {
     },
     nowUserCode: {
       handler(val) {
-        this.requireLoadUserName()
+        if (val) this.loadUserName()
       }
     }
   },
@@ -87,11 +83,16 @@ export default {
     },
     loadUserName() {
       if (this.userRealName || !this.nowUserCode) return
-      getUserBase(this.nowUserCode).then(data => {
-        this.$nextTick(() => {
-          this.userRealName = data.base.realName
+      this.loading = true
+      getUserBase(this.nowUserCode)
+        .then(data => {
+          this.$nextTick(() => {
+            this.userRealName = data.base.realName
+          })
         })
-      })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }
