@@ -1,7 +1,6 @@
 import Layout from '@/layout'
 
 import logRouter from './modules/log'
-import phyGrade from './modules/phyGrade'
 import fileRouter from './modules/file'
 import qrCodeRouter from './modules/qrCode'
 import dwzRouter from './modules/dwz'
@@ -24,7 +23,7 @@ const systemRouter = {
       icon: 'component'
     },
     children: [
-      managerRouter, logRouter, phyGrade,
+      managerRouter, logRouter,
       {
         path: 'iframePage',
         component: () => import('@/components/IFramePage'),

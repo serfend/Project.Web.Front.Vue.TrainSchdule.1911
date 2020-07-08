@@ -4,7 +4,7 @@ const phyGrade = {
   name: 'MemberPhyGrade_detail',
   meta: {
     title: 'default.app.phyGrade.detail.title',
-    icon: 'skill'
+    icon: 'dispose'
   }
 }
 

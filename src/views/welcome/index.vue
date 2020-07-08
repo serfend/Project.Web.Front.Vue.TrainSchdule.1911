@@ -84,10 +84,16 @@ export default {
             href: '/application/queryAndAuditApplies'
           },
           {
+            label: '身体健康',
+            description: '休假不忘锻炼，自律便是自由',
+            svg: 'phy-grade',
+            href: '/phyGrade/detail'
+          },
+          {
             label: '统计信息',
             description: '各单位休假情况统计驾驶舱',
             // icon: '/favicon.png',
-            svg: 'dashboard',
+            svg: 'HTTPcuowushuai',
             href: '/dashboard'
           }
         ]
