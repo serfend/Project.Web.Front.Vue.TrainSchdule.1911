@@ -123,6 +123,11 @@ export default {
     }
   },
   watch: {
+    'auditForm.auth.authByUserId': {
+      handler(val) {
+        this.auditForm.handleBy = val
+      }
+    },
     defaultStampReturn: {
       handler(val) {
         this.auditForm.stampReturn = val
@@ -170,9 +175,6 @@ export default {
       const row = this.row
       const sr = row.request.stampReturn
       this.auditForm.applyId = row.id
-      setTimeout(() => {
-        this.auditForm.handleBy = this.auditForm.auth.authByUserId
-      }, 2000)
       this.auditForm.recallData = {
         rawStampReturn: sr
       }
