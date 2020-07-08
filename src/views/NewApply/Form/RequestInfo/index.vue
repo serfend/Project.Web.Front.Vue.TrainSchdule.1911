@@ -29,13 +29,13 @@
                 <el-option
                   v-for="(v,i) in vacationTypes"
                   :key="i"
-                  :disabled="!v.allowBeforePrimary&&usersvacation.leftLength>0"
+                  :disabled="!v.allowBeforePrimary&&!v.primary&&usersvacation.leftLength>0"
                   :value="v.name"
                   :label="v.alias"
                 >
                   <span style="float: left">{{ v.alias }}</span>
                   <span
-                    v-if="!v.allowBeforePrimary&&usersvacation.leftLength>0"
+                    v-if="!v.allowBeforePrimary&&!v.primary&&usersvacation.leftLength>0"
                     style="float: right; color: #ff92a6; font-size: 0.7rem"
                   >正休假未完成</span>
                 </el-option>
