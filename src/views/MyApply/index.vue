@@ -142,7 +142,7 @@ export default {
             setTimeout(() => {
               this.iList = this.iList.concat(newList)
               if (data.list.length < pages.pageSize) {
-                this.$message.error('没有更多了')
+                if (this.autoExpand) this.$message.error('没有更多了')
                 this.haveNext = false
               }
               if (pages.pageIndex === 0 && this.autoExpand) {

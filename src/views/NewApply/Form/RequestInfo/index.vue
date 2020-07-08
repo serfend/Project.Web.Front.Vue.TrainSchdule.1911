@@ -29,9 +29,16 @@
                 <el-option
                   v-for="(v,i) in vacationTypes"
                   :key="i"
+                  :disabled="!v.allowBeforePrimary&&usersvacation.leftLength>0"
                   :value="v.name"
                   :label="v.alias"
-                />
+                >
+                  <span style="float: left">{{ v.alias }}</span>
+                  <span
+                    v-if="!v.allowBeforePrimary&&usersvacation.leftLength>0"
+                    style="float: right; color: #ff92a6; font-size: 0.7rem"
+                  >正休假未完成</span>
+                </el-option>
               </el-select>
               <el-tooltip v-if="formApply.isArchitect" placement="top" effect="light">
                 <div slot="content">如果您存在前期已休过假，但未记录的情况，申请将会被标记为【补充记录】</div>
