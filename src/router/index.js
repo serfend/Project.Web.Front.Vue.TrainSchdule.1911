@@ -4,6 +4,7 @@ import applicationRouter from './modules/application'
 import applicationSettingRouter from './modules/applicationSetting/index'
 import gameRouter from './modules/Game'
 import systemRouter from './modules/system/index'
+import phyGrade from './modules/phyGrade'
 import memberRateRouter from './modules/MemberRate'
 import user from './modules/user'
 Vue.use(Router)
@@ -37,9 +38,9 @@ export const constantRoutes = [user, {
   name: 'Dashboard',
   meta: {
     title: 'dashboard',
-    icon: 'dashboard'
+    icon: 'chart'
   }
-}, applicationRouter, applicationSettingRouter, gameRouter, systemRouter, memberRateRouter, {
+}, applicationRouter, phyGrade, applicationSettingRouter, gameRouter, systemRouter, memberRateRouter, {
   path: '/redirect',
   component: Layout,
   hidden: true,

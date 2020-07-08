@@ -36,6 +36,9 @@ var dict = {
         detail: {
           title: 'grade card'
         },
+        exam: {
+          title: 'exams'
+        },
         list: {
           title: 'grade list'
         },

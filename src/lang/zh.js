@@ -36,6 +36,9 @@ var dict = {
         detail: {
           title: '成绩统计卡'
         },
+        exam: {
+          title: '考核'
+        },
         list: {
           title: '成绩单'
         },
