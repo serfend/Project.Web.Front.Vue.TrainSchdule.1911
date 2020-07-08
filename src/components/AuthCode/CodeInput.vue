@@ -89,19 +89,37 @@ export default {
     }
   },
   mounted() {
-    var self = this
+    const self = this
     this.update()
+    document.onpaste = function(e) {
+      const clip = e.clipboardData || window.clipboardData
+      const text = clip.getData('Text')
+      const code = text.substr(0, 6)
+      if (!code) return
+      const input = [...code]
+      const checkChar = input.findIndex((v, i) => {
+        const k = code.charCodeAt(i)
+        return k < 48 || k > 57
+      })
+      if (checkChar === -1) {
+        self.$nextTick(() => {
+          self.userInput(code)
+        })
+      }
+    }
     document.onkeydown = function(e) {
-      var key = window.event.keyCode
-      var newCode = self.innerCode
+      let key = e.keyCode
+      if (key >= 96 && key <= 105) key -= 48
+      let newCode = self.innerCode
       if (key === 8 && self.innerCode.length > 0) {
         newCode = self.innerCode.substr(0, self.innerCode.length - 1)
-      } else if (key >= 48 && key <= 57 && self.innerCode.length < 6) {
-        var newKey = key - 48
-        newCode = newCode + newKey
-      } else {
-        return
-      }
+      } else if (key >= 48 && key <= 57) {
+        if (self.innerCode.length < 6) {
+          const newKey = key - 48
+          newCode = newCode + newKey
+        } else newCode = ''
+      } else return
+
       self.$nextTick(() => {
         self.userInput(newCode)
       })
@@ -109,7 +127,7 @@ export default {
   },
   methods: {
     update() {
-      var rate = 0.18
+      let rate = 0.18
       switch (this.status) {
         case -1:
           this.rgb = '255,15,100'
@@ -131,7 +149,7 @@ export default {
     },
     userClick(isDown) {
       if (!isDown) {
-        var userClickActiveDate = new Date()
+        const userClickActiveDate = new Date()
         this.userClickActiveDate = userClickActiveDate
         setTimeout(() => {
           if (userClickActiveDate === this.userClickActiveDate) {
