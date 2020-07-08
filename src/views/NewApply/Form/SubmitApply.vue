@@ -28,15 +28,30 @@
 
     <el-button :disabled="disabled" type="success" @click="submitApply(2)">发布</el-button>
     <el-button type="info" @click="createNew">新建申请</el-button>
-    <el-button v-show="submitId" type="info" @click="skimDetail">查看详情</el-button>
+    <el-button v-show="submitId" type="success" style="width:40%" @click="skimDetail">查 看 详 情</el-button>
+    <el-dialog :visible.sync="showSuccessDialog">
+      <SvgIcon
+        icon-class="Message_success"
+        style-normal="width:5rem;height:5rem;margin:auto;display:flex;justify-content:center"
+      />
+      <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">申 请 提 交 成 功</div>
+      <div class="item-put-center">
+        <el-button type="success" style="width:60%" @click="skimDetail">查 看 详 情</el-button>
+      </div>
+      <div class="item-put-center">
+        <el-button type="info" style="width:60%" @click="showSuccessDialog=false">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import SvgIcon from '@/components/SvgIcon'
 import { doAction } from '@/api/apply/handle'
 import { submitApply } from '@/api/apply/create'
 export default {
   name: 'SubmitApply',
+  components: { SvgIcon },
   props: {
     baseInfoId: {
       type: String,
@@ -53,20 +68,28 @@ export default {
   },
   data: () => ({
     onLoading: false,
-    submitId: ''
+    submitId: '',
+    showSuccessDialog: false
   }),
   computed: {
     theme() {
       return this.$store.state.settings.theme
     },
     applyDetailUrl() {
-      return `/application/applydetail?id=${this.submitId}`
+      return `#/application/applydetail?id=${this.submitId}`
+    }
+  },
+  watch: {
+    submitId: {
+      handler(val) {
+        if (val) this.showSuccessDialog = true
+      }
     }
   },
   methods: {
     skimDetail() {
-      var url = this.applyDetailUrl
-      this.$router.push(url)
+      const url = this.applyDetailUrl
+      window.open(url)
     },
     /**
      * 提交申请 0:仅提交，1:提交并保存，2:提交并发布
@@ -126,5 +149,10 @@ export default {
   background: white;
   box-shadow: 0 -2px 10px -4px;
   padding: 8px;
+}
+.item-put-center {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
 }
 </style>

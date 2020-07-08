@@ -379,21 +379,23 @@ export default {
     submitRequestInfo() {
       if (this.onLoading || !this.anyChanged) return
       this.anyChanged = false
+      this.submitId = null
+      this.$emit('update:submitId', null)
+
       const caculaingDate = this.caculaingDate()
       if (caculaingDate.length <= 0) return
+
       const model = Object.assign({ id: this.userid }, this.formApply)
       model.vacationAdditionals = this.filtedBenefitList
       const items = this.checkParamValid(model)
       if (items.length > 0) {
         this.anyChanged = false
         this.$message.error(items.join(' '))
-        this.submitId = null
-        this.$emit('update:submitId', null)
         return
       }
+
       model.vacationPlace = model.vacationPlace.code
       this.onLoading = true
-
       postRequestInfo(model)
         .then(data => {
           this.$message.success('休假信息验证成功')
