@@ -32,7 +32,8 @@
     <el-dialog :visible.sync="showSuccessDialog">
       <SvgIcon
         icon-class="Message_success"
-        style-normal="width:5rem;height:5rem;margin:auto;display:flex;justify-content:center"
+        style-normal="width:6rem;height:6rem;margin: auto;color:#67c23a"
+        class-name="item-put-center"
       />
       <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">申 请 提 交 成 功</div>
       <div class="item-put-center">
