@@ -65,9 +65,21 @@ export default {
       defaultUser: null
     }
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.user.userid
+    }
+  },
   watch: {
+    currentUser: {
+      handler(val) {
+        this.innerForm.authByUserId = val
+        this.defaultUser = `${this.$store.state.user.name}(${val})`
+      },
+      immediate: true
+    },
     innerForm: {
-      handler(val, oldVal) {
+      handler(val) {
         if (val.code === '') val.code = null
         if (!val.authByUserId) {
           val.authByUserId = null
@@ -75,28 +87,23 @@ export default {
           getUserIdByCid(val.authByUserId, true)
             .then(data => {
               val.authByUserId = data.id
-              this.$message.success(`成功转换身份证号为id`)
             })
             .finally(() => {
-              this.$emit('update:form', val)
-              this.$emit('change', val)
+              this.updateForm(val)
             })
         } else {
-          this.$emit('update:form', val)
-          this.$emit('change', val)
+          this.updateForm(val)
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
   },
-  mounted() {
-    setTimeout(() => {
-      this.innerForm.authByUserId = this.$store.state.user.userid
-      var id = this.$store.state.user.userid
-      this.defaultUser = `${this.$store.state.user.name}(${id})`
-    }, 1000)
-  },
   methods: {
+    updateForm(val) {
+      this.$emit('update:form', val)
+      this.$emit('change', val)
+    },
     checkCode() {
       return new Promise((res, rej) => {
         if (!this.innerForm.authByUserId) {
