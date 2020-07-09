@@ -26,13 +26,17 @@
       @click="showAudit=true"
     >审批</el-link>
     <span v-if="row.status==100">
-      <el-link v-if="CheckIfShowRecall(row)" type="warning" @click="recallApply(false)">召回</el-link>
-      <el-link v-else-if="row.recallId!==null" type="primary" @click="recallApply(true)">召回信息</el-link>
-      <el-tooltip v-else-if="row.executeStatusId==null" content="休假结束后，确认实际归队时间">
-        <el-link type="warning" @click="confirmExecuteStatus(false)">待确认时间</el-link>
-      </el-tooltip>
+      <div v-if="!row.executeStatus&1">
+        <el-tooltip content="填写召回单交终审人审批完成后，确认召回生效">
+          <el-link type="danger" @click="recallApply(false)">召回</el-link>
+        </el-tooltip>
+        <el-tooltip content="休假结束后，确认实际归队时间">
+          <el-link type="success" @click="confirmExecuteStatus(false)">确认</el-link>
+        </el-tooltip>
+      </div>
+      <el-link v-if="row.recallId!==null" type="primary" @click="recallApply(true)">召回信息</el-link>
       <el-link
-        v-else-if="row.executeStatus!==1"
+        v-else-if="row.executeStatus&4"
         type="danger"
         @click="confirmExecuteStatus(true)"
       >推迟归队</el-link>
@@ -97,11 +101,6 @@ export default {
       this.recallOrExecute = false
       this.onlyView = isOnlyShow
       this.showExecuteStatus = true
-    },
-    CheckIfShowRecall(row) {
-      return (
-        row.recallId === null && new Date(row.request.stampReturn) > new Date()
-      )
     }
   }
 }
