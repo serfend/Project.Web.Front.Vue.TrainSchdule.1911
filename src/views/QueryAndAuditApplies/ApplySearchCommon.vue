@@ -7,7 +7,7 @@
           style="margin:0px 20px"
           active-text="管理查询"
           inactive-text="一般查询"
-          @change="searchData"
+          @change="requireSearchData"
         />
       </el-tooltip>
       <el-tooltip effect="light" content="使用更多的查询条件进行查询">
@@ -24,7 +24,7 @@
         :icon="onLoading?'el-icon-loading':'el-icon-refresh-right'"
         circle
         style="float:right"
-        @click="searchDataDirect(true)"
+        @click="requireSearchData"
       />
     </el-card>
     <el-form
@@ -145,7 +145,7 @@
               style="width:40%"
               :loading="onLoading"
               autofocus
-              @click="searchData"
+              @click="requireSearchData"
             >筛选</el-button>
             <el-button
               type="primary"
@@ -171,6 +171,7 @@ import {
   queryMyAudit,
   createQueryApplyModel
 } from '@/api/apply/query'
+import { debounce } from '../../utils'
 export default {
   Name: 'ApplySearchCommon',
   components: { CompaniesSelector, AuthCode, UserSelector },
@@ -213,7 +214,6 @@ export default {
         }
       ],
       onLoading: false,
-      lastUpdate: new Date(),
       onFormModifying: false,
       queryForm: {
         createTime: null,
@@ -238,12 +238,16 @@ export default {
         pageIndex: 0,
         pageSize: 20
       },
-      lastQueryString: '',
       adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
       innerfullui: false
     }
   },
   computed: {
+    requireSearchData() {
+      return debounce(() => {
+        this.searchData()
+      }, 500)
+    },
     statusOptions() {
       return this.$store.state.vacation.statusDic
     },
@@ -252,42 +256,27 @@ export default {
     }
   },
   watch: {
-    adminQuery: {
-      handler(val) {
-        if (!val) this.innerfullui = false
-      },
-      immediate: true
+    adminQuery(val) {
+      if (!val) this.innerfullui = false
     },
-    fullui: {
-      handler(val) {
-        this.innerfullui = val
-      }
+    fullui(val) {
+      this.innerfullui = val
     },
-    innerfullui: {
-      handler(val) {
-        this.$emit('update:fullui', val)
-      }
+    innerfullui(val) {
+      this.$emit('update:fullui', val)
     },
-    onLoading: {
-      handler(val) {
-        this.$emit('update:loading', val)
-      },
-      immediate: true
+    onLoading(val) {
+      this.$emit('update:loading', val)
     },
     queryForm: {
       handler(val) {
-        if (this.onFormModifying) return
-        this.onFormModifying = true
-        this.$nextTick(() => {
-          const item = this.queryForm.CreateCompanyItem || []
-          const codes = item.map(i => i.code)
+        const item = this.queryForm.CreateCompanyItem || []
+        const codes = item.map(i => i.code)
+        if (codes.length !== this.queryForm.createCompany.length) {
           this.queryForm.createCompany = codes
-          setTimeout(() => {
-            this.onFormModifying = false
-          }, 500)
-          this.setFormRecord()
-          this.searchData()
-        })
+        }
+        this.setFormRecord()
+        this.requireSearchData()
       },
       immediate: true,
       deep: true
@@ -296,7 +285,7 @@ export default {
       handler(val) {
         if (val) {
           this.innerPages = val
-          this.searchData()
+          this.requireSearchData()
         } else this.$emit('update:pages', this.innerPages)
       },
       immediate: true,
@@ -326,38 +315,41 @@ export default {
     clearForm() {
       this.$refs.queryForm.resetFields()
     },
-    searchData(isUserAction) {
-      const lastUpdate = new Date()
-      this.lastUpdate = lastUpdate
-      setTimeout(() => {
-        if (this.lastUpdate !== lastUpdate) return
-        this.searchDataDirect(isUserAction)
-      }, 500)
+    handleSearchedData(data) {
+      const list = data.list || []
+      this.$emit('update:list', list)
+      // this.$emit('update:pages', f.pages)
+      this.$emit('update:pagesTotalCount', data.totalCount)
     },
-    searchDataDirect(isUserAction) {
+    searchData(callback, pages) {
+      if (this.onFormModifying) {
+        this.$message.error('操作太快啦,歇歇吧~')
+        return
+      }
+      callback = callback || this.handleSearchedData
+      this.onFormModifying = true
+      this.onLoading = true
+      pages = pages || this.innerPages
       const f = createQueryApplyModel(
         this.queryForm,
-        this.innerPages,
+        pages,
         this.queryForm.auth
       )
       // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
       const status = this.queryForm.status
       const actionStatus = this.queryForm.actionStatus
-      const queryString = `${JSON.stringify(f)}${status}${actionStatus}`
-      if (queryString === this.lastQueryString && !isUserAction) return
-      this.lastQueryString = queryString
       const action = this.adminQuery
         ? queryList(f)
         : queryMyAudit(f.pages, status, actionStatus)
-      this.onLoading = true
       action
         .then(data => {
-          this.$emit('update:list', data.list || [])
-          this.$emit('update:pages', f.pages)
-          this.$emit('update:pagesTotalCount', data.totalCount)
+          callback(data)
         })
         .finally(() => {
           this.onLoading = false
+          setTimeout(() => {
+            this.onFormModifying = false
+          }, 1000)
         })
     }
   }

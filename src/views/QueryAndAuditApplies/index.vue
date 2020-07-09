@@ -61,11 +61,25 @@ export default {
   },
   methods: {
     exportApplies() {
+      const total = this.pagesTotalCount
+      const expFn = this.exportAppliesDirect
+      this.$confirm(`当前记录共有${total}条，是否导出?`).then(() => {
+        this.loading = true
+        const nowScrrenCount = this.appliesList.length
+        if (nowScrrenCount < total) {
+          this.$message.success('加载全部休假申请中')
+          const fn = this.$refs.queryAppliesForm.searchData
+          const callback = data => {
+            expFn(data.list.map(i => i.id))
+          }
+          fn(callback, { pageIndex: 0, pageSize: total })
+        } else expFn(this.appliesList.map(i => i.id))
+      })
+    },
+    exportAppliesDirect(ids) {
       this.loading = true
-      exportMultiApplies(
-        '休假人员统计表.xlsx',
-        this.appliesList.map(i => i.id)
-      ).finally(() => {
+      this.$message.success('导出申请中')
+      exportMultiApplies('休假人员统计表.xlsx', ids).finally(() => {
         this.loading = false
       })
     },
