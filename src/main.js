@@ -32,10 +32,6 @@ import * as filters from './filters' // global filters
  * mockXHR()
  */
 
-import mavonEditor from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
-Vue.use(mavonEditor)
-
 // register global utility filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

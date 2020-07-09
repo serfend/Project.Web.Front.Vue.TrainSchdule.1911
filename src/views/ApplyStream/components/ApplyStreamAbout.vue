@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="value">
-      <mavon-editor
+      <mavonEditor
         v-model="value"
         :ishljs="true"
         :toolbars-flag="false"
@@ -16,9 +16,12 @@
 </template>
 
 <script>
+import { mavonEditor } from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 import { loadDocument } from '@/utils/file'
 export default {
   name: 'ApplyStreamAbout',
+  components: { mavonEditor },
   data() {
     return {
       fileName: 'auditStream.about.md',
