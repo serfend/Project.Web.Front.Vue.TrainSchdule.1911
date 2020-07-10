@@ -68,7 +68,29 @@
             :value="item.code"
           >
             <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
-            <span style="float: right; color: #f0f0f0; font-size: 10px">{{ item.code }}</span>
+            <span style="float: right; color: #e0e0e0; font-size: 10px">{{ item.code }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="onFilterAccept" label="落实状态">
+        <el-select
+          v-if="executeStatus"
+          v-model="queryForm.executeStatus"
+          class="full-width"
+          placeholder="选择确认时间情况"
+          clearable
+        >
+          <el-option
+            v-for="(item,i) in Object.keys(executeStatus).map(s=>executeStatus[s])"
+            :key="i"
+            :value="item.value"
+            :label="item.alias"
+          >
+            <div v-if="item">
+              <span :style="{'float': 'left','color':item.color}">{{ item.alias }}</span>
+              <span style="float: right; color: #e0e0e0; font-size: 10px">{{ item.value }}</span>
+            </div>
+            <div v-else>未知项{{ Object.keys(executeStatus)[i] }}</div>
           </el-option>
         </el-select>
       </el-form-item>
@@ -171,7 +193,7 @@ import {
   queryMyAudit,
   createQueryApplyModel
 } from '@/api/apply/query'
-import { debounce } from '../../utils'
+import { debounce } from '@/utils'
 export default {
   Name: 'ApplySearchCommon',
   components: { CompaniesSelector, AuthCode, UserSelector },
@@ -243,10 +265,16 @@ export default {
     }
   },
   computed: {
+    onFilterAccept() {
+      return this.queryForm.status.indexOf(100) > -1
+    },
     requireSearchData() {
       return debounce(() => {
         this.searchData()
       }, 500)
+    },
+    executeStatus() {
+      return this.$store.state.vacation.executeStatus
     },
     statusOptions() {
       return this.$store.state.vacation.statusDic
@@ -326,21 +354,23 @@ export default {
         this.$message.error('操作太快啦,歇歇吧~')
         return
       }
+      const form = this.queryForm
+      if (!this.onFilterAccept && form.executeStatus != null) {
+        form.executeStatus = null
+        return
+      }
       callback = callback || this.handleSearchedData
       this.onFormModifying = true
       this.onLoading = true
       pages = pages || this.innerPages
-      const f = createQueryApplyModel(
-        this.queryForm,
-        pages,
-        this.queryForm.auth
-      )
+      const f = createQueryApplyModel(form, pages, form.auth)
       // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
-      const status = this.queryForm.status
-      const actionStatus = this.queryForm.actionStatus
+      const status = form.status
+      const actionStatus = form.actionStatus
+      const execStatus = form.executeStatus
       const action = this.adminQuery
         ? queryList(f)
-        : queryMyAudit(f.pages, status, actionStatus)
+        : queryMyAudit(f.pages, status, actionStatus, execStatus)
       action
         .then(data => {
           callback(data)

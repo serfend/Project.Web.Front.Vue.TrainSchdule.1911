@@ -44,6 +44,7 @@ export function queryList(data, ignoreErr) {
     stampLeaveTime: Array:Date*2,
     stampReturnTime: Array:Date*2,
     status: [], // 状态
+    executeStatus: null // 执行状态
     actionStatus: 'Received', // 我的状态
     auditBy: String,
     nowAuditBy: String,
@@ -61,6 +62,7 @@ export function createQueryApplyModel(model, pages) {
   f.stampLeave = form.toQueryStartEndByArray(model.stampLeaveTime)
   f.stampReturn = form.toQueryStartEndByArray(model.stampReturnTime)
   f.status = form.toQueryArrays(model.status)
+  f.executeStatus = form.toQueryValue(model.executeStatus)
   f.auditBy = form.toQueryValue(model.auditBy)
   f.nowAuditBy = form.toQueryValue(model.nowAuditBy)
   f.createCompany = form.toQueryArrays(model.createCompany)
@@ -79,8 +81,9 @@ export function createQueryApplyModel(model, pages) {
  * @param {Object} pages 分页
  * @param {Array} status 状态
  * @param {String} myAuditStatus 我的状态：accept,deny,unreceive,received,null
+ * @param {String} executeStatus 落实状态
  */
-export function queryMyAudit(pages, status, myAuditStatus) {
+export function queryMyAudit(pages, status, myAuditStatus, executeStatus) {
   pages = (!pages) ? {
     pageIndex: 0,
     pageSize: 20
@@ -91,7 +94,8 @@ export function queryMyAudit(pages, status, myAuditStatus) {
       pageIndex: pages.pageIndex,
       pageSize: pages.pageSize,
       status: status.join('##'),
-      actionStatus: myAuditStatus
+      actionStatus: myAuditStatus,
+      executeStatus
     }
   })
 }

@@ -25,14 +25,16 @@
       >
         <i class="el-icon-download" />
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-for="item in statusDic[row.status].acessable" :key="item.name">
+          <el-dropdown-item v-for="item in statusDic[row.status].acessable" :key="item.desc">
             <el-popconfirm
+              v-if="actionDic[item]"
               :title="`${actionDic[item].description} 确定要${actionDic[item].alias}吗？`"
               :confirm-button-text="actionDic[item].alias"
               @onConfirm="hendleExecute(item,row)"
             >
               <el-link slot="reference" :type="actionDic[item].type">{{ actionDic[item].alias }}</el-link>
             </el-popconfirm>
+            <div v-else>未知操作选项:{{ item }}</div>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
