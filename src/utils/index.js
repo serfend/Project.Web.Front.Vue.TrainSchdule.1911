@@ -119,14 +119,16 @@ export function formatTime(time, option) {
 
   const diff = (now - d) / 1000
 
-  if (diff < 30) {
+  if (diff < 60) {
     return '刚刚'
   } else if (diff < 3600) {
-    return `${Math.ceil(diff / 60)}分钟前`
+    return `${Math.floor(diff / 60)}分钟前`
   } else if (diff < 3600 * 24) {
-    return `${Math.ceil(diff / 3600)}小时前`
-  } else if (diff < 3600 * 24 * 8) {
-    return `${Math.ceil(diff / 86400)}天前`
+    return `${Math.floor(diff / 3600)}小时前`
+  } else if (diff < 3600 * 48) {
+    return '昨天'
+  } else if (diff < 3600 * 24 * 90) {
+    return `${Math.floor(diff / 86400)}天前`
   }
   return parseTime(time, option)
 }
