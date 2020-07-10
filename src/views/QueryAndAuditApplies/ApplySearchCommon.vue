@@ -340,8 +340,8 @@ export default {
       // this.$emit('update:pages', f.pages)
       this.$emit('update:pagesTotalCount', data.totalCount)
     },
-    searchData(callback, pages) {
-      if (this.onFormModifying) {
+    searchData(userAct, callback, pages) {
+      if (!userAct && this.onFormModifying) {
         this.$message.error('操作太快啦,歇歇吧~')
         return
       }
