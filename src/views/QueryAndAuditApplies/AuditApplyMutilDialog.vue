@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="multiAuditFormShow" title="批量审核">
+  <el-dialog v-loading="loading" :visible.sync="multiAuditFormShow" title="批量审核">
     <div v-if="multiAuditForm.responseList.length>0">
       <el-form ref="auditForm" :model="auditForm">
         <el-form-item label="审核结果" align="left">
@@ -98,6 +98,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       multiAuditForm: {
         responseList: []
       },
@@ -113,8 +114,8 @@ export default {
     responselist: {
       handler(val) {
         this.multiAuditForm.responseList = []
-        for (var i = 0; i < val.length; i++) {
-          var item = val[i]
+        for (let i = 0; i < val.length; i++) {
+          const item = val[i]
           if (item.status !== 100) {
             this.multiAuditForm.responseList.push({
               apply: item,
@@ -149,6 +150,7 @@ export default {
     SubmitMultiAuditForm() {
       this.$refs['auditForm'].validate(valid => {
         if (!valid) return
+        this.loading = true
         const auth = this.auditForm.auth
         var list = this.multiAuditForm.responseList.map(item => {
           return {
@@ -159,16 +161,17 @@ export default {
         })
         audit({ list: list }, auth)
           .then(resultlist => {
-            for (var i = 0; i < resultlist.length; i++) {
-              var item = {
+            for (let i = 0; i < resultlist.length; i++) {
+              const item = {
                 message: resultlist[i].message,
                 status: resultlist[i].status
               }
-              var applyraw = this.multiAuditForm.responseList[i]
-              var apply = applyraw.apply
-              var from = apply.base.realName
-              var r = apply.request
-              var vacationLen = datedifference(r.stampReturn, r.stampLeave) + 1
+              const applyraw = this.multiAuditForm.responseList[i]
+              const apply = applyraw.apply
+              const from = apply.base.realName
+              const r = apply.request
+              const vacationLen =
+                datedifference(r.stampReturn, r.stampLeave) + 1
               item.msg = applyraw.action === 2 ? '驳回' : '通过'
               item.msg = `${item.msg}${from}的${vacationLen}天申请`
               item.msg += item.status === 0 ? '成功' : `失败:${item.message}`
@@ -180,13 +183,14 @@ export default {
                     this.$notify.error(result.msg)
                   }
                 },
-                (i + 1) * 3000,
+                (i + 1) * 1000,
                 item
               )
             }
             this.$emit('updated')
           })
           .finally(() => {
+            this.loading = false
             this.multiAuditFormShow = false
           })
       })
@@ -205,6 +209,6 @@ export default {
 
 <style scope>
 .el-form-item {
-  margin-bottom: 2px;
+  margin-bottom: 1rem;
 }
 </style>
