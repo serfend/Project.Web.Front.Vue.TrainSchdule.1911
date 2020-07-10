@@ -117,12 +117,9 @@
         <el-date-picker
           v-model="queryForm.createTime"
           type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="-"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          format="yyyy-MM-dd"
+          format="yyyy年MM月dd日"
           value-format="yyyy-MM-dd"
           clearable
         />
@@ -132,12 +129,9 @@
           <el-date-picker
             v-model="queryForm.stampLeaveTime"
             type="daterange"
-            align="right"
-            unlink-panels
-            range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            format="yyyy-MM-dd"
+            format="yyyy年MM月dd日"
             value-format="yyyy-MM-dd"
             clearable
           />
@@ -147,12 +141,9 @@
         <el-date-picker
           v-model="queryForm.stampReturnTime"
           type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="-"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          format="yyyy-MM-dd"
+          format="yyyy年MM月dd日"
           value-format="yyyy-MM-dd"
           clearable
         />

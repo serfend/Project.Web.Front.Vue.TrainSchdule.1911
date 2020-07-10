@@ -11,7 +11,7 @@
         <el-form-item v-show="onlyView" :label="`${displayName}创建`">
           <el-date-picker
             v-model="auditForm.recallData.create"
-            format="yyyy-MM-dd"
+            format="yyyy年MM月dd日"
             value-format="yyyy-MM-dd"
             disabled
             style="width:100%"
@@ -20,7 +20,7 @@
         <el-form-item label="原归队时">
           <el-date-picker
             v-model="auditForm.recallData.rawStampReturn"
-            format="yyyy-MM-dd"
+            format="yyyy年MM月dd日"
             value-format="yyyy-MM-dd"
             disabled
             style="width:100%"
@@ -29,7 +29,7 @@
         <el-form-item :label="`${displayName}后时间`">
           <el-date-picker
             v-model="auditForm.stampReturn"
-            format="yyyy-MM-dd"
+            format="yyyy年MM月dd日"
             value-format="yyyy-MM-dd"
             style="width:100%"
           />
