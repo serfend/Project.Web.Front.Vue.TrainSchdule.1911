@@ -32,8 +32,8 @@ export function getExam({
     holdBy: toQueryValue(holdBy),
     createBy: toQueryValue(createBy),
     handleBy: toQueryValue(handleBy),
-    create: toQueryStartEndByArray(handleBy),
-    executeTime: toQueryStartEndByArray(handleBy),
+    create: toQueryStartEndByArray(create),
+    executeTime: toQueryStartEndByArray(executeTime),
     pages
   })
 }
