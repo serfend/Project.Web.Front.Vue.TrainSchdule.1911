@@ -54,7 +54,7 @@
           </el-row>
           <el-row>
             <el-tooltip content="休假起始和结束的时间">
-              <span>{{ row.stampLeave }}-{{ row.stampReturn }}</span>
+              <span>{{ parseTime(row.stampLeave) }}-{{ parseTime(row.stampReturn) }}</span>
             </el-tooltip>
           </el-row>
         </template>
@@ -204,6 +204,18 @@ export default {
     format(d) {
       return formatTime(d)
     },
+    parseTime(d) {
+      const now = new Date()
+      const nowY = now.getFullYear()
+      const dY = d.getFullYear()
+      const nowM = now.getMonth() + 1
+      const dM = d.getMonth() + 1
+      const sameYear = nowY === dY ? '' : `${dY}年`
+      const same = !sameYear && nowM === dM
+      const sameMonth = same ? '' : `${dM}月`
+      return `${sameYear}${sameMonth}${d.getDate()}日`
+    },
+    datedifference,
     getCDdes(row, prevRow) {
       const cn = row.companyName
       const prevCn = prevRow.companyName
@@ -219,30 +231,18 @@ export default {
       return result.join(' ')
     },
     formatApplyItem(li) {
-      const { ...item } = li
-      const statusObj = this.statusOptions[item.status]
-      item.statusDesc = statusObj ? statusObj.desc : '不明类型'
-      item.statusColor = statusObj ? statusObj.color : 'gray'
-      item.acessable = statusObj ? statusObj.acessable : []
-      var stampLeave = new Date(item.request.stampLeave)
-      item.checkIfIsReplentApply = stampLeave <= new Date(item.create)
-      var nowYear = new Date().getFullYear()
-      var nowYearDes =
-        stampLeave.getFullYear() !== nowYear
-          ? `${stampLeave.getFullYear()}年`
-          : ''
-      item.stampLeave = `${nowYearDes}${stampLeave.getMonth() +
-        1}月${stampLeave.getDate()}日`
-      var stampReturn = new Date(item.request.stampReturn)
-      var stampReturnYearDes =
-        stampReturn.getFullYear() !== nowYear
-          ? `${stampReturn.getFullYear()}年`
-          : ''
-      item.stampReturn = `${stampReturnYearDes}${stampReturn.getMonth() +
-        1}月${stampReturn.getDate()}日`
-      return item
+      const statusObj = this.statusOptions[li.status]
+      li.statusDesc = statusObj ? statusObj.desc : '未知状态'
+      li.statusColor = statusObj ? statusObj.color : 'gray'
+      li.acessable = statusObj ? statusObj.acessable : []
+
+      const stampLeave = new Date(li.request.stampLeave)
+      const stampReturn = new Date(li.request.stampReturn)
+      li.stampLeave = stampLeave
+      li.stampReturn = stampReturn
+      li.checkIfIsReplentApply = stampLeave <= new Date(li.create)
+      return li
     },
-    datedifference,
     countOtherTime(row) {
       return (
         datedifference(row.stampReturn, row.stampLeave) -
