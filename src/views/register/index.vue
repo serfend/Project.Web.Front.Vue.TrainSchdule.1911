@@ -236,17 +236,24 @@ export default {
     }
   },
   computed: {
-    nowLoginUserName() {
-      return this.$store.state.user.realName
+    currentCmp() {
+      return this.$store.state.user.companyid
     }
   },
   watch: {
+    currentCmp: {
+      handler(val) {
+        this.nowSelectCompany = { code: val }
+      },
+      immediate: true
+    },
     nowSelectCompany: {
       handler(val) {
         if (val) {
           this.loadWaitToAuthRegisterUsers()
         }
-      }
+      },
+      immediate: true
     },
     MembersQuery: {
       handler(val) {
