@@ -72,7 +72,7 @@ export default {
           const callback = data => {
             expFn(data.list.map(i => i.id))
           }
-          fn(callback, { pageIndex: 0, pageSize: total })
+          fn(true, callback, { pageIndex: 0, pageSize: total })
         } else expFn(this.appliesList.map(i => i.id))
       })
     },
