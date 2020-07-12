@@ -78,15 +78,22 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>{{ vacationTypesDic[row.request.vacationType].alias }}{{ row.request.vacationLength }}天</el-dropdown-item>
-              <el-dropdown-item>路途{{ row.request.onTripLength }}天</el-dropdown-item>
               <el-dropdown-item
-                v-for="additial in row.request.additialVacations"
+                v-if="row.request.vacationLength>0"
+              >{{ vacationTypesDic[row.request.vacationType].alias }}{{ row.request.vacationLength }}天</el-dropdown-item>
+              <el-dropdown-item v-if="row.request.onTripLength>0">路途{{ row.request.onTripLength }}天</el-dropdown-item>
+              <el-dropdown-item
+                v-for="(v,i) in row.request.additialVacations"
                 v-show="row.request.additialVacations.length>0"
-                :key="additial.name"
+                :key="i"
               >
-                <el-tooltip :content="additial.description" placement="left">
-                  <el-tag>{{ additial.name }} {{ additial.length }}天</el-tag>
+                <el-tooltip
+                  :content="v.description=='法定节假日'?v.description:`用户个人创建，原因:${v.description}`"
+                  placement="left"
+                >
+                  <el-tag
+                    :type="v.description=='法定节假日'?'primary':'warning'"
+                  >{{ v.name }} {{ v.length }}天</el-tag>
                 </el-tooltip>
               </el-dropdown-item>
             </el-dropdown-menu>
