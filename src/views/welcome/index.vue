@@ -5,11 +5,11 @@
         <el-row v-if="showTitle" type="flex">
           <div>
             <span style="color:#ffffff;font-size:2em">{{ $store.state.settings.title }}</span>
-            <el-popover trigger="hover">
+            <el-popover trigger="hover" placement="right">
               <div>
                 <h2>{{ $store.state.settings.version }}</h2>
                 <span>{{ formatTime($store.state.settings.create) }}</span>
-                <p v-for="l in $store.state.settings.description.split('\n')" :key="l">{{ l }}</p>
+                <div v-for="l in $store.state.settings.description.split('\n')" :key="l">{{ l }}</div>
               </div>
               <el-link
                 slot="reference"
