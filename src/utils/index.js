@@ -117,18 +117,20 @@ export function formatTime(time, option) {
   const d = new Date(time)
   const now = Date.now()
 
-  const diff = (now - d) / 1000
-
-  if (diff < 60) {
+  let diff = (now - d) / 1000
+  const isFuture = diff < 0
+  const append = isFuture ? '后' : '前'
+  diff = Math.abs(diff)
+  if (!isFuture && diff < 60) {
     return '刚刚'
   } else if (diff < 3600) {
-    return `${Math.floor(diff / 60)}分钟前`
+    return `${Math.floor(diff / 60)}分钟${append}`
   } else if (diff < 3600 * 24) {
-    return `${Math.floor(diff / 3600)}小时前`
+    return `${Math.floor(diff / 3600)}小时${append}`
   } else if (diff < 3600 * 48) {
-    return '昨天'
+    return isFuture ? '明天' : '昨天'
   } else if (diff < 3600 * 24 * 90) {
-    return `${Math.floor(diff / 86400)}天前`
+    return `${Math.floor(diff / 86400)}天${append}`
   }
   return parseTime(time, option)
 }

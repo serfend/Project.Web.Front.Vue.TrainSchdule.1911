@@ -129,8 +129,9 @@ export default {
       this.$emit('updated')
     },
     timeFormat(val) {
-      const f = parseTime(val)
-      const dis = formatTime(val)
+      const opt = '{y}年{m}月{d}日'
+      const f = parseTime(val, opt)
+      const dis = formatTime(val, opt)
       return f === dis ? f : `${f}(${dis})`
     },
     formatPercent(val) {
