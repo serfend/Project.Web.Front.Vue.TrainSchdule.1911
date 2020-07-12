@@ -26,14 +26,14 @@
       @click="showAudit=true"
     >审批</el-link>
     <span v-if="row.status==100">
-      <div v-if="!row.executeStatus&1">
+      <span v-if="!row.executeStatus&1">
         <el-tooltip content="填写召回单交终审人审批完成后，确认召回生效">
           <el-link type="danger" @click="recallApply(false)">召回</el-link>
         </el-tooltip>
         <el-tooltip v-if="row.stampReturn <= new Date()" content="休假结束后，确认实际归队时间">
           <el-link type="success" @click="confirmExecuteStatus(false)">确认</el-link>
         </el-tooltip>
-      </div>
+      </span>
       <el-link v-if="row.recallId!==null" type="primary" @click="recallApply(true)">召回信息</el-link>
       <el-link
         v-else-if="row.executeStatus&4"
