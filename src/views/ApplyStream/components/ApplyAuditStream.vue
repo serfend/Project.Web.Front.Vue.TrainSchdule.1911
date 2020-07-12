@@ -23,14 +23,20 @@
             <el-tooltip>
               <div slot="content">
                 <el-steps direction="vertical">
-                  <el-step v-for="s in scope.row.nodes" :key="s.key" style="width:20rem">
-                    <div slot="title" style="color:#ffc300">{{ s.name }}</div>
+                  <el-step v-for="(s,i) in scope.row.nodes" :key="i" style="width:20rem">
+                    <div slot="title" style="color:#ffc300">
+                      <div v-if="s">{{ s.name }}</div>
+                      <div v-else>无效的节点，可能已被删除</div>
+                    </div>
                     <div slot="description">
-                      创建于
-                      {{ format(s.create) }}
-                      需要
-                      {{ s.auditMembersCount==0?'所有人':(s.auditMembersCount+'人') }}审核
-                      <div style="color:#ffffff;font-size:1rem">{{ s.description }}</div>
+                      <div v-if="s">
+                        <div>创建于:{{ format(s.create) }}</div>
+                        <div>
+                          需要
+                          {{ s.auditMembersCount==0?'所有人':(s.auditMembersCount+'人') }}审核
+                        </div>
+                        <div style="color:#ffffff;font-size:1rem">{{ s.description }}</div>
+                      </div>
                     </div>
                   </el-step>
                 </el-steps>
@@ -191,9 +197,10 @@ export default {
         this.newSolution.id = target.id
         this.newSolution.name = target.name
         this.newSolution.description = target.description
-        this.newSolution.nodes = target.nodes.map(i =>
-          this.buildNodeSelect(i.name)
-        )
+        this.newSolution.nodes = target.nodes.map(i => {
+          if (!i) i = { name: '无效的节点' }
+          return this.buildNodeSelect(i.name)
+        })
       }
     },
     deleteSolution() {
@@ -214,10 +221,11 @@ export default {
         })
     },
     buildNodeSelect(val) {
+      const s = this.data.allActionNodeDic[val]
       return {
         id: Math.random(),
         label: val,
-        description: this.data.allActionNodeDic[val].description
+        description: s && s.description
       }
     },
     selectNodeChanged(val) {
