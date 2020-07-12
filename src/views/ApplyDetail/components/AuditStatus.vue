@@ -15,8 +15,13 @@
               :key="index"
               style="margin-top:0.5rem"
             >
-              <UserFormItem v-if="rec.auditingUserId" :userid="rec.auditingUserId" />
-              <span v-else>{{ rec.auditingUserRealName }}</span>
+              <UserFormItem
+                v-if="rec.auditingUserId"
+                :userid="rec.auditingUserId"
+                style="margin:0.5rem 0 0.5rem 0"
+              />
+              <span v-else-if="rec.auditingUserRealName">{{ rec.auditingUserRealName }}</span>
+              <span v-else style="color:#ccc">{{ rec.remark }}</span>
               <el-tag
                 :type="rec.status===4?'success':rec.status===8?'danger':'info'"
               >{{ rec.status===4?'通过':rec.status===8?'驳回':'未处理' }}</el-tag>
