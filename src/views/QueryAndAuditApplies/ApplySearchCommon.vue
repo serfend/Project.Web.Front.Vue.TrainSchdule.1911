@@ -272,6 +272,9 @@ export default {
     },
     currentUserId() {
       return this.$store.state.user.userid
+    },
+    currentUserCmp() {
+      return this.$store.state.user.companyid
     }
   },
   watch: {
@@ -286,6 +289,12 @@ export default {
     },
     onLoading(val) {
       this.$emit('update:loading', val)
+    },
+    currentUserCmp(val) {
+      const s = this.queryForm
+      if (!s.CreateCompanyItem || s.CreateCompanyItem.length === 0) {
+        s.CreateCompanyItem = [{ code: val }]
+      }
     },
     queryForm: {
       handler(val) {
