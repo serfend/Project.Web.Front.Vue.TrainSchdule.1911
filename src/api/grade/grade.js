@@ -98,7 +98,7 @@ export function getRecord(create, createBy, createFor, pages) {
  */
 export function postRecord(model, auth) {
   return request.post(`${api}/record`, {
-    ...model,
+    data: model,
     auth
   })
 }
