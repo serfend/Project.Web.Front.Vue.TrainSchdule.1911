@@ -17,15 +17,18 @@
                   effect="dark"
                   :type="detail.request.vacationType==='正休'?'primary':'danger'"
                 >{{ detail.request.vacationType }}</el-tag>
-
-                <el-col v-if="staticData.vacationStart" :lg="6" :md="12" :sm="24">
+                <div v-if="staticData.vacationStart">
                   <el-tooltip effect="light">
                     <template slot="content">
                       <span>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</span>
                     </template>
-                    <el-progress :width="100" :percentage="staticData.vacationProgress" />
+                    <el-col v-if="staticData.vacationSpent>=0" :lg="6" :md="12" :sm="24">
+                      <el-progress :width="100" :percentage="staticData.vacationProgress" />
+                    </el-col>
+
+                    <span v-else>距离离队时间:{{ -staticData.vacationSpent }}天</span>
                   </el-tooltip>
-                </el-col>
+                </div>
                 <span v-else>
                   <el-tag
                     v-if="statusDic[detail.status]"
@@ -125,8 +128,7 @@ export default {
         vacationLength: 0,
         vacationSpent: 0,
         vacationProgress: 0,
-        vacationStart: false,
-        applyDetailName: '加载中...'
+        vacationStart: false
       }
     }
   },
@@ -162,31 +164,25 @@ export default {
     },
     initstaticDataData() {
       const now = new Date()
-      const start = this.detail.request.stampLeave
-      const end = this.detail.request.stampReturn
+      const { request, status } = this.detail
+      const start = request.stampLeave
+      const end = request.stampReturn
       const vacationLength = datedifference(end, start) + 1
-      this.staticData.vacationLength = vacationLength
+      const s = this.staticData
+      s.vacationLength = vacationLength
       const vacationSpend = datedifference(now, start)
-      this.staticData.vacationSpent =
+      s.vacationSpent =
         vacationSpend > vacationLength ? vacationLength : vacationSpend
-      this.staticData.applyDetailName = `${this.detail.base.dutiesName}${
-        this.detail.base.realName
-      }的${datedifference(
-        this.detail.request.stampReturn,
-        this.detail.request.stampLeave
-      ) + 1}天${this.detail.request.vacationType}休假`
-      this.staticData.vacationStart =
-        this.detail.status &&
-        this.statusDic[this.detail.status].desc === '已通过'
-      if (this.staticData.vacationSpent >= this.staticData.vacationLength) {
-        this.staticData.vacationProgress = 100
+      s.vacationStart = status === 100
+      let progress = 0
+      if (s.vacationSpent >= s.vacationLength) {
+        progress = 100
       } else {
-        this.staticData.vacationProgress =
-          (this.staticData.vacationSpent / this.staticData.vacationLength) * 100
-        this.staticData.vacationProgress = Math.floor(
-          this.staticData.vacationProgress
-        )
+        progress = (s.vacationSpent / s.vacationLength) * 100
+        if (progress < 0) progress = 0
+        progress = Math.floor(progress)
       }
+      s.vacationProgress = progress
     },
     downloadUserApplies() {
       const dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
