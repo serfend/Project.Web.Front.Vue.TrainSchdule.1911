@@ -26,6 +26,10 @@ export default {
     placeholder: {
       type: String,
       default: null
+    },
+    code: {
+      type: String,
+      default: null
     }
   },
   data: () => ({
@@ -51,6 +55,7 @@ export default {
           code: val.value,
           name: val.label
         })
+        this.$emit('update:code', val.value)
       }
     }
   },
