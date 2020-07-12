@@ -1,5 +1,5 @@
 <template>
-  <el-form :style="{width:width}">
+  <el-form v-loading="loading" :style="{width:width}">
     <el-form-item label="代码">{{ innerInfo.code }}</el-form-item>
     <el-form-item label="名称">{{ innerInfo.name }}</el-form-item>
     <el-form-item label="类别">{{ innerInfo.type }}</el-form-item>
@@ -31,8 +31,13 @@
 </template>
 
 <script>
+import { companyDetail } from '@/api/company'
 export default {
   name: 'Company',
+  model: {
+    prop: 'id',
+    event: 'change'
+  },
   props: {
     data: {
       type: Object,
@@ -40,17 +45,41 @@ export default {
         return this.defaultData()
       }
     },
+    id: {
+      type: String,
+      default: null
+    },
     width: {
       type: String,
       default: '200px'
+    },
+    canLoad: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      innerInfo: this.defaultData()
+      loading: false,
+      innerInfo: this.defaultData(),
+      loaded: false,
+      lastId: null
     }
   },
   watch: {
+    id: {
+      handler(val) {
+        this.loaded = false
+        this.OnStatusChange()
+      },
+      immediate: true
+    },
+    canLoad: {
+      handler(val) {
+        this.OnStatusChange()
+      },
+      immediate: true
+    },
     data: {
       handler(val) {
         if (!val) return
@@ -65,6 +94,22 @@ export default {
     }
   },
   methods: {
+    OnStatusChange() {
+      const id = this.id
+      const canLoad = this.canLoad
+      if (!canLoad || this.lastId === id) return
+      this.loading = true
+      this.lastId = id
+      companyDetail(id)
+        .then(data => {
+          const c = data.model
+          this.$emit('update:data', c)
+          this.loaded = true
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     defaultData() {
       return {
         name: '无名称',
