@@ -85,7 +85,7 @@
             </el-tooltip>
           </el-form-item>
           <el-form-item v-for="(s,i) in form.subjects" :key="i" :label="s.alias">
-            <el-input v-model="form.subjects[i].rawValue" :placeholder="`${s.alias}成绩`" />
+            <span>{{ s.rawValue }}</span>
           </el-form-item>
         </el-form>
       </el-card>
@@ -252,24 +252,29 @@ export default {
       this.refreshSubmitUser()
       const u = this.submitU
       const query = buildGradeQuery(grades, u, true)
-      getResult(query).then(data => {
-        const s = data.subjects
-        const sub = this.form.subjects
-        for (let i = 0; i < s.length; i++) {
-          for (let j = 0; j < sub.length; j++) {
-            if (s[i].subject === sub[j].name) {
-              const { grade } = s[i]
-              sub[j].grade = grade
-              for (let r = 0; r < singleRankingOpt.length; r++) {
-                if (singleRankingOpt[r].grade > grade) break
-                sub[j].description = singleRankingOpt[r].description
-                sub[j].status = singleRankingOpt[r].status
+      this.loading = true
+      getResult(query)
+        .then(data => {
+          const s = data.subjects
+          const sub = this.form.subjects
+          for (let i = 0; i < s.length; i++) {
+            for (let j = 0; j < sub.length; j++) {
+              if (s[i].subject === sub[j].name) {
+                const { grade } = s[i]
+                sub[j].grade = grade
+                for (let r = 0; r < singleRankingOpt.length; r++) {
+                  if (singleRankingOpt[r].grade > grade) break
+                  sub[j].description = singleRankingOpt[r].description
+                  sub[j].status = singleRankingOpt[r].status
+                }
+                break
               }
-              break
             }
           }
-        }
-      })
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     refreshSubmitUser() {
       const user = this.form.user

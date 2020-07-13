@@ -4,7 +4,7 @@
       <el-form-item label="名称">
         <el-input v-model="data.name" />
       </el-form-item>
-      <el-form-item label="名称">
+      <el-form-item label="描述">
         <el-input v-model="data.description" type="textarea" />
       </el-form-item>
       <el-form-item label="负责单位">
