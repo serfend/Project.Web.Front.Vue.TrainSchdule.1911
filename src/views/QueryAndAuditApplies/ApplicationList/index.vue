@@ -88,7 +88,7 @@
                 :key="i"
               >
                 <el-tooltip
-                  :content="v.description=='法定节假日'?v.description:`用户个人创建，原因:${v.description}`"
+                  :content="v.description=='法定节假日'?v.description:`用户个人创建(非法定节假日)，原因:${v.description}`"
                   placement="left"
                 >
                   <el-tag

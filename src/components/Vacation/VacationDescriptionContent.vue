@@ -26,12 +26,17 @@
     </li>
     <li>
       <b>其他假期：</b>
-      <el-tooltip v-if="usersVacation.additionals" effect="light" placement="right">
+      <el-tooltip
+        v-if="usersVacation.additionals&&usersVacation.additionals.length>0"
+        effect="light"
+        placement="right"
+      >
         <div slot="content">
-          <span
+          <div
             v-for="(v,i) in usersVacation.additionals"
             :key="i"
-          >{{ parseTime(v.start) }}:{{ v.name }} {{ v.length }}天</span>
+            :style="{color:v.description=='法定节假日'?'#13ce66':'#ff4949'}"
+          >{{ parseTime(v.start) }}:{{ v.name }} {{ v.length }}天</div>
         </div>
         <span>{{ usersVacation.additionals.reduce((prev,cur)=>prev+cur.length,0) }}天</span>
       </el-tooltip>
