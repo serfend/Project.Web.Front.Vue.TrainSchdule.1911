@@ -117,7 +117,7 @@ export default {
     form: createNewExam(),
     pages: {
       pageIndex: 0,
-      pageSize: 20
+      pageSize: 5
     },
     totalCount: 0
   }),
@@ -135,7 +135,8 @@ export default {
     refresh() {
       const pages = this.pages
       getExam({ ...this.form, pages }).then(data => {
-        console.log(data)
+        this.list = data.list
+        this.totalCount = data.totalCount
       })
     },
     editExam(scope) {
