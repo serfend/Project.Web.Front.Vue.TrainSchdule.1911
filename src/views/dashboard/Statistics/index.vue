@@ -160,6 +160,8 @@ export default {
       const collectionNames = Object.keys(companiesData[0]).filter(
         i => i !== 'types' && apiOption[i].chartShow[0]
       )
+      const allTypes = companiesData[0].types
+      const comparer = (a, b) => new Date(b.target) - new Date(a.target)
       const rawData = collectionNames.map(collect => {
         const { props, accumulate } = apiOption[collect]
         const mutiScreenProps = groupByFiled(props, 'screen')
@@ -167,24 +169,43 @@ export default {
         const spkLen = screenPropsKeys.length
         const screens = screenPropsKeys.map(screenPropsKey => {
           const screenProps = mutiScreenProps[screenPropsKey]
-          const series = screenProps.map(prop => {
-            const { key, name } = prop
-            const reducer = (prev, cur, curIndec, arr) => prev + cur[key]
-            const data = companiesData.map(cmp => {
-              const cmpCollect = cmp[collect]
-              if (!cmpCollect || cmpCollect.length === 0) return 0
-              return accumulate
-                ? cmpCollect.reduce(reducer, 0)
-                : cmpCollect[cmpCollect.length - 1][key]
+          const series = allTypes.map(t => {
+            // get series where `type` equal to `t`
+            const typeSeries = screenProps.map(prop => {
+              const { key, name } = prop
+              const reducer = (prev, cur, curIndec, arr) => prev + cur[key]
+              const data = companiesData.map(cmp => {
+                const cmpCollect = cmp[collect].filter(i => i.type === t)
+                if (!cmpCollect || cmpCollect.length === 0) return 0
+                if (accumulate) return cmpCollect.reduce(reducer, 0)
+                else {
+                  // get lastest data
+                  cmpCollect.sort(comparer)
+                  const r = cmpCollect[0][key]
+                  return r
+                }
+              })
+              return { name: `${name}(${t})`, data }
             })
-            return { name, data }
+            const cn = apiOption[collect].name
+            const name = spkLen === 1 ? cn : `${cn}(${screenPropsKey})`
+            return { name, typeSeries }
           })
-          const cn = apiOption[collect].name
-          const name = spkLen === 1 ? cn : `${cn}(${screenPropsKey})`
-          return { name, series }
+          // TODO flat only support in ES6 which require chrome 69+
+          const sr = []
+          for (let i = 0; i < series.length; i++) {
+            const s = series[i]
+            const st = s.typeSeries
+            for (let j = 0; j < st.length; j++) {
+              sr.push(st[j])
+            }
+          }
+          return { name: series[0].name, series: sr }
         })
         return screens
       })
+      console.log(rawData, [].concat(...rawData))
+      debugger
       return [].concat(...rawData)
     },
     // 主单位趋势数据，展示折线图
