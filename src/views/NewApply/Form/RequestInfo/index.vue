@@ -12,12 +12,6 @@
             <template slot="content">鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
           </CardTooltipAlert>
           <el-form ref="formApply" :model="formApply" label-width="10rem">
-            <el-form-item label="休假年度">
-              <el-radio-group v-model="submitYear">
-                <el-radio :label="nowYear">本年度休假({{ nowYear }}年)</el-radio>
-                <el-radio :label="nowYear+1">下一年度休假({{ nowYear + 1 }}年)</el-radio>
-              </el-radio-group>
-            </el-form-item>
             <el-form-item label="全年休假完成率">
               <VacationDescription
                 :users-vacation="usersvacation"
@@ -166,7 +160,6 @@ import CascaderSelector from '@/components/CascaderSelector'
 import BenefitVacation from './BenefitVacation'
 import LawVacation from './LawVacation'
 import { locationChildren } from '@/api/common/static'
-import { getUsersVacationLimit } from '@/api/user/userinfo'
 import { debounce } from '@/utils'
 export default {
   name: 'RequestInfo',
@@ -192,7 +185,6 @@ export default {
       onLoading: true,
       formApply: null,
       vacationPlaceDefault: null,
-      submitYear: new Date().getFullYear(),
       usersvacation: {
         yearlyLength: 0,
         nowTimes: 0,
@@ -276,11 +268,6 @@ export default {
         })
       }
     },
-    submitYear: {
-      handler(val) {
-        this.formApply.yearIndex = val
-      }
-    },
     formApply: {
       handler(val) {
         if (val && !this.onLoading) {
@@ -341,15 +328,6 @@ export default {
       this.onLoading = false
       this.anyChanged = false
     },
-    refreshVacation() {
-      getUsersVacationLimit(this.userid, this.formApply.yearIndex)
-        .then(data => {
-          this.usersvacation = data
-        })
-        .finally(() => {
-          this.resetLoading()
-        })
-    },
     createNewRequest() {
       const type = this.vacationTypes
       return {
@@ -361,8 +339,7 @@ export default {
         vacationPlace: null,
         vacationPlaceName: '',
         reason: '',
-        ByTransportation: '0',
-        yearIndex: new Date().getFullYear()
+        ByTransportation: '0'
       }
     },
     checkParamValid(params) {

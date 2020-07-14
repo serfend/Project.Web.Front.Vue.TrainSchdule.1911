@@ -200,8 +200,7 @@ export default {
         })
     },
     refreshVacation() {
-      const ny = new Date().getFullYear()
-      getUsersVacationLimit(this.userid, ny).then(data => {
+      getUsersVacationLimit(this.userid).then(data => {
         this.vacation = data
       })
     }

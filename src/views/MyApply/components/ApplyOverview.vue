@@ -33,7 +33,7 @@ export default {
     userid: {
       handler(val) {
         if (val) {
-          getUsersVacationLimit(val, new Date().getFullYear()).then(data => {
+          getUsersVacationLimit(val).then(data => {
             this.usersvacation = {
               yearlyLength: 0,
               nowTimes: 0,

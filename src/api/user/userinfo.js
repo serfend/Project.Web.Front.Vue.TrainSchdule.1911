@@ -165,13 +165,11 @@ export function getUserIdByRealName(realName, pageIndex, pageSize, ignoreErr) {
 /**
  * 获取用户休假限制时长和次数
  * @param {*} id
- * @param {int} yearIndex
  */
-export function getUsersVacationLimit(id, yearIndex, ignoreErr) {
+export function getUsersVacationLimit(id, ignoreErr) {
   return request.get('/users/vacation', {
     params: {
-      id,
-      yearIndex
+      id
     },
     respondErrorIngore: ignoreErr
   })
