@@ -70,7 +70,6 @@
         <div class="content-card">
           <el-card v-if="detail&&detail.id">
             <h3 slot="header">申请人信息</h3>
-
             <MyApply
               :id="detail.base.id"
               :list.sync="selfHistory"
@@ -199,7 +198,12 @@ export default {
       this.loading = true
       const loadDetail = detail(id).then(data => {
         this.detail = data
-        this.detail.request = data.requestInfo
+        const d = this.detail
+        d.request = data.requestInfo
+        if (d.request) {
+          d.stampReturn = new Date(d.request.stampReturn)
+          d.stampLeave = new Date(d.request.stampLeave)
+        }
         this.initstaticDataData()
       })
       loadDetail.finally(() => {
