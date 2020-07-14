@@ -19,7 +19,7 @@
               />
             </el-form-item>
             <el-form-item label="休假类型">
-              <el-select v-model="formApply.vacationType">
+              <el-select v-model="formApply.vacationType" @change="updateMaxLen">
                 <el-option
                   v-for="(v,i) in vacationTypes"
                   :key="i"
@@ -160,6 +160,7 @@ import CascaderSelector from '@/components/CascaderSelector'
 import BenefitVacation from './BenefitVacation'
 import LawVacation from './LawVacation'
 import { locationChildren } from '@/api/common/static'
+import { getUsersVacationLimit } from '@/api/user/userinfo'
 import { debounce } from '@/utils'
 export default {
   name: 'RequestInfo',
@@ -295,7 +296,7 @@ export default {
       const maxMin = Math.min(type.maxLength, 30)
       if (newLength < maxMin) newLength = maxMin
       if (newLength > type.maxLength) newLength = type.maxLength
-      this.nowMaxLength = Math.round(newLength / 5) * 5
+      this.nowMaxLength = newLength
     },
     stampLeaveRuleCheck(field, invalid, cb) {
       const i = new Date(this.formApply[field.field]) < new Date('2000-1-1')
@@ -305,6 +306,16 @@ export default {
     leaveCard() {
       this.isHover = false
       this.requireSubmit()
+    },
+    // call by base info ,DO NOT REMOVE
+    refreshVacation() {
+      getUsersVacationLimit(this.userid)
+        .then(data => {
+          this.usersvacation = data
+        })
+        .finally(() => {
+          this.resetLoading()
+        })
     },
     resetSettle(val) {
       if (val && val.self && val.self.address) {
