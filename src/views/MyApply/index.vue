@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-row class="row">
-      <el-col :span="$slots.inner?16:24">
+    <el-row v-if="!$slots.inner" class="row">
+      <el-col>
         <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
           <UserFormItem
             :data="id?null:currentUser"
@@ -14,10 +14,23 @@
           <ApplyOverview :userid="id||currentUser.id" />
         </el-col>
       </el-col>
-      <el-col v-if="$slots.inner" :span="8">
-        <slot name="inner" />
-      </el-col>
     </el-row>
+    <div v-else>
+      <ApplyOverview :userid="id||currentUser.id" class="row" />
+      <el-row class="row">
+        <el-col>
+          <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+            <UserFormItem
+              :data="id?null:currentUser"
+              :userid="id"
+              :direct-show-card="true"
+              :can-load-avatar="true"
+            />
+          </el-col>
+          <slot name="inner" />
+        </el-col>
+      </el-row>
+    </div>
     <el-row class="row">
       <el-card v-loading="loading">
         <el-steps direction="vertical">
