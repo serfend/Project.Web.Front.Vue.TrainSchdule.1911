@@ -391,37 +391,43 @@ export default {
       this.selectIsInvalidAccount = val.accountAuthStatus === 0
       getUserAllInfo(this.waitToAuthRegisterUsersLoadId)
         .then(data => {
-          this.registerForm.Social = data.social
-          this.registerForm.Diy = data.diy
-          this.registerForm.Base = data.base.base
-          this.registerForm.Application = data.application
-          this.registerForm.Company = {
+          const f = this.registerForm
+          f.Social = data.social
+          f.Diy = data.diy
+          f.Base = data.base.base
+          f.Application = data.application
+          const duties = data.duties || {}
+          const company = data.company.company
+          f.Company = {
             company: {
-              name: data.company.company.name,
-              code: data.company.company.code
+              name: company.name,
+              code: company.code
             },
-            duties: data.duties,
+            duties: {
+              name: duties.name
+            },
             title: {
-              name: data.duties.title
+              name: duties.title
             },
-            titleDate: data.duties.titleDate
+            titleDate: duties.titleDate
           }
           const { inviteBy } = data.application
           this.selectIsInvalidAccount = this.checkUserValid(inviteBy)
-          this.nowSelectCompany = data.company.company
+          this.nowSelectCompany = company
         })
         .finally(() => (this.submitLoading = false))
     },
     submitRegister(regOrModefy) {
       this.submitLoading = true
-      this.registerForm.password = this.registerForm.Application.password
-      this.registerForm.confirmPassword = this.registerForm.Application.confirmPassword
+      const f = this.registerForm
+      f.password = f.Application.password
+      f.confirmPassword = f.Application.confirmPassword
       var submitForm = {
-        Data: this.registerForm,
+        Data: f,
         verify: {
           code: '201700816'
         },
-        Auth: this.registerForm.Auth
+        Auth: f.Auth
       }
       const submitMethod = regOrModefy ? regnew : modefyUser
       // var confirmPassword = submitForm.Data.confirmPassword
