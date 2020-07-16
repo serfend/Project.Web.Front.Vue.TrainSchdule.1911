@@ -14,11 +14,7 @@
       <el-table-column label="基本">
         <template slot-scope="{row}">
           <div>
-            <el-tag
-              v-if="row.request.vacationType"
-              effect="dark"
-              :type="vacationTypesDic[row.request.vacationType].primary?'':'danger'"
-            >{{ vacationTypesDic[row.request.vacationType].alias }}</el-tag>
+            <VacationType v-model="row.request.vacationType" />
             <el-link
               :href="`#/user/profile?id=${row.userBase.id}`"
               target="_blank"
@@ -143,13 +139,14 @@ import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
 import Pagination from '@/components/Pagination'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
-
+import VacationType from '@/components/Vacation/VacationType'
 export default {
   name: 'ApplicationList',
   components: {
     AuditApplyMutilDialog,
     Pagination,
-    ApplyAuditStreamPreview
+    ApplyAuditStreamPreview,
+    VacationType
   },
   props: {
     list: {

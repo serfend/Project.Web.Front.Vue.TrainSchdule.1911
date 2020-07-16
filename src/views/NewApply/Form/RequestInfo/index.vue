@@ -19,19 +19,23 @@
               />
             </el-form-item>
             <el-form-item label="休假类型">
-              <el-select v-model="formApply.vacationType" @change="updateMaxLen">
+              <el-select
+                v-model="formApply.vacationType"
+                popper-class="display:block"
+                @change="updateMaxLen"
+              >
                 <el-option
-                  v-for="(v,i) in vacationTypes"
+                  v-for="(v,i) in vacationTypes.filter(i=>!i.disabled)"
                   :key="i"
-                  :disabled="!v.allowBeforePrimary&&!v.primary&&usersvacation.leftLength>0"
+                  :disabled="checkDisabled(v)"
                   :value="v.name"
                   :label="v.alias"
                 >
-                  <span style="float: left">{{ v.alias }}</span>
-                  <span
-                    v-if="!v.allowBeforePrimary&&!v.primary&&usersvacation.leftLength>0"
-                    style="float: right; color: #ff92a6; font-size: 0.7rem"
-                  >正休假未完成</span>
+                  <VacationType
+                    v-model="v.name"
+                    :show-tag="false"
+                    :left-length="usersvacation.leftLength"
+                  />
                 </el-option>
               </el-select>
               <el-tooltip v-if="formApply.isArchitect" placement="top" effect="light">
@@ -162,6 +166,8 @@ import LawVacation from './LawVacation'
 import { locationChildren } from '@/api/common/static'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
 import { debounce } from '@/utils'
+import VacationType from '@/components/Vacation/VacationType'
+
 export default {
   name: 'RequestInfo',
   components: {
@@ -169,7 +175,8 @@ export default {
     VacationDescription,
     CascaderSelector,
     BenefitVacation,
-    LawVacation
+    LawVacation,
+    VacationType
   },
   props: {
     userid: {
@@ -219,6 +226,7 @@ export default {
     vacationTypesDic() {
       return this.$store.state.vacation.vacationTypes
     },
+    // above 3 computed should remove in the future
     maxVacationLength() {
       const type = this.nowVacationType
       if (!type) return 0
@@ -289,6 +297,13 @@ export default {
   },
   methods: {
     locationChildren,
+    checkDisabled(v) {
+      const uv = this.usersvacation
+      return (
+        (!v.allowBeforePrimary && !v.primary && uv.leftLength > 0) ||
+        (v.primary && uv.leftLength === 0)
+      )
+    },
     updateMaxLen() {
       const type = this.nowVacationType
       if (!type) return
@@ -340,13 +355,13 @@ export default {
       this.anyChanged = false
     },
     createNewRequest() {
-      const type = this.vacationTypes
+      const types = this.vacationTypes
       return {
         StampLeave: parseTime(+new Date() + 86400000, '{y}-{m}-{d}'),
         StampReturn: '',
         vacationLength: 0,
         OnTripLength: 0,
-        vacationType: type ? type[0].name : '',
+        vacationType: types ? types[0].name : '',
         vacationPlace: null,
         vacationPlaceName: '',
         reason: '',
@@ -359,12 +374,14 @@ export default {
       const place =
         !params.vacationPlace ||
         !params.vacationPlace.code ||
-        params.vacationPlace.code.replace(/(0+)$/g, '').length < 6
+        params.vacationPlace.code.length < 6
       const stamp =
         !params.StampLeave || new Date(params.StampLeave) < new Date('2000-1-1')
       const result = []
       if (id) result.push('基础信息未成功提交')
-      if (place) result.push('休假地点须精确到区县')
+      if (place) {
+        result.push(`休假地点须精确到区县，当前:${params.vacationPlace.code}`)
+      }
       if (stamp) result.push('离队时间有误')
       return result
     },

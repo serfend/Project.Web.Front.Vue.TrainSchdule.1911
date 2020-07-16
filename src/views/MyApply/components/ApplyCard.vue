@@ -28,9 +28,7 @@
                   />
                 </el-form-item>
                 <el-form-item label="类别">
-                  <el-tag
-                    :type="innerData.request.vacationType=='正休'?'success':(innerData.request.vacationType=='病休'?'danger':'warning')"
-                  >{{ innerData.request.vacationType }}</el-tag>
+                  <VacationType v-model="innerData.request.vacationType" />
                   <svg-icon v-if="data.request.byTransportation==0" icon-class="huoche" />
                   <svg-icon v-else-if="innerData.request.byTransportation==1" icon-class="feiji" />
                   <svg-icon v-else-if="innerData.request.byTransportation==2" icon-class="qiche" />
@@ -69,9 +67,11 @@ import { parseTime, datedifference } from '@/utils'
 import { formatTime } from '@/utils'
 import ActionUser from '@/views/QueryAndAuditApplies/ActionUser'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
+import VacationType from '@/components/Vacation/VacationType'
+
 export default {
   name: 'ApplyCard',
-  components: { ActionUser, ApplyAuditStreamPreview },
+  components: { ActionUser, ApplyAuditStreamPreview, VacationType },
   props: {
     data: {
       type: Object,
