@@ -127,10 +127,10 @@
             </el-form-item>
             <el-form-item label="所乘交通工具">
               <el-select v-model="formApply.ByTransportation" placeholder="火车">
-                <el-option label="火车" value="0" />
+                <el-option label="火车" :value="0" />
                 <!-- <el-option label="飞机" value="1" /> -->
-                <el-option label="汽车" value="2" />
-                <el-option label="其他" value="-1" />
+                <el-option label="汽车" :value="2" />
+                <el-option label="其他" :value="-1" />
               </el-select>
             </el-form-item>
           </el-form>
@@ -365,7 +365,7 @@ export default {
         vacationPlace: null,
         vacationPlaceName: '',
         reason: '',
-        ByTransportation: '0'
+        ByTransportation: 0
       }
     },
     checkParamValid(params) {
