@@ -79,15 +79,17 @@ export default {
   },
   methods: {
     handleItemChange(val) {
-      const nodes = this.$refs.elcascader.getCheckedNodes()
-      const items = nodes.map(i => {
-        const item = {}
-        item[this.valueName] = i.value
-        item[this.labelName] = i.label
-        return item
+      this.$nextTick(() => {
+        const nodes = this.$refs.elcascader.getCheckedNodes()
+        const items = nodes.map(i => {
+          const item = {}
+          item[this.valueName] = i.value
+          item[this.labelName] = i.label
+          return item
+        })
+        const data = this.multiple ? items : items[0]
+        this.$emit('change', data)
       })
-      const data = this.multiple ? items : items[0]
-      this.$emit('change', data)
     }
   }
 }

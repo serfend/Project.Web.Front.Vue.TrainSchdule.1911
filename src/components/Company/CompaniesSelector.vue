@@ -43,15 +43,14 @@ export default {
   watch: {
     companySelectItem: {
       handler(val) {
-        this.$emit(
-          'change',
-          val.map(i => ({
-            code: i.value,
-            name: i.label
-          }))
-        )
+        const item = val.map(i => ({
+          code: i.value,
+          name: i.label
+        }))
+        this.$emit('change', item)
       }
-    }
+    },
+    immediate: true
   },
   methods: {
     companyChild,
