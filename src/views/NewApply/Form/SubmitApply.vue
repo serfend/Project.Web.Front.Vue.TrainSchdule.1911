@@ -42,6 +42,14 @@
       <div class="item-put-center">
         <el-button type="info" style="width:60%" @click="showSuccessDialog=false">关 闭</el-button>
       </div>
+      <el-alert
+        v-if="errorMsg"
+        type="error"
+        center
+        effect="dark"
+        show-icon
+        style="margin-top:1rem"
+      >{{ errorMsg }}</el-alert>
     </el-dialog>
   </div>
 </template>
@@ -70,7 +78,8 @@ export default {
   data: () => ({
     onLoading: false,
     submitId: '',
-    showSuccessDialog: false
+    showSuccessDialog: false,
+    errorMsg: null
   }),
   computed: {
     iDisabled() {
@@ -119,11 +128,16 @@ export default {
           this.$emit('submit')
           this.submitId = data.id
           if (actionStatus > 0) {
-            doAction(fn, applyId).then(() => {
-              this.$message.success(
-                `${actionStatus === 1 ? '提交并保存' : '提交并发布'}成功`
-              )
-            })
+            doAction(fn, applyId)
+              .then(() => {
+                const msg = actionStatus === 1 ? '提交并保存' : '提交并发布'
+                this.$message.success(`${msg}成功`)
+                this.$emit('complete', true)
+              })
+              .catch(e => {
+                this.$emit('complete', false)
+                this.errorMsg = e.message
+              })
           }
         })
         .finally(() => {
