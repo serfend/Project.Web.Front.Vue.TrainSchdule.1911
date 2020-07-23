@@ -1,7 +1,6 @@
 <template>
   <div>
     <div v-if="innerList&&innerList.length>0">
-      <el-alert title="注意：当假期包含其他假时将无法享受法定节假日假期" type="warning" show-icon />
       <el-collapse v-model="nowIndex" accordion>
         <el-collapse-item v-for="(item,index) in innerList" :key="index" :name="index">
           <template slot="title">
