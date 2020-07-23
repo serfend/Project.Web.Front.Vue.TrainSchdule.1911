@@ -125,7 +125,7 @@ export default {
   watch: {
     'auditForm.auth.authByUserId': {
       handler(val) {
-        this.auditForm.handleBy = val
+        if (!this.onlyView) this.auditForm.handleBy = val
       }
     },
     defaultStampReturn: {
