@@ -204,8 +204,6 @@ export default {
         })
         return screens
       })
-      console.log(rawData, [].concat(...rawData))
-      debugger
       return [].concat(...rawData)
     },
     // 主单位趋势数据，展示折线图
