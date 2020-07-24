@@ -85,6 +85,23 @@ export function requestFile(filepath, filename) {
 }
 
 /**
+ * 通过路径下载文件
+ *
+ * @export
+ * @param {*} path
+ * @param {*} filename
+ * @returns
+ */
+export function downloadByPath(path, filename) {
+  return request.get('file/frompath', {
+    params: {
+      path,
+      filename
+    }
+  })
+}
+
+/**
  * 删除指定文件
  *
  * @export

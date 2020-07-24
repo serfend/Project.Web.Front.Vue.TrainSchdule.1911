@@ -11,37 +11,24 @@
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
             <template slot="content">鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
           </CardTooltipAlert>
-          <el-form ref="formApply" :model="formApply" label-width="10rem">
-            <el-form-item label="全年休假完成率">
+          <el-tooltip v-if="formApply.isArchitect" placement="top" effect="light">
+            <div slot="content">如果您存在前期已休过假，但未记录的情况，申请将会被标记为【补充记录】</div>
+            <el-alert type="danger">补充申请</el-alert>
+          </el-tooltip>
+          <el-form ref="formApply" :model="formApply" label-width="5rem">
+            <el-form-item label="年休假率">
               <VacationDescription
                 :users-vacation="usersvacation"
                 :this-time-vacation-length="nowVacationType.primary?formApply.vacationLength:0"
               />
             </el-form-item>
             <el-form-item label="休假类型">
-              <el-select
+              <VacationTypeSelector
                 v-model="formApply.vacationType"
-                popper-class="display:block"
+                :types="vacationTypes"
+                :left-length="usersvacation.leftLength"
                 @change="updateMaxLen"
-              >
-                <el-option
-                  v-for="(v,i) in vacationTypes.filter(i=>!i.disabled)"
-                  :key="i"
-                  :disabled="checkDisabled(v)"
-                  :value="v.name"
-                  :label="v.alias"
-                >
-                  <VacationType
-                    v-model="v.name"
-                    :show-tag="false"
-                    :left-length="usersvacation.leftLength"
-                  />
-                </el-option>
-              </el-select>
-              <el-tooltip v-if="formApply.isArchitect" placement="top" effect="light">
-                <div slot="content">如果您存在前期已休过假，但未记录的情况，申请将会被标记为【补充记录】</div>
-                <el-tag type="danger">补充申请</el-tag>
-              </el-tooltip>
+              />
             </el-form-item>
             <el-form-item label="休假原因">
               <el-input
@@ -52,6 +39,11 @@
                 style="width:30rem"
               />
             </el-form-item>
+            <el-alert
+              title="注意：正休天数范围内可含的法定节假日。若您核实到前期未被正常包含法定节假日的，请联系业务口处理补回。"
+              type="warning"
+              show-icon
+            />
             <el-form-item label="休假天数">
               <el-slider
                 v-model="formApply.vacationLength"
@@ -125,7 +117,7 @@
             <el-form-item label="详细地址">
               <el-input v-model="formApply.vacationPlaceName" style="width:30rem" />
             </el-form-item>
-            <el-form-item label="所乘交通工具">
+            <el-form-item label="交通工具">
               <el-select v-model="formApply.ByTransportation" placeholder="火车">
                 <el-option label="火车" :value="0" />
                 <!-- <el-option label="飞机" value="1" /> -->
@@ -160,23 +152,23 @@ import { postRequestInfo, getStampReturn } from '@/api/apply/create'
 import { parseTime } from '@/utils'
 import CardTooltipAlert from '../FormHelper/CardTooltipAlert'
 import VacationDescription from '@/components/Vacation/VacationDescription'
+import VacationTypeSelector from '@/components/Vacation/VacationTypeSelector'
 import CascaderSelector from '@/components/CascaderSelector'
 import BenefitVacation from './BenefitVacation'
 import LawVacation from './LawVacation'
 import { locationChildren } from '@/api/common/static'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
 import { debounce } from '@/utils'
-import VacationType from '@/components/Vacation/VacationType'
 
 export default {
   name: 'RequestInfo',
   components: {
     CardTooltipAlert,
     VacationDescription,
+    VacationTypeSelector,
     CascaderSelector,
     BenefitVacation,
-    LawVacation,
-    VacationType
+    LawVacation
   },
   props: {
     userid: {
@@ -297,13 +289,6 @@ export default {
   },
   methods: {
     locationChildren,
-    checkDisabled(v) {
-      const uv = this.usersvacation
-      return (
-        (!v.allowBeforePrimary && !v.primary && uv.leftLength > 0) ||
-        (v.primary && uv.leftLength === 0)
-      )
-    },
     updateMaxLen() {
       const type = this.nowVacationType
       if (!type) return
@@ -461,7 +446,7 @@ export default {
       return {
         start: this.formApply.StampLeave,
         length: total,
-        caculateLawvacation: benefit && benefits === 0
+        caculateLawvacation: benefit
       }
     }
   }
