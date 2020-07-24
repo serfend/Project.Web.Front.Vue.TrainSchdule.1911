@@ -50,8 +50,8 @@ export default {
   },
   data: () => ({
     iType: null,
-    bgLoad: false,
-    defaultUrl: null
+    defaultUrl: null,
+    urlDict: {}
   }),
   computed: {
     list() {
@@ -81,22 +81,20 @@ export default {
   },
   methods: {
     getBackground(v) {
-      const bg = v.backgroundUrl || this.defaultUrl
+      const bg = this.urlDict[v.name] || this.defaultUrl
       if (bg) {
         return `url(${bg}) center center/cover no-repeat`
       }
       return 'gray'
     },
     loadBgUrl() {
-      if (this.bgLoad) return
-      this.bgLoad = true
       const types = this.types
       for (let i = 0; i < types.length; i++) {
         const type = types[i]
-        if (type.background) {
+        if (type.background && !this.urlDict[type.name]) {
           requestFile(bgPath, type.background).then(data => {
-            type.backgroundUrl = `${process.env.VUE_APP_BASEURL}${staticfile}${data.file.id}`
-            this.$forceUpdate() // TODO shouldnt use this
+            const url = `${process.env.VUE_APP_BASEURL}${staticfile}${data.file.id}`
+            this.urlDict[type.name] = url
           })
         }
       }
