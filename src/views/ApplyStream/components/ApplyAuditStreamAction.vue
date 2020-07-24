@@ -198,9 +198,19 @@
         <el-form-item label="主官">
           <el-radio-group v-model="newNode.dutyIsMajor">
             <el-radio :label="0">不限</el-radio>
-            <el-radio :label="1">仅主官</el-radio>
-            <el-radio :label="2">仅非主官</el-radio>
+            <el-radio :label="2">仅主官</el-radio>
+            <el-radio :label="1">仅非主官</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="职务">
+          <DutiesSelector v-model="newNode.duties" />
+          <el-tag
+            v-for="(tag,index) in newNode.duties"
+            :key="index"
+            closable
+            :disable-transitions="false"
+            @close="handleDutiesSelectClose(tag)"
+          >{{ tag.value }}</el-tag>
         </el-form-item>
         <el-form-item label="职务类型">
           <el-select
@@ -221,11 +231,11 @@
           />
           <el-tag
             v-for="tag in newNode.auditMembers"
-            :key="tag"
+            :key="tag.id"
             closable
             :disable-transitions="false"
             @close="handleAuditMembersSelectClosed(tag)"
-          >{{ newNode.auditMembersRealName[tag] }}</el-tag>
+          >{{ tag.realName }}</el-tag>
         </el-form-item>
         <el-form-item label="审批人数量">
           <el-input-number v-model="newNode.auditMembersCount" placeholder="需要多少人审批" />
@@ -258,6 +268,7 @@ import {
   buildFilter
 } from '@/api/applyAuditStream'
 import CompaniesSelector from '@/components/Company/CompaniesSelector'
+import DutiesSelector from '@/components/Duty/DutiesSelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
@@ -272,6 +283,7 @@ export default {
     CompaniesSelector,
     AuthCode,
     UserFormItem,
+    DutiesSelector,
     UserSelector
   },
   props: {
@@ -309,13 +321,17 @@ export default {
     format(d) {
       return formatTime(d)
     },
+    checkAuditMembersIndex(id) {
+      const auditMembers = this.newNode.auditMembers.map(i => i.id)
+      return auditMembers.indexOf(id)
+    },
     handleUserSelectChange(val) {
+      if (!val) return
       this.userSelect.realName = val.realName
-      if (this.newNode.auditMembers.indexOf(val.id) > -1) {
+      if (this.checkAuditMembersIndex(val.id) > -1) {
         return this.$message.error(`${val.realName}已被选中`)
       }
-      this.newNode.auditMembers.push(val.id)
-      this.newNode.auditMembersRealName[val.id] = val.realName
+      this.newNode.auditMembers.push(val)
     },
     handleCompaniesSelectClose(tag) {
       const companies = this.newNode.companies.map(i => i.code)
@@ -323,10 +339,12 @@ export default {
       this.newNode.companies.splice(companies.indexOf(code), 1)
     },
     handleAuditMembersSelectClosed(tag) {
-      this.newNode.auditMembers.splice(
-        this.newNode.auditMembers.indexOf(tag),
-        1
-      )
+      const i = this.checkAuditMembersIndex(tag.id)
+      this.newNode.auditMembers.splice(i, 1)
+    },
+    handleDutiesSelectClose(tag) {
+      const i = this.newNode.duties.map(i => i.code).indexOf(tag.code)
+      this.newNode.duties.splice(i, 1)
     },
     refresh() {
       this.$emit('refresh')
@@ -336,18 +354,6 @@ export default {
       this.newNode.mode = mode
       if (target) {
         Object.assign(this.newNode, target)
-
-        this.newNode.dutiesName = {}
-        this.newNode.duties.forEach(i => {
-          this.newNode.dutiesName[i.code] = i.name
-        })
-        this.newNode.duties = this.newNode.duties.map(i => i.code)
-
-        this.newNode.auditMembersRealName = {}
-        this.newNode.auditMembers.forEach(i => {
-          this.newNode.auditMembersRealName[i.id] = i.realName
-        })
-        this.newNode.auditMembers = this.newNode.auditMembers.map(i => i.id)
       }
     },
     submitNode() {
@@ -407,7 +413,6 @@ export default {
         companyCodeLength: [],
         auditMembersCount: 1,
         auditMembers: [],
-        auditMembersRealName: {},
         auth: lastAuth,
         loading: false
       }

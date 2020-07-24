@@ -62,14 +62,14 @@ export function getStreamSolutionRule(name) {
  */
 export function buildFilter(data) {
   return {
-    duties: data.duties,
+    duties: data.duties.map(i => i.code),
     dutyTags: data.dutyTags,
     dutyIsMajor: data.dutyIsMajor,
     companies: data.companies.map(i => i.code),
     companyRefer: data.companyRefer,
     companyTags: data.companyTags,
     companyCodeLength: data.companyCodeLength,
-    auditMembers: data.auditMembers,
+    auditMembers: data.auditMembers.map(i => i.id),
     auditMembersCount: data.auditMembersCount
   }
 }

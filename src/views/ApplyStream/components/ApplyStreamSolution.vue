@@ -233,9 +233,19 @@
         <el-form-item label="主官">
           <el-radio-group v-model="newRule.dutyIsMajor">
             <el-radio :label="0">不限</el-radio>
-            <el-radio :label="1">仅主官</el-radio>
-            <el-radio :label="2">仅非主官</el-radio>
+            <el-radio :label="2">仅主官</el-radio>
+            <el-radio :label="1">仅非主官</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="职务">
+          <DutiesSelector v-model="newRule.duties" />
+          <el-tag
+            v-for="(tag,index) in newRule.duties"
+            :key="index"
+            closable
+            :disable-transitions="false"
+            @close="handleDutiesSelectClose(tag)"
+          >{{ tag.value }}</el-tag>
         </el-form-item>
         <el-form-item label="职务类型">
           <el-select
@@ -256,11 +266,11 @@
           />
           <el-tag
             v-for="tag in newRule.auditMembers"
-            :key="tag"
+            :key="tag.id"
             closable
             :disable-transitions="false"
             @close="handleAuditMembersSelectClosed(tag)"
-          >{{ newRule.auditMembersRealName[tag] }}</el-tag>
+          >{{ tag.realName }}</el-tag>
         </el-form-item>
         <AuthCode :form.sync="newRule.auth" />
         <el-button-group style="width:100%">
@@ -284,6 +294,7 @@
 
 <script>
 import CompaniesSelector from '@/components/Company/CompaniesSelector'
+import DutiesSelector from '@/components/Duty/DutiesSelector'
 import AuthCode from '@/components/AuthCode'
 import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import DutyFormItem from '@/components/Duty/DutyFormItem'
@@ -304,6 +315,7 @@ export default {
     UserFormItem,
     AuthCode,
     CompaniesSelector,
+    DutiesSelector,
     UserSelector
   },
   props: {
@@ -336,13 +348,17 @@ export default {
     format(d) {
       return formatTime(d)
     },
+    checkAuditMembersIndex(id) {
+      const auditMembers = this.newRule.auditMembers.map(i => i.id)
+      return auditMembers.indexOf(id)
+    },
     handleUserSelectChange(val) {
-      this.userSelect.realName = val.value
-      if (this.newRule.auditMembers.indexOf(val.id) > -1) {
-        return this.$message.error(`${val.value}已被选中`)
+      if (!val) return
+      this.userSelect.realName = val.realName
+      if (this.checkAuditMembersIndex(val.id) > -1) {
+        return this.$message.error(`${val.realName}已被选中`)
       }
-      this.newRule.auditMembers.push(val.id)
-      this.newRule.auditMembersRealName[val.id] = val.value
+      this.newRule.auditMembers.push(val)
     },
     handleCompaniesSelectClose(tag) {
       const companies = this.newRule.companies.map(i => i.code)
@@ -350,10 +366,12 @@ export default {
       this.newRule.companies.splice(companies.indexOf(code), 1)
     },
     handleAuditMembersSelectClosed(tag) {
-      this.newRule.auditMembers.splice(
-        this.newRule.auditMembers.indexOf(tag),
-        1
-      )
+      const i = this.checkAuditMembersIndex(tag.id)
+      this.newRule.auditMembers.splice(i, 1)
+    },
+    handleDutiesSelectClose(tag) {
+      const i = this.newRule.duties.map(i => i.code).indexOf(tag.code)
+      this.newRule.duties.splice(i, 1)
     },
     refresh() {
       this.$emit('refresh')
@@ -385,17 +403,6 @@ export default {
       this.newRule.mode = mode
       if (target) {
         Object.assign(this.newRule, target)
-        this.newRule.dutiesName = {}
-        this.newRule.duties.forEach(i => {
-          this.newRule.dutiesName[i.code] = i.name
-        })
-        this.newRule.duties = this.newRule.duties.map(i => i.code)
-
-        this.newRule.auditMembersRealName = {}
-        this.newRule.auditMembers.forEach(i => {
-          this.newRule.auditMembersRealName[i.id] = i.realName
-        })
-        this.newRule.auditMembers = this.newRule.auditMembers.map(i => i.id)
       }
     },
     submitSolutionRule() {
@@ -448,7 +455,6 @@ export default {
         companyCodeLength: [],
         auditMembersCount: 1,
         auditMembers: [],
-        auditMembersRealName: {},
         auth: lastAuth,
         loading: false
       }
