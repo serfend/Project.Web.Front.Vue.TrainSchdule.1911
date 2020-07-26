@@ -36,22 +36,22 @@
       @submit.native.prevent
     >
       <AuthCode v-show="adminQuery" :form.sync="queryForm.auth" />
-      <el-form-item v-show="fullui&&adminQuery" label="审核人">
+      <el-form-item v-show="fullui" label="审核人">
         <UserSelector :code.sync="queryForm.auditBy" default-info="搜索成员" style="display:inline" />
       </el-form-item>
-      <el-form-item v-show="fullui&&adminQuery" label="当前审核人">
+      <el-form-item v-show="fullui" label="当前审核人">
         <UserSelector :code.sync="queryForm.nowAuditBy" default-info="搜索成员" style="display:inline" />
       </el-form-item>
-      <el-form-item v-show="fullui&&adminQuery" label="创建人">
+      <el-form-item v-show="fullui" label="创建人">
         <UserSelector :code.sync="queryForm.createFor" default-info="搜索成员" style="display:inline" />
       </el-form-item>
       <el-form-item v-show="adminQuery" label="来自单位">
         <CompaniesSelector v-model="queryForm.CreateCompanyItem" />
       </el-form-item>
-      <el-form-item v-show="adminQuery" label="单位类别">
+      <el-form-item v-show="fullui" label="单位类别">
         <el-input v-model="queryForm.companyType" />
       </el-form-item>
-      <el-form-item v-show="adminQuery" label="职务类别">
+      <el-form-item v-show="fullui" label="职务类别">
         <el-input v-model="queryForm.dutiesType" />
       </el-form-item>
       <el-form-item v-show="!adminQuery" label="我的审核">
@@ -149,7 +149,7 @@
         />
       </el-form-item>
       <el-row>
-        <el-col v-show="fullui&&adminQuery" :lg="24">
+        <el-col v-show="adminQuery" :lg="24">
           <el-button-group style="width:100%">
             <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
             <el-button
