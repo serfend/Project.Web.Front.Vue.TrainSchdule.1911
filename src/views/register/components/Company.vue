@@ -1,7 +1,10 @@
 <template>
   <div>
     <el-form-item prop="company" label="单位" style="width:400px">
-      <CompanySelector v-model="innerForm.company" :placeholder="innerForm.company.name" />
+      <CompanySelector
+        v-model="innerForm.company"
+        :placeholder="innerForm.company.name||'仅当前登录的用户的单位可见'"
+      />
     </el-form-item>
     <el-form-item prop="duties" label="职务">
       <el-tooltip content="需选用下拉框中的建议" placement="right">

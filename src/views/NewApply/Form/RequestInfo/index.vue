@@ -11,10 +11,7 @@
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
             <template slot="content">鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
           </CardTooltipAlert>
-          <el-tooltip v-if="formApply.isArchitect" placement="top" effect="light">
-            <div slot="content">如果您存在前期已休过假，但未记录的情况，申请将会被标记为【补充记录】</div>
-            <el-alert type="danger">补充申请</el-alert>
-          </el-tooltip>
+          <el-alert v-if="formApply.isArchitect" center type="error">补充申请 申请将会被标记为【补充记录】</el-alert>
           <el-form ref="formApply" :model="formApply" label-width="5rem">
             <el-form-item label="年休假率">
               <VacationDescription
