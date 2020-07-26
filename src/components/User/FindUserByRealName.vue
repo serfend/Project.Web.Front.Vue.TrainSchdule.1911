@@ -3,7 +3,7 @@
     <el-input
       v-model="nowSelectRealName"
       style="width: 100%"
-      placeholder="输入姓名查找"
+      placeholder="按姓名查找"
       @input="handleUserSelectByRealnameChange"
     />
     <div v-loading="loading">

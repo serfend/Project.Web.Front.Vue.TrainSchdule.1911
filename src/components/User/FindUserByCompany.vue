@@ -13,6 +13,7 @@
         </template>
         <User :data="u" :can-load-avatar="u.canLoadAvatar" />
       </el-collapse-item>
+      <el-button v-show="hasNextPage" v-loading="loading" style="width:100%" @click="nextPage">下一页</el-button>
     </el-collapse>
   </div>
 </template>
@@ -27,8 +28,14 @@ export default {
   components: { CompanySelector, User },
   data() {
     return {
+      loading: false,
       company: null,
       usersByCompany: [],
+      hasNextPage: false,
+      pages: {
+        pageIndex: 0,
+        pageSize: 20
+      },
       nowCollapseSelectUserId: ''
     }
   },
@@ -36,11 +43,10 @@ export default {
     company: {
       handler(val) {
         if (val) {
-          getMembers({ code: val.code, page: 0, pageSize: 999 }).then(data => {
-            this.usersByCompany = data.list.map(li => {
-              li.canLoadAvatar = false
-              return li
-            })
+          this.pages.pageIndex = -1
+          this.usersByCompany = []
+          this.$nextTick(() => {
+            this.nextPage()
           })
         }
       },
@@ -48,6 +54,24 @@ export default {
     }
   },
   methods: {
+    nextPage() {
+      this.loading = true
+      this.pages.pageIndex++
+      const item = { code: this.company.code }
+      const query = Object.assign(this.pages, item)
+      getMembers(query)
+        .then(data => {
+          const list = data.list.map(li => {
+            li.canLoadAvatar = false
+            return li
+          })
+          this.usersByCompany = this.usersByCompany.concat(list)
+          this.hasNextPage = data.totalCount > this.usersByCompany.length
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     mapUser(li) {
       return {
         description: li.companyName + li.dutiesName,
