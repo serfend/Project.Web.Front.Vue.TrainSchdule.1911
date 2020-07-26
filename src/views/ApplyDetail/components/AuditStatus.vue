@@ -46,7 +46,7 @@
                 <span>未收到审批</span>
               </span>
               <span
-                v-if="step.index === detail.nowStep.index&&statusDic[detail.status].desc!=='已驳回'"
+                v-if="step.index === detail.nowStep.index&&detail.status!==75"
               >
                 <i class="el-icon-loading title red--text" />
                 <span>审批中</span>
@@ -56,7 +56,7 @@
                 <span>通过审核</span>
               </span>
               <span
-                v-if="step.index === detail.nowStep.index&&statusDic[detail.status].desc==='已驳回'"
+                v-if="step.index === detail.nowStep.index&&detail.status===75"
               >
                 <i class="el-icon-circle-close title red--text" />
                 <span>驳回</span>
