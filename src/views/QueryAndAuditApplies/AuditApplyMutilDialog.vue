@@ -161,6 +161,13 @@ export default {
         })
         audit({ list: list }, auth)
           .then(resultlist => {
+            const fn = result => {
+              if (result.status === 0) {
+                this.$notify.success(result.msg)
+              } else {
+                this.$notify.error(result.msg)
+              }
+            }
             for (let i = 0; i < resultlist.length; i++) {
               const item = {
                 message: resultlist[i].message,
@@ -175,17 +182,7 @@ export default {
               item.msg = applyraw.action === 2 ? '驳回' : '通过'
               item.msg = `${item.msg}${from}的${vacationLen}天申请`
               item.msg += item.status === 0 ? '成功' : `失败:${item.message}`
-              setTimeout(
-                result => {
-                  if (result.status === 0) {
-                    this.$notify.success(result.msg)
-                  } else {
-                    this.$notify.error(result.msg)
-                  }
-                },
-                (i + 1) * 1000,
-                item
-              )
+              setTimeout(fn, (i + 1) * 1000, item)
             }
             this.$emit('updated')
           })
