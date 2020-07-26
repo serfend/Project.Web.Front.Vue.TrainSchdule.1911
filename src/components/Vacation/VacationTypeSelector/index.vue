@@ -1,25 +1,31 @@
 <template>
-  <ul class="card-list">
-    <li
-      v-for="(v,i) in list"
-      :key="i"
-      class="card-item"
-      :style="{background:getBackground(v),transition:'all 0.5s ease','box-shadow': v.name==iType?'0 0 0.5rem 0.5rem rgba(0, 139, 255, 0.5)':''}"
-      @click="selectType(v)"
+  <div>
+    <el-link v-show="hide&&urlDict" type="primary" @click="hide = false">{{ iType }}</el-link>
+    <ul
+      class="card-list"
+      :style="{top:hide?'-17rem':0,transform: hide?'scale(0)':null,opacity:hide?0:1,position:hide?'absolute':null}"
     >
-      <div class="item-content">
-        <span class="item-title text-gradient">{{ v.alias }}</span>
-        <div class="outer-description">
-          <VacationTypeDetail
-            v-model="list[i]"
-            :show-tag="false"
-            :left-length="leftLength"
-            class="inner-description"
-          />
+      <li
+        v-for="(v,i) in list"
+        :key="i"
+        class="card-item"
+        :style="getStyle(v)"
+        @click="selectType(v)"
+      >
+        <div class="item-content">
+          <span class="item-title text-gradient">{{ v.alias }}</span>
+          <div class="outer-description">
+            <VacationTypeDetail
+              v-model="list[i]"
+              :show-tag="false"
+              :left-length="leftLength"
+              class="inner-description"
+            />
+          </div>
         </div>
-      </div>
-    </li>
-  </ul>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -27,6 +33,7 @@ const bgPath = 'dataview/vacationtype'
 const staticfile = '/file/staticfile/'
 import VacationTypeDetail from '../VacationType/VacationTypeDetail'
 import { requestFile } from '@/api/common/file'
+import { debounce } from '../../../utils'
 export default {
   name: 'VacationTypeSelector',
   components: { VacationTypeDetail },
@@ -51,11 +58,23 @@ export default {
   data: () => ({
     iType: null,
     defaultUrl: null,
-    urlDict: {}
+    urlDict: {},
+    hide: false
   }),
   computed: {
+    requireHide() {
+      return debounce(() => {
+        this.hideDirect()
+      }, 1000)
+    },
     list() {
-      return this.types.filter(i => !i.disabled)
+      return this.types
+        .filter(i => !i.disabled)
+        .map(i => {
+          i.backgroundUrl = this.getBackground(i)
+          i.invalid = this.checkDisabled(i)
+          return i
+        })
     }
   },
   watch: {
@@ -80,6 +99,18 @@ export default {
     })
   },
   methods: {
+    getStyle(v) {
+      const iType = this.iType
+      return {
+        background: v.backgroundUrl,
+        transition: 'all 0.5s ease',
+        'box-shadow':
+          v.name === iType ? '0 0 0.5rem 0.5rem rgba(0, 139, 255, 0.5)' : '',
+        cursor: v.invalid ? 'no-drop' : 'pointer',
+        filter: v.invalid ? 'grayscale(1)' : null,
+        opacity: v.invalid ? 0.2 : 1
+      }
+    },
     getBackground(v) {
       const bg = this.urlDict[v.name] || this.defaultUrl
       if (bg) {
@@ -101,20 +132,33 @@ export default {
     },
     checkDisabled(v) {
       const leftLength = this.leftLength
-      return (
-        (!v.allowBeforePrimary && !v.primary && leftLength > 0) ||
-        (v.primary && leftLength === 0)
-      )
+      if (v.primary && leftLength === 0) return '已无假可休'
+      if (!v.allowBeforePrimary && !v.primary && leftLength > 0) {
+        return '正休假未休完'
+      }
+      return false
     },
     selectType(v) {
+      if (v.invalid) {
+        this.$notify.error({
+          title: '无法休此类型假期',
+          message: v.invalid
+        })
+        return
+      }
       this.iType = v.name
       this.$emit('change', this.iType)
+      this.requireHide()
+    },
+    hideDirect() {
+      this.hide = true
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 .card-list {
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
   text-align: center;
   font-size: 1.5rem;
   justify-content: space-between;
@@ -125,15 +169,14 @@ export default {
 .card-item {
   height: 18rem;
   width: 12rem;
-  cursor: pointer;
   float: left;
   margin: 0.5rem 0.5rem;
   overflow: hidden;
   .item-content {
+    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
     height: 100%;
     background-color: rgba(0, 139, 204, 0.8);
     margin-top: 15.5rem;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     &:hover {
       margin-top: 0;
       background-color: rgba(0, 139, 255, 0.9);
