@@ -73,9 +73,9 @@ export default {
         .then(resultlist => {
           resultlist.forEach(result => {
             if (result.status === 0) {
-              this.$notify.success('已审批' + result.id)
+              this.$message.success('审批成功')
             } else {
-              this.$notify.error(result.message + ':' + result.id)
+              this.$message.error(`审批失败:${result.message}`)
             }
           })
           this.$emit('updated')
