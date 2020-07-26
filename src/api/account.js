@@ -1,16 +1,20 @@
 import request from '../utils/request'
 import rsa from '../utils/crtypto/rsa'
 import aes from '../utils/crtypto/aes'
-import { parseTime } from '../utils'
+import {
+  parseTime
+} from '../utils'
 import crypto from 'crypto'
-function formatPsw(username, rawPsw) {
+
+async function formatPsw(username, rawPsw) {
   if (rawPsw === passwordCache(username)) {
     rawPsw = aes.decrypt(getLoginSetting().password)
   }
   const md5 = crypto.createHash('md5')
   md5.update(username)
   var tmpraw = parseTime(new Date(), '{yyyy}{mm}{dd}') + rawPsw + md5.digest('hex')
-  return rsa.encrypt(tmpraw)
+  const r = await rsa.encrypt(tmpraw)
+  return r
 }
 const dic_loginSetting = 'login.setting'
 const dic_passwordCache = '##password.cache.inmemory##'
@@ -38,8 +42,8 @@ export function passwordCache(username) {
  * Verify: { Code: any }
  * } } params
  */
-export function login(params) {
-  params.password = formatPsw(params.username, params.password)
+export async function login(params) {
+  params.password = await formatPsw(params.username, params.password)
   return request.post('account/login', params)
 }
 
@@ -82,10 +86,10 @@ export function regnew(params) {
  * 修改用户密码
  * @param {*} params
  */
-export function accountPassword(params) {
-  params.newPassword = formatPsw(params.id, params.newPassword)
-  params.confirmNewPassword = formatPsw(params.id, params.confirmNewPassword)
-  params.oldPassword = formatPsw(params.id, params.oldPassword)
+export async function accountPassword(params) {
+  params.newPassword = await formatPsw(params.id, params.newPassword)
+  params.confirmNewPassword = await formatPsw(params.id, params.confirmNewPassword)
+  params.oldPassword = await formatPsw(params.id, params.oldPassword)
   return request.post('/account/password', params)
 }
 
@@ -147,7 +151,9 @@ export function postAuthKey(params) {
  * 获取授权码
  */
 export function getAuthKey(ignoreErr) {
-  return request.get('account/AuthKey', { respondErrorIngore: ignoreErr })
+  return request.get('account/AuthKey', {
+    respondErrorIngore: ignoreErr
+  })
 }
 
 /**
@@ -242,14 +248,27 @@ export function report(username, msg, rank) {
  * @returns
  */
 export function getReport(username, startDate, endDate, page, rankArr, ip, device, message) {
-  var date = startDate === null || endDate === null ? null : { start: startDate, end: endDate }
+  var date = startDate === null || endDate === null ? null : {
+    start: startDate,
+    end: endDate
+  }
   return request.post('log/query', {
-    userName: { value: username },
+    userName: {
+      value: username
+    },
     date,
-    rank: rankArr === null ? null : { arrays: rankArr },
-    ip: ip === null ? null : { arrays: ip },
-    device: device === null ? null : { arrays: device },
-    message: message === null ? null : { value: message },
+    rank: rankArr === null ? null : {
+      arrays: rankArr
+    },
+    ip: ip === null ? null : {
+      arrays: ip
+    },
+    device: device === null ? null : {
+      arrays: device
+    },
+    message: message === null ? null : {
+      value: message
+    },
     page
   })
 }

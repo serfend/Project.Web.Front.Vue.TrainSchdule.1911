@@ -9,7 +9,7 @@ import request from '@/utils/request'
  * posY int     前景图片y坐标
  */
 export function verify() {
-  return request.get('static/verify')
+  return request.get('systemStatic/verifyCode')
 }
 
 /**
@@ -136,4 +136,13 @@ export function exportApplyDetail(dutiesType, id) {
       templete = '人员请假单.xlsx'
   }
   return exportSingleApply(templete, id)
+}
+
+/**
+ * 当前RSA
+ *
+ * @export
+ */
+export function currentRSAKey() {
+  return request.get('systemStatic/currentRSAKey')
 }
