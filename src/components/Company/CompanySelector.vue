@@ -4,6 +4,7 @@
     v-model="companySelectItem"
     :child-getter-method="companyChild"
     :placeholder="showInfo.name||placeholder"
+    @change="updateItem"
   />
 </template>
 
@@ -48,19 +49,17 @@ export default {
       return cn || this.showPlaceholder
     }
   },
-  watch: {
-    companySelectItem: {
-      handler(val) {
-        this.$emit('change', {
-          code: val.value,
-          name: val.label
-        })
-        this.$emit('update:code', val.value)
-      }
-    }
-  },
   methods: {
     companyChild,
+    updateItem(val) {
+      const item = {}
+      if (val) {
+        item.code = val.value
+        item.name = val.label
+      }
+      this.$emit('change', item)
+      this.$emit('update:code', item.code)
+    },
     checkName() {
       const data = this.data
       const val = this.placeholder

@@ -3,10 +3,10 @@
     <el-collapse-item title="授权人">
       <template slot="title">
         <AuthCodeAbout />
-        <div v-if="$store.state.user.name">
+        <div v-if="defaultUser">
           <el-tooltip>
             <template slot="content">默认为当前登录</template>
-            <el-tag type="success">{{ $store.state.user.name }}</el-tag>
+            <el-tag type="success">{{ defaultUser }}</el-tag>
           </el-tooltip>
         </div>
         <span v-else style="color:#ff8f8f">未登录,请使用授权码</span>

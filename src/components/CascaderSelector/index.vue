@@ -4,7 +4,7 @@
     v-model="staticValue"
     :props="props"
     :show-all-levels="true"
-    :placeholder="placeholder||'未选择'"
+    :placeholder="placeholder||'???'"
     :style="{width:'100%',color:data&&data.length>0?'#00f':'#ccc'}"
     clearable
     :disabled="disabled"
