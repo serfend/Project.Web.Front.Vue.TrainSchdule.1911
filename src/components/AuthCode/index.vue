@@ -3,10 +3,10 @@
     <el-collapse-item title="授权人">
       <template slot="title">
         <AuthCodeAbout />
-        <div v-if="defaultUser">
+        <div v-if="$store.state.user.name">
           <el-tooltip>
             <template slot="content">默认为当前登录</template>
-            <el-tag type="success">{{ defaultUser }}</el-tag>
+            <el-tag type="success">{{ $store.state.user.name }}</el-tag>
           </el-tooltip>
         </div>
         <span v-else style="color:#ff8f8f">未登录,请使用授权码</span>
@@ -32,7 +32,6 @@ import AuthCodeAbout from './AuthCodeAbout'
 import CodeInput from './CodeInput'
 import UserSelector from '@/components/User/UserSelector'
 import { checkAuthCode } from '@/api/account'
-import { getUserIdByCid } from '@/api/user/userinfo'
 export default {
   name: 'AuthCode',
   components: {
@@ -83,14 +82,6 @@ export default {
         if (val.code === '') val.code = null
         if (!val.authByUserId) {
           val.authByUserId = null
-        } else if (val.authByUserId.length === 18) {
-          getUserIdByCid(val.authByUserId, true)
-            .then(data => {
-              val.authByUserId = data.id
-            })
-            .finally(() => {
-              this.updateForm(val)
-            })
         } else {
           this.updateForm(val)
         }

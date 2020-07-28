@@ -5,13 +5,13 @@
         <h3>审批节点设置（筛选审批人）</h3>
         <el-button
           type="success"
-          :icon="loading?'el-icon-loading':'el-icon-refresh-right'"
+          icon="el-icon-refresh-right"
           circle
           style="float:right"
           @click="refresh"
         />
       </div>
-      <el-table :data="data.allActionNode">
+      <el-table v-loading="loading" :data="data.allActionNode">
         <el-table-column label="名称">
           <template slot-scope="scope">
             <el-tooltip effect="light">

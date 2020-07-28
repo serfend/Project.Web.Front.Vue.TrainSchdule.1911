@@ -206,16 +206,28 @@ export function editStreamSolutionRule(id, name, description, solutionName, prio
   })
 }
 
-export function queryStreamNode() {
-  return request.get('ApplyAuditStream/StreamNodeQuery')
+export function queryStreamNode(companyRegion) {
+  return request.get('ApplyAuditStream/StreamNodeQuery', {
+    params: {
+      companyRegion
+    }
+  })
 }
 
-export function queryStreamSolution() {
-  return request.get('ApplyAuditStream/StreamSolutionQuery')
+export function queryStreamSolution(companyRegion) {
+  return request.get('ApplyAuditStream/StreamSolutionQuery', {
+    params: {
+      companyRegion
+    }
+  })
 }
 
-export function queryStreamSolutionRule() {
-  return request.get('ApplyAuditStream/StreamSolutionRuleQuery')
+export function queryStreamSolutionRule(companyRegion) {
+  return request.get('ApplyAuditStream/StreamSolutionRuleQuery', {
+    params: {
+      companyRegion
+    }
+  })
 }
 
 export function deleteStreamNode(name, authByUserid, code) {

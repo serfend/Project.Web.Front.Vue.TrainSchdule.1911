@@ -5,13 +5,13 @@
         <h3>审批方案规则（筛选申请人审批方案）</h3>
         <el-button
           type="success"
-          :icon="loading?'el-icon-loading':'el-icon-refresh-right'"
+          icon="el-icon-refresh-right"
           circle
           style="float:right"
           @click="refresh"
         />
       </div>
-      <el-table :data="data.allSolutionRule">
+      <el-table v-loading="loading" :data="data.allSolutionRule">
         <el-table-column
           label="优先"
           width="80px"

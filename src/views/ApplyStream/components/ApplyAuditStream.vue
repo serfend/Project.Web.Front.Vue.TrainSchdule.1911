@@ -1,17 +1,17 @@
 <template>
   <div>
-    <el-card v-loading="loading">
+    <el-card>
       <div slot="header">
         <h3>审批方案</h3>
         <el-button
           type="success"
-          :icon="loading?'el-icon-loading':'el-icon-refresh-right'"
+          icon="el-icon-refresh-right"
           circle
           style="float:right"
           @click="refresh"
         />
       </div>
-      <el-table :data="data.allSolution">
+      <el-table v-loading="loading" :data="data.allSolution">
         <el-table-column label="名称">
           <template slot-scope="scope">{{ scope.row.name }}</template>
         </el-table-column>

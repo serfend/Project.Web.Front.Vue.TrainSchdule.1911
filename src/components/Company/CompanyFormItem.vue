@@ -3,7 +3,7 @@
     <Company v-model="id" :data.sync="form" :can-load="canLoad" />
     <span slot="reference">
       <el-tag v-if="form">{{ form.name }}</el-tag>
-      <el-tag v-else>{{ id }}æ— </el-tag>
+      <el-tag v-else>{{ id }}æ—</el-tag>
     </span>
   </el-popover>
 </template>
@@ -36,6 +36,12 @@ export default {
     canLoad: false
   }),
   watch: {
+    data: {
+      handler(val) {
+        this.form = val
+      },
+      immediate: true
+    },
     id: {
       handler(val) {
         if (val) this.canLoad = true

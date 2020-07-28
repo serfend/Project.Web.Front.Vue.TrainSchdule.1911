@@ -1,5 +1,6 @@
 <template>
   <el-card class="content-card">
+    <CompanySelector :code.sync="companyRegion" placeholder="选择管理的主单位" @change="requireRefresh" />
     <el-tabs v-model="activeName" class="tab-container">
       <el-tab-pane label="说明" name="ApplyStreamAbout">
         <ApplyStreamAbout v-show="activeName=='ApplyStreamAbout'" />
@@ -18,6 +19,7 @@
 </template>
 
 <script>
+import CompanySelector from '@/components/Company/CompanySelector'
 import ApplyStreamAbout from './components/ApplyStreamAbout'
 import ApplyStreamSolution from './components/ApplyStreamSolution'
 import ApplyAuditStream from './components/ApplyAuditStream'
@@ -27,9 +29,11 @@ import {
   queryStreamSolution,
   queryStreamSolutionRule
 } from '@/api/applyAuditStream'
+import { debounce } from '@/utils'
 export default {
   name: 'ApplyStream',
   components: {
+    CompanySelector,
     ApplyStreamSolution,
     ApplyAuditStream,
     ApplyAuditStreamAction,
@@ -39,6 +43,7 @@ export default {
     return {
       activeName: 'ApplyStreamAbout',
       loading: false,
+      companyRegion: null,
       data: {
         allSolutionRule: [],
         allSolutionRuleDic: {},
@@ -49,14 +54,24 @@ export default {
       }
     }
   },
+  computed: {
+    requireRefresh() {
+      return debounce(() => {
+        this.refresh()
+      }, 500)
+    }
+  },
   mounted() {
-    this.solutionRuleRefresh()
-    this.solutionRefresh()
+    this.refresh()
   },
   methods: {
+    refresh() {
+      this.solutionRuleRefresh()
+      this.solutionRefresh()
+    },
     solutionRuleRefresh() {
       this.loading = true
-      queryStreamSolutionRule()
+      queryStreamSolutionRule(this.companyRegion)
         .then(data => {
           this.data.allSolutionRule = data.list
         })
@@ -64,12 +79,12 @@ export default {
           this.loading = false
         })
     },
-    solutionRefresh() {
+    async solutionRefresh() {
       this.loading = true
-      this.actionNodeRefresh()
+      const node = this.actionNodeRefresh
       // 加载解决方案
-      queryStreamSolution()
-        .then(data => {
+      const solution = () =>
+        queryStreamSolution(this.companyRegion).then(data => {
           var tableData = data.list
           var length = tableData.nodes ? tableData.nodes.length : 0
           for (var i = length; i < length; i++) {
@@ -77,19 +92,20 @@ export default {
           }
           this.data.allSolution = tableData
         })
+      return node()
+        .then(() => solution())
         .finally(() => {
           this.loading = false
         })
     },
-    actionNodeRefresh() {
+    async actionNodeRefresh() {
       this.loading = true
-      queryStreamNode()
+      return await queryStreamNode(this.companyRegion)
         .then(data => {
           this.data.allActionNode = data.list
           for (var n in this.data.allActionNode) {
-            this.data.allActionNodeDic[
-              this.data.allActionNode[n].name
-            ] = this.data.allActionNode[n]
+            const node = this.data.allActionNode[n]
+            this.data.allActionNodeDic[node.name] = node
           }
         })
         .finally(() => {
