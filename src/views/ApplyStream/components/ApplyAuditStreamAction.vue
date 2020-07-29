@@ -143,7 +143,7 @@
       >添加</el-button>
     </el-card>
     <el-dialog
-      :visible.sync="newNodeDialogShow"
+      :visible.sync="nodeDialogShow"
       :title="newNode.mode=='new'?'新增':newNode.mode=='edit'?'编辑':'删除'"
     >
       <el-form v-loading="newNode.loading" label-width="120px">
@@ -291,6 +291,8 @@ export default {
       type: Object,
       default() {
         return {
+          companyRegion: null,
+          newCompanyRegion: null,
           allSolutionRule: [],
           allSolutionRuleDic: {},
           allSolution: [],
@@ -312,7 +314,7 @@ export default {
         { value: 'self', label: '本级审核' },
         { value: 'parent', label: '上级审核' }
       ],
-      newNodeDialogShow: false,
+      nodeDialogShow: false,
       newNode: this.buildnewNode(),
       userSelect: {}
     }
@@ -322,78 +324,90 @@ export default {
       return formatTime(d)
     },
     checkAuditMembersIndex(id) {
-      const auditMembers = this.newNode.auditMembers.map(i => i.id)
+      const node = this.newNode
+      const auditMembers = node.auditMembers.map(i => i.id)
       return auditMembers.indexOf(id)
     },
     handleUserSelectChange(val) {
+      const node = this.newNode
       if (!val) return
       this.userSelect.realName = val.realName
       if (this.checkAuditMembersIndex(val.id) > -1) {
         return this.$message.error(`${val.realName}已被选中`)
       }
-      this.newNode.auditMembers.push(val)
+      node.auditMembers.push(val)
     },
     handleCompaniesSelectClose(tag) {
-      const companies = this.newNode.companies.map(i => i.code)
+      const node = this.newNode
+      const companies = node.companies.map(i => i.code)
       const code = tag.code
-      this.newNode.companies.splice(companies.indexOf(code), 1)
+      node.companies.splice(companies.indexOf(code), 1)
     },
     handleAuditMembersSelectClosed(tag) {
+      const node = this.newNode
       const i = this.checkAuditMembersIndex(tag.id)
-      this.newNode.auditMembers.splice(i, 1)
+      node.auditMembers.splice(i, 1)
     },
     handleDutiesSelectClose(tag) {
-      const i = this.newNode.duties.map(i => i.code).indexOf(tag.code)
-      this.newNode.duties.splice(i, 1)
+      const node = this.newNode
+      const i = node.duties.map(i => i.code).indexOf(tag.code)
+      node.duties.splice(i, 1)
     },
     refresh() {
       this.$emit('refresh')
     },
     showNodeDialoag(mode, target) {
-      this.newNodeDialogShow = true
-      this.newNode.mode = mode
+      const node = this.newNode
+      this.nodeDialogShow = true
+      node.mode = mode
       if (target) {
-        Object.assign(this.newNode, target)
+        Object.assign(node, target)
       }
     },
     submitNode() {
-      if (this.newNode.loading) return this.$message.info('加载中')
-      this.newNode.loading = true
-      var fn = this.newNode.mode === 'edit' ? editStreamNode : addStreamNode
+      const node = this.newNode
+      if (node.loading) return this.$message.info('加载中')
+      node.loading = true
+      var fn = node.mode === 'edit' ? editStreamNode : addStreamNode
+      const region = this.data.newCompanyRegion || {}
+
       fn(
-        this.newNode.id,
-        this.newNode.name,
-        this.newNode.description,
-        buildFilter(this.newNode),
-        this.newNode.auth
+        node.id,
+        node.name,
+        region.code,
+        node.description,
+        buildFilter(node),
+        node.auth
       )
         .then(() => {
-          this.$message.success(`节点${this.newNode.name}已提交`)
+          this.$message.success(`节点${node.name}已提交`)
           this.refresh()
         })
         .finally(() => {
-          this.newNode.loading = false
+          node.loading = false
         })
     },
     deleteNode(row) {
-      if (this.newNode.loading) return this.$message.info('加载中')
-      this.newNode.loading = true
-      var auth = this.newNode.auth
+      const node = this.newNode
+      if (node.loading) return this.$message.info('加载中')
+      node.loading = true
+      var auth = node.auth
       if (!auth) {
         auth = {}
       }
-      deleteStreamNode(this.newNode.name, auth.authByUserId, auth.code)
+      deleteStreamNode(node.name, auth.authByUserId, auth.code)
         .then(() => {
-          this.$message.success(`${this.newNode.name}已删除`)
-          this.newNodeDialogShow = false
+          this.$message.success(`${node.name}已删除`)
+          this.nodeDialogShow = false
           this.refresh()
         })
         .finally(() => {
-          this.newNode.loading = false
+          node.loading = false
         })
     },
     buildnewNode() {
-      var lastAuth = this.newNode ? this.newNode.auth : null
+      const node = this.newNode
+      var lastAuth = node ? node.auth : null
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',

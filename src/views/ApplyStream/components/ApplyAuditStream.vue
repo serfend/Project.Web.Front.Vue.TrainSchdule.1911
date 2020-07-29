@@ -30,12 +30,12 @@
                     </div>
                     <div slot="description">
                       <div v-if="s">
-                        <div>创建于:{{ format(s.create) }}</div>
-                        <div>
-                          需要
-                          {{ s.auditMembersCount==0?'所有人':(s.auditMembersCount+'人') }}审核
-                        </div>
                         <div style="color:#ffffff;font-size:1rem">{{ s.description }}</div>
+                        <div>
+                          <span>需要</span>
+                          <span>{{ s.auditMembersCount==0?'所有人':(s.auditMembersCount+'人') }}</span>
+                          <span>审核</span>
+                        </div>
                       </div>
                     </div>
                   </el-step>
@@ -69,7 +69,7 @@
       >添加</el-button>
     </el-card>
     <el-dialog
-      :visible.sync="newSolutionDialogShow"
+      :visible.sync="nodeDialogShow"
       :title="newSolution.mode=='new'?'新增':newSolution.mode=='edit'?'编辑':'删除'"
     >
       <el-form v-loading="newSolution.loading">
@@ -141,6 +141,8 @@ export default {
       type: Object,
       default() {
         return {
+          companyRegion: null,
+          newCompanyRegion: null,
           allSolutionRule: [],
           allSolutionRuleDic: {},
           allSolution: [],
@@ -157,7 +159,7 @@ export default {
   },
   data() {
     return {
-      newSolutionDialogShow: false,
+      nodeDialogShow: false,
       newSolution: this.buildNewSolution()
     }
   },
@@ -169,51 +171,53 @@ export default {
       this.$emit('refresh')
     },
     submitSolution() {
-      if (this.newSolution.loading) return this.$message.info('加载中')
-      this.newSolution.loading = true
-      var fn =
-        this.newSolution.mode === 'edit'
-          ? editStreamSolution
-          : addStreamSolution
+      const node = this.newSolution
+      if (node.loading) return this.$message.info('加载中')
+      node.loading = true
+      var fn = node.mode === 'edit' ? editStreamSolution : addStreamSolution
+      const region = this.data.newCompanyRegion || {}
       fn(
-        this.newSolution.id,
-        this.newSolution.name,
-        this.newSolution.description,
-        this.newSolution.nodes.map(i => i.label),
-        this.newSolution.auth
+        node.id,
+        node.name,
+        region.code,
+        node.description,
+        node.nodes.map(i => i.label),
+        node.auth
       )
         .then(() => {
-          this.$message.success(`方案${this.newSolution.name}已提交`)
+          this.$message.success(`方案${node.name}已提交`)
           this.refresh()
         })
         .finally(() => {
-          this.newSolution.loading = false
+          node.loading = false
         })
     },
     showSolutionDialog(mode, target) {
-      this.newSolutionDialogShow = true
-      this.newSolution.mode = mode
+      const node = this.newSolution
+      this.nodeDialogShow = true
+      node.mode = mode
       if (target) {
-        this.newSolution.id = target.id
-        this.newSolution.name = target.name
-        this.newSolution.description = target.description
-        this.newSolution.nodes = target.nodes.map(i => {
+        node.id = target.id
+        node.name = target.name
+        node.description = target.description
+        node.nodes = target.nodes.map(i => {
           if (!i) i = { name: '无效的节点' }
           return this.buildNodeSelect(i.name)
         })
       }
     },
     deleteSolution() {
-      if (this.newSolution.loading) return this.$message.info('加载中')
-      this.newSolution.loading = true
-      var auth = this.newSolution.auth
+      const node = this.newSolution
+      if (node.loading) return this.$message.info('加载中')
+      node.loading = true
+      var auth = node.auth
       if (!auth) {
         auth = {}
       }
-      deleteStreamSolution(this.newSolution.name, auth.authByUserId, auth.code)
+      deleteStreamSolution(node.name, auth.authByUserId, auth.code)
         .then(() => {
-          this.$message(`${this.newSolution.name}已删除`)
-          this.newSolutionDialogShow = false
+          this.$message(`${node.name}已删除`)
+          this.nodeDialogShow = false
           this.refresh()
         })
         .catch(e => {
@@ -229,16 +233,19 @@ export default {
       }
     },
     selectNodeChanged(val) {
-      this.newSolution.nodes.push(this.buildNodeSelect(val))
-      this.newSolution.nodeSelect = ''
+      const node = this.newSolution
+      node.nodes.push(this.buildNodeSelect(val))
+      node.nodeSelect = ''
     },
     handleSelectNodeClose(node) {
+      const no = this.newSolution
       var id = node.data.id
-      var index = this.newSolution.nodes.findIndex(n => n.id === id)
-      this.newSolution.nodes.splice(index, 1)
+      var index = no.nodes.findIndex(n => n.id === id)
+      no.nodes.splice(index, 1)
     },
     buildNewSolution() {
-      var lastAuth = this.newSolution ? this.newSolution.auth : null
+      const node = this.newSolution
+      var lastAuth = node ? node.auth : null
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',

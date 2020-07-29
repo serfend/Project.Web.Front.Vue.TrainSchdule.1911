@@ -84,9 +84,10 @@ export function buildFilter(data) {
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamNode(id, name, description, filter, auth) {
+export function addStreamNode(id, name, companyRegion, description, filter, auth) {
   return request.post('ApplyAuditStream/StreamNode', {
     name,
+    companyRegion,
     description,
     filter,
     auth
@@ -99,15 +100,17 @@ export function addStreamNode(id, name, description, filter, auth) {
  * @export
  * @param {String} id id
  * @param {String} name 名称
+ * @param {String} companyRegion 单位作用域
  * @param {String} description 描述
  * @param {Filter} filter 请调用`buildFilter进行构造`
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamNode(id, name, description, filter, auth) {
+export function editStreamNode(id, name, companyRegion, description, filter, auth) {
   return request.put('ApplyAuditStream/StreamNode', {
     id,
     name,
+    companyRegion,
     description,
     filter,
     auth
@@ -119,14 +122,16 @@ export function editStreamNode(id, name, description, filter, auth) {
  *
  * @export
  * @param {String} name 名称
+ * @param {String} companyRegion 单位作用域
  * @param {String} description 描述
  * @param {Array} nodes 节点名称
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamSolution(id, name, description, nodes, auth) {
+export function addStreamSolution(id, name, companyRegion, description, nodes, auth) {
   return request.post('ApplyAuditStream/StreamSolution', {
     name,
+    companyRegion,
     description,
     nodes,
     auth
@@ -139,15 +144,17 @@ export function addStreamSolution(id, name, description, nodes, auth) {
  * @export
  * @param {String} id
  * @param {String} name 名称
+ * @param {String} companyRegion 单位作用域
  * @param {String} description 描述
  * @param {Array} nodes 节点名称
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamSolution(id, name, description, nodes, auth) {
+export function editStreamSolution(id, name, companyRegion, description, nodes, auth) {
   return request.put('ApplyAuditStream/StreamSolution', {
     id,
     name,
+    companyRegion,
     description,
     nodes,
     auth
@@ -159,6 +166,7 @@ export function editStreamSolution(id, name, description, nodes, auth) {
  *
  * @export
  * @param {String} name 名称
+ * @param {String} companyRegion 单位作用域
  * @param {String} description 描述
  * @param {String} solutionName 规则符合后使用的解决方案
  * @param {Int} priority 优先级
@@ -167,9 +175,10 @@ export function editStreamSolution(id, name, description, nodes, auth) {
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamSolutionRule(id, name, description, solutionName, priority, enable, filter, auth) {
+export function addStreamSolutionRule(id, name, companyRegion, description, solutionName, priority, enable, filter, auth) {
   return request.post('ApplyAuditStream/StreamSolutionRule', {
     name,
+    companyRegion,
     description,
     solutionName,
     priority,
@@ -185,6 +194,7 @@ export function addStreamSolutionRule(id, name, description, solutionName, prior
  * @export
  * @param {String} id
  * @param {String} name 名称
+ * @param {String} companyRegion 单位作用域
  * @param {String} description 描述
  * @param {String} solutionName 规则符合后使用的解决方案
  * @param {Int} priority 优先级
@@ -193,10 +203,11 @@ export function addStreamSolutionRule(id, name, description, solutionName, prior
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamSolutionRule(id, name, description, solutionName, priority, enable, filter, auth) {
+export function editStreamSolutionRule(id, name, companyRegion, description, solutionName, priority, enable, filter, auth) {
   return request.put('ApplyAuditStream/StreamSolutionRule', {
     id,
     name,
+    companyRegion,
     description,
     solutionName,
     priority,

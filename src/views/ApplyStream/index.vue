@@ -1,6 +1,15 @@
 <template>
   <el-card class="content-card">
-    <CompanySelector :code.sync="companyRegion" placeholder="选择管理的主单位" @change="requireRefresh" />
+    <CompanySelector
+      v-model="data.companyRegion"
+      placeholder="选择管理的主单位（单位作用域是界定当前规则有效范围的配置）"
+      @change="requireRefresh"
+    />
+    <CompanySelector
+      v-model="data.newCompanyRegion"
+      placeholder="选择变动到新的单位作用域"
+      @change="requireRefresh"
+    />
     <el-tabs v-model="activeName" class="tab-container">
       <el-tab-pane label="说明" name="ApplyStreamAbout">
         <ApplyStreamAbout v-show="activeName=='ApplyStreamAbout'" />
@@ -43,8 +52,9 @@ export default {
     return {
       activeName: 'ApplyStreamAbout',
       loading: false,
-      companyRegion: null,
       data: {
+        companyRegion: null,
+        newCompanyRegion: null,
         allSolutionRule: [],
         allSolutionRuleDic: {},
         allSolution: [],
@@ -61,6 +71,13 @@ export default {
       }, 500)
     }
   },
+  watch: {
+    'data.companyRegion': {
+      handler(val) {
+        this.data.newCompanyRegion = val
+      }
+    }
+  },
   mounted() {
     this.refresh()
   },
@@ -71,7 +88,8 @@ export default {
     },
     solutionRuleRefresh() {
       this.loading = true
-      queryStreamSolutionRule(this.companyRegion)
+      const region = this.data.companyRegion || {}
+      queryStreamSolutionRule(region.code)
         .then(data => {
           this.data.allSolutionRule = data.list
         })
@@ -83,8 +101,9 @@ export default {
       this.loading = true
       const node = this.actionNodeRefresh
       // 加载解决方案
-      const solution = () =>
-        queryStreamSolution(this.companyRegion).then(data => {
+      const solution = () => {
+        const region = this.data.companyRegion || {}
+        return queryStreamSolution(region.code).then(data => {
           var tableData = data.list
           var length = tableData.nodes ? tableData.nodes.length : 0
           for (var i = length; i < length; i++) {
@@ -92,6 +111,8 @@ export default {
           }
           this.data.allSolution = tableData
         })
+      }
+
       return node()
         .then(() => solution())
         .finally(() => {
@@ -100,7 +121,8 @@ export default {
     },
     async actionNodeRefresh() {
       this.loading = true
-      return await queryStreamNode(this.companyRegion)
+      const region = this.data.companyRegion || {}
+      return await queryStreamNode(region.code)
         .then(data => {
           this.data.allActionNode = data.list
           for (var n in this.data.allActionNode) {

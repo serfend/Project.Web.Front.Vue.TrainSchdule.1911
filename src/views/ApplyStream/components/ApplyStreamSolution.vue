@@ -166,7 +166,7 @@
       >添加</el-button>
     </el-card>
     <el-dialog
-      :visible.sync="newSolutionRuleDialogShow"
+      :visible.sync="nodeDialogShow"
       :title="newRule.mode=='new'?'新增':newRule.mode=='edit'?'编辑':'删除'"
     >
       <el-form v-loading="newRule.loading" label-width="120px">
@@ -323,6 +323,8 @@ export default {
       type: Object,
       default() {
         return {
+          companyRegion: null,
+          newCompanyRegion: null,
           allSolutionRule: [],
           allSolutionRuleDic: {},
           allSolution: [],
@@ -339,7 +341,7 @@ export default {
   },
   data() {
     return {
-      newSolutionRuleDialogShow: false,
+      nodeDialogShow: false,
       newRule: this.buildNewSolutionRule(),
       userSelect: {}
     }
@@ -349,89 +351,98 @@ export default {
       return formatTime(d)
     },
     checkAuditMembersIndex(id) {
-      const auditMembers = this.newRule.auditMembers.map(i => i.id)
+      const node = this.newRule
+      const auditMembers = node.auditMembers.map(i => i.id)
       return auditMembers.indexOf(id)
     },
     handleUserSelectChange(val) {
+      const node = this.newRule
       if (!val) return
       this.userSelect.realName = val.realName
       if (this.checkAuditMembersIndex(val.id) > -1) {
         return this.$message.error(`${val.realName}已被选中`)
       }
-      this.newRule.auditMembers.push(val)
+      node.auditMembers.push(val)
     },
     handleCompaniesSelectClose(tag) {
-      const companies = this.newRule.companies.map(i => i.code)
+      const node = this.newRule
+      const companies = node.companies.map(i => i.code)
       const code = tag.code
-      this.newRule.companies.splice(companies.indexOf(code), 1)
+      node.companies.splice(companies.indexOf(code), 1)
     },
     handleAuditMembersSelectClosed(tag) {
+      const node = this.newRule
       const i = this.checkAuditMembersIndex(tag.id)
-      this.newRule.auditMembers.splice(i, 1)
+      node.auditMembers.splice(i, 1)
     },
     handleDutiesSelectClose(tag) {
-      const i = this.newRule.duties.map(i => i.code).indexOf(tag.code)
-      this.newRule.duties.splice(i, 1)
+      const node = this.newRule
+      const i = node.duties.map(i => i.code).indexOf(tag.code)
+      node.duties.splice(i, 1)
     },
     refresh() {
       this.$emit('refresh')
     },
     deleteSolutionRule(row) {
-      if (this.newRule.loading) return this.$message.info('加载中')
-      this.newRule.loading = true
-      var auth = this.newRule.auth
+      const node = this.newRule
+      if (node.loading) return this.$message.info('加载中')
+      node.loading = true
+      var auth = node.auth
       if (!auth) {
         auth = {}
       }
-      deleteStreamSolutionRule(this.newRule.name, auth.authByUserId, auth.code)
+      deleteStreamSolutionRule(node.name, auth.authByUserId, auth.code)
         .then(() => {
-          this.$message.success(`${this.newRule.name}已删除`)
-          this.newSolutionRuleDialogShow = false
+          this.$message.success(`${node.name}已删除`)
+          this.nodeDialogShow = false
           this.refresh()
         })
         .finally(() => {
-          this.newRule.loading = false
+          node.loading = false
         })
     },
     handleEnableChange(target) {
       this.showSolutionRuleDialog('edit', target)
-      this.newSolutionRuleDialogShow = false
+      this.nodeDialogShow = false
       this.submitSolutionRule()
     },
     showSolutionRuleDialog(mode, target) {
-      this.newSolutionRuleDialogShow = true
-      this.newRule.mode = mode
+      const node = this.newRule
+      this.nodeDialogShow = true
+      node.mode = mode
       if (target) {
-        Object.assign(this.newRule, target)
+        Object.assign(node, target)
       }
     },
     submitSolutionRule() {
-      if (this.newRule.loading) return this.$message.info('加载中')
-      this.newRule.loading = true
+      const node = this.newRule
+      if (node.loading) return this.$message.info('加载中')
+      node.loading = true
       var fn =
-        this.newRule.mode === 'edit'
-          ? editStreamSolutionRule
-          : addStreamSolutionRule
+        node.mode === 'edit' ? editStreamSolutionRule : addStreamSolutionRule
+      const region = this.data.newCompanyRegion || {}
       fn(
-        this.newRule.id,
-        this.newRule.name,
-        this.newRule.description,
-        this.newRule.solutionName,
-        this.newRule.priority,
-        this.newRule.enable,
-        buildFilter(this.newRule),
-        this.newRule.auth
+        node.id,
+        node.name,
+        region.code,
+        node.description,
+        node.solutionName,
+        node.priority,
+        node.enable,
+        buildFilter(node),
+        node.auth
       )
         .then(() => {
-          this.$message.success(`方案规则 ${this.newRule.name}已提交`)
+          this.$message.success(`方案规则 ${node.name}已提交`)
           this.refresh()
         })
         .finally(() => {
-          this.newRule.loading = false
+          node.loading = false
         })
     },
     buildNewSolutionRule() {
-      var lastAuth = this.newRule ? this.newRule.auth : null
+      const node = this.newRule
+      var lastAuth = node ? node.auth : null
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',
