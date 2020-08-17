@@ -81,7 +81,7 @@ export function createQueryApplyModel(model, pages) {
  * @param {Object} pages 分页
  * @param {Array} status 状态
  * @param {String} myAuditStatus 我的状态：accept,deny,unreceive,received,null
- * @param {String} executeStatus 落实状态
+ * @param {int} executeStatus 落实状态
  */
 export function queryMyAudit(pages, status, myAuditStatus, executeStatus) {
   pages = (!pages) ? {
