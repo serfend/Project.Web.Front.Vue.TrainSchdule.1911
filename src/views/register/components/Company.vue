@@ -8,13 +8,7 @@
     </el-form-item>
     <el-form-item prop="duties" label="职务">
       <el-tooltip content="需选用下拉框中的建议" placement="right">
-        <el-autocomplete
-          v-model="innerForm.duties.name"
-          class="inline-input"
-          :fetch-suggestions="dutiesQuery"
-          placeholder="请输入并选中职务名称"
-          @select="handleDutiesSelect"
-        />
+        <DutiesSelector v-model="innerForm.duties" class="inline-input" placeholder="请输入并选中职务名称" />
       </el-tooltip>
     </el-form-item>
     <el-form-item prop="title" label="职务等级">
@@ -24,7 +18,6 @@
           class="inline-input"
           :fetch-suggestions="companyTitleQuery"
           placeholder="请输入并选中职务等级"
-          @select="handleDutiesSelect"
         />
       </el-tooltip>
     </el-form-item>
@@ -41,11 +34,13 @@
 
 <script>
 import CompanySelector from '@/components/Company/CompanySelector'
-import { companyChild, dutiesQuery, companyTitleQuery } from '@/api/company'
+import DutiesSelector from '@/components/Duty/DutiesSelector'
+import { companyChild, companyTitleQuery } from '@/api/company'
 export default {
   name: 'Company',
   components: {
-    CompanySelector
+    CompanySelector,
+    DutiesSelector
   },
   props: {
     form: {
@@ -100,10 +95,6 @@ export default {
   },
   methods: {
     companyChild,
-    async dutiesQuery(queryString, cb) {
-      var data = await dutiesQuery(queryString)
-      await this.queryItem(data, cb)
-    },
     async companyTitleQuery(queryString, cb) {
       var data = await companyTitleQuery(queryString)
       await this.queryItem(data, cb)
@@ -117,9 +108,6 @@ export default {
         }
       })
       cb(result)
-    },
-    handleDutiesSelect(item) {
-      console.log(item)
     }
   }
 }

@@ -17,7 +17,7 @@
       v-model="iDuties"
       class="inline-input"
       :fetch-suggestions="dutiesQuery"
-      placeholder="请输入并选中职务名称"
+      :placeholder="dutiesIsObj?dutiesIsObj.name:duties?duties.join(' '):'选择职务'"
       @select="handleDutiesSelect"
     />
   </span>
@@ -41,7 +41,7 @@ export default {
       default: null
     },
     duties: {
-      type: Array,
+      type: [Array, Object],
       default: null
     }
   },
@@ -50,6 +50,13 @@ export default {
     iTag: null,
     tags: []
   }),
+  computed: {
+    dutiesIsObj() {
+      const list = this.duties
+      if (!list) return false
+      return Object.prototype.toString.call(list) === '[object Object]'
+    }
+  },
   watch: {
     tag: {
       handler(val) {
@@ -88,14 +95,17 @@ export default {
       cb(result)
     },
     handleDutiesSelect(val) {
-      this.$message.success(`已选中${val.value}(${val.code})`)
       const list = this.duties
-      const existed = list.map(i => i.code).indexOf(val.code)
-      if (existed > -1) return
-      this.$emit('change', list.concat([val]))
-      this.$nextTick(() => {
-        this.iDuties = null
-      })
+      const isObj = this.dutiesIsObj
+      if (!isObj) {
+        const existed = list.map(i => i.code).indexOf(val.code)
+        if (existed > -1) {
+          return this.$message.warning(`已存在${val.value}`)
+        }
+      }
+      this.$message.success(`已选中${val.value}(${val.code})`)
+
+      this.$emit('change', isObj ? val : list.concat([val]))
     }
   }
 }

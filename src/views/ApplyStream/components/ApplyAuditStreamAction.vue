@@ -213,14 +213,14 @@
           >{{ tag.value }}</el-tag>
         </el-form-item>
         <el-form-item label="职务类型">
-          <el-select
-            v-model="newNode.dutyTags"
-            multiple
-            filterable
-            allow-create
-            default-first-option
-            placeholder="职务类型选取，输入后按回车键确认"
-          />
+          <DutiesSelector :tag.sync="newNode.dutyTags" :only-tag="true" />
+          <el-tag
+            v-for="(tag,index) in newNode.dutyTags"
+            :key="index"
+            closable
+            :disable-transitions="false"
+            @close="newNode.dutyTag.splice(newNode.dutyTag.indexOf(tag))"
+          >{{ tag }}</el-tag>
         </el-form-item>
         <el-form-item label="指定审核人">
           <UserSelector

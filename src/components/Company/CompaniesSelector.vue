@@ -50,7 +50,8 @@ export default {
         this.$emit('change', item)
       }
     },
-    immediate: true
+    immediate: true,
+    deep: true
   },
   methods: {
     companyChild,
