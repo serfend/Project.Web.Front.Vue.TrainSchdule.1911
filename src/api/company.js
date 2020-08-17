@@ -102,23 +102,107 @@ export function dutiesDetail(name) {
  *
  * @export
  * @param {*} name
+ * @param {*} tag
+ * @param {*} page
  * @returns
  */
-export function dutiesQuery(name) {
+export function dutiesQuery(name, tag, page) {
+  page = page || {
+    pageSize: 20,
+    pageIndex: 0
+  }
+  const {
+    pageSize,
+    pageIndex
+  } = page
   return request({
     url: '/company/dutiesQuery',
     method: 'get',
     params: {
-      name
+      name,
+      tag,
+      pageSize,
+      pageIndex
     }
   })
 }
-export function companyTitleQuery(name) {
+
+/**
+ * 查询职务类别
+ *
+ * @export
+ * @param {*} tagName
+ * @returns
+ */
+export function dutiesTag(tagName) {
+  return request({
+    url: 'company/dutiesTag',
+    method: 'get',
+    params: {
+      tag: tagName
+    }
+  })
+}
+
+/**
+ * 职级查询
+ *
+ * @export
+ * @param {*} name
+ * @param {*} tag
+ * @param {*} page
+ * @returns
+ */
+export function companyTitleQuery(name, tag, page) {
+  page = page || {
+    pageSize: 20,
+    pageIndex: 0
+  }
+  const {
+    pageSize,
+    pageIndex
+  } = page
   return request({
     url: '/company/titleQuery',
     method: 'get',
     params: {
-      name
+      name,
+      tag,
+      pageSize,
+      pageIndex
+    }
+  })
+}
+
+/**
+ * 查询职务等级类别
+ *
+ * @export
+ * @param {*} tagName
+ * @returns
+ */
+export function companyTitleTag(tagName) {
+  return request({
+    url: 'company/titleTag',
+    method: 'get',
+    params: {
+      tag: tagName
+    }
+  })
+}
+
+export function companyTag(tag, page) {
+  page = page || {
+    pageSize: 20,
+    pageIndex: 0
+  }
+  return request({
+    url: 'company/companyTag',
+    method: 'get',
+    params: {
+      tag,
+      pageSize: page.pageSize,
+      pageIndex: page.pageIndex
     }
   })
 }

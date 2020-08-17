@@ -1,15 +1,30 @@
 <template>
-  <el-autocomplete
-    v-model="iDuties"
-    class="inline-input"
-    :fetch-suggestions="dutiesQuery"
-    placeholder="请输入并选中职务名称"
-    @select="handleDutiesSelect"
-  />
+  <span>
+    <el-select
+      v-model="iTag"
+      :remote-method="tagFilter"
+      filterable
+      clearable
+      default-first-option
+      remote
+      placeholder="选择类别"
+      @change="tagChange"
+    >
+      <el-option v-for="(item,i) in tags" :key="i" :value="item" :label="item" />
+    </el-select>
+    <el-autocomplete
+      v-if="!onlyTag"
+      v-model="iDuties"
+      class="inline-input"
+      :fetch-suggestions="dutiesQuery"
+      placeholder="请输入并选中职务名称"
+      @select="handleDutiesSelect"
+    />
+  </span>
 </template>
 
 <script>
-import { dutiesQuery } from '@/api/company'
+import { dutiesQuery, dutiesTag } from '@/api/company'
 export default {
   name: 'DutiesSelector',
   model: {
@@ -17,17 +32,49 @@ export default {
     event: 'change'
   },
   props: {
+    onlyTag: {
+      type: Boolean,
+      default: false
+    },
+    tag: {
+      type: String,
+      default: null
+    },
     duties: {
       type: Array,
       default: null
     }
   },
   data: () => ({
-    iDuties: null
+    iDuties: null,
+    iTag: null,
+    tags: []
   }),
+  watch: {
+    tag: {
+      handler(val) {
+        this.iTag = val
+      },
+      immediate: true
+    }
+  },
+  mounted() {
+    this.tagFilter()
+  },
   methods: {
+    tagChange(val) {
+      this.iTag = val
+      this.$emit('update:tag', val)
+      this.iDuties = null
+    },
+    tagFilter(val) {
+      dutiesTag(val).then(d => {
+        this.tags = d.list
+        this.iDuties = null
+      })
+    },
     async dutiesQuery(queryString, cb) {
-      var data = await dutiesQuery(queryString)
+      var data = await dutiesQuery(queryString, this.iTag)
       await this.queryItem(data, cb)
     },
     async queryItem(data, cb) {
