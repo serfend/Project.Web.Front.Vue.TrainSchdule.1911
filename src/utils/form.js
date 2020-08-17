@@ -10,7 +10,7 @@ export function toQueryStartEndByArray(datetime) {
 }
 
 export function toQueryValue(value) {
-  if (value) {
+  if (value !== null && value !== undefined && value !== '') {
     return {
       value
     }
