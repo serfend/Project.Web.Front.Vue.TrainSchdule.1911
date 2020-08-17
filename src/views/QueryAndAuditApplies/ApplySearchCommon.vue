@@ -49,10 +49,10 @@
         <CompaniesSelector v-model="queryForm.CreateCompanyItem" />
       </el-form-item>
       <el-form-item v-show="fullui" label="单位类别">
-        <el-input v-model="queryForm.companyType" />
+        <CompanyTagSelector v-model="queryForm.companyType" />
       </el-form-item>
       <el-form-item v-show="fullui" label="职务类别">
-        <el-input v-model="queryForm.dutiesType" />
+        <DutiesSelector :tag.sync="queryForm.dutiesType" :only-tag="true" />
       </el-form-item>
       <el-form-item v-show="!adminQuery" label="我的审核">
         <el-select
@@ -177,8 +177,9 @@
 <script>
 import AuthCode from '@/components/AuthCode'
 import CompaniesSelector from '@/components/Company/CompaniesSelector'
+import CompanyTagSelector from '@/components/Company/CompanyTagSelector'
 import UserSelector from '@/components/User/UserSelector'
-
+import DutiesSelector from '@/components/Duty/DutiesSelector'
 import {
   queryList,
   queryMyAudit,
@@ -187,7 +188,13 @@ import {
 import { debounce } from '@/utils'
 export default {
   Name: 'ApplySearchCommon',
-  components: { CompaniesSelector, AuthCode, UserSelector },
+  components: {
+    CompaniesSelector,
+    CompanyTagSelector,
+    AuthCode,
+    UserSelector,
+    DutiesSelector
+  },
   props: {
     list: {
       type: Array,
@@ -209,10 +216,8 @@ export default {
   data() {
     return {
       myAuditActionDic: [
-        {
-          code: 'Received',
-          desc: '等待我审核的'
-        },
+        { code: 'Received', desc: '等待我审核的' },
+        { code: '', desc: '所有申请' },
         {
           code: 'UnReceive',
           desc: '未轮到我审核的'
@@ -300,7 +305,9 @@ export default {
       handler(val) {
         const item = this.queryForm.CreateCompanyItem || []
         const codes = item.map(i => i.code)
-        if (codes.length !== this.queryForm.createCompany.length) {
+        if (
+          JSON.stringify(codes) !== JSON.stringify(this.queryForm.createCompany)
+        ) {
           this.queryForm.createCompany = codes
         }
         this.setFormRecord()
@@ -324,6 +331,7 @@ export default {
     const tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
     var tmp = JSON.parse(tmpItem)
     if (tmp) {
+      tmp.actionStatus = 'Received' // 默认查询待我审核的
       this.queryForm = tmp
     }
     this.queryFormStartRecord = true
@@ -350,10 +358,10 @@ export default {
       this.$emit('update:pagesTotalCount', data.totalCount)
     },
     searchData(userAct, callback, pages) {
-      if (!userAct && this.onFormModifying) {
-        this.$message.error('操作太快啦,歇歇吧~')
-        return
-      }
+      // if (!userAct && this.onFormModifying) {
+      //   this.$message.error('操作太快啦,歇歇吧~')
+      //   return
+      // }
       const form = this.queryForm
       if (!this.onFilterAccept && form.executeStatus != null) {
         form.executeStatus = null
