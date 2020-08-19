@@ -49,7 +49,10 @@ export function queryList(data, ignoreErr) {
     auditBy: String,
     nowAuditBy: String,
     createFor: String,
+    isMarried: bool, // 已婚
+    isApart: bool, // 分居
     createCompany: Array:Company, // 申请单位
+    isRemote: bool, // 偏远单位
     dutiesType: Array:String,
     companyType: Array:String
  * @param {Pages} pages
@@ -58,6 +61,13 @@ export function createQueryApplyModel(model, pages) {
   const f = {
     pages: Object.assign({}, pages)
   }
+  const userStatus =
+    (model.isMarried ? 1 : 0) |
+    (model.isApart ? 2 : 0)
+  if (userStatus) f.userStatus = form.toQueryArrays([userStatus])
+  const companyStatus =
+    (model.isRemote ? 1 : 0)
+  if (companyStatus) f.companyStatus = form.toQueryArrays([companyStatus])
   f.create = form.toQueryStartEndByArray(model.createTime)
   f.stampLeave = form.toQueryStartEndByArray(model.stampLeaveTime)
   f.stampReturn = form.toQueryStartEndByArray(model.stampReturnTime)
