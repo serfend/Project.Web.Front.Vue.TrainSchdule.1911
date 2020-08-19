@@ -27,7 +27,7 @@
                     :title="innerData.auditStreamSolution"
                   />
                 </el-form-item>
-                <el-form-item label="类别">
+                <el-form-item v-if="innerData.status!==20" label="类别">
                   <VacationType v-model="innerData.request.vacationType" />
                   <svg-icon v-if="data.request.byTransportation==0" icon-class="huoche" />
                   <svg-icon v-else-if="innerData.request.byTransportation==1" icon-class="feiji" />
@@ -35,9 +35,10 @@
                   <svg-icon v-else-if="innerData.request.byTransportation==-1" icon-class="guide" />
                 </el-form-item>
                 <el-form-item
+                  v-if="innerData.status!==20"
                   label="休假原因"
                 >{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
-                <el-form-item label="假期天数">
+                <el-form-item v-if="innerData.status!==20" label="假期天数">
                   <span>{{ `净假期${innerData.request.vacationLength}天 在途${innerData.request.onTripLength}天` }}</span>
                   <el-tooltip
                     v-for="a in innerData.request.additialVacations"
@@ -48,10 +49,17 @@
                   </el-tooltip>
                 </el-form-item>
                 <el-form-item
+                  v-if="innerData.status!==20"
                   label="休假地点"
                 >{{ `${innerData.request.vacationPlace.name} ${innerData.request.vacationPlaceName==null?'无详细地址':innerData.request.vacationPlaceName}` }}</el-form-item>
-                <el-form-item label="离队时间">{{ timeFormat(innerData.request.stampLeave) }}</el-form-item>
-                <el-form-item label="归队时间">{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
+                <el-form-item
+                  v-if="innerData.status!==20"
+                  label="离队时间"
+                >{{ timeFormat(innerData.request.stampLeave) }}</el-form-item>
+                <el-form-item
+                  v-if="innerData.status!==20"
+                  label="归队时间"
+                >{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
               </el-form>
             </el-row>
           </div>
@@ -92,16 +100,14 @@ export default {
   },
   computed: {
     total() {
-      return (
-        1 +
-        datedifference(
-          this.innerData.request.stampReturn,
-          this.innerData.request.stampLeave
-        )
-      )
+      const request = this.innerData.request
+      if (!request) return 1
+      return 1 + datedifference(request.stampReturn, request.stampLeave)
     },
     spent() {
-      return 1 + datedifference(new Date(), this.innerData.request.stampLeave)
+      const request = this.innerData.request
+      if (!request) return 0
+      return 1 + datedifference(new Date(), request.stampLeave)
     }
   },
   watch: {

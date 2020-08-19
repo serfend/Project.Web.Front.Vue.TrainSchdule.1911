@@ -8,31 +8,38 @@
       highlight-current-row
       stripe
       header-align="center"
+      :span-method="arraySpanMethod"
       @row-dblclick="showDetail"
     >
       <el-table-column type="selection" />
       <el-table-column label="基本">
         <template slot-scope="{row}">
-          <div>
-            <VacationType v-model="row.request.vacationType" />
-            <el-link
-              :href="`#/user/profile?id=${row.userBase.id}`"
-              target="_blank"
-            >{{ row.userBase.realName }}</el-link>
-            <el-tooltip content="用户原姓名">
-              <span v-if="row.userBase.realName!=row.base.realName">({{ row.base.realName }})</span>
-            </el-tooltip>
-          </div>
-          <div :style="{'font-size':'0.8rem',margin:'2px',color:'#3f3f3f'}">
-            <el-link
-              :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
-              target="_blank"
-            >{{ getCDdes(row.userBase,row.base) }}</el-link>
-          </div>
+          <component :is="!rowCanShow(row)?'ElTooltip':'div'" effect="light">
+            <div slot="content">
+              <VacationType v-if="rowCanShow(row)" v-model="row.request.vacationType" />
+              <el-link
+                :href="`#/user/profile?id=${row.userBase.id}`"
+                target="_blank"
+              >{{ row.userBase.realName }}</el-link>
+              <el-tooltip content="用户原姓名">
+                <span v-if="row.userBase.realName!=row.base.realName">({{ row.base.realName }})</span>
+              </el-tooltip>
+              <div :style="{'font-size':'0.8rem',margin:'2px',color:'#3f3f3f'}">
+                <el-link
+                  :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
+                  target="_blank"
+                >{{ getCDdes(row.userBase,row.base) }}</el-link>
+              </div>
+            </div>
+            <div
+              v-if="!rowCanShow(row)"
+              style="font-size:1rem;color:#ccc;letter-spacing:1rem;text-align:center"
+            >申请已被撤回</div>
+          </component>
         </template>
       </el-table-column>
       <el-table-column align="center" label="审批流程">
-        <template slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{row}">
           <ApplyAuditStreamPreview
             slot="content"
             :audit-status="row.steps"
@@ -42,7 +49,7 @@
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="休假时间">
-        <template slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{row}">
           <el-row>
             <el-tooltip :content="`创建于:${row.create}`">
               <span>{{ format(row.create) }}</span>
@@ -56,7 +63,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假地点">
-        <template slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{row}">
           <el-tooltip
             :content="`详细地址:${row.request.vacationPlaceName?row.request.vacationPlaceName:'未填写'}`"
           >
@@ -65,7 +72,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假总天数">
-        <template slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{row}">
           <el-dropdown>
             <span class="el-dropdown-link">
               <span
@@ -98,7 +105,7 @@
       </el-table-column>
 
       <el-table-column align="center" label="状态">
-        <template slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{row}">
           <el-tooltip content="此申请可能为休假结束后创建">
             <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
           </el-tooltip>
@@ -110,7 +117,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
-        <template slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{row}">
           <slot :row="row" name="action" />
         </template>
       </el-table-column>
@@ -220,6 +227,18 @@ export default {
       return `${sameYear}${sameMonth}${d.getDate()}日`
     },
     datedifference,
+    rowCanShow(row) {
+      return row.status !== 20 // 状态：撤回
+    },
+    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (!this.rowCanShow(row)) {
+        if (columnIndex === 1) {
+          return [1, 8]
+        } else {
+          return [0, 0]
+        }
+      }
+    },
     getCDdes(row, prevRow) {
       const cn = row.companyName
       const prevCn = prevRow.companyName
@@ -239,7 +258,7 @@ export default {
       li.statusDesc = statusObj ? statusObj.desc : '未知状态'
       li.statusColor = statusObj ? statusObj.color : 'gray'
       li.acessable = statusObj ? statusObj.acessable : []
-
+      if (!this.rowCanShow(li)) return li
       const stampLeave = new Date(li.request.stampLeave)
       const stampReturn = new Date(li.request.stampReturn)
       li.stampLeave = stampLeave

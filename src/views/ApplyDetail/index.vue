@@ -8,7 +8,7 @@
     <div style="padding-top:0.5rem">
       <el-form type="flex" label-width="8rem">
         <div class="content-card">
-          <el-card v-if="detail&&detail.id" v-loading="loading" shadow="hover">
+          <el-card v-if="detail&&detail.id&&detail.status!==20" v-loading="loading" shadow="hover">
             <h3 slot="header">本次休假</h3>
             <div v-if="detail.id">
               <el-form-item label="基本">
@@ -53,7 +53,7 @@
                 <span>{{ parseTime(detail.request.stampLeave) }} - {{ parseTime(detail.request.stampReturn) }}</span>
               </el-form-item>
               <el-form-item label="休假地点">
-                <span>{{ detail.request.vacationPlace.name }}</span>
+                <span>{{ detail.request.vacationPlace&&detail.request.vacationPlace.name }}</span>
                 <span
                   v-if="detail.request.vacationPlaceName"
                 >{{ `(${detail.request.vacationPlaceName})` }}</span>
@@ -197,6 +197,7 @@ export default {
     loadDetail(id) {
       this.loading = true
       const loadDetail = detail(id).then(data => {
+        if (!data.requestInfo) data.requestInfo = {}
         this.detail = data
         const d = this.detail
         d.request = data.requestInfo
