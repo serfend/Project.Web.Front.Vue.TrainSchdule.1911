@@ -97,15 +97,19 @@ export default {
     handleDutiesSelect(val) {
       const list = this.duties
       const isObj = this.dutiesIsObj
+      const c = {
+        name: val.value,
+        code: val.code
+      }
       if (!isObj) {
-        const existed = list.map(i => i.code).indexOf(val.code)
+        const existed = list.map(i => i.code).indexOf(c.code)
         if (existed > -1) {
-          return this.$message.warning(`已存在${val.value}`)
+          return this.$message.warning(`已存在${c.name}`)
         }
       }
-      this.$message.success(`已选中${val.value}(${val.code})`)
+      this.$message.success(`已选中${c.name}(${c.code})`)
 
-      this.$emit('change', isObj ? val : list.concat([val]))
+      this.$emit('change', isObj ? c : list.concat([c]))
     }
   }
 }
