@@ -1,16 +1,23 @@
 <template>
-  <!-- no模块制作 -->
   <div class="no">
     <div class="no-hd">
       <ul>
         <li v-for="(i,index) in formatedList" :key="index" :style="{color:i.color}" class="counter">
-          <CountTo :start-val="i.prev" :end-val="i.value" />
+          <el-tooltip effect="light">
+            <template slot="content">{{ i.description }}</template>
+            <CountTo :start-val="i.prev" :end-val="i.value" />
+          </el-tooltip>
         </li>
       </ul>
     </div>
     <div class="no-bd">
       <ul>
-        <li v-for="(i,index) in formatedList" :key="index">{{ i.title }}</li>
+        <li v-for="(i,index) in formatedList" :key="index">
+          <el-tooltip effect="light">
+            <template slot="content">{{ i.description }}</template>
+            <span>{{ i.title }}</span>
+          </el-tooltip>
+        </li>
       </ul>
     </div>
   </div>
@@ -41,7 +48,25 @@ export default {
   computed: {
     updatedItems() {
       return debounce(() => {
-        this.updateItems()
+        new Promise(() => {
+          this.updateItems()
+        }).catch(e => {
+          let current = localStorage.getItem('dashboard.settings')
+          if (current) {
+            current = JSON.parse(current)
+            const key = `dashboard.setting[${current.name}]`
+            current = localStorage.getItem(key)
+            if (current) {
+              this.$confirm('检测到无效的设置,是否重置设置?').then(() => {
+                localStorage.removeItem(key)
+                this.$message.success('已重置')
+                location.reload()
+              })
+              return
+            }
+          }
+          this.$confirm('发现未知异常')
+        })
       }, 500)
     },
     formatedList() {
@@ -72,17 +97,17 @@ export default {
       if (!items) return item
       const memberCard = this.rawSetting.setting
       for (var card of memberCard) {
-        const { title, color } = card
+        const { title, description, color } = card
         let value = 0
         if (items[card.collection]) {
           const collect = items[card.collection]
           const filter = card.filter
-          const expression = new Function('i', `return i.${filter}`)
+          const expression = new Function('i', 'value', 'card', filter)
           for (var i of collect) {
-            if (!filter || expression(i)) value += i[card.binding]
+            value = expression(i, value, card)
           }
         }
-        item.push({ title, prev: 0, value, color })
+        item.push({ title, prev: 0, value, color, description })
       }
       this.list = item
     },

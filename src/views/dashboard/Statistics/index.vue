@@ -5,7 +5,6 @@
         <h1 class="content">{{ company.name }}休假情况</h1>
         <TimeCenter :time-sync-method="timeZone" />
       </div>
-      <!-- 页面主体部分 -->
       <section v-if="company" class="mainbox">
         <div class="column">
           <Square>
@@ -36,7 +35,6 @@
         </div>
         <div class="column">
           <MembersCounter v-if="setting.dateRange" :setting="memberCardSetting" />
-          <!-- 地图模块 -->
           <div class="map">
             <div class="map1" />
             <div class="map2" />
