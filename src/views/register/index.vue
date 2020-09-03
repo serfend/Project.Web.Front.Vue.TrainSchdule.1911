@@ -1,16 +1,7 @@
 <template>
-  <el-card>
-    <div v-show="waitToAuthRegisterUsersLoadId!==''">
-      <el-steps :active="nowStep" simple>
-        <el-step
-          v-for="opt in stepOptions.filter(i=>!i.removed)"
-          :key="opt.index"
-          :status="nowStep==opt.index?'success':''"
-          :title="opt.name"
-          :icon="opt.icon"
-        />
-      </el-steps>
-      <el-form label-position="right" label-width="120px">
+  <el-tabs v-model="current_tab" type="border-card">
+    <el-tab-pane :disabled="!waitToAuthRegisterUsersLoadId" name="reg" label="用户信息">
+      <el-form v-loading="submitLoading" label-position="right" label-width="120px">
         <el-collapse v-model="nowStep" accordion>
           <el-collapse-item
             v-for="opt in stepOptions.filter(i=>!i.removed)"
@@ -31,53 +22,52 @@
         v-if="isToRegister"
         type="success"
         :loading="submitLoading"
-        :style="{ width: '100%' }"
         @click="submitRegister(true)"
       >提交注册</el-button>
+      <el-button
+        v-if="isToRegister"
+        type="primary"
+        :loading="submitLoading"
+        @click="switchFormType"
+      >切换到审核认证</el-button>
       <el-button
         v-if="!isToRegister"
         type="warning"
         :loading="submitLoading"
-        :style="{ width: '100%' }"
         @click="submitRegister(false)"
       >修改信息</el-button>
-    </div>
-    <div v-if="!isToRegister">
-      <el-button-group
-        v-show="waitToAuthRegisterUsersLoadId!==''&&selectIsInvalidAccount"
-        :style="{ width: '100%' }"
-      >
-        <el-button
-          type="danger"
-          :loading="submitLoading"
-          :style="{ width: '50%' }"
-          @click="submitValidAccount(false)"
-        >注册信息不合格</el-button>
-        <el-button
-          type="success"
-          :loading="submitLoading"
-          :style="{ width: '50%' }"
-          @click="submitValidAccount(true)"
-        >注册信息合格</el-button>
-      </el-button-group>
-
+      <span v-show="waitToAuthRegisterUsersLoadId!==''&&selectIsInvalidAccount">
+        <el-button type="danger" :loading="submitLoading" @click="submitValidAccount(false)">注册信息不合格</el-button>
+        <el-button type="success" :loading="submitLoading" @click="submitValidAccount(true)">注册信息合格</el-button>
+      </span>
+    </el-tab-pane>
+    <el-tab-pane :disabled="isToRegister" name="lst" label="用户列表">
       <el-card>
         <div slot="header">
-          <el-button
-            type="info"
-            :loading="submitLoading"
-            style="margin:0 1rem 0 0"
-            @click="loadWaitToAuthRegisterUsers"
-          >刷新待认证人员</el-button>
-          <span>选择成员</span>
-          <UserSelector
-            :code.sync="nowSelectRealName"
-            default-info="未选择"
-            style="display:inline;margin:0 1rem 0 0"
-            @change="handleCurrentChange"
-          />
-          <span>选择单位</span>
-          <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width:40%" />
+          <el-card>
+            <span>选择成员</span>
+            <UserSelector
+              :code.sync="nowSelectRealName"
+              default-info="未选择"
+              style="display:inline;margin:0 1rem 0 0"
+              @change="handleCurrentChange"
+            />
+            <span>选择单位</span>
+            <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width:40%" />
+            <div style="margin-top:0.5rem">
+              <el-button
+                type="primary"
+                :loading="submitLoading"
+                @click="requireLoadWaitToAUthRegisterUsers"
+              >刷新待认证人员</el-button>
+              <el-button
+                v-if="!isToRegister"
+                type="primary"
+                :loading="submitLoading"
+                @click="switchFormType"
+              >切换到普通注册</el-button>
+            </div>
+          </el-card>
         </div>
 
         <el-table
@@ -121,30 +111,16 @@
           </el-table-column>
         </el-table>
       </el-card>
-    </div>
-    <el-card>
-      <el-button
-        v-if="isToRegister"
-        type="warning"
-        :loading="submitLoading"
-        :style="{ width: '20%' }"
-        @click="switchFormType"
-      >切换到审核认证</el-button>
-      <div v-else>
-        <el-button
-          type="warning"
-          :loading="submitLoading"
-          :style="{ width: '20%' }"
-          @click="switchFormType"
-        >切换到普通注册</el-button>
-        <Pagination :pagesetting.sync="MembersQuery" :total-count="MembersQueryTotalCount" />
-      </div>
-    </el-card>
-  </el-card>
+      <Pagination
+        v-if="!isToRegister"
+        :pagesetting.sync="MembersQuery"
+        :total-count="MembersQueryTotalCount"
+      />
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
-import LangSelect from '@/components/LangSelect'
 import Base from './components/Base'
 import Application from './components/Application'
 import Company from './components/Company'
@@ -161,12 +137,12 @@ import { getMembers } from '@/api/company'
 import { getUsersVacationLimit, getUserAvatar } from '@/api/user/userinfo'
 import { getUserAllInfo } from '@/api/user/usercompany'
 import Pagination from '@/components/Pagination'
+import { debounce } from '@/utils'
 
 export default {
   name: 'Register',
   components: {
     CompanySelector,
-    LangSelect,
     Pagination,
     Base,
     Application,
@@ -183,6 +159,7 @@ export default {
       submitLoading: false,
       tableLoading: false,
       isToRegister: true,
+      current_tab: 'lst',
       registerForm: this.createForm(),
       nowStep: 1,
       stepOptions: [
@@ -229,13 +206,18 @@ export default {
       },
       MembersQueryTotalCount: 0,
       waitToAuthRegisterUsers: [],
-      waitToAuthRegisterUsersLoadId: '',
+      waitToAuthRegisterUsersLoadId: null,
       nowSelectRealName: '', // 通过姓名选择器选中的人员
       selectIsInvalidAccount: false,
       nowSelectCompany: null
     }
   },
   computed: {
+    requireLoadWaitToAUthRegisterUsers() {
+      return debounce(() => {
+        this.loadWaitToAuthRegisterUsers()
+      }, 500)
+    },
     currentCmp() {
       return this.$store.state.user.companyid
     }
@@ -250,7 +232,7 @@ export default {
     nowSelectCompany: {
       handler(val) {
         if (val) {
-          this.loadWaitToAuthRegisterUsers()
+          this.requireLoadWaitToAUthRegisterUsers()
         }
       },
       immediate: true
@@ -258,7 +240,7 @@ export default {
     MembersQuery: {
       handler(val) {
         if (val) {
-          this.loadWaitToAuthRegisterUsers()
+          this.requireLoadWaitToAUthRegisterUsers()
         }
       },
       deep: true
@@ -287,12 +269,17 @@ export default {
     },
     switchFormType() {
       this.isToRegister = !this.isToRegister
+
       this.refreshFormType()
     },
     refreshFormType() {
       this.stepOptions[1].removed = !this.isToRegister
       if (this.isToRegister) {
         this.waitToAuthRegisterUsersLoadId = '0'
+        this.current_tab = 'reg'
+      } else {
+        this.current_tab = 'lst'
+        this.waitToAuthRegisterUsersLoadId = null
       }
     },
     // 授权当前账号
@@ -326,7 +313,7 @@ export default {
       })
     },
     // 刷新待认证人员列表
-    loadWaitToAuthRegisterUsers() {
+    async loadWaitToAuthRegisterUsers() {
       this.tableLoading = true
       this.submitLoading = true
       getMembers({
@@ -334,24 +321,22 @@ export default {
         page: this.MembersQuery.pageIndex,
         pageSize: this.MembersQuery.pageSize
       })
-        .then(data => {
-          const list = data.list.filter(item => item.inviteBy === null)
+        .then(async data => {
           this.MembersQueryTotalCount = data.totalCount
-          if (list.length === 0) this.$message.success('当前无用户待审批')
           this.waitToAuthRegisterUsers = this.loadUserList(data.list)
-          this.loadSingleUser()
+          await this.loadSingleUser()
         })
         .finally(() => {
           this.tableLoading = false
           this.submitLoading = false
         })
     },
-    loadSingleUser() {
-      var fn = []
-      for (var i = 0; i < this.waitToAuthRegisterUsers.length; i++) {
+    async loadSingleUser() {
+      const fn = []
+      for (let i = 0; i < this.waitToAuthRegisterUsers.length; i++) {
         fn.push(
           new Promise((resolve, reject) => {
-            var item = this.waitToAuthRegisterUsers[i]
+            const item = this.waitToAuthRegisterUsers[i]
             return Promise.all([
               getUserAvatar(item.id),
               getUsersVacationLimit(item.id)
@@ -365,9 +350,7 @@ export default {
           })
         )
       }
-      Promise.all(fn).then(() => {
-        this.$message.success('加载完毕')
-      })
+      await Promise.all(fn)
     },
     loadUserList(list) {
       const result = list.map(item => {
@@ -389,6 +372,7 @@ export default {
       this.waitToAuthRegisterUsersLoadId = val.id
       this.submitLoading = true
       this.selectIsInvalidAccount = val.accountAuthStatus === 0
+      this.current_tab = 'reg'
       getUserAllInfo(this.waitToAuthRegisterUsersLoadId)
         .then(data => {
           const f = this.registerForm
@@ -415,14 +399,20 @@ export default {
           this.selectIsInvalidAccount = this.checkUserValid(inviteBy)
           this.nowSelectCompany = company
         })
-        .finally(() => (this.submitLoading = false))
+        .finally(() => {
+          this.submitLoading = false
+        })
     },
-    submitRegister(regOrModefy) {
+    async submitRegister(regOrModefy) {
+      const confirm_action = await this.$confirm('确定要提交吗？').catch(e => {
+        this.$message.error('已取消')
+      })
+      if (!confirm_action) return
       this.submitLoading = true
       const f = this.registerForm
       f.password = f.Application.password
       f.confirmPassword = f.Application.confirmPassword
-      var submitForm = {
+      const submitForm = {
         Data: f,
         verify: {
           code: '201700816'
