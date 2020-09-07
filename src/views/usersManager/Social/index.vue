@@ -138,9 +138,6 @@ export default {
   },
   methods: {
     edit(item) {
-      if (this.auth.authByUserId !== 'root') {
-        return this.$message.error('此操作需要最高授权')
-      }
       modefySingle(item, this.auth).then(() => {
         this.$message.success('操作成功')
         this.refresh()
