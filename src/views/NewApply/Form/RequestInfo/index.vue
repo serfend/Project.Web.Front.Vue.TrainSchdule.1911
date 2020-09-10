@@ -439,10 +439,11 @@ export default {
       const onTrip = parseInt(this.formApply.OnTripLength)
       let total = primary
       if (trip) total += onTrip
-      if (benefit) total += benefits
+      // if (benefit) total += benefits // 福利假不可累积法定节假日
       return {
         start: this.formApply.StampLeave,
         length: total,
+        benefits,
         caculateLawvacation: benefit
       }
     }
