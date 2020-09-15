@@ -101,10 +101,12 @@ export default {
         let value = 0
         if (items[card.collection]) {
           const collect = items[card.collection]
+          const collect_len = collect.length
           const filter = card.filter
           const expression = new Function('i', 'value', 'card', filter)
-          for (var i of collect) {
-            value = expression(i, value, card)
+          for (let i = 0; i < collect_len; i++) {
+            const tmp_item = collect[i]
+            value = expression(tmp_item, value, card)
           }
         }
         item.push({ title, prev: 0, value, color, description })
