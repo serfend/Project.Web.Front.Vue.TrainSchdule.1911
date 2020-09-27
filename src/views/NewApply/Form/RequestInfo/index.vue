@@ -377,7 +377,7 @@ export default {
       this.$emit('update:submitId', null)
 
       const caculaingDate = this.caculaingDate()
-      if (caculaingDate.length <= 0) return
+      if (caculaingDate.length < 0) return
 
       const model = Object.assign({ id: this.userid }, this.formApply)
       model.vacationAdditionals = this.filtedBenefitList
@@ -414,7 +414,7 @@ export default {
     },
     updateChangeDirect() {
       const caculaingDate = this.caculaingDate()
-      if (caculaingDate.length <= 0) return
+      if (caculaingDate.length < 0) return
       this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
       getStampReturn(caculaingDate).then(data => {
         this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
