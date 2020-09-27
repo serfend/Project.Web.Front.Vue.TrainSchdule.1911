@@ -17,7 +17,7 @@
       v-model="iDuties"
       class="inline-input"
       :fetch-suggestions="dutiesQuery"
-      :placeholder="dutiesIsObj?dutiesIsObj.name:duties?duties.join(' '):'选择职务'"
+      :placeholder="dutiesIsObj?duties.name:duties?duties.join(' '):'选择职务'"
       @select="handleDutiesSelect"
     />
   </span>
