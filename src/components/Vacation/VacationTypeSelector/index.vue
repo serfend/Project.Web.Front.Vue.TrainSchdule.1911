@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-link v-show="hide&&urlDict" type="primary" @click="hide = false">{{ iType }}</el-link>
     <ul
+      v-if="!loading"
       class="card-list"
       :style="{top:hide?'-17rem':0,transform: hide?'scale(0)':null,opacity:hide?0:1,position:hide?'absolute':null}"
     >
@@ -56,6 +57,7 @@ export default {
     }
   },
   data: () => ({
+    loading: false,
     iType: null,
     defaultUrl: null,
     urlDict: {},
@@ -119,16 +121,37 @@ export default {
       return 'gray'
     },
     loadBgUrl() {
+      this.loading = true
       const types = this.types
+      const cb = (data, type) => {
+        const id = data.file.id
+        const url = `${process.env.VUE_APP_BASEURL}${staticfile}${id}`
+        this.urlDict[type.name] = id ? url : null
+      }
+      const null_data = {
+        file: {
+          id: null
+        }
+      }
+      const loader = []
       for (let i = 0; i < types.length; i++) {
         const type = types[i]
         if (type.background && !this.urlDict[type.name]) {
-          requestFile(bgPath, type.background).then(data => {
-            const url = `${process.env.VUE_APP_BASEURL}${staticfile}${data.file.id}`
-            this.urlDict[type.name] = url
-          })
+          loader.push(
+            new Promise(res => {
+              requestFile(bgPath, type.background)
+                .then(d => res(d))
+                .catch(e => res(null_data))
+            })
+          )
         }
       }
+      Promise.all(loader).then(result => {
+        for (let i = 0; i < result.length; i++) {
+          cb(result[i], types[i])
+        }
+        this.loading = false
+      })
     },
     checkDisabled(v) {
       const leftLength = this.leftLength
