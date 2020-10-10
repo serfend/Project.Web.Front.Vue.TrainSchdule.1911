@@ -51,7 +51,9 @@ import {
   postExecuteStatus,
   getExecuteStatus
 } from '@/api/apply/recall'
-
+const INFO_delay_return = '因XXXX，需延迟归队'
+const INFO_ontime_return = '按时归队'
+const INFO_need_recall_return = '因XXXXX工作需要，此同志需尽快归队'
 import HandleReturnStampDialog from './HandleReturnStampDialog'
 import AuditApplyDialog from '../AuditApplyDialog'
 export default {
@@ -78,6 +80,20 @@ export default {
       onlyView: false
     }
   },
+  watch: {
+    defaultStampReturn: {
+      handler(val) {
+        if (val > new Date() && this.defaultReason === INFO_ontime_return) {
+          this.defaultReason = INFO_delay_return
+        } else if (
+          val < new Date() - 86400000 &&
+          INFO_ontime_return === this.defaultStampReturn
+        ) {
+          this.defaultReason = INFO_need_recall_return
+        }
+      }
+    }
+  },
   methods: {
     requireUpdate() {
       this.$emit('updated')
@@ -87,7 +103,7 @@ export default {
       this.dataGetter = getRecallOrder
       this.dataSetter = postRecallOrder
       this.defaultStampReturn = new Date()
-      this.defaultReason = '因工作需要，此同志需尽快归队'
+      this.defaultReason = INFO_need_recall_return
       this.recallOrExecute = true
       this.onlyView = isOnlyShow
       this.showExecuteStatus = true
@@ -97,7 +113,7 @@ export default {
       this.dataGetter = getExecuteStatus
       this.dataSetter = postExecuteStatus
       this.defaultStampReturn = this.row.request.stampReturn
-      this.defaultReason = '按时归队'
+      this.defaultReason = INFO_ontime_return
       this.recallOrExecute = false
       this.onlyView = isOnlyShow
       this.showExecuteStatus = true
