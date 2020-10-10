@@ -1,126 +1,156 @@
 <template>
-  <el-tabs v-model="current_tab" type="border-card">
-    <el-tab-pane :disabled="!waitToAuthRegisterUsersLoadId" name="reg" label="用户信息">
-      <el-form v-loading="submitLoading" label-position="right" label-width="120px">
-        <el-collapse v-model="nowStep" accordion>
-          <el-collapse-item
-            v-for="opt in stepOptions.filter(i=>!i.removed)"
-            :key="opt.index"
-            :name="opt.index"
-          >
-            <template slot="title">
-              {{ opt.name }}
-              <i :class="opt.icon" />
-            </template>
-            <el-card :key="opt.index" shadow="hover">
-              <component :is="opt.component" :form.sync="registerForm[opt.component]" />
+  <div>
+    <el-tabs v-model="current_tab" type="border-card" class="tab-container">
+      <el-tab-pane :disabled="waitToAuthRegisterUsersLoadId==''" name="reg" label="用户信息">
+        <el-form v-loading="submitLoading" label-position="right" label-width="120px">
+          <el-collapse v-model="nowStep" accordion>
+            <el-collapse-item
+              v-for="opt in stepOptions.filter(i=>!i.removed)"
+              :key="opt.index"
+              :name="opt.index"
+            >
+              <template slot="title">
+                {{ opt.name }}
+                <i :class="opt.icon" />
+              </template>
+              <el-card :key="opt.index" shadow="hover">
+                <component :is="opt.component" :form.sync="registerForm[opt.component]" />
+              </el-card>
+            </el-collapse-item>
+          </el-collapse>
+        </el-form>
+        <el-button
+          v-if="isToRegister"
+          type="success"
+          :loading="submitLoading"
+          @click="submitRegister(true)"
+        >提交注册</el-button>
+        <el-button
+          v-if="isToRegister"
+          type="primary"
+          :loading="submitLoading"
+          @click="switchFormType"
+        >切换到审核认证</el-button>
+        <el-button
+          v-if="!isToRegister"
+          type="warning"
+          :loading="submitLoading"
+          @click="submitRegister(false)"
+        >修改信息</el-button>
+        <span v-show="waitToAuthRegisterUsersLoadId!==''&&selectIsInvalidAccount">
+          <el-button
+            type="danger"
+            :loading="submitLoading"
+            @click="submitValidAccount(false)"
+          >注册信息不合格</el-button>
+          <el-button
+            type="success"
+            :loading="submitLoading"
+            @click="submitValidAccount(true)"
+          >注册信息合格</el-button>
+        </span>
+      </el-tab-pane>
+      <el-tab-pane :disabled="isToRegister" name="lst" label="用户列表">
+        <el-card>
+          <div slot="header">
+            <el-card>
+              <span>选择成员</span>
+              <UserSelector
+                :code.sync="nowSelectRealName"
+                default-info="未选择"
+                style="display:inline;margin:0 1rem 0 0"
+                @change="handleCurrentChange"
+              />
+              <span>选择单位</span>
+              <CompanySelector
+                v-model="nowSelectCompany"
+                placeholder="选择需要检查的单位"
+                style="width:40%"
+              />
+              <div style="margin-top:0.5rem">
+                <el-button
+                  type="primary"
+                  :loading="submitLoading"
+                  @click="requireLoadWaitToAUthRegisterUsers"
+                >刷新待认证人员</el-button>
+                <el-button
+                  v-if="!isToRegister"
+                  type="primary"
+                  :loading="submitLoading"
+                  @click="switchFormType"
+                >切换到普通注册</el-button>
+              </div>
             </el-card>
-          </el-collapse-item>
-        </el-collapse>
-      </el-form>
-      <el-button
-        v-if="isToRegister"
-        type="success"
-        :loading="submitLoading"
-        @click="submitRegister(true)"
-      >提交注册</el-button>
-      <el-button
-        v-if="isToRegister"
-        type="primary"
-        :loading="submitLoading"
-        @click="switchFormType"
-      >切换到审核认证</el-button>
-      <el-button
-        v-if="!isToRegister"
-        type="warning"
-        :loading="submitLoading"
-        @click="submitRegister(false)"
-      >修改信息</el-button>
-      <span v-show="waitToAuthRegisterUsersLoadId!==''&&selectIsInvalidAccount">
-        <el-button type="danger" :loading="submitLoading" @click="submitValidAccount(false)">注册信息不合格</el-button>
-        <el-button type="success" :loading="submitLoading" @click="submitValidAccount(true)">注册信息合格</el-button>
-      </span>
-    </el-tab-pane>
-    <el-tab-pane :disabled="isToRegister" name="lst" label="用户列表">
-      <el-card>
-        <div slot="header">
-          <el-card>
-            <span>选择成员</span>
-            <UserSelector
-              :code.sync="nowSelectRealName"
-              default-info="未选择"
-              style="display:inline;margin:0 1rem 0 0"
-              @change="handleCurrentChange"
-            />
-            <span>选择单位</span>
-            <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width:40%" />
-            <div style="margin-top:0.5rem">
-              <el-button
-                type="primary"
-                :loading="submitLoading"
-                @click="requireLoadWaitToAUthRegisterUsers"
-              >刷新待认证人员</el-button>
-              <el-button
-                v-if="!isToRegister"
-                type="primary"
-                :loading="submitLoading"
-                @click="switchFormType"
-              >切换到普通注册</el-button>
-            </div>
-          </el-card>
-        </div>
+          </div>
 
-        <el-table
-          v-loading="tableLoading"
-          :data="waitToAuthRegisterUsers"
-          highlight-current-row
-          style="width: 100%"
-          @current-change="handleCurrentChange"
-        >
-          <el-table-column label="姓名" width="100">
-            <template slot-scope="scope">
-              <el-popover
-                placement="right-start"
-                trigger="hover"
-                @show="scope.row.userHasShow=true"
-              >
-                <User :data="scope.row" :can-load-avatar="scope.row.userHasShow" />
-                <span slot="reference">{{ scope.row.realName }}</span>
-              </el-popover>
-            </template>
-          </el-table-column>
-          <el-table-column prop="dutiesName" label="职务" width="150" />
-          <el-table-column prop="vacation.yearlyLength" label="基础假" width="50" />
-          <el-table-column prop="vacation.maxTripTimes" label="可休路途次数" width="50" />
-          <el-table-column prop="accountAuthStatus" label="状态" width="100">
-            <template slot-scope="scope">
-              <el-tag
-                :type="scope.row.accountAuthStatus==1?'success':scope.row.accountAuthStatus==0?'info':'danger'"
-              >{{ scope.row.accountAuthStatus==1?'已认证':scope.row.accountAuthStatus==0?'待认证':'已退回' }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="vacation.description" label="休假详情描述">
-            <template slot-scope="scope">
-              <span slot="reference">{{ scope.row.vacation.description }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="vacation.description" label="休假率">
-            <template slot-scope="scope">
-              <VacationDescription :users-vacation="scope.row.vacation" />
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-      <Pagination
-        v-if="!isToRegister"
-        :pagesetting.sync="MembersQuery"
-        :total-count="MembersQueryTotalCount"
+          <el-table
+            v-loading="tableLoading"
+            :data="waitToAuthRegisterUsers"
+            highlight-current-row
+            style="width: 100%"
+            @current-change="handleCurrentChange"
+          >
+            <el-table-column label="姓名" width="100">
+              <template slot-scope="scope">
+                <el-popover
+                  placement="right-start"
+                  trigger="hover"
+                  @show="scope.row.userHasShow=true"
+                >
+                  <User :data="scope.row" :can-load-avatar="scope.row.userHasShow" />
+                  <span slot="reference">{{ scope.row.realName }}</span>
+                </el-popover>
+              </template>
+            </el-table-column>
+            <el-table-column prop="dutiesName" label="职务" width="150" />
+            <el-table-column prop="vacation.yearlyLength" label="基础假" width="50" />
+            <el-table-column prop="vacation.maxTripTimes" label="可休路途次数" width="50" />
+            <el-table-column prop="accountAuthStatus" label="状态" width="100">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="scope.row.accountAuthStatus==1?'success':scope.row.accountAuthStatus==0?'info':'danger'"
+                >{{ scope.row.accountAuthStatus==1?'已认证':scope.row.accountAuthStatus==0?'待认证':'已退回' }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="vacation.description" label="休假详情描述">
+              <template slot-scope="scope">
+                <span slot="reference">{{ scope.row.vacation.description }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="vacation.description" label="休假率">
+              <template slot-scope="scope">
+                <VacationDescription :users-vacation="scope.row.vacation" />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <Pagination
+          v-if="!isToRegister"
+          :pagesetting.sync="MembersQuery"
+          :total-count="MembersQueryTotalCount"
+        />
+      </el-tab-pane>
+    </el-tabs>
+    <el-dialog :visible="init_page_over&&not_login_show">
+      <SvgIcon
+        icon-class="Message_error"
+        style-normal="width:6rem;height:6rem;margin: auto;color:rgb(243, 126, 125)"
+        class-name="item-put-center"
       />
-    </el-tab-pane>
-  </el-tabs>
+      <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">进入注册页面失败</div>
+      <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:1rem">为保证您的账号安全</div>
+
+      <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:1.2rem">
+        <span>请</span>
+        <el-link href="/" type="danger">登录任何一名其他成员的账号</el-link>
+        <span>执行注册操作</span>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
+import SvgIcon from '@/components/SvgIcon'
 import Base from './components/Base'
 import Application from './components/Application'
 import Company from './components/Company'
@@ -142,6 +172,7 @@ import { debounce } from '@/utils'
 export default {
   name: 'Register',
   components: {
+    SvgIcon,
     CompanySelector,
     Pagination,
     Base,
@@ -209,7 +240,9 @@ export default {
       waitToAuthRegisterUsersLoadId: null,
       nowSelectRealName: '', // 通过姓名选择器选中的人员
       selectIsInvalidAccount: false,
-      nowSelectCompany: null
+      nowSelectCompany: null,
+      not_login_show: false,
+      init_page_over: false
     }
   },
   computed: {
@@ -226,6 +259,13 @@ export default {
     currentCmp: {
       handler(val) {
         this.nowSelectCompany = { code: val }
+        this.not_login_show = !val
+        const to_tab = this.isToRegister ? 'reg' : 'lst'
+        if (to_tab !== this.current_tab) {
+          setTimeout(() => {
+            this.current_tab = to_tab
+          }, 2000)
+        }
       },
       immediate: true
     },
@@ -247,10 +287,12 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.query) {
-      this.isToRegister = this.$route.query.isRegister
-    }
+    this.isToRegister =
+      this.$route.query && this.$route.query.isRegister === 'true'
     this.refreshFormType()
+    setTimeout(() => {
+      this.init_page_over = true
+    }, 5000)
   },
   methods: {
     modefyUser,
@@ -440,6 +482,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.item-put-center {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+.tab-container {
+  .el-tab-pane {
+    animation: fade 0.5s ease;
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
 .top-enter,
 .top-leave-to {
   transform: translate3d(0, -100%, 0);
