@@ -73,6 +73,9 @@
           <div class="right-menu-item" />
         </div>
       </el-popover>
+      <div class="right-menu-item">
+        <span class="multiline-item">{{ $store.state.user.name }}</span>
+      </div>
       <div v-if="!hasLogin" class="right-menu-item">
         <el-link @click="userCardShowing(true)">登录</el-link>
         <el-link @click="handleReg(true)">注册</el-link>
@@ -144,6 +147,7 @@ export default {
       if (!this.hasLogin && !this.$store.state.user.isUserLogout) {
         this.userCardShow = true
       }
+      console.log(this.$store.state.user.data)
     }, 500)
   },
   methods: {

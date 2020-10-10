@@ -43,7 +43,9 @@
       font-size: 18px;
       color: #5a5e66;
       vertical-align: text-bottom;
-
+      .multiline-item {
+        font-size: 0.4rem;
+      }
       &.hover-effect {
         cursor: pointer;
         transition: all 0.3s;
