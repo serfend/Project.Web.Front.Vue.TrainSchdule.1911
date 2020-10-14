@@ -23,11 +23,11 @@
       >
         <el-link
           type="info"
-          style="position:absulote;width:3rem;right:0;cursor:pointer"
-          @click="userCardShow=false"
+          style="position: absulote; width: 3rem; right: 0; cursor: pointer"
+          @click="userCardShow = false"
         >关闭</el-link>
-        <Login v-if="!hasLogin&&loginFormHasShow" @login="hdlLogin" />
-        <div v-else style="width:250px">
+        <Login v-if="!hasLogin && loginFormHasShow" @login="hdlLogin" />
+        <div v-else style="width: 250px">
           <UserSummary
             :showout="userCardIsShowing"
             :data="$store.state.user.data"
@@ -35,7 +35,7 @@
             :vacation="$store.state.user.vacation"
           />
           <div class="menu-divider" />
-          <el-menu style="border-right:none">
+          <el-menu style="border-right: none">
             <el-submenu index="1">
               <template slot="title">
                 <SvgIcon icon-class="principal" />
@@ -45,7 +45,7 @@
                 <SvgIcon icon-class="namecard" />
                 <span>个人信息</span>
               </el-menu-item>
-              <el-menu-item index="2" @click="isToShowPasswordModefier=true">
+              <el-menu-item index="2" @click="isToShowPasswordModefier = true">
                 <SvgIcon icon-class="scan_namecard" />
                 <span>修改密码</span>
               </el-menu-item>
@@ -63,11 +63,11 @@
         <div
           slot="reference"
           class="avatar-container right-menu-item"
-          @click="userCardShow=!userCardShow"
+          @click="userCardShow = !userCardShow"
         >
           <el-image
             class="user-avatar"
-            :style="{transform:userCardIsShowing?'scale(0)':''}"
+            :style="{ transform: userCardIsShowing ? 'scale(0)' : ''}"
             :src="avatar"
           />
           <div class="right-menu-item" />
@@ -75,6 +75,7 @@
       </el-popover>
       <div class="right-menu-item">
         <span class="multiline-item">{{ $store.state.user.name }}</span>
+        <span class="multiline-item">{{ $store.state.user.data.dutiesName }}</span>
       </div>
       <div v-if="!hasLogin" class="right-menu-item">
         <el-link @click="userCardShowing(true)">登录</el-link>

@@ -9,6 +9,7 @@
     <div class="userinfo">
       <div class="username">{{ data.realName }}</div>
       <el-tag class="userduties">{{ data.dutiesName }}</el-tag>
+      <el-tag class="userduties">{{ data.userTitle }}</el-tag>
     </div>
     <div v-if="vacation" style="width:100%">
       <div style="height:0.7em" />
@@ -70,10 +71,10 @@ export default {
     text-align: center;
     .username {
       color: --color-primary;
+      font-size: 2rem;
     }
     .userduties {
       color: --color-primary;
-      display: grid;
     }
   }
 
