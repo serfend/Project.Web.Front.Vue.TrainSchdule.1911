@@ -13,8 +13,8 @@
     >
       <el-table-column type="selection" />
       <el-table-column label="基本">
-        <template slot-scope="{row}">
-          <component :is="!rowCanShow(row)?'ElTooltip':'div'" effect="light">
+        <template slot-scope="{ row }">
+          <component :is="!rowCanShow(row) ? 'ElTooltip' : 'div'" effect="light">
             <div slot="content">
               <VacationType v-if="rowCanShow(row)" v-model="row.request.vacationType" />
               <el-link
@@ -22,34 +22,45 @@
                 target="_blank"
               >{{ row.userBase.realName }}</el-link>
               <el-tooltip content="用户原姓名">
-                <span v-if="row.userBase.realName!=row.base.realName">({{ row.base.realName }})</span>
+                <span v-if="row.userBase.realName != row.base.realName">({{ row.base.realName }})</span>
               </el-tooltip>
-              <div :style="{'font-size':'0.8rem',margin:'2px',color:'#3f3f3f'}">
+              <div
+                :style="{
+                  'font-size': '0.8rem',
+                  margin: '2px',
+                  color: '#3f3f3f',
+                }"
+              >
                 <el-link
                   :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
                   target="_blank"
-                >{{ getCDdes(row.userBase,row.base) }}</el-link>
+                >{{ getCDdes(row.userBase, row.base) }}</el-link>
               </div>
             </div>
             <div
               v-if="!rowCanShow(row)"
-              style="font-size:1rem;color:#ccc;letter-spacing:1rem;text-align:center"
+              style="
+                font-size: 1rem;
+                color: #ccc;
+                letter-spacing: 1rem;
+                text-align: center;
+              "
             >申请已被撤回</div>
           </component>
         </template>
       </el-table-column>
       <el-table-column align="center" label="审批流程">
-        <template v-if="rowCanShow(row)" slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <ApplyAuditStreamPreview
             slot="content"
             :audit-status="row.steps"
             :title="row.auditStreamSolution"
-            :now-step="row.nowStep?row.nowStep.index:row.steps.length"
+            :now-step="row.nowStep ? row.nowStep.index : row.steps.length"
           />
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="休假时间">
-        <template v-if="rowCanShow(row)" slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-row>
             <el-tooltip :content="`创建于:${row.create}`">
               <span>{{ format(row.create) }}</span>
@@ -63,39 +74,58 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假地点">
-        <template v-if="rowCanShow(row)" slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-tooltip
-            :content="`详细地址:${row.request.vacationPlaceName?row.request.vacationPlaceName:'未填写'}`"
+            :content="`详细地址:${
+              row.request.vacationPlaceName
+                ? row.request.vacationPlaceName
+                : '未填写'
+            }`"
           >
-            <span>{{ row.request.vacationPlace? row.request.vacationPlace.name :'未选择' }}</span>
+            <span>{{ row.request.vacationPlace ? row.request.vacationPlace.name : '未选择' }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假总天数">
-        <template v-if="rowCanShow(row)" slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-dropdown>
             <span class="el-dropdown-link">
               <span
-                :style="{color:row.request.additialVacations&&row.request.additialVacations.length>0?'#3a3':'#333'}"
-              >{{ datedifference(row.request.stampReturn,row.request.stampLeave) + 1 }}天</span>
+                :style="{
+                  color:
+                    row.request.additialVacations &&
+                    row.request.additialVacations.length > 0
+                      ? '#3a3'
+                      : '#333',
+                }"
+              >{{ datedifference( row.request.stampReturn, row.request.stampLeave ) + 1 }}天</span>
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-if="row.request.vacationLength > 0">
+                {{ vacationTypesDic[row.request.vacationType].alias
+                }}{{ row.request.vacationLength }}天
+              </el-dropdown-item>
               <el-dropdown-item
-                v-if="row.request.vacationLength>0"
-              >{{ vacationTypesDic[row.request.vacationType].alias }}{{ row.request.vacationLength }}天</el-dropdown-item>
-              <el-dropdown-item v-if="row.request.onTripLength>0">路途{{ row.request.onTripLength }}天</el-dropdown-item>
+                v-if="row.request.onTripLength > 0"
+              >路途{{ row.request.onTripLength }}天</el-dropdown-item>
               <el-dropdown-item
-                v-for="(v,i) in row.request.additialVacations"
-                v-show="row.request.additialVacations.length>0"
+                v-for="(v, i) in row.request.additialVacations"
+                v-show="row.request.additialVacations.length > 0"
                 :key="i"
               >
                 <el-tooltip
-                  :content="v.description=='法定节假日'?v.description:`用户个人创建(非法定节假日)，原因:${v.description}`"
+                  :content="
+                    v.description == '法定节假日'
+                      ? v.description
+                      : `用户个人创建(非法定节假日)，原因:${v.description}`
+                  "
                   placement="left"
                 >
                   <el-tag
-                    :type="v.description=='法定节假日'?'primary':'warning'"
+                    :type="
+                      v.description == '法定节假日' ? 'primary' : 'warning'
+                    "
                   >{{ v.name }} {{ v.length }}天</el-tag>
                 </el-tooltip>
               </el-dropdown-item>
@@ -105,7 +135,7 @@
       </el-table-column>
 
       <el-table-column align="center" label="状态">
-        <template v-if="rowCanShow(row)" slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-tooltip content="此申请可能为休假结束后创建">
             <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
           </el-tooltip>
@@ -117,7 +147,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
-        <template v-if="rowCanShow(row)" slot-scope="{row}">
+        <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <slot :row="row" name="action" />
         </template>
       </el-table-column>
@@ -128,18 +158,23 @@
       @updated="$emit('updated')"
     />
     <el-button
-      v-show="!multiAuditFormShow&&list.length>1"
-      style="width:100%;font-size:1rem;letter-spacing:1.5rem"
+      v-show="!multiAuditFormShow && list.length > 1"
+      style="width: 100%; font-size: 1rem; letter-spacing: 1.5rem"
       type="success"
       @click="showMutilAudit"
     >审批当前选中项</el-button>
     <Pagination
       :pagesetting.sync="pagesetting"
       :total-count="pagesTotalCount"
-      :hidden="formatedList.length===0"
+      :hidden="formatedList.length === 0"
     />
+    <el-dialog :visible.sync="apply_detail_focus" width="80%">
+      <h1 slot="title" style="text-align:center">详细信息</h1>
+      <ApplyDetail :focus-id="apply_detail_focus_id" />
+    </el-dialog>
   </div>
 </template>
+
 <script>
 import { formatTime } from '@/utils'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
@@ -147,41 +182,44 @@ import { datedifference } from '@/utils'
 import Pagination from '@/components/Pagination'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 import VacationType from '@/components/Vacation/VacationType'
+import ApplyDetail from '@/views/ApplyDetail'
 export default {
   name: 'ApplicationList',
   components: {
     AuditApplyMutilDialog,
     Pagination,
     ApplyAuditStreamPreview,
-    VacationType
+    VacationType,
+    ApplyDetail,
   },
   props: {
     list: {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     loading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     pages: {
       type: Object,
       default() {
         return {}
-      }
+      },
     },
     pagesTotalCount: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   data() {
     return {
       multiAuditFormShow: false,
       multiAuditFormSelection: [],
-      formatedList: [] // 经过格式化过的主列表
+      apply_detail_focus_id: null,
+      formatedList: [], // 经过格式化过的主列表
     }
   },
   computed: {
@@ -194,22 +232,32 @@ export default {
       },
       set(val) {
         this.$emit('update:pages', val)
-      }
+      },
     },
     myUserid() {
       return this.$store.state.user.userid
     },
     statusOptions() {
       return this.$store.state.vacation.statusDic
-    }
+    },
+    apply_detail_focus: {
+      set(val) {
+        if (!val) {
+          this.apply_detail_focus_id = null // only set if null
+        }
+      },
+      get() {
+        return this.apply_detail_focus_id !== null
+      },
+    },
   },
   watch: {
     list: {
       handler(val) {
-        this.formatedList = val.map(li => this.formatApplyItem(li))
+        this.formatedList = val.map((li) => this.formatApplyItem(li))
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   methods: {
     format(d) {
@@ -282,12 +330,12 @@ export default {
     },
     showDetail(row, column, event) {
       if (column.label === '操作') return
-      this.$router.push(`/application/applyDetail?id=${row.id}`)
-    }
-  }
+      this.apply_detail_focus_id = row.id
+      // this.$router.push(`/application/applyDetail?id=${row.id}`)
+    },
+  },
 }
 </script>
 
 <style lang='scss'>
 </style>
-
