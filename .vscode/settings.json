@@ -1,0 +1,16 @@
+{
+  /************** Editor *****************/
+  "editor.cursorBlinking": "smooth",
+  "workbench.iconTheme": "vscode-great-icons",
+  "editor.fontFamily": "Consolas,Monospace",
+  "editor.wordWrap": "on",
+  "editor.cursorStyle": "line", //光标为细竖线
+  "editor.tabSize": 2, //缩进2个空格
+  "editor.detectIndentation": false,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "editor.formatOnSave": false,
+}
