@@ -118,7 +118,7 @@ export default {
     SvgIcon,
     ResetPassword,
     UserSummary,
-    Login
+    Login,
   },
   data() {
     return {
@@ -127,7 +127,7 @@ export default {
       userCardIsShowing: false,
       loginFormHasShow: false,
       isToShowPasswordModefier: false,
-      loading: false
+      loading: false,
     }
   },
   computed: {
@@ -140,7 +140,7 @@ export default {
     },
     realName() {
       return `${this.$store.state.user.dutiesName}${this.$store.state.user.realName}`
-    }
+    },
   },
   mounted() {
     setTimeout(() => {
@@ -173,7 +173,7 @@ export default {
     },
     handleReg(isToRegister) {
       this.$router.push({
-        path: `/register?${isToRegister ? 'isRegister=true' : ''}`
+        path: `/register?${isToRegister ? 'isRegister=true' : ''}`,
       })
     },
     async logout() {
@@ -183,8 +183,8 @@ export default {
       this.$nextTick(() => {
         this.userCardShow = false
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
