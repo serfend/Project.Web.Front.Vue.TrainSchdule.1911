@@ -135,20 +135,8 @@
         />
       </el-tab-pane>
     </el-tabs>
-    <el-dialog :visible="init_page_over && not_login_show">
-      <SvgIcon
-        icon-class="Message_error"
-        style-normal="width:6rem;height:6rem;margin: auto;color:rgb(243, 126, 125)"
-        class-name="item-put-center"
-      />
-      <div class="item-put-center" style="margin: 3rem 0 2rem 0; font-size: 2rem">进入注册页面失败</div>
-      <div class="item-put-center" style="margin: 3rem 0 2rem 0; font-size: 1rem">为保证您的账号安全</div>
-
-      <div class="item-put-center" style="margin: 3rem 0 2rem 0; font-size: 1.2rem">
-        <span>请</span>
-        <el-link href="/" type="danger">登录任何一名其他成员的账号</el-link>
-        <span>执行注册操作</span>
-      </div>
+    <el-dialog :visible.sync="card_should_show">
+      <NotLoginRegisterNotice />
     </el-dialog>
   </div>
 </template>
@@ -173,6 +161,7 @@ import { getUserAllInfo } from '@/api/user/usercompany'
 import Pagination from '@/components/Pagination'
 import { debounce } from '@/utils'
 
+import NotLoginRegisterNotice from './NotLoginRegisterNotice'
 export default {
   name: 'Register',
   components: {
@@ -188,6 +177,7 @@ export default {
     User,
     VacationDescription,
     UserSelector,
+    NotLoginRegisterNotice,
   },
   data() {
     return {
@@ -247,6 +237,7 @@ export default {
       nowSelectCompany: null,
       not_login_show: false,
       init_page_over: false,
+      card_should_show: false,
     }
   },
   computed: {
@@ -290,6 +281,12 @@ export default {
         }
       },
       deep: true,
+    },
+    init_page_over(val) {
+      this.card_should_show = val && this.not_login_show
+    },
+    not_login_show(val) {
+      this.card_should_show = val && this.init_page_over
     },
   },
   mounted() {
@@ -369,7 +366,7 @@ export default {
         page: this.MembersQuery.pageIndex,
         pageSize: this.MembersQuery.pageSize,
       })
-        .then(async(data) => {
+        .then(async (data) => {
           this.MembersQueryTotalCount = data.totalCount
           this.waitToAuthRegisterUsers = this.loadUserList(data.list)
           await this.loadSingleUser()
@@ -490,12 +487,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.item-put-center {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: center;
-}
-
 .tab-container {
   .el-tab-pane {
     animation: fade 0.5s ease;

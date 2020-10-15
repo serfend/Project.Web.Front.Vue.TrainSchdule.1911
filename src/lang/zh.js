@@ -123,7 +123,7 @@ var dict = {
     welcome: '首页'
   },
   register: {
-    title: '注册',
+    title: '注册新的账号',
     new: '注册新号',
     checkemail: '认证邮箱',
     audit: '审核注册'
