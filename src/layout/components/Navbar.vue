@@ -15,18 +15,17 @@
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
       </template>
       <el-popover
-        v-model="userCardShow"
+        :show.sync="userCardShow"
         placement="bottom-end"
-        trigger="manual"
+        trigger="click"
         @show="userCardShowing(true)"
         @hide="userCardShowing(false)"
       >
-        <el-link
-          type="info"
-          style="position: absulote; width: 3rem; right: 0; cursor: pointer"
-          @click="userCardShow = false"
-        >关闭</el-link>
-        <Login v-if="!hasLogin && loginFormHasShow" @login="hdlLogin" />
+        <div v-if="!hasLogin && loginFormHasShow">
+          <el-dialog :visible.sync="userCardShow" width="80%" append-to-body>
+            <Login @login="hdlLogin" />
+          </el-dialog>
+        </div>
         <div v-else style="width: 250px">
           <UserSummary
             :showout="userCardIsShowing"
@@ -73,7 +72,7 @@
           <div class="right-menu-item" />
         </div>
       </el-popover>
-      <div class="right-menu-item">
+      <div v-if="$store.state.user.data" class="right-menu-item">
         <span class="multiline-item">{{ $store.state.user.name }}</span>
         <span class="multiline-item">{{ $store.state.user.data.dutiesName }}</span>
       </div>
@@ -143,12 +142,24 @@ export default {
       return `${this.$store.state.user.dutiesName}${this.$store.state.user.realName}`
     },
   },
+  watch: {
+    // hasLogin: {
+    //   handler(val) {
+    //     // fix bug for card directly show out in abnormal appearance
+    //     if (val) {
+    //       this.userCardShow = false
+    //       setTimeout(() => {
+    //         this.userCardShow = true
+    //       }, 500)
+    //     }
+    //   },
+    // },
+  },
   mounted() {
     setTimeout(() => {
       if (!this.hasLogin && !this.$store.state.user.isUserLogout) {
         this.userCardShow = true
       }
-      console.log(this.$store.state.user.data)
     }, 500)
   },
   methods: {
@@ -183,6 +194,7 @@ export default {
       this.loading = false
       this.$nextTick(() => {
         this.userCardShow = false
+        this.userCardShowing(false)
       })
     },
   },

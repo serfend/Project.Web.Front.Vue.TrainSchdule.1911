@@ -66,7 +66,7 @@ export default {
   -ms-flex-align: center;
   align-items: center;
   .userinfo {
-    margin-top: 0.5rem;
+    margin-top: 1.5rem;
     font-weight: 600;
     text-align: center;
     .username {
@@ -82,7 +82,7 @@ export default {
     transition: all 0.5s ease;
     position: absolute;
     cursor: pointer;
-    top: -4.5rem;
+    top: -3.5rem;
     width: 4.5rem;
     height: 4.5rem;
     border-radius: 50%;
