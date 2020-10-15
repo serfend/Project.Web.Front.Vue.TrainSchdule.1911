@@ -7,8 +7,8 @@
             <span style="color:#ffffff;font-size:2em">{{ $store.state.settings.title }}</span>
             <el-popover trigger="hover" placement="right">
               <div>
-                <h2>{{ $store.state.settings.version }}</h2>
-                <span>{{ formatTime($store.state.settings.create) }}</span>
+                <h2>版本：{{ $store.state.settings.version }}</h2>
+                <span>更新时间：{{ formatTime($store.state.settings.create) }}</span>
                 <div v-for="l in $store.state.settings.description.split('\n')" :key="l">{{ l }}</div>
               </div>
               <el-link

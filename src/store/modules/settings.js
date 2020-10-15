@@ -14,8 +14,9 @@ const {
 
 const state = {
   title: title,
-  version: 'beta',
-  description: '',
+  version: '无版本信息',
+  description: '暂无信息',
+  notice: '暂无信息',
   create: new Date(),
   theme: variables.theme,
   variables: variables,
@@ -52,6 +53,7 @@ const actions = {
           const version = data.list[0]
           state.version = version.version
           state.description = version.description
+          state.noice = data.notice || '暂无信息'
           state.create = version.create
         }
         resolve()

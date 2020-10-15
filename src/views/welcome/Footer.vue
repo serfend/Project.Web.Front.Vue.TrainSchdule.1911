@@ -20,6 +20,14 @@
       />
       <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs/">相关政策</el-link>
     </el-popover>
+    <div style="float:right;color:#bbb">
+      <span>©2020 sf</span>
+      <span>{{ $store.state.settings.title }}</span>
+      <el-popover trigger="hover">
+        <p>{{ $store.state.settings.notice }}</p>
+        <el-link slot="reference" href="#/about/version">{{ $store.state.settings.version }}</el-link>
+      </el-popover>
+    </div>
   </el-footer>
 </template>
 
@@ -30,13 +38,13 @@ export default {
   name: 'Footer',
   components: { ContactMe },
   props: {
-    show: { type: Boolean, default: true }
+    show: { type: Boolean, default: true },
   },
   data: () => ({
     contactMeHasShow: false,
     helpMeHasShow: false,
-    policyHasShow: false
-  })
+    policyHasShow: false,
+  }),
 }
 </script>
 <style lang="scss" scoped>
@@ -51,7 +59,7 @@ export default {
   line-height: 1.5rem;
   font-size: 1rem;
   .el-link {
-    font-size: 0.8rem;
+    font-size: 1rem;
     margin-left: 1rem;
   }
 }

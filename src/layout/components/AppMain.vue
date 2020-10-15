@@ -5,18 +5,14 @@
         <router-view :key="key" />
       </keep-alive>
     </transition>
-    <Footer :show="canShow" />
   </section>
 </template>
 
 <script>
-import Footer from '@/views/welcome/Footer'
 export default {
   name: 'AppMain',
-  components: { Footer },
   data: () => ({
     isAlive: true,
-    canShow: false
   }),
   computed: {
     cachedViews() {
@@ -24,17 +20,9 @@ export default {
     },
     key() {
       return this.$route.fullPath
-    }
+    },
   },
   watch: {
-    key: {
-      handler(val) {
-        this.canShow = false
-        setTimeout(() => {
-          this.canShow = true
-        }, 2000)
-      }, immediate: true
-    },
     '$store.state.app.isReloading': {
       handler(val) {
         if (val) {
@@ -42,8 +30,8 @@ export default {
           this.initUserInfo()
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   created() {
     this.$store.dispatch('app/reload', { complete: false })
@@ -62,8 +50,8 @@ export default {
         this.$store.dispatch('user/initAvatar')
         this.$store.dispatch('user/initVacation')
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
