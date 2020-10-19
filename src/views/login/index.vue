@@ -1,10 +1,10 @@
 <template>
   <el-card style="text-align:center">
-    <el-row>
-      <el-col :span="12">
-        <el-image :src="bg" />
+    <el-row :gutter="20">
+      <el-col :span="14">
+        <el-image :src="bg" fit="contain" class="full-img" />
       </el-col>
-      <el-col :span="12">
+      <el-col :span="10">
         <LoginForm style="boa" />
       </el-col>
     </el-row>
@@ -23,5 +23,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.full-img {
+  width: 100%;
+  height: 100%;
+  box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.4);
+}
 </style>

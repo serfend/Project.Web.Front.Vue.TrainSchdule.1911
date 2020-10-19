@@ -82,7 +82,6 @@ import { validUsername } from '@/utils/validate'
 import { passwordCache, setLoginSetting, getLoginSetting } from '@/api/account'
 import LangSelect from '@/components/LangSelect'
 import { Message } from 'element-ui'
-import { getUserBase } from '@/api/user/userinfo'
 import NotLoginRegisterNotice from '@/views/register/NotLoginRegisterNotice'
 export default {
   name: 'LoginForm',
@@ -132,6 +131,20 @@ export default {
       return this.$store.state.user.userid
     },
   },
+  watch: {
+    hasLogin: {
+      handler(val) {
+        if (val) {
+          Message({
+            message: `欢迎您，${this.currentUser}！`,
+            type: 'success',
+            duration: 8000,
+          })
+        }
+      },
+      immediate: true,
+    },
+  },
   mounted() {
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
@@ -139,15 +152,6 @@ export default {
       this.$refs.password.focus()
     }
     this.loadLoginSetting()
-    getUserBase('', true).then((data) => {
-      if (data) {
-        Message({
-          message: '欢迎您,' + data.base.realName,
-          type: 'success',
-          duration: 5000,
-        })
-      }
-    })
   },
   methods: {
     checkCapslock({ shiftKey, key } = {}) {
@@ -236,7 +240,7 @@ export default {
         }
         case 12450: {
           title = '账号审批被退回?'
-          msg = `进入<a style="color:#00f" href="/#/register?isRegister=true">注册页面</a> 选中【切换到审批模式】、搜索本人姓名找到本人账号、修改正确信息并重新提交`
+          msg = `进入<a style="color:#00f" href="/#/register/user">注册页面</a> 选中【切换到审批模式】、搜索本人姓名找到本人账号、修改正确信息并重新提交`
           break
         }
         case 11500: {
