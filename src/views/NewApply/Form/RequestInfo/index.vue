@@ -125,7 +125,7 @@
           </el-form>
         </el-main>
         <el-aside
-          width="2%"
+          width="0.1%"
           style="padding:0;margin:0;text-align:center;background: rgb(255, 255, 255)"
         >
           <div

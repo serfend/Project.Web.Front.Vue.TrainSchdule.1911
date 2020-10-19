@@ -136,7 +136,7 @@ export function formatTime(time, option) {
     if (day_diff === 1) {
       return isFuture ? '明天' : '昨天'
     } else if (day_diff === 2) {
-      return isFuture ? '后天' : '前台'
+      return isFuture ? '后天' : '前天'
     } else return `${day_diff}天${append}`
   }
   return parseTime(time, option)
