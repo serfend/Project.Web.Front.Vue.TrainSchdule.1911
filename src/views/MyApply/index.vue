@@ -1,23 +1,7 @@
 <template>
   <div>
-    <el-row v-if="!$slots.inner" class="row">
-      <el-col>
-        <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-          <UserFormItem
-            :data="id?null:currentUser"
-            :userid="id"
-            :direct-show-card="true"
-            :can-load-avatar="true"
-          />
-        </el-col>
-        <el-col v-if="id||currentUser" :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
-          <ApplyOverview :userid="id||currentUser.id" />
-        </el-col>
-      </el-col>
-    </el-row>
-    <div v-else>
-      <ApplyOverview :userid="id||currentUser.id" class="row" />
-      <el-row class="row">
+    <div v-if="id||(currentUser&&currentUser.id)">
+      <el-row v-if="!$slots.inner" :gutter="20" class="row">
         <el-col>
           <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
             <UserFormItem
@@ -27,38 +11,61 @@
               :can-load-avatar="true"
             />
           </el-col>
-          <slot name="inner" />
+          <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
+            <ApplyOverview :userid="id||currentUser.id" />
+          </el-col>
         </el-col>
       </el-row>
-    </div>
-    <el-row class="row">
-      <el-card v-loading="loading">
-        <el-steps direction="vertical">
-          <el-step v-for="i in iList" :key="i.id">
-            <div slot="title">
-              <span>{{ format(i.create) }}</span>
-              <el-tag
-                v-if="statusDic[i.status]"
-                :color="statusDic[i.status].color"
-                class="white--text"
-              >{{ statusDic[i.status].desc }}</el-tag>
-              <el-switch v-model="i.show" />
-              <el-link :href="applyDetailUrl(i.id)" target="_blank">查看详情</el-link>
-            </div>
-            <div slot="description">
-              <ApplyCard
-                v-if="i.create"
-                :data="i"
-                :show="i.show"
-                @updated="applyUpdate(i.itemIndex)"
+      <div v-else>
+        <ApplyOverview :userid="id||currentUser.id" class="row" />
+        <el-row class="row">
+          <el-col>
+            <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+              <UserFormItem
+                :data="id?null:currentUser"
+                :userid="id"
+                :direct-show-card="true"
+                :can-load-avatar="true"
               />
-            </div>
-          </el-step>
-        </el-steps>
-        <div v-if="!haveNext">没有更多了</div>
-        <el-button v-else @click="load">加载更多...</el-button>
-      </el-card>
-    </el-row>
+            </el-col>
+            <slot name="inner" />
+          </el-col>
+        </el-row>
+      </div>
+      <el-row class="row">
+        <el-card v-loading="loading">
+          <el-steps direction="vertical">
+            <el-step v-for="i in iList" :key="i.id">
+              <div slot="title">
+                <span>{{ format(i.create) }}</span>
+                <el-tag
+                  v-if="statusDic[i.status]"
+                  :color="statusDic[i.status].color"
+                  class="white--text"
+                >{{ statusDic[i.status].desc }}</el-tag>
+                <el-switch v-model="i.show" />
+                <el-link :href="applyDetailUrl(i.id)" target="_blank">查看详情</el-link>
+              </div>
+              <div slot="description">
+                <ApplyCard
+                  v-if="i.create"
+                  :data="i"
+                  :show="i.show"
+                  @updated="applyUpdate(i.itemIndex)"
+                />
+              </div>
+            </el-step>
+          </el-steps>
+          <el-button
+            :disabled="!haveNext"
+            type="text"
+            style="width:100%"
+            @click="load"
+          >{{ haveNext?'点击加载更多记录':'到底啦~' }}</el-button>
+        </el-card>
+      </el-row>
+    </div>
+    <Login v-else />
   </div>
 </template>
 
@@ -68,29 +75,30 @@ import UserFormItem from '@/components/User/UserFormItem'
 import ApplyCard from './components/ApplyCard'
 import ApplyOverview from './components/ApplyOverview'
 import { querySelf } from '@/api/apply/query'
+import Login from '@/views/login'
 export default {
   name: 'MyApply',
-  components: { UserFormItem, ApplyCard, ApplyOverview },
+  components: { UserFormItem, ApplyCard, ApplyOverview, Login },
   props: {
     start: {
       type: String,
-      default: `${new Date().getFullYear()}-01-01`
+      default: `${new Date().getFullYear()}-01-01`,
     },
     id: {
       type: String,
-      default: null
+      default: null,
     },
     autoExpand: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
       innerList: [],
       lastPage: 0,
       haveNext: true,
-      loading: false
+      loading: false,
     }
   },
   computed: {
@@ -107,16 +115,16 @@ export default {
       },
       get() {
         return this.innerList
-      }
-    }
+      },
+    },
   },
   watch: {
     list: {
       handler(val) {
         this.innerList = val
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
     this.load()
@@ -129,7 +137,7 @@ export default {
       return formatTime(val)
     },
     applyUpdate(index) {
-      querySelf({ pageIndex: index, pageSize: 1 }).then(data => {
+      querySelf({ pageIndex: index, pageSize: 1 }).then((data) => {
         if (data.list[0]) {
           this.iList[index] = Object.assign(this.list[index], data.list[0])
           this.iList[index].show = false
@@ -143,9 +151,9 @@ export default {
       if (this.loading) return
       if (this.haveNext) {
         this.loading = true
-        var pages = { pageIndex: this.lastPage, pageSize: 5 }
+        const pages = { pageIndex: this.lastPage, pageSize: 5 }
         querySelf(pages, this.id, this.start)
-          .then(data => {
+          .then((data) => {
             this.lastPage++
             const newList = data.list.map((v, i) => {
               v.itemIndex = i + pages.pageIndex * pages.pageSize
@@ -155,7 +163,6 @@ export default {
             setTimeout(() => {
               this.iList = this.iList.concat(newList)
               if (data.list.length < pages.pageSize) {
-                if (this.autoExpand) this.$message.error('没有更多了')
                 this.haveNext = false
               }
               if (pages.pageIndex === 0 && this.autoExpand) {
@@ -169,8 +176,8 @@ export default {
             this.loading = false
           })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

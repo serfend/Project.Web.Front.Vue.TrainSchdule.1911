@@ -6,7 +6,7 @@
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
             <template slot="content">若有误（含信息有变化），请到审核注册页面修改信息</template>
           </CardTooltipAlert>
-          <el-form ref="form" :model="form" label-width="10rem">
+          <el-form ref="form" :model="form" label-width="8rem">
             <el-form-item label="申请人">
               <UserSelector
                 :code.sync="form.id"
@@ -22,7 +22,6 @@
                 </el-form-item>
               </el-col>
             </el-row>
-
             <el-form-item
               label="联系方式"
               prop="Phone"

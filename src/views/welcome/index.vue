@@ -50,7 +50,7 @@ export default {
   props: {
     showTitle: {
       type: Boolean,
-      default: true
+      default: true,
     },
     list: {
       type: Array,
@@ -61,49 +61,49 @@ export default {
             description: '注册和审批新账号窗口',
             svg: 'registernew',
             // icon: '/favicon.png',
-            href: '/register?isRegister=true'
+            href: '/register/user',
           },
           {
             label: '我要休假',
             description: '个人提交休假申请窗口',
             svg: 'newapply',
-            href: '/application/newApply'
+            href: '/application/newApply',
           },
           {
             label: '我的假期',
             description: '个人休假情况概览窗口',
             // icon: '/favicon.png',
             svg: 'people_fill',
-            href: '/application/myApply'
+            href: '/application/myApply',
           },
           {
             label: '休假审批',
             description: '查询批假情况和审批单位休假窗口',
             // icon: '/favicon.png',
             svg: 'auditapply',
-            href: '/application/queryAndAuditApplies'
+            href: '/application/queryAndAuditApplies',
           },
           {
             label: '身体健康',
             description: '休假不忘锻炼，自律便是自由',
             svg: 'phy-grade',
-            href: '/phyGrade/detail'
+            href: '/phyGrade/detail',
           },
           {
             label: '统计信息',
             description: '各单位休假情况统计驾驶舱',
             // icon: '/favicon.png',
             svg: 'HTTPcuowushuai',
-            href: '/dashboard'
-          }
+            href: '/dashboard',
+          },
         ]
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       qrCodeUrl: '',
-      innerList: []
+      innerList: [],
     }
   },
   watch: {
@@ -117,8 +117,8 @@ export default {
         }
         this.innerList = result
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     formatTime,
@@ -129,8 +129,8 @@ export default {
       if (item.href) {
         this.$router.push(item.href)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

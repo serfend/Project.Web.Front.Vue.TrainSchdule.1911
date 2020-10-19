@@ -1,29 +1,32 @@
 <template>
-  <el-card v-loading="loading">
-    <ApplySearchCommon
-      ref="queryAppliesForm"
-      :loading.sync="appliesListIsLoading"
-      :list.sync="appliesList"
-      :pages.sync="pages"
-      :pages-total-count.sync="pagesTotalCount"
-      :fullui.sync="fullSearchUI"
-      @exportApplies="exportApplies"
-    />
-    <ApplicationList
-      ref="applicationlist"
-      :list="appliesList"
-      :pages.sync="pages"
-      :pages-total-count="pagesTotalCount"
-      :loading="appliesListIsLoading"
-      @updated="requestUpdate"
-    >
-      <template slot="action" slot-scope="{row}">
-        <el-link type="info" :href="detailUrl(row.id)" target="_blank">查看详情</el-link>
-        <action-examine :row="row" @updated="requestUpdate" />
-        <action-user :row="row" @updated="requestUpdate" />
-      </template>
-    </ApplicationList>
-  </el-card>
+  <div>
+    <el-card v-if="currentUser&&currentUser.id" v-loading="loading">
+      <ApplySearchCommon
+        ref="queryAppliesForm"
+        :loading.sync="appliesListIsLoading"
+        :list.sync="appliesList"
+        :pages.sync="pages"
+        :pages-total-count.sync="pagesTotalCount"
+        :fullui.sync="fullSearchUI"
+        @exportApplies="exportApplies"
+      />
+      <ApplicationList
+        ref="applicationlist"
+        :list="appliesList"
+        :pages.sync="pages"
+        :pages-total-count="pagesTotalCount"
+        :loading="appliesListIsLoading"
+        @updated="requestUpdate"
+      >
+        <template slot="action" slot-scope="{row}">
+          <el-link type="info" :href="detailUrl(row.id)" target="_blank">查看详情</el-link>
+          <action-examine :row="row" @updated="requestUpdate" />
+          <action-user :row="row" @updated="requestUpdate" />
+        </template>
+      </ApplicationList>
+    </el-card>
+    <Login v-else />
+  </div>
 </template>
 
 <script>
@@ -32,9 +35,16 @@ import ApplicationList from './ApplicationList'
 import ActionExamine from './ActionExamine'
 import { exportMultiApplies } from '@/api/common/static'
 import ActionUser from './ActionUser'
+import Login from '@/views/login'
 export default {
   name: 'QueryAndAuditApplies',
-  components: { ApplySearchCommon, ApplicationList, ActionExamine, ActionUser },
+  components: {
+    ApplySearchCommon,
+    ApplicationList,
+    ActionExamine,
+    ActionUser,
+    Login,
+  },
   data() {
     return {
       loading: false,
@@ -42,11 +52,16 @@ export default {
       appliesListIsLoading: false,
       pages: {
         pageSize: 20,
-        pageIndex: 0
+        pageIndex: 0,
       },
       pagesTotalCount: 0,
-      fullSearchUI: false
+      fullSearchUI: false,
     }
+  },
+  computed: {
+    currentUser() {
+      return this.$store.state.user.data
+    },
   },
   watch: {
     pages: {
@@ -56,8 +71,8 @@ export default {
           JSON.stringify({ pages: val })
         )
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   methods: {
     exportApplies() {
@@ -69,11 +84,11 @@ export default {
         if (nowScrrenCount < total) {
           this.$message.success('加载全部休假申请中')
           const fn = this.$refs.queryAppliesForm.searchData
-          const callback = data => {
-            expFn(data.list.map(i => i.id))
+          const callback = (data) => {
+            expFn(data.list.map((i) => i.id))
           }
           fn(true, callback, { pageIndex: 0, pageSize: total })
-        } else expFn(this.appliesList.map(i => i.id))
+        } else expFn(this.appliesList.map((i) => i.id))
       })
     },
     exportAppliesDirect(ids) {
@@ -89,8 +104,8 @@ export default {
     },
     requestUpdate() {
       this.$refs.queryAppliesForm.searchData(true)
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>

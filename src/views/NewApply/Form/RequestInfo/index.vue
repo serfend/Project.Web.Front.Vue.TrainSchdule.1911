@@ -101,7 +101,7 @@
                 style="margin:0.2rem"
               />
             </el-form-item>
-            <el-form-item label="休假目的地" :rules="[{required:true,trigger:'blur'}]">
+            <el-form-item label="目的地" :rules="[{required:true,trigger:'blur'}]">
               <CascaderSelector
                 v-model="formApply.vacationPlace"
                 :child-getter-method="locationChildren"
@@ -165,17 +165,17 @@ export default {
     VacationTypeSelector,
     CascaderSelector,
     BenefitVacation,
-    LawVacation
+    LawVacation,
   },
   props: {
     userid: {
       type: String,
-      default: null
+      default: null,
     },
     selfSettle: {
       type: Object,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
@@ -187,14 +187,14 @@ export default {
         nowTimes: 0,
         leftLength: 0,
         onTripTimes: 0,
-        maxTripTimes: 0
+        maxTripTimes: 0,
       },
       benefitList: [],
       lawVacations: [],
       submitId: null,
       isHover: false,
       anyChanged: false,
-      nowMaxLength: 30
+      nowMaxLength: 30,
     }
   },
   computed: {
@@ -210,7 +210,7 @@ export default {
       const types = this.vacationTypesDic
       if (!types) return null
       const keys = Object.keys(types)
-      return keys.map(i => types[i])
+      return keys.map((i) => types[i])
     },
     vacationTypesDic() {
       return this.$store.state.vacation.vacationTypes
@@ -251,8 +251,8 @@ export default {
       return this.$store.state.user.data
     },
     filtedBenefitList() {
-      return this.benefitList.filter(i => i && i.name && i.length)
-    }
+      return this.benefitList.filter((i) => i && i.name && i.length)
+    },
   },
   watch: {
     vacationTypes: {
@@ -264,7 +264,7 @@ export default {
           }
           this.formApply.vacationType = val[0].name
         })
-      }
+      },
     },
     formApply: {
       handler(val) {
@@ -275,14 +275,14 @@ export default {
           })
         }
       },
-      deep: true
+      deep: true,
     },
     selfSettle: {
       handler(val) {
         this.resetSettle(val)
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   methods: {
     locationChildren,
@@ -307,7 +307,7 @@ export default {
     // call by base info ,DO NOT REMOVE
     refreshVacation() {
       getUsersVacationLimit(this.userid)
-        .then(data => {
+        .then((data) => {
           this.usersvacation = data
         })
         .finally(() => {
@@ -318,8 +318,8 @@ export default {
       if (val && val.self && val.self.address) {
         const self = val.self.address
         const social = [val.parent, val.lover, val.loversParent]
-        const checkDic = social.map(i => i.address)
-        const target = checkDic.find(i => i && i.code !== self.code)
+        const checkDic = social.map((i) => i.address)
+        const target = checkDic.find((i) => i && i.code !== self.code)
         if (target) {
           const likely = Object.assign({}, target)
           this.formApply.vacationPlace = likely
@@ -347,7 +347,7 @@ export default {
         vacationPlace: null,
         vacationPlaceName: '',
         reason: '',
-        ByTransportation: 0
+        ByTransportation: 0,
       }
     },
     checkParamValid(params) {
@@ -391,7 +391,7 @@ export default {
       model.vacationPlace = model.vacationPlace.code
       this.onLoading = true
       postRequestInfo(model)
-        .then(data => {
+        .then((data) => {
           this.$message.success('休假信息验证成功')
           this.submitId = data.id
           this.$emit('update:submitId', data.id)
@@ -416,10 +416,10 @@ export default {
       const caculaingDate = this.caculaingDate()
       if (caculaingDate.length < 0) return
       this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
-      getStampReturn(caculaingDate).then(data => {
+      getStampReturn(caculaingDate).then((data) => {
         this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
         const des = data.descriptions ? data.descriptions : []
-        this.lawVacations = des.map(i => {
+        this.lawVacations = des.map((i) => {
           i.useLength = i.length
           return i
         })
@@ -444,10 +444,10 @@ export default {
         start: this.formApply.StampLeave,
         length: total,
         benefits,
-        caculateLawvacation: benefit
+        caculateLawvacation: benefit,
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
