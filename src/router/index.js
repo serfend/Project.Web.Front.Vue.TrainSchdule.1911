@@ -32,7 +32,7 @@ import Layout from '@/layout'
     activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
  */
-export const constantRoutes = [user, {
+export const constantRoutes = [{
   path: '/dashboard',
   component: () => import('@/views/dashboard/index'),
   name: 'Dashboard',
@@ -40,7 +40,7 @@ export const constantRoutes = [user, {
     title: 'dashboard',
     icon: 'chart'
   }
-}, applicationRouter, phyGrade, applicationSettingRouter, gameRouter, systemRouter, memberRateRouter, {
+}, user, applicationRouter, phyGrade, applicationSettingRouter, gameRouter, systemRouter, memberRateRouter, {
   path: '/redirect',
   component: Layout,
   hidden: true,
@@ -61,15 +61,20 @@ export const constantRoutes = [user, {
   component: () => import('@/components/ContactMe/QrCodeGenerate'),
   hidden: true
 }, {
-  path: '/reg',
+  path: '/register',
   component: Layout,
   children: [{
-    path: '/register',
-    component: () => import('@/views/register/index')
-  }, {
     path: '/forget',
-    component: () => import('@/views/ForgetPassword')
+    component: () => import('@/views/ForgetPassword'),
+    hidden: true
+  }, {
+    path: 'approve',
+    component: () => import('@/views/register/approve')
   }],
+  hidden: true
+}, {
+  path: '/register/user',
+  component: () => import('@/views/register/register'),
   hidden: true
 }, {
   path: '/auth-redirect',
@@ -90,7 +95,8 @@ export const constantRoutes = [user, {
     verify: 'on'
   },
   component: () => import('@/views/welcome/index')
-}]
+}
+]
 
 /**
  * asyncRoutes
