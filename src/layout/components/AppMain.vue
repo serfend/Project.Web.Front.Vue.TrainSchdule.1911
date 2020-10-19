@@ -2,7 +2,7 @@
   <section v-if="isAlive" class="app-main">
     <transition name="fade-transform">
       <keep-alive :include="cachedViews">
-        <router-view :key="key" />
+        <router-view :key="key" style="margin:1rem" />
       </keep-alive>
     </transition>
   </section>
@@ -22,33 +22,12 @@ export default {
       return this.$route.fullPath
     },
   },
-  watch: {
-    '$store.state.app.isReloading': {
-      handler(val) {
-        if (val) {
-          this.$store.dispatch('app/reload', { complete: true })
-          this.initUserInfo()
-        }
-      },
-      immediate: true,
-    },
-  },
-  created() {
-    this.$store.dispatch('app/reload', { complete: false })
-  },
   methods: {
     reload() {
       this.isAlive = false
       this.$nextTick(() => {
         this.isAlive = true
-        this.initUserInfo()
-      })
-    },
-    async initUserInfo() {
-      this.$store.dispatch('vacation/initDic')
-      await this.$store.dispatch('user/initBase').then(() => {
-        this.$store.dispatch('user/initAvatar')
-        this.$store.dispatch('user/initVacation')
+        this.$store.dispatch('user/initUserInfo')
       })
     },
   },

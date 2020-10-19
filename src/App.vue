@@ -7,6 +7,20 @@
 <script>
 export default {
   name: 'App',
+  watch: {
+    '$store.state.app.isReloading': {
+      handler(val) {
+        if (val) {
+          this.$store.dispatch('app/reload', { complete: true })
+          this.$store.dispatch('user/initUserInfo')
+        }
+      },
+      immediate: true,
+    },
+  },
+  created() {
+    this.$store.dispatch('app/reload', { complete: false })
+  },
   mounted() {
     this.$store.dispatch('settings/initProject')
     const str =
@@ -15,6 +29,6 @@ export default {
       `%c${str}`,
       'color:#fff;background: linear-gradient(to right, #888cff, #885eaa, #aa4fa5)'
     )
-  }
+  },
 }
 </script>

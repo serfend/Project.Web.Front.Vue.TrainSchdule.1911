@@ -1,5 +1,5 @@
 <template>
-  <el-card v-loading="!usersvacation">
+  <el-card v-loading="loading">
     <el-form>
       <el-form-item label="休假率">
         <VacationDescription
@@ -7,6 +7,7 @@
           :users-vacation="usersvacation"
           :this-time-vacation-length="0"
         />
+        <span v-else>{{ loading_result }}</span>
       </el-form-item>
     </el-form>
   </el-card>
@@ -21,33 +22,46 @@ export default {
   props: {
     userid: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
-      usersvacation: null
+      usersvacation: null,
+      loading: false,
+      loading_result: null,
     }
   },
   watch: {
     userid: {
       handler(val) {
         if (val) {
-          getUsersVacationLimit(val).then(data => {
-            this.usersvacation = {
-              yearlyLength: 0,
-              nowTimes: 0,
-              leftLength: 0,
-              onTripTimes: 0,
-              maxTripTimes: 0,
-              ...data
-            }
-          })
+          this.loading = true
+          this.loading_result = '加载中...'
+          getUsersVacationLimit(val)
+            .then((data) => {
+              this.usersvacation = {
+                yearlyLength: 0,
+                nowTimes: 0,
+                leftLength: 0,
+                onTripTimes: 0,
+                maxTripTimes: 0,
+                ...data,
+              }
+            })
+            .catch((e) => {
+              this.loading_result = JSON.stringify(e)
+            })
+            .finally(() => {
+              this.loading = false
+            })
+        } else {
+          this.loading_result = '未登录'
         }
       },
-      immediate: true
-    }
-  }
+      immediate: true,
+    },
+  },
 }
 </script>
 

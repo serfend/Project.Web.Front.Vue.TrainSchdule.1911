@@ -1,4 +1,5 @@
 import {
+  getUserBase,
   getUserSummary,
   getUserAvatar,
   getUsersVacationLimit
@@ -30,7 +31,18 @@ const state = {
   roles: [],
   isToRegister: true
 }
-
+export function clear_login_status(commit) {
+  commit('SET_TOKEN', '')
+  commit('SET_NAME', '')
+  commit('SET_USERID', '')
+  commit('SET_CMPID', '')
+  commit('SET_AVATAR', defaultAvatar)
+  commit('SET_DATA', null)
+  commit('SET_INTRODUCTION', '')
+  commit('SET_ISUSERLOGOUT', true)
+  removeToken()
+  resetRouter()
+}
 const mutations = {
   SET_ISUSERLOGOUT: (state, val) => {
     state.isUserLogout = val
@@ -68,6 +80,16 @@ const mutations = {
 }
 
 const actions = {
+  initUserInfo({ commit }) {
+    return new Promise((res, rej) => {
+      console.log(this)
+      this.dispatch('vacation/initDic')
+      this.dispatch('user/initBase').then(() => {
+        this.dispatch('user/initAvatar')
+        this.dispatch('user/initVacation')
+      })
+    })
+  },
   // user login
   login({
     commit
@@ -91,6 +113,12 @@ const actions = {
       }).catch(error => {
         reject(error)
       })
+    })
+  },
+  check_login({ commit, state }) {
+    // TODO 检查当前是否登录，若未登录，则重置个人信息为空
+    getUserBase().then(data => { }).catch(e => {
+      clear_login_status(commit)
     })
   },
   initBase({
@@ -152,16 +180,7 @@ const actions = {
   }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_NAME', '')
-        commit('SET_USERID', '')
-        commit('SET_CMPID', '')
-        commit('SET_AVATAR', defaultAvatar)
-        commit('SET_DATA', null)
-        commit('SET_INTRODUCTION', '')
-        commit('SET_ISUSERLOGOUT', true)
-        removeToken()
-        resetRouter()
+        clear_login_status(commit)
         resolve()
       }).catch(error => {
         reject(error)
