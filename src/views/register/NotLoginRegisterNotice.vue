@@ -21,7 +21,9 @@ import SvgIcon from '@/components/SvgIcon'
 export default {
   components: { SvgIcon },
   methods: {
-    handle_show_login_page() {},
+    handle_show_login_page() {
+      this.$router.push({ path: '/application/myApply' })
+    },
   },
 }
 </script>

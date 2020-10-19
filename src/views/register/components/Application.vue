@@ -3,7 +3,7 @@
     <el-form-item prop="userName" label="用户名">
       <el-input
         v-model="innerForm.userName"
-        :style="{ width: '200px' }"
+        :style="{ width: '14rem' }"
         placeholder="请填写用户名"
         auto-complete="on"
         type="text"
@@ -15,7 +15,7 @@
       </el-tooltip>
     </el-form-item>
     <el-tooltip v-model="capsTooltip" content="Caps lock is On" manual placement="right">
-      <el-form-item prop="password" label="密码" :style="{ width: '400px' }">
+      <el-form-item prop="password" label="密码" :style="{ width: '19rem' }">
         <el-input
           :key="passwordType"
           ref="password"
@@ -36,7 +36,7 @@
         </el-input>
       </el-form-item>
     </el-tooltip>
-    <el-form-item prop="confirmPassword" label="确认密码" :style="{ width: '400px' }">
+    <el-form-item prop="confirmPassword" label="确认密码" :style="{ width: '19rem' }">
       <el-input
         :key="passwordType"
         ref="confirmPassword"
