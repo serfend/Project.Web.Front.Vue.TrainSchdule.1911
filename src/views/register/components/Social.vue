@@ -1,19 +1,52 @@
 <template>
   <div>
-    <SettleFormItem :form.sync="innerForm.settle.self" label="本人居住地" :disabled="false" />
-    <SettleFormItem :form.sync="innerForm.settle.lover" label="配偶居住地" :disabled="false" />
-    <SettleFormItem :form.sync="innerForm.settle.parent" label="本人父母居住地" :disabled="false" />
-    <SettleFormItem :form.sync="innerForm.settle.loversParent" label="配偶父母居住地" :disabled="false" />
-    <el-col :span="8">
-      <el-form-item
-        label="联系方式"
-        prop="phone"
-        inline-message
-        :rules="[{ validator: phoneRoleCheck, trigger: 'blur' }]"
-      >
-        <el-input v-model="innerForm.phone" placeholder="请输入常用的手机号" />
-      </el-form-item>
-    </el-col>
+    <el-form-item
+      label="联系方式"
+      prop="phone"
+      inline-message
+      :rules="[{ validator: phoneRoleCheck, trigger: 'blur' }]"
+      class="normal-item-card"
+    >
+      <el-input v-model="innerForm.phone" placeholder="请输入常用的手机号" />
+    </el-form-item>
+    <el-tabs v-model="nowStep">
+      <el-tab-pane label="本人居住地">
+        <SettleFormItem
+          :form.sync="innerForm.settle.self"
+          :disabled="false"
+          label="本人居住地"
+          :show-label="false"
+          class="normal-item-card"
+        />
+      </el-tab-pane>
+      <el-tab-pane label="配偶居住地">
+        <SettleFormItem
+          :form.sync="innerForm.settle.lover"
+          :disabled="false"
+          label="配偶居住地"
+          :show-label="false"
+          class="normal-item-card"
+        />
+      </el-tab-pane>
+      <el-tab-pane label="本人父母居住地">
+        <SettleFormItem
+          :form.sync="innerForm.settle.parent"
+          :disabled="false"
+          label="本人父母居住地"
+          :show-label="false"
+          class="normal-item-card"
+        />
+      </el-tab-pane>
+      <el-tab-pane label="配偶父母居住地">
+        <SettleFormItem
+          :form.sync="innerForm.settle.loversParent"
+          :disabled="false"
+          label="配偶父母居住地"
+          :show-label="false"
+          class="normal-item-card"
+        />
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -24,27 +57,38 @@ export default {
   name: 'Social',
   components: { SettleFormItem },
   props: {
+    childIndex: {
+      type: Number,
+      default: 0,
+    },
     form: {
       type: Object,
       default() {
         return this.innerForm
-      }
-    }
+      },
+    },
   },
   data() {
     return {
+      nowStep: '0',
       innerForm: {
         phone: '',
         settle: {
           self: {},
           lover: {},
           parent: {},
-          loversParent: {}
-        }
-      }
+          loversParent: {},
+        },
+      },
     }
   },
   watch: {
+    childIndex: {
+      handler(val) {
+        const v = val.toString()
+        this.nowStep = v
+      },
+    },
     form: {
       handler(val) {
         if (!val || !val.settle) return
@@ -53,7 +97,7 @@ export default {
         if (settle.id) delete settle.id
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     innerForm: {
       handler(val, oldVal) {
@@ -62,8 +106,8 @@ export default {
         })
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     phoneRoleCheck(filed, invalidVal, cb) {
@@ -71,11 +115,14 @@ export default {
       var result = validPhone(val)
       if (result) cb(new Error(result))
       cb()
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+.normal-item-card {
+  margin-top: 1rem;
+  max-width: 40rem;
+}
 </style>
-

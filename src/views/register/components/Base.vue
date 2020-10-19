@@ -1,26 +1,28 @@
 <template>
   <div>
     <el-form-item label="身份证号">
-      <el-input v-model="innerForm.cid" :style="{ width: '400px' }" @change="fetchUserInfoes" />
+      <el-input v-model="innerForm.cid" :style="{ width: '19rem' }" @change="fetchUserInfoes" />
       <el-tooltip :content="invalid.cid.des">
         <i v-if="invalid.cid.status" class="el-icon-error" style="color:#F56C6C" />
         <i v-else class="el-icon-success" style="color:#67C23A" />
       </el-tooltip>
     </el-form-item>
     <el-form-item label="真实姓名">
-      <el-input v-model="innerForm.realName" :style="{ width: '400px' }" />
+      <el-input v-model="innerForm.realName" :style="{ width: '19rem' }" />
     </el-form-item>
     <el-form-item label="性别">
       <GenderBtn v-model="innerForm.gender" />
     </el-form-item>
     <el-form-item label="籍贯">
-      <el-input v-model="innerForm.hometown" :style="{ width: '400px' }" />
+      <el-input v-model="innerForm.hometown" :style="{ width: '19rem' }" />
     </el-form-item>
     <el-form-item label="生日">
       <el-date-picker
         v-model="innerForm.time_Birthday"
         format="yyyy年MM月dd日"
         value-format="yyyy-MM-dd"
+        style="width:19rem"
+        placeholder="根据身份证计算"
         disabled
       />
     </el-form-item>
@@ -29,6 +31,7 @@
         v-model="innerForm.time_Work"
         format="yyyy年MM月dd日"
         value-format="yyyy-MM-dd"
+        style="width:19rem"
         :editable="false"
       />
     </el-form-item>
@@ -50,8 +53,8 @@ export default {
       type: Object,
       default() {
         return this.innerForm
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -62,14 +65,14 @@ export default {
         hometown: '',
         time_Work: '',
         time_Birthday: '',
-        time_Party: ''
+        time_Party: '',
       },
       invalid: {
         cid: {
           status: false,
-          des: '用户已存在'
-        }
-      }
+          des: '用户已存在',
+        },
+      },
     }
   },
   watch: {
@@ -79,14 +82,14 @@ export default {
         if (this.innerForm.id) delete this.innerForm.id
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     innerForm: {
       handler(val, oldVal) {
         this.$emit('update:form', val)
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   methods: {
     fetchUserInfoes() {
@@ -101,7 +104,7 @@ export default {
             return
           }
           getUserIdByCid(id, true)
-            .then(data => {
+            .then((data) => {
               this.invalid.cid.status = true
               this.invalid.cid.des =
                 '此身份证号已被' + data.base.realName + '使用'
@@ -122,8 +125,8 @@ export default {
         this.invalid.cid.status = true
         this.invalid.cid.des = '非正确身份号码,正确格式为18位法定身份证号码'
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

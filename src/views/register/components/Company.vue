@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form-item prop="company" label="单位" style="width:400px">
+    <el-form-item prop="company" label="单位" style="width:25.2rem">
       <CompanySelector
         v-model="innerForm.company"
         :placeholder="innerForm.company.name||'仅当前登录的用户的单位可见'"
@@ -17,16 +17,18 @@
           v-model="innerForm.title.name"
           class="inline-input"
           :fetch-suggestions="companyTitleQuery"
+          style="width:14rem"
           placeholder="请输入并选中职务等级"
         />
       </el-tooltip>
     </el-form-item>
-    <el-form-item prop="titleDate" label="职务等级时间">
+    <el-form-item prop="titleDate" label="等级时间">
       <el-date-picker
         v-model="innerForm.titleDate"
         placeholder="职务等级生效时间"
         format="yyyy年MM月dd日"
         value-format="yyyy-MM-dd"
+        style="width:14rem"
       />
     </el-form-item>
   </div>
@@ -40,40 +42,40 @@ export default {
   name: 'Company',
   components: {
     CompanySelector,
-    DutiesSelector
+    DutiesSelector,
   },
   props: {
     form: {
       type: Object,
       default() {
         return this.innerForm
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       innerForm: {
         company: {
-          code: 'root'
+          code: 'root',
         },
         duties: {
-          name: ''
+          name: '',
         },
         title: {
-          name: ''
+          name: '',
         },
-        titleDate: ''
+        titleDate: '',
       },
       invalid: {
         company: {
           status: false,
-          des: ''
+          des: '',
         },
         duties: {
           status: false,
-          des: ''
-        }
-      }
+          des: '',
+        },
+      },
     }
   },
   watch: {
@@ -84,14 +86,14 @@ export default {
         if (this.innerForm.id) delete this.innerForm.id
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     innerForm: {
       handler(val, oldVal) {
         this.$emit('update:form', val)
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   methods: {
     companyChild,
@@ -101,15 +103,15 @@ export default {
     },
     async queryItem(data, cb) {
       var list = data.list
-      var result = list.map(item => {
+      var result = list.map((item) => {
         return {
           value: item.name,
-          code: item.code
+          code: item.code,
         }
       })
       cb(result)
-    }
-  }
+    },
+  },
 }
 </script>
 
