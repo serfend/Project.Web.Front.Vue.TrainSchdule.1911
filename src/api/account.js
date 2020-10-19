@@ -65,7 +65,11 @@ export function logout() {
  * } } params
  */
 export function removeAccount(params) {
-  return request.delete('account/Remove', params)
+  return request({
+    method: 'DELETE',
+    url: 'Account/Remove',
+    data: params
+  })
 }
 
 /**
@@ -217,10 +221,10 @@ export function signIn(signInId) {
  * @param {*} username
  * @param {*} msg
  * @param {*} rank Debug = 32,
-		///Infomation = 16,
-		///Warning = 8,
-		///Danger = 4,
-		///Disaster = 0
+    ///Infomation = 16,
+    ///Warning = 8,
+    ///Danger = 4,
+    ///Disaster = 0
  * @returns
  */
 export function report(username, msg, rank) {
@@ -241,10 +245,10 @@ export function report(username, msg, rank) {
  * @param {*} startDate
  * @param {*} endDate
  * @param {*} rankArr Debug = 32,
-		///Infomation = 16,
-		///Warning = 8,
-		///Danger = 4,
-		///Disaster = 0
+    ///Infomation = 16,
+    ///Warning = 8,
+    ///Danger = 4,
+    ///Disaster = 0
  * @returns
  */
 export function getReport(username, startDate, endDate, page, rankArr, ip, device, message) {
