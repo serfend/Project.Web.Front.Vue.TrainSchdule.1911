@@ -3,7 +3,8 @@ import defaultSettings from '@/settings'
 import {
   getUpdateRecord
 } from '@/api/common/version'
-
+import { timeZone } from '@/api/common/static'
+import { getTimeDelta } from '@/utils'
 const {
   showSettings,
   tagsView,
@@ -23,9 +24,43 @@ const state = {
   showSettings: showSettings,
   tagsView: tagsView,
   fixedHeader: fixedHeader,
-  sidebarLogo: sidebarLogo
+  sidebarLogo: sidebarLogo,
+  currentTime_left: 0,
+  currentTime_right: 0,
+  currentTimeDelta_left: 0,
+  currentTimeDelta_right: 0
 }
-
+let time_token = null
+export function syn_time() {
+  if (time_token) clearInterval(time_token)
+  // TODO 同步服务器时间
+  // 每秒更新一次时间，若误差超过0.5秒，则立即重新同步
+  time_token = setInterval(() => {
+    const now = new Date()
+    const delta = getTimeDelta(new Date(state.currentTime_left - state.currentTimeDelta_left), now, 1)
+    // console.log('sync time check delta', delta)
+    if (Math.abs(delta) > 1500 || Math.abs(delta) < 500) {
+      re_syn_time()
+      return
+    }
+    state.currentTime_left = new Date(now - 0 + state.currentTimeDelta_left)
+    state.currentTime_right = new Date(now - 0 + state.currentTimeDelta_right)
+  }, 1000)
+}
+export function re_syn_time() {
+  // console.info('resync server time begin')
+  state.currentTime_left = '同步中...'
+  state.currentTime_right = state.currentTime_left
+  timeZone().then(data => {
+    const { left, right } = data
+    const now = new Date()
+    state.currentTime_left = new Date(left.value)
+    state.currentTime_right = new Date(right.value)
+    state.currentTimeDelta_left = state.currentTime_left - now
+    state.currentTimeDelta_right = state.currentTime_right - now
+    syn_time()
+  })
+}
 const mutations = {
   CHANGE_SETTING: (state, {
     key,
@@ -58,6 +93,12 @@ const actions = {
         }
         resolve()
       }).catch(e => reject())
+    })
+  },
+  sync_time({ commit, state }) {
+    return new Promise((res, rej) => {
+      re_syn_time()
+      res()
     })
   }
 }

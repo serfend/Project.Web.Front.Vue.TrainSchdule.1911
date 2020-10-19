@@ -52,6 +52,10 @@
                 <SvgIcon icon-class="newapplication_" />
                 <span>授权注册</span>
               </el-menu-item>
+              <el-menu-item index="4" @click="handleReg(true)">
+                <SvgIcon icon-class="newapplication_" />
+                <span>注册新账号</span>
+              </el-menu-item>
             </el-submenu>
             <el-menu-item @click="logout">
               <SvgIcon icon-class="dengchu" />
@@ -72,9 +76,9 @@
           <div class="right-menu-item" />
         </div>
       </el-popover>
-      <div v-if="$store.state.user.data" class="right-menu-item">
-        <span class="multiline-item">{{ $store.state.user.name }}</span>
-        <span class="multiline-item">{{ $store.state.user.data.dutiesName }}</span>
+      <div v-if="$store.state.user.data" class="right-menu-2-item" style="color:#000">
+        <div>{{ $store.state.user.name }}</div>
+        <div>{{ $store.state.user.data.dutiesName }}</div>
       </div>
       <div v-if="!hasLogin" class="right-menu-item">
         <el-link @click="userCardShowing(true)">登录</el-link>
@@ -89,6 +93,10 @@
           <span>建设中</span>
           <el-link slot="reference">收藏</el-link>
         </el-popover>
+      </div>
+      <div v-if="device !== 'mobile'&&currentTime" class="right-menu-2-item">
+        <div>{{ currentTime.split('\n')[0] }}</div>
+        <div>{{ currentTime.split('\n')[1] }}</div>
       </div>
     </div>
     <el-dialog title="修改密码" :modal="false" :visible.sync="isToShowPasswordModefier" width="500px">
@@ -108,6 +116,7 @@ import ResetPassword from '@/components/ResetPassword'
 import Login from '@/views/login'
 import SvgIcon from '@/components/SvgIcon'
 import UserSummary from '@/layout/components/UserSummary/index'
+import { datedifference, parseTime } from '@/utils'
 export default {
   components: {
     Breadcrumb,
@@ -122,24 +131,24 @@ export default {
   },
   data() {
     return {
+      checker: null,
       lastUpdateShow: new Date(),
       userCardShow: false,
       userCardIsShowing: false,
       loginFormHasShow: false,
       isToShowPasswordModefier: false,
       loading: false,
+      check: {
+        check_sync_time: 0,
+        check_user_login: 0,
+      },
+      currentTime: null,
     }
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'device']),
     hasLogin() {
       return this.$store.state.user.userid
-    },
-    companyName() {
-      return this.$store.state.user.companyName
-    },
-    realName() {
-      return `${this.$store.state.user.dutiesName}${this.$store.state.user.realName}`
     },
   },
   watch: {
@@ -161,8 +170,39 @@ export default {
         this.userCardShow = true
       }
     }, 500)
+    this.checker = setInterval(() => {
+      this.check_sync_time()
+      this.check_user_login()
+      const s = this.$store.state.settings.currentTime_left_status
+      if (s) {
+        this.currentTime = `时间同步\n${s}`
+      } else {
+        const d = new Date(
+          new Date() - 0 + this.$store.state.settings.currentTimeDelta_left
+        )
+        this.currentTime = parseTime(d, '{y}年{m}月{d}日\n{h}时{i}分{s}秒')
+      }
+    }, 1000)
+    this.check_sync_time(true)
+  },
+  destroyed() {
+    if (this.checker) clearInterval(this.checker)
   },
   methods: {
+    check_sync_time(direct_load = false) {
+      const d = datedifference(new Date(), this.check.check_sync_time, 'minute')
+      if (d < 5 && !direct_load) return // 5分钟同步一次
+      // console.log('check sync time after ' + d + ' minute(s)')
+      this.check.check_sync_time = new Date()
+      this.$store.dispatch('settings/sync_time')
+    },
+    check_user_login() {
+      const d = datedifference(new Date(), this.check.check_sync_time, 'minute')
+      if (d < 10) return
+      console.log('check login status')
+      this.check.check_sync_time = new Date()
+      this.$store.dispatch('user/check_login')
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
@@ -185,7 +225,7 @@ export default {
     },
     handleReg(isToRegister) {
       this.$router.push({
-        path: `/register?${isToRegister ? 'isRegister=true' : ''}`,
+        path: `/register/${isToRegister ? 'user' : 'approve'}`,
       })
     },
     async logout() {

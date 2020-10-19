@@ -2,13 +2,13 @@
  * Created by jiachenpan on 16/11/18.
  */
 
-const getDateDelta = (s, e) => {
-  const yearDelta = e.getFullYear() - s.getFullYear()
+export const getDateDelta = (s, e) => {
+  const yearDelta = e.getRFullYear() - s.getFullYear()
   const monthDelta = e.getMonth() - s.getMonth()
   const dayDelta = e.getDate() - s.getDate()
   return [yearDelta, monthDelta, dayDelta]
 }
-const getTimeDelta = (s, e, interval) => {
+export const getTimeDelta = (s, e, interval) => {
   const dateSpan = e - s
   return Math.floor(dateSpan / interval)
 }
@@ -25,7 +25,11 @@ const DateIntervalOption = {
     if (delta[2] < 0) return r - 1
     return r
   },
-  day: (s, e) => getTimeDelta(s, e, 24 * 3600000),
+  day: (s, e) => {
+    const s_date = new Date(s.getYear(), s.getMonth(), s.getDate())
+    const e_date = new Date(e.getYear(), e.getMonth(), e.getDate())
+    return getTimeDelta(s_date, e_date, 24 * 3600000)
+  },
   hour: (s, e) => getTimeDelta(s, e, 3600000),
   minute: (s, e) => getTimeDelta(s, e, 60000),
   second: (s, e) => getTimeDelta(s, e, 1)
@@ -127,10 +131,13 @@ export function formatTime(time, option) {
     return `${Math.floor(diff / 60)}分钟${append}`
   } else if (diff < 3600 * 24) {
     return `${Math.floor(diff / 3600)}小时${append}`
-  } else if (diff < 3600 * 48) {
-    return isFuture ? '明天' : '昨天'
   } else if (diff < 3600 * 24 * 90) {
-    return `${Math.floor(diff / 86400)}天${append}`
+    const day_diff = Math.abs(datedifference(now, d))
+    if (day_diff === 1) {
+      return isFuture ? '明天' : '昨天'
+    } else if (day_diff === 2) {
+      return isFuture ? '后天' : '前台'
+    } else return `${day_diff}天${append}`
   }
   return parseTime(time, option)
 }

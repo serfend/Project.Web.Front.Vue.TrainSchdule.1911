@@ -1,12 +1,12 @@
 .navbar {
-  height: 50px;
+  height: 3rem;
   overflow: hidden;
   position: relative;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
-    line-height: 46px;
+    line-height: 2.8rem;
     height: 100%;
     float: left;
     cursor: pointer;
@@ -29,23 +29,20 @@
 
   .right-menu {
     float: right;
-    margin-right: 20px;
+    margin-right: 2rem;
     height: 100%;
-    line-height: 50px;
+    line-height: 3rem;
 
     &:focus {
       outline: none;
     }
-
-    .right-menu-item {
+    %right-menu-item-base {
       display: inline-block;
-      height: 100%;
-      font-size: 18px;
+      height: 95%;
+      font-size: 1rem;
       color: #5a5e66;
       vertical-align: text-bottom;
-      .multiline-item {
-        font-size: 0.4rem;
-      }
+
       &.hover-effect {
         cursor: pointer;
         transition: all 0.3s;
@@ -55,7 +52,16 @@
         }
       }
     }
-
+    .right-menu-item {
+      @extend %right-menu-item-base;
+    }
+    .right-menu-2-item {
+      @extend %right-menu-item-base;
+      margin-top: 0.2rem;
+      font-size: 0.5rem;
+      line-height: 1.5rem;
+      color: #aaa;
+    }
     .avatar-container {
       cursor: pointer;
       .user-avatar {
