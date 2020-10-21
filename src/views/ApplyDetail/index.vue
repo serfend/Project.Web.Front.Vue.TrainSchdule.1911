@@ -132,6 +132,7 @@ export default {
   },
   data() {
     return {
+      id: null,
       route_id: null,
       detail: {},
       loading: false,
@@ -156,14 +157,27 @@ export default {
     settle() {
       return this.detail.social.settle
     },
-    id() {
-      return this.focusId || this.route_id
+  },
+  watch: {
+    focusId: {
+      handler(val) {
+        console.log('modify focusId', val)
+        this.id = val
+      },
+      immediate: true,
+    },
+    route_id(val) {
+      if (this.focusId !== null) return
+      console.log('modify routeId', val)
+      this.id = val
+    },
+    id(val) {
+      this.requestUpdate()
     },
   },
   mounted() {
     if (!this.$route || !this.$route.query) return
     this.route_id = this.$route.query.id
-    this.requestUpdate()
   },
   methods: {
     parseTime(date) {
@@ -171,11 +185,9 @@ export default {
     },
     datedifference,
     updateDetail() {
-      if (!this.id) {
-        this.$message.error('未选择休假申请')
-        return this.$router.push('/application/queryAndAuditApplies')
+      if (this.id) {
+        this.loadDetail(this.id)
       }
-      this.loadDetail(this.id)
     },
     initstaticDataData() {
       const now = new Date()
