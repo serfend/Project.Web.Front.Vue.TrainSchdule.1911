@@ -1,5 +1,5 @@
 <template>
-  <el-footer height="2rem" class="footer" :style="{opacity:show?1:0}">
+  <el-footer height="2rem" class="footer" :style="{opacity:show?1:0,position:show?'absolute':''}">
     <el-popover placement="top" trigger="hover" @show="contactMeHasShow = true">
       <ContactMe v-if="contactMeHasShow" content="https://u.wechat.com/MKXY9nIvV-9oPgMNhB4cd58" />
       <el-link slot="reference" type="primary">联系我们</el-link>
