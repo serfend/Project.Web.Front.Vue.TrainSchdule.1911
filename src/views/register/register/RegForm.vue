@@ -349,6 +349,9 @@ export default {
       submitMethod(submitForm)
         .then((data) => {
           this.$message.success(regOrModefy ? '注册成功' : '修改成功')
+          if (regOrModefy) {
+            this.$router.push('/')
+          }
         })
         .finally(() => {
           this.loading = false

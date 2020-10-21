@@ -3,7 +3,7 @@
     <el-form-item label="个性签名">
       <el-input
         v-model="innerForm.about"
-        :style="{ width: '400px' }"
+        :style="{ width: '18rem' }"
         placeholder="可填写个人描述"
         type="textarea"
         maxlength="50"

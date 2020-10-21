@@ -5,18 +5,17 @@
       prop="phone"
       inline-message
       :rules="[{ validator: phoneRoleCheck, trigger: 'blur' }]"
-      class="normal-item-card"
     >
       <el-input v-model="innerForm.phone" placeholder="请输入常用的手机号" />
     </el-form-item>
     <el-tabs v-model="nowStep">
       <el-tab-pane label="本人居住地">
+        <el-alert type="warning" show-icon>本人地址应为当前居住地，而非家乡所在地。</el-alert>
         <SettleFormItem
           :form.sync="innerForm.settle.self"
           :disabled="false"
           label="本人居住地"
           :show-label="false"
-          class="normal-item-card"
         />
       </el-tab-pane>
       <el-tab-pane label="配偶居住地">
@@ -25,7 +24,6 @@
           :disabled="false"
           label="配偶居住地"
           :show-label="false"
-          class="normal-item-card"
         />
       </el-tab-pane>
       <el-tab-pane label="本人父母居住地">
@@ -34,7 +32,6 @@
           :disabled="false"
           label="本人父母居住地"
           :show-label="false"
-          class="normal-item-card"
         />
       </el-tab-pane>
       <el-tab-pane label="配偶父母居住地">
@@ -43,7 +40,6 @@
           :disabled="false"
           label="配偶父母居住地"
           :show-label="false"
-          class="normal-item-card"
         />
       </el-tab-pane>
     </el-tabs>
