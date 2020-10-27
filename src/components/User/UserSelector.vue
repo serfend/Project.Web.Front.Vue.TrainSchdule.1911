@@ -10,7 +10,7 @@
           v-loading="loading"
           :style="{color:code?'#00f':'#aaa'}"
           @mouseenter="forgetHasShow=true"
-        >{{ userRealName?userRealName:defaultInfo }}</span>
+        >{{ userRealName?userRealName:`${defaultInfo} ${code?code:''}` }}</span>
       </el-link>
     </el-tooltip>
     <el-dialog v-if="forgetHasShow" title="搜索成员" :visible.sync="dialogVisible" append-to-body>
@@ -27,24 +27,28 @@ export default {
   components: { FindUserByRealName },
   model: {
     prop: 'code',
-    event: 'change'
+    event: 'change',
   },
   props: {
     code: {
       type: String,
-      default: null
+      default: null,
     },
     defaultInfo: {
       type: String,
-      default: '搜索成员'
-    }
+      default: '搜索成员',
+    },
+    placeholder: {
+      type: String,
+      default: null,
+    },
   },
   data: () => ({
     loading: false,
     forgetHasShow: false,
     dialogVisible: false,
     userRealName: null,
-    avatar: null
+    avatar: null,
   }),
   computed: {
     nowUserCode: {
@@ -53,20 +57,20 @@ export default {
       },
       set(val) {
         this.$emit('update:code', val)
-      }
-    }
+      },
+    },
   },
   watch: {
     avatar: {
       handler(val) {
         this.$emit('update:avatar', val)
-      }
+      },
     },
     nowUserCode: {
       handler(val) {
         if (val) this.loadUserName()
-      }
-    }
+      },
+    },
   },
   methods: {
     clearSelect() {
@@ -85,7 +89,7 @@ export default {
       if (this.userRealName || !this.nowUserCode) return
       this.loading = true
       getUserBase(this.nowUserCode)
-        .then(data => {
+        .then((data) => {
           this.$nextTick(() => {
             this.userRealName = data.base.realName
           })
@@ -93,8 +97,8 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    }
-  }
+    },
+  },
 }
 </script>
 

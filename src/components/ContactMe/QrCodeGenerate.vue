@@ -3,7 +3,13 @@
     v-loading="onLoading"
     :style="{width:size + 'px',height:size + 'px','line-height':size+'px','text-align':'center',display:'flex',margin:'0 auto'}"
   >
-    <el-image v-if="qrCodeUrl" class="full" :src="qrCodeUrl" />
+    <el-image
+      v-if="qrCodeUrl"
+      class="full"
+      :src="qrCodeUrl"
+      style="cursor:pointer"
+      @click="go_url"
+    />
     <div v-else class="full">加载中</div>
   </div>
 </template>
@@ -20,7 +26,7 @@ export default {
     icon: { type: String, default: null },
     iconSize: { type: Number, default: 15 },
     iconBorderSize: { type: Number, default: 6 },
-    margin: { type: Boolean, default: false }
+    margin: { type: Boolean, default: false },
   },
   data() {
     return { qrCodeUrl: null, onLoading: false, lastUpdate: new Date() }
@@ -32,8 +38,8 @@ export default {
           this.innerUrl = val
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     if (!this.$route) return
@@ -44,6 +50,10 @@ export default {
     }
   },
   methods: {
+    go_url() {
+      const url = this.innerUrl
+      window.open(url)
+    },
     refreshDelay(delay) {
       var lastUpdate = new Date()
       if (!delay) delay = 1000
@@ -61,22 +71,22 @@ export default {
         {
           fileName: this.icon,
           iconSize: this.iconSize,
-          borderSize: this.iconBorderSize
+          borderSize: this.iconBorderSize,
         },
         this.margin,
         this.pixel
       )
-        .then(data => {
+        .then((data) => {
           var t = fileToBase64(data)
-          t.then(url => {
+          t.then((url) => {
             self.qrCodeUrl = url
           })
         })
         .finally(() => {
           this.onLoading = false
         })
-    }
-  }
+    },
+  },
 }
 </script>
 
