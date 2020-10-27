@@ -1,10 +1,18 @@
 <template>
   <div style="padding: 10px">
-    <el-link icon="el-icon-download" type="success" @click="downloadUserApplies">导出休假登记卡</el-link>
     <span v-if="detail && detail.id">
+      <el-dialog :visible.sync="show_share" title="分享休假申请详情" append-to-body>
+        <DetailShare :id="detail.id" />
+      </el-dialog>
+      <el-tooltip effect="light" content="分享">
+        <el-button type="text" icon="el-icon-share" @click="show_share=true" />
+      </el-tooltip>
+
+      <el-link icon="el-icon-download" type="success" @click="downloadUserApplies">导出休假登记卡</el-link>
       <action-examine :row="detail" style="display: inline" @updated="requestUpdate" />
       <action-user :row="detail" style="display: inline" @updated="requestUpdate" />
     </span>
+
     <div style="padding-top: 0.5rem">
       <el-form type="flex" label-width="8rem">
         <div class="content-card">
@@ -114,6 +122,7 @@ import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'
 import AuditStatus from './components/AuditStatus'
 import MyApply from '@/views/MyApply'
+import DetailShare from './components/DetailShare'
 import { debounce } from '../../utils'
 export default {
   name: 'ApplyDetail',
@@ -123,6 +132,7 @@ export default {
     ActionUser,
     AuditStatus,
     MyApply,
+    DetailShare,
   },
   props: {
     focusId: {
@@ -135,6 +145,7 @@ export default {
       id: null,
       route_id: null,
       detail: {},
+      show_share: false,
       loading: false,
       selfHistory: [],
       staticData: {
@@ -171,8 +182,11 @@ export default {
       console.log('modify routeId', val)
       this.id = val
     },
-    id(val) {
-      this.requestUpdate()
+    id: {
+      handler(val) {
+        this.requestUpdate()
+      },
+      immediate: true,
     },
   },
   mounted() {
