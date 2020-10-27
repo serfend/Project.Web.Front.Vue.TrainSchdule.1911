@@ -1,26 +1,26 @@
 <template>
   <div>
     <el-card v-if="currentUser&&currentUser.id">
-      <div slot="header">
-        <el-card>
-          <span>选择成员</span>
-          <UserSelector
-            :code.sync="nowSelectRealName"
-            default-info="未选择"
-            style="display: inline; margin: 0 1rem 0 0"
-            @change="handleCurrentChange"
-          />
-          <span>选择单位</span>
-          <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width: 40%" />
-          <div style="margin-top: 0.5rem">
-            <el-button
-              type="primary"
-              :loading="loading"
-              @click="requireLoadWaitToAUthRegisterUsers"
-            >刷新待认证人员</el-button>
-          </div>
-        </el-card>
-      </div>
+      <el-card>
+        <el-form>
+          <el-form-item label="选择成员">
+            <UserSelector
+              :code.sync="nowSelectRealName"
+              default-info="未选择"
+              style="display: inline; margin: 0 1rem 0 0"
+              @change="handleCurrentChange"
+            />
+          </el-form-item>
+          <el-form-item label="选择单位">
+            <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width: 40%" />
+          </el-form-item>
+          <el-button
+            type="primary"
+            :loading="loading"
+            @click="requireLoadWaitToAUthRegisterUsers"
+          >刷新</el-button>
+        </el-form>
+      </el-card>
 
       <el-table
         v-loading="loading"
