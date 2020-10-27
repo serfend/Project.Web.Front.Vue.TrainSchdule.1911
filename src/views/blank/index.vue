@@ -4,6 +4,6 @@
 
 <script>
 export default {
-  name: 'BlankView'
+  name: 'BlankView',
 }
 </script>

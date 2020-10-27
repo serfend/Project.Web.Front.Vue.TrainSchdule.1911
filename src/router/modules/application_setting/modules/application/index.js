@@ -6,7 +6,6 @@ const route = {
   name: 'Application',
   meta: {
     title: 'application.setting.application.title',
-    verify: 'on',
     icon: 'task_done'
   },
   children: [AuditStream, Export]

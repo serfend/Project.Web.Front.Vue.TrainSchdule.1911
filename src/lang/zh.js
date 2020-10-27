@@ -102,7 +102,7 @@ var dict = {
     detail: '休假申请详情',
     my: '我的假期',
     setting: {
-      title: '设置选项',
+      title: '管理',
       application: {
         title: '休假申请',
         auditStream: '审批流',

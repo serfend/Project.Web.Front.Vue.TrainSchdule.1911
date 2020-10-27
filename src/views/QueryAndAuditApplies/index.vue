@@ -99,7 +99,7 @@ export default {
       })
     },
     detailUrl(id) {
-      var t = `/#/application/applydetail?id=${id}`
+      var t = `/#/vacation/applydetail?id=${id}`
       return t
     },
     requestUpdate() {

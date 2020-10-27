@@ -9,6 +9,7 @@ const phyGrade = {
   path: '/phyGrade',
   component: Layout,
   name: 'MemberPhyGrade',
+  hidden: false,
   meta: {
     title: 'default.app.phyGrade.title',
     icon: 'phy-grade'

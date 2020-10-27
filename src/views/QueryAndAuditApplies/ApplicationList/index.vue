@@ -331,7 +331,7 @@ export default {
     showDetail(row, column, event) {
       if (column.label === '操作') return
       this.apply_detail_focus_id = row.id
-      // this.$router.push(`/application/applyDetail?id=${row.id}`)
+      // this.$router.push(`/vacation/applyDetail?id=${row.id}`)
     },
   },
 }

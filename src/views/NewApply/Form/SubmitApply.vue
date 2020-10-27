@@ -89,7 +89,7 @@ export default {
       return this.$store.state.settings.theme
     },
     applyDetailUrl() {
-      return `#/application/applydetail?id=${this.submitId}`
+      return `#/vacation/applydetail?id=${this.submitId}`
     }
   },
   watch: {

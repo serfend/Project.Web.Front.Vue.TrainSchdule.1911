@@ -4,7 +4,6 @@ const route = {
   name: 'ApplyExportXls',
   meta: {
     title: 'application.setting.application.exportXls',
-    verify: 'on',
     icon: 'file'
   }
 }

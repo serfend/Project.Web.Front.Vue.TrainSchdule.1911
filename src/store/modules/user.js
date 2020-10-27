@@ -82,7 +82,6 @@ const mutations = {
 const actions = {
   initUserInfo({ commit }) {
     return new Promise((res, rej) => {
-      console.log(this)
       this.dispatch('vacation/initDic')
       this.dispatch('user/initBase').then(() => {
         this.dispatch('user/initAvatar')

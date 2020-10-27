@@ -1,13 +1,14 @@
 import Layout from '@/layout'
 
-import logRouter from './modules/log'
-import fileRouter from './modules/file'
-import qrCodeRouter from './modules/qrCode'
-import dwzRouter from './modules/dwz'
-import managerRouter from './modules/manager'
-import commentRouter from '../comment'
+import log from './modules/log'
+import file from './modules/file'
+import qr_code from './modules/qrCode'
+import dwz from './modules/dwz'
+import manage from './modules/manager'
+import comment from '../others/comment'
+import version from './modules/version'
 
-const systemRouter = {
+const system = {
   path: '/system',
   component: Layout,
   name: 'System',
@@ -15,37 +16,20 @@ const systemRouter = {
     title: 'default.system.title',
     icon: 'setting'
   },
-  children: [{
-    path: 'app',
-    component: () => import('@/views/blank'),
-    meta: {
-      title: 'default.app.title',
-      icon: 'component'
-    },
-    children: [
-      managerRouter, logRouter,
-      {
-        path: 'iframePage',
-        component: () => import('@/components/IFramePage'),
-        name: 'IFramePage',
-        hidden: true,
-        meta: {
-          breadcrumb: false,
-          affix: false,
-          title: 'default.app.iframepage.title'
-        }
+  children: [
+    manage, log,
+    {
+      path: 'iframePage',
+      component: () => import('@/components/IFramePage'),
+      name: 'IFramePage',
+      hidden: true,
+      meta: {
+        breadcrumb: false,
+        affix: false,
+        title: 'default.app.iframepage.title',
+        icon: 'component'
       }
-
-    ]
-  }, {
-    path: 'utils',
-    component: () => import('@/views/blank'),
-    meta: {
-      title: 'default.utils.title',
-      icon: 'tree-table'
-    },
-    children: [fileRouter, dwzRouter, qrCodeRouter]
-  }, commentRouter]
+    }, version, file, dwz, qr_code, comment]
 }
 
-export default systemRouter
+export default system

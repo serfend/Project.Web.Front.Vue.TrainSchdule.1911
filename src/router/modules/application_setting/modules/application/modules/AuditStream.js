@@ -4,7 +4,6 @@ const route = {
   name: 'ApplyAuditStream',
   meta: {
     title: 'application.setting.application.auditStream',
-    verify: 'on',
     icon: 'memo'
   }
 }

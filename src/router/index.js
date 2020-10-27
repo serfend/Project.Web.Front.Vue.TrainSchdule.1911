@@ -1,102 +1,29 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import applicationRouter from './modules/application'
-import applicationSettingRouter from './modules/applicationSetting/index'
-import gameRouter from './modules/Game'
-import systemRouter from './modules/system/index'
-import phyGrade from './modules/phyGrade'
-import memberRateRouter from './modules/MemberRate'
+import application from './modules/vacation'
+import game from './modules/others/Game'
+import system from './modules/system'
+import member_rate from './modules/member_rate'
+import phy_grade from './modules/phy_grade'
+import application_setting from './modules/application_setting'
 import user from './modules/user'
+import others from './modules/others/others'
 Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
 
-/**
- * Note: sub-menu only appear when route children.length >= 1
- * Detail see: https://serfend.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
- *
- * hidden: true                   if set true, item will not show in the sidebar(default is false)
- * alwaysShow: true               if set true, will always show the root menu
- *                                if not set alwaysShow, when item has more than one children route,
- *                                it will becomes nested mode, otherwise not show the root menu
- * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
- * name:'router-name'             the name is used by <keep-alive> (must set!!!)
- * meta : {
-    roles: ['admin','editor']    control the page roles (you can set multiple roles)
-    title: 'title'               the name show in sidebar and breadcrumb (recommend set)
-    icon: 'svg-name'             the icon show in the sidebar
-    noCache: true                if set true, the page will no be cached(default is false)
-    affix: true                  if set true, the tag will affix in the tags-view
-    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
-    activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
-  }
- */
-export const constantRoutes = [{
-  path: '/dashboard',
-  component: () => import('@/views/dashboard/index'),
-  name: 'Dashboard',
-  meta: {
-    title: 'dashboard',
-    icon: 'chart'
-  }
-}, user, applicationRouter, phyGrade, applicationSettingRouter, gameRouter, systemRouter, memberRateRouter, {
-  path: '/redirect',
-  component: Layout,
-  hidden: true,
-  children: [{
-    path: '/redirect/:path*',
-    component: () => import('@/views/redirect/index')
-  }]
-}, {
-  path: '/markdown',
-  component: () => import('@/views/ApplyStream/components/ApplyStreamAbout'),
-  hidden: true
-}, {
-  path: '/contactme',
-  component: () => import('@/components/ContactMe'),
-  hidden: true
-}, {
-  path: '/qrCodeGenerate',
-  component: () => import('@/components/ContactMe/QrCodeGenerate'),
-  hidden: true
-}, {
-  path: '/register',
-  component: Layout,
-  children: [{
-    path: '/forget',
-    component: () => import('@/views/ForgetPassword'),
-    hidden: true
-  }, {
-    path: 'approve',
-    component: () => import('@/views/register/approve')
-  }],
-  hidden: true
-}, {
-  path: '/register/user',
-  component: () => import('@/views/register/register'),
-  hidden: true
-}, {
-  path: '/auth-redirect',
-  component: () => import('@/views/login/auth-redirect'),
-  hidden: true
-}, {
-  path: '/404',
-  component: () => import('@/views/error-page/404'),
-  hidden: true
-}, {
-  path: '/401',
-  component: () => import('@/views/error-page/401'),
-  hidden: true
-}, {
-  path: '',
-  hidden: true,
-  meta: {
-    verify: 'on'
-  },
-  component: () => import('@/views/welcome/index')
-}
-]
+export const constantRoutes = [
+  {
+    path: '/dashboard',
+    component: () => import('@/views/dashboard/index'),
+    name: 'Dashboard',
+    meta: {
+      title: 'dashboard',
+      icon: 'chart'
+    }
+  }, user, application, system, game, phy_grade, application_setting, member_rate
+].concat(others)
 
 /**
  * asyncRoutes
@@ -167,3 +94,24 @@ export function resetRouter() {
 }
 
 export default router
+
+/**
+ * Note: sub-menu only appear when route children.length >= 1
+ * Detail see: https://serfend.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
+ *
+ * hidden: false                   if set true, item will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu
+ *                                if not set alwaysShow, when item has more than one children route,
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
+    roles: ['admin','editor']    control the page roles (you can set multiple roles)
+    title: 'title'               the name show in sidebar and breadcrumb (recommend set)
+    icon: 'svg-name'             the icon show in the sidebar
+    noCache: true                if set true, the page will no be cached(default is false)
+    affix: true                  if set true, the tag will affix in the tags-view
+    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
+    activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
+  }
+ */

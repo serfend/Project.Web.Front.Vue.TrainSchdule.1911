@@ -28,7 +28,7 @@
       <el-card v-if="!is_register" style="margin-top:1rem">
         <el-form>
           <el-form-item label="认证状态">
-            <el-tag>{{ selectIsInvalidAccountDescription }}</el-tag>
+            <el-tag :type="selectIsInvalidAccountType">{{ selectIsInvalidAccountDescription }}</el-tag>
           </el-form-item>
           <el-form-item label="账号操作" style="margin-top:1rem">
             <el-button type="warning" plain :loading="loading" @click="submitRegister(false)">修改信息</el-button>
@@ -198,6 +198,10 @@ export default {
     is_login() {
       return this.currentUser && this.currentUser.id
     },
+    selectIsInvalidAccountType() {
+      const s = this.selectIsInvalidAccount
+      return s === 0 ? 'info' : s === 1 ? 'success' : 'danger'
+    },
     selectIsInvalidAccountDescription() {
       const s = this.selectIsInvalidAccount
       const c = '用户信息认证'
@@ -312,8 +316,8 @@ export default {
             },
             titleDate: duties.titleDate,
           }
-          const { inviteBy } = data.application
-          this.selectIsInvalidAccount = checkUserValid(inviteBy)
+          const { invitedBy } = data.application
+          this.selectIsInvalidAccount = checkUserValid(invitedBy)
           this.nowSelectCompany = company
         })
         .finally(() => {
@@ -381,7 +385,7 @@ export default {
     },
     switch_login() {
       this.$store.dispatch('user/logout')
-      this.$router.push({ path: '/application/myApply' })
+      this.$router.push({ path: '/vacation/myApply' })
     },
   },
 }

@@ -4,10 +4,10 @@ import Layout from '@/layout'
 
 /* Router Modules */
 const applicationRouter = {
-  path: '/application',
+  path: '/vacation',
   component: Layout,
   redirect: 'noRedirect',
-  name: 'application',
+  name: 'vacation',
   meta: {
     title: 'application.title',
     icon: 'clipboard'
@@ -19,7 +19,6 @@ const applicationRouter = {
       name: 'newApplication',
       meta: {
         title: 'application.new',
-        // verify: 'on',
         icon: 'newapply'
       }
     },
@@ -29,7 +28,6 @@ const applicationRouter = {
       name: 'MyApply',
       meta: {
         title: 'application.my',
-        verify: 'on',
         icon: 'principal'
       }
     },
@@ -39,7 +37,6 @@ const applicationRouter = {
       name: 'applicationList',
       meta: {
         title: 'application.audit',
-        verify: 'on',
         icon: 'auditapply'
       }
     },
@@ -49,10 +46,9 @@ const applicationRouter = {
       name: 'ApplyDetail',
       meta: {
         title: 'application.detail',
-        verify: 'on',
         icon: 'menu-outoforder'
       },
-      hidden: true
+      hidden: false
     }
   ]
 }

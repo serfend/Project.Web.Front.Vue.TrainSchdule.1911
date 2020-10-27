@@ -1,5 +1,5 @@
 const router = {
-  path: 'Social',
+  path: 'social',
   component: () => import('@/views/usersManager/Social'),
   name: 'Social',
   meta: {
