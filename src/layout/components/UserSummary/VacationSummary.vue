@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     toMyVacation() {
-      this.$router.push('/application/myapply')
+      this.$router.push('/vacation/myapply')
     }
   }
 }
