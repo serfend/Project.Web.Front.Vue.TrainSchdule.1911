@@ -1,21 +1,26 @@
 <template>
   <div>
     <div v-if="id||(currentUser&&currentUser.id)">
-      <el-row v-if="!$slots.inner" :gutter="20" class="row">
-        <el-col>
-          <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-            <UserFormItem
-              :data="id?null:currentUser"
-              :userid="id"
-              :direct-show-card="true"
-              :can-load-avatar="true"
-            />
+      <div v-if="!$slots.inner">
+        <el-row class="row">
+          <UserSelector :code.sync="id" :default-info="'查询其他人休假情况'" style="display:inline" />
+        </el-row>
+        <el-row :gutter="20" class="row">
+          <el-col>
+            <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+              <UserFormItem
+                :data="id?null:currentUser"
+                :userid="id"
+                :direct-show-card="true"
+                :can-load-avatar="true"
+              />
+            </el-col>
+            <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
+              <ApplyOverview :userid="id||currentUser.id" />
+            </el-col>
           </el-col>
-          <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
-            <ApplyOverview :userid="id||currentUser.id" />
-          </el-col>
-        </el-col>
-      </el-row>
+        </el-row>
+      </div>
       <div v-else>
         <ApplyOverview :userid="id||currentUser.id" class="row" />
         <el-row class="row">
@@ -72,13 +77,14 @@
 <script>
 import { formatTime } from '@/utils'
 import UserFormItem from '@/components/User/UserFormItem'
+import UserSelector from '@/components/User/UserSelector'
 import ApplyCard from './components/ApplyCard'
 import ApplyOverview from './components/ApplyOverview'
 import { querySelf } from '@/api/apply/query'
 import Login from '@/views/login'
 export default {
   name: 'MyApply',
-  components: { UserFormItem, ApplyCard, ApplyOverview, Login },
+  components: { UserFormItem, UserSelector, ApplyCard, ApplyOverview, Login },
   props: {
     start: {
       type: String,
@@ -125,13 +131,27 @@ export default {
       },
       deep: true,
     },
+    id: {
+      handler(val) {
+        this.reload()
+      },
+    },
   },
   mounted() {
     this.load()
   },
   methods: {
+    reload() {
+      this.clear_data()
+      this.load()
+    },
+    clear_data() {
+      this.innerList = []
+      this.lastPage = 0
+      this.haveNext = true
+    },
     applyDetailUrl(id) {
-      return `/#/application/applydetail?id=${id}`
+      return `/#/vacation/applydetail?id=${id}`
     },
     format(val) {
       return formatTime(val)
