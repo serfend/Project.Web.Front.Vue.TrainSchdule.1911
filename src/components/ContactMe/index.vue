@@ -33,12 +33,12 @@ export default {
     icon: { type: String, default: null },
     iconSize: { type: Number, default: 15 },
     iconBorderSize: { type: Number, default: 6 },
-    margin: { type: Boolean, default: false }
+    margin: { type: Boolean, default: false },
   },
   data() {
     return {
       qrCodeUrl: null,
-      innerUrl: null
+      innerUrl: null,
     }
   },
   watch: {
@@ -49,7 +49,7 @@ export default {
           this.refresh()
         }
       },
-      immediate: true
+      immediate: true,
     },
     url: {
       handler(val) {
@@ -57,8 +57,8 @@ export default {
           this.load(val)
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     if (!this.$route) return
@@ -75,11 +75,11 @@ export default {
     },
     load(url) {
       var self = this
-      download(url).then(data => {
+      download(url).then((data) => {
         self.innerUrl = data
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
