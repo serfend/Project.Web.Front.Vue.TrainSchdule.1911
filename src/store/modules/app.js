@@ -11,7 +11,13 @@ const state = {
   },
   device: 'desktop',
   language: getLanguage(),
-  size: Cookies.get('size') || 'medium'
+  size: Cookies.get('size') || 'medium',
+  clipboard: null,
+  shorturl: {
+    loading: false,
+    content: null
+  },
+  focus: true
 }
 
 const mutations = {
@@ -44,8 +50,35 @@ const mutations = {
     Cookies.set('size', size)
   }
 }
-
+import { loadDwz } from '@/api/common/dwz'
+const checkShortUrl = function (state, content) {
+  let start = content.indexOf('￥')
+  if (start > -1) {
+    start += 1
+    const end = content.indexOf('￥', start)
+    const key = content.substring(start, end)
+    if (key.length === 6) {
+      state.shorturl.loading = true
+      loadDwz(({
+        key,
+        pages: { pageIndex: 0, pageSize: 1 },
+      })).then(data => {
+        const list = data.list
+        if (list.length === 0) return
+        const shorturl = list[0]
+        state.shorturl.content = shorturl.key
+      }).finally(() => {
+        state.shorturl.loading = false
+      })
+    }
+  }
+}
 const actions = {
+  checkClipboard({ commit, state }, content) {
+    if (state.clipboard === content) return
+    state.clipboard = content
+    checkShortUrl(state, content)
+  },
   reload({
     commit
   }, opt) {

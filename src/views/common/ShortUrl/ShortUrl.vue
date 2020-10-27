@@ -1,6 +1,21 @@
 <template>
-  <el-popover trigger="hover" @show="loadQrCode">
-    <el-form label-width="60px">
+  <div>
+    <el-popover v-if="showLabel" trigger="hover" @show="loadQrCode">
+      <el-form label-width="60px">
+        <el-form-item label="创建于">
+          <span>{{ innerData.create }}</span>
+        </el-form-item>
+        <el-form-item label="有效期">
+          <span>{{ innerData.expire }}</span>
+        </el-form-item>
+        <el-form-item label="创建人">
+          <UserFormItem :userid="innerData.createBy" />
+        </el-form-item>
+        <ContactMe v-if="hasShow" :content="url" description="扫码访问" />
+      </el-form>
+      <el-link slot="reference" :href="url">{{ innerData.urlKey }}</el-link>
+    </el-popover>
+    <el-form v-else label-width="60px">
       <el-form-item label="创建于">
         <span>{{ innerData.create }}</span>
       </el-form-item>
@@ -10,10 +25,9 @@
       <el-form-item label="创建人">
         <UserFormItem :userid="innerData.createBy" />
       </el-form-item>
-      <ContactMe v-if="hasShow" :content="url" description="扫码访问" />
+      <ContactMe :content="url" description="扫码访问" />
     </el-form>
-    <el-link slot="reference" :href="url">{{ innerData.urlKey }}</el-link>
-  </el-popover>
+  </div>
 </template>
 
 <script>
@@ -24,14 +38,18 @@ export default {
   name: 'ShortUrl',
   components: { UserFormItem, ContactMe },
   props: {
+    showLabel: {
+      type: Boolean,
+      default: true,
+    },
     urlKey: {
       type: String,
-      default: ''
+      default: '',
     },
     data: {
       type: Object,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
@@ -40,15 +58,15 @@ export default {
         create: '',
         createBy: '',
         target: '',
-        expire: ''
+        expire: '',
       },
-      hasShow: false
+      hasShow: false,
     }
   },
   computed: {
     url() {
       return `${process.env.VUE_APP_BASE_API}/s/${this.innerData.urlKey}`
-    }
+    },
   },
   watch: {
     urlKey: {
@@ -56,8 +74,8 @@ export default {
         if (val) {
           loadDwz({
             key: val,
-            pages: { pageIndex: 0, pageSize: 1 }
-          }).then(data => {
+            pages: { pageIndex: 0, pageSize: 1 },
+          }).then((data) => {
             if (data.list.length === 0) return
             var item = data.list[0]
             this.innerData = item
@@ -65,7 +83,7 @@ export default {
           })
         }
       },
-      immediate: true
+      immediate: true,
     },
     data: {
       handler(val) {
@@ -74,15 +92,15 @@ export default {
         }
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     loadQrCode() {
       if (this.hasShow) return
       this.hasShow = true
-    }
-  }
+    },
+  },
 }
 </script>
 
