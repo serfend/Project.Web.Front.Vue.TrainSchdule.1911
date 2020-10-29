@@ -1,17 +1,14 @@
 <template>
   <div style="padding: 10px">
-    <span v-if="detail && detail.id">
+    <el-card v-if="detail && detail.id">
       <el-dialog :visible.sync="show_share" title="分享休假申请详情" append-to-body>
         <DetailShare :id="detail.id" />
       </el-dialog>
-      <el-tooltip effect="light" content="分享">
-        <el-button type="text" icon="el-icon-share" @click="show_share=true" />
-      </el-tooltip>
-
-      <el-link icon="el-icon-download" type="success" @click="downloadUserApplies">导出休假登记卡</el-link>
+      <el-button type="text" icon="el-icon-share" @click="show_share=true">分享此休假详情</el-button>
+      <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出休假登记卡</el-button>
       <action-examine :row="detail" style="display: inline" @updated="requestUpdate" />
       <action-user :row="detail" style="display: inline" @updated="requestUpdate" />
-    </span>
+    </el-card>
 
     <div style="padding-top: 0.5rem">
       <el-form type="flex" label-width="8rem">
@@ -108,6 +105,9 @@
             </MyApply>
           </el-card>
         </div>
+        <div class="content-card">
+          <ApplyComments :id="detail.id" />
+        </div>
       </el-form>
     </div>
   </div>
@@ -124,6 +124,7 @@ import AuditStatus from './components/AuditStatus'
 import MyApply from '@/views/MyApply'
 import DetailShare from './components/DetailShare'
 import { debounce } from '../../utils'
+import ApplyComments from './components/ApplyComments'
 export default {
   name: 'ApplyDetail',
   components: {
@@ -133,6 +134,7 @@ export default {
     AuditStatus,
     MyApply,
     DetailShare,
+    ApplyComments,
   },
   props: {
     focusId: {
