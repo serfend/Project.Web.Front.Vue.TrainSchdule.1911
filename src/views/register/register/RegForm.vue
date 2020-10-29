@@ -89,7 +89,7 @@ import Social from '../components/Social'
 import Auth from '@/components/AuthCode'
 import {
   regnew,
-  modefyUser,
+  modifyUser,
   removeAccount,
   authUserRegister,
 } from '@/api/account'
@@ -236,7 +236,7 @@ export default {
     }, 5000)
   },
   methods: {
-    modefyUser,
+    modifyUser,
     regnew,
     next_step(step) {
       let now_index = parseInt(this.nowStep)
@@ -324,7 +324,7 @@ export default {
           this.loading = false
         })
     },
-    async submitRegister(regOrModefy) {
+    async submitRegister(regOrModify) {
       const confirm_action = await this.$confirm('确定要提交吗？').catch(
         (e) => {
           this.$message.error('已取消')
@@ -342,7 +342,7 @@ export default {
         },
         Auth: f.Auth,
       }
-      const submitMethod = regOrModefy ? regnew : modefyUser
+      const submitMethod = regOrModify ? regnew : modifyUser
       // var confirmPassword = submitForm.Data.confirmPassword
       // var password = submitForm.Data.password
       // if (password !== confirmPassword || password === undefined) {
@@ -352,8 +352,8 @@ export default {
       // }
       submitMethod(submitForm)
         .then((data) => {
-          this.$message.success(regOrModefy ? '注册成功' : '修改成功')
-          if (regOrModefy) {
+          this.$message.success(regOrModify ? '注册成功' : '修改成功')
+          if (regOrModify) {
             this.$router.push('/')
           }
         })

@@ -8,7 +8,7 @@ import request from '@/utils/request'
  * @returns
  */
 export function getUserSocialRecord(id) {
-  return request.get('/users/social/userModefyRecord', {
+  return request.get('/users/social/userModifyRecord', {
     params: {
       id
     }
@@ -23,7 +23,7 @@ export function getUserSocialRecord(id) {
  * @returns
  */
 export function getSingle(code) {
-  return request.get('/users/social/modefyRecord', {
+  return request.get('/users/social/modifyRecord', {
     params: {
       code
     }
@@ -33,12 +33,12 @@ export function getSingle(code) {
  * 修改单条记录
  *
  * @export
- * @param {SocialModefyRecord} record
+ * @param {SocialModifyRecord} record
  * @param {GoogleAuth} auth
  * @returns
  */
-export function modefySingle(record, auth) {
-  return request.post('/users/social/modefyRecord', {
+export function modifySingle(record, auth) {
+  return request.post('/users/social/modifyRecord', {
     record,
     auth
   })
@@ -52,7 +52,7 @@ export function modefySingle(record, auth) {
  * @param {*} settle
  * @param {*} auth
  */
-export function modefySettle(id, settle, auth) {
+export function modifySettle(id, settle, auth) {
   return request.post('/users/social/settle', {
     auth,
     data: {

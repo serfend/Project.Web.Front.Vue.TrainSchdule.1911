@@ -65,7 +65,7 @@ export default {
   computed: {
     updatedStream() {
       return debounce(() => {
-        this.streamModefy()
+        this.streamModify()
       }, 500)
     }
   },
@@ -111,7 +111,7 @@ export default {
       if (requireAuditMemberCount === 0) return '所有人'
       return `${requireAuditMemberCount}人`
     },
-    streamModefy() {
+    streamModify() {
       this.loading = true
       this.initUserStatus()
       this.initCompanyManager()

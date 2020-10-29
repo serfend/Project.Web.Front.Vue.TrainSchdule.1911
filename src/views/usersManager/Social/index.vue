@@ -79,9 +79,9 @@
 
 <script>
 import {
-  modefySingle,
+  modifySingle,
   getUserSocialRecord,
-  modefySettle
+  modifySettle
 } from '@/api/user/usersocial'
 import { getUserSocial, getUsersVacationLimit } from '@/api/user/userinfo'
 import AuthCode from '@/components/AuthCode'
@@ -138,7 +138,7 @@ export default {
   },
   methods: {
     edit(item) {
-      modefySingle(item, this.auth).then(() => {
+      modifySingle(item, this.auth).then(() => {
         this.$message.success('操作成功')
         this.refresh()
       })
@@ -154,7 +154,7 @@ export default {
     },
     submitNewSettle() {
       this.loading_social = true
-      modefySettle(this.userid, this.social.settle, this.auth)
+      modifySettle(this.userid, this.social.settle, this.auth)
         .then(data => {
           this.$message.success('家庭情况已修改')
           this.refreshVacation()

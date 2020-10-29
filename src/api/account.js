@@ -199,11 +199,11 @@ export function authUserRegister(username, valid) {
  * @param {*} params
  * @returns
  */
-export function modefyUser(params) {
+export function modifyUser(params) {
   // 注册接口暂时不使用加密
   // params.password = formatPsw(params.username, params.password)
   // params.confirmpassword = formatPsw(params.username, params.confirmpassword)
-  return request.post('account/modefyUser', params)
+  return request.post('account/modifyUser', params)
 }
 
 export function signIn(signInId) {

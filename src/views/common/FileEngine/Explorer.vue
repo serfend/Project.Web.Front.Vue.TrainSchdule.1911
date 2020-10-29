@@ -18,9 +18,9 @@
           <el-tooltip>
             <template slot="content">
               <div>创建时间:{{ file.create }}</div>
-              <div>最后修改:{{ file.lastModefy }}</div>
+              <div>最后修改:{{ file.lastModify }}</div>
             </template>
-            <span>{{ new Date(file.lastModefy)|formatTime }}</span>
+            <span>{{ new Date(file.lastModify)|formatTime }}</span>
           </el-tooltip>
         </el-col>
         <el-col :span="2">
