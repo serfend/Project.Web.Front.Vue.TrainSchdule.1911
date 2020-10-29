@@ -191,16 +191,16 @@ export default {
   methods: {
     check_sync_time(direct_load = false) {
       const d = datedifference(new Date(), this.check.check_sync_time, 'minute')
-      if (d < 5 && !direct_load) return // 5分钟同步一次
+      if (d < 30 && !direct_load) return // 30分钟同步一次
       // console.log('check sync time after ' + d + ' minute(s)')
       this.check.check_sync_time = new Date()
       this.$store.dispatch('settings/sync_time')
     },
     check_user_login() {
-      const d = datedifference(new Date(), this.check.check_sync_time, 'minute')
+      const d = datedifference(new Date(), this.check.check_user_login, 'minute')
       if (d < 10) return
-      console.log('check login status')
-      this.check.check_sync_time = new Date()
+      // console.log('check login status')
+      this.check.check_user_login = new Date()
       this.$store.dispatch('user/check_login')
     },
     toggleSideBar() {

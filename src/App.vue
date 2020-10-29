@@ -10,9 +10,6 @@ import ClipboardMonitor from '@/views/common/ClipboardMonitor'
 export default {
   name: 'App',
   components: { ClipboardMonitor },
-  created() {
-    this.$store.dispatch('app/reload', { complete: false })
-  },
   mounted() {
     this.$store.dispatch('settings/initProject')
     this.show_tip()

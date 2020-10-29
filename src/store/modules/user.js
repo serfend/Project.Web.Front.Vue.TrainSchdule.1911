@@ -17,6 +17,8 @@ import router, {
   resetRouter
 } from '@/router'
 import defaultAvatar from '@/assets/plain/defaultAvatar.js'
+import { Message } from 'element-ui'
+
 const state = {
   isUserLogout: false,
   data: {},
@@ -115,8 +117,14 @@ const actions = {
     })
   },
   check_login({ commit, state }) {
+    if (!state.userid) return
     // TODO 检查当前是否登录，若未登录，则重置个人信息为空
     getUserBase().then(data => { }).catch(e => {
+      Message({
+        message: '已超时退出登录',
+        duration: 0,
+        type: 'error'
+      })
       clear_login_status(commit)
     })
   },

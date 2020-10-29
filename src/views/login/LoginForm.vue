@@ -218,7 +218,7 @@ export default {
             duration: 5 * 1000,
           })
           this.$emit('login', true)
-          this.$store.dispatch('app/reload', { complete: false })
+          this.$store.dispatch('user/initUserInfo')
         })
         .catch((e) => {
           this.showLoginFailTip(e)
