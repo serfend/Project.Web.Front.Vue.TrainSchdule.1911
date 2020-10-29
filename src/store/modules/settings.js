@@ -4,7 +4,8 @@ import {
   getUpdateRecord
 } from '@/api/common/version'
 import { timeZone } from '@/api/common/static'
-import { getTimeDelta } from '@/utils'
+import { Message } from 'element-ui'
+
 const {
   showSettings,
   tagsView,
@@ -28,7 +29,8 @@ const state = {
   currentTime_left: 0,
   currentTime_right: 0,
   currentTimeDelta_left: 0,
-  currentTimeDelta_right: 0
+  currentTimeDelta_right: 0,
+  show_time_tip: 0
 }
 let time_token = null
 export function syn_time() {
@@ -37,12 +39,6 @@ export function syn_time() {
   // 每秒更新一次时间，若误差超过0.5秒，则立即重新同步
   time_token = setInterval(() => {
     const now = new Date()
-    const delta = getTimeDelta(new Date(state.currentTime_left - state.currentTimeDelta_left), now, 1)
-    // console.log('sync time check delta', delta)
-    if (Math.abs(delta) > 1500 || Math.abs(delta) < 500) {
-      re_syn_time()
-      return
-    }
     state.currentTime_left = new Date(now - 0 + state.currentTimeDelta_left)
     state.currentTime_right = new Date(now - 0 + state.currentTimeDelta_right)
   }, 1000)
@@ -53,11 +49,21 @@ export function re_syn_time() {
   state.currentTime_right = state.currentTime_left
   timeZone().then(data => {
     const { left, right } = data
-    const now = new Date()
+    const now = new Date() - 0
     state.currentTime_left = new Date(left.value)
     state.currentTime_right = new Date(right.value)
     state.currentTimeDelta_left = state.currentTime_left - now
     state.currentTimeDelta_right = state.currentTime_right - now
+    if (Math.abs(state.currentTimeDelta_left) > 5000 * 60) {
+      if (state.show_time_tip % 60 === 0) {
+        Message({
+          message: `系统时间相差过大(${state.currentTimeDelta_left}毫秒)，请调准`,
+          type: 'error',
+          duration: 10000
+        })
+      }
+      state.show_time_tip++
+    }
     syn_time()
   })
 }
