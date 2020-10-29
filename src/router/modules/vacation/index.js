@@ -48,7 +48,7 @@ const applicationRouter = {
         title: 'application.detail',
         icon: 'menu-outoforder'
       },
-      hidden: false
+      hidden: true
     }
   ]
 }
