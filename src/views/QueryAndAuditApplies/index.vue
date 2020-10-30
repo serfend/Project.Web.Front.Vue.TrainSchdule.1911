@@ -19,7 +19,9 @@
         @updated="requestUpdate"
       >
         <template slot="action" slot-scope="{row}">
-          <el-link type="info" :href="detailUrl(row.id)" target="_blank">查看详情</el-link>
+          <el-tooltip content="点击此处或双击空白处查看">
+            <el-link type="info" :href="detailUrl(row.id)" target="_blank">查看详情</el-link>
+          </el-tooltip>
           <action-examine :row="row" @updated="requestUpdate" />
           <action-user :row="row" @updated="requestUpdate" />
         </template>

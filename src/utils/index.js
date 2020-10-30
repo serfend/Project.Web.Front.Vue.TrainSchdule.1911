@@ -126,7 +126,7 @@ export function formatTime(time, option) {
   const append = isFuture ? '后' : '前'
   diff = Math.abs(diff)
   if (!isFuture && diff < 60) {
-    return '刚刚'
+    return `${Math.floor(diff)}秒${append}`
   } else if (diff < 3600) {
     return `${Math.floor(diff / 60)}分钟${append}`
   } else if (diff < 3600 * 24) {
