@@ -204,13 +204,15 @@
         </el-form-item>
         <el-form-item label="职务">
           <DutiesSelector v-model="newNode.duties" />
-          <el-tag
-            v-for="(tag,index) in newNode.duties"
-            :key="index"
-            closable
-            :disable-transitions="false"
-            @close="handleDutiesSelectClose(tag)"
-          >{{ tag.value }}</el-tag>
+          <div>
+            <el-tag
+              v-for="(tag,index) in newNode.duties"
+              :key="index"
+              closable
+              :disable-transitions="false"
+              @close="handleDutiesSelectClose(tag)"
+            >{{ tag.name }}</el-tag>
+          </div>
         </el-form-item>
         <el-form-item label="职务类型">
           <DutiesSelector :tag.sync="newNode.dutyTags" :only-tag="true" />
@@ -265,7 +267,7 @@ import {
   addStreamNode,
   editStreamNode,
   deleteStreamNode,
-  buildFilter
+  buildFilter,
 } from '@/api/applyAuditStream'
 import CompaniesSelector from '@/components/Company/CompaniesSelector'
 import DutiesSelector from '@/components/Duty/DutiesSelector'
@@ -284,7 +286,7 @@ export default {
     AuthCode,
     UserFormItem,
     DutiesSelector,
-    UserSelector
+    UserSelector,
   },
   props: {
     data: {
@@ -298,25 +300,25 @@ export default {
           allSolution: [],
           allSolutionDic: {},
           allActionNode: [],
-          allActionNodeDic: {}
+          allActionNodeDic: {},
         }
-      }
+      },
     },
     loading: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       companyReferDic: [
         { value: '', label: '不使用相对' },
         { value: 'self', label: '本级审核' },
-        { value: 'parent', label: '上级审核' }
+        { value: 'parent', label: '上级审核' },
       ],
       nodeDialogShow: false,
       newNode: this.buildnewNode(),
-      userSelect: {}
+      userSelect: {},
     }
   },
   methods: {
@@ -325,7 +327,7 @@ export default {
     },
     checkAuditMembersIndex(id) {
       const node = this.newNode
-      const auditMembers = node.auditMembers.map(i => i.id)
+      const auditMembers = node.auditMembers.map((i) => i.id)
       return auditMembers.indexOf(id)
     },
     handleUserSelectChange(val) {
@@ -339,7 +341,7 @@ export default {
     },
     handleCompaniesSelectClose(tag) {
       const node = this.newNode
-      const companies = node.companies.map(i => i.code)
+      const companies = node.companies.map((i) => i.code)
       const code = tag.code
       node.companies.splice(companies.indexOf(code), 1)
     },
@@ -350,7 +352,7 @@ export default {
     },
     handleDutiesSelectClose(tag) {
       const node = this.newNode
-      const i = node.duties.map(i => i.code).indexOf(tag.code)
+      const i = node.duties.map((i) => i.code).indexOf(tag.code)
       node.duties.splice(i, 1)
     },
     refresh() {
@@ -411,7 +413,7 @@ export default {
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',
-          code: 0
+          code: 0,
         }
       }
       return {
@@ -428,10 +430,10 @@ export default {
         auditMembersCount: 1,
         auditMembers: [],
         auth: lastAuth,
-        loading: false
+        loading: false,
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

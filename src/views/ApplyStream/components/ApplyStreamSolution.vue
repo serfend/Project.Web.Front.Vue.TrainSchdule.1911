@@ -239,13 +239,15 @@
         </el-form-item>
         <el-form-item label="职务">
           <DutiesSelector v-model="newRule.duties" />
-          <el-tag
-            v-for="(tag,index) in newRule.duties"
-            :key="index"
-            closable
-            :disable-transitions="false"
-            @close="handleDutiesSelectClose(tag)"
-          >{{ tag.value }}</el-tag>
+          <div>
+            <el-tag
+              v-for="(tag,index) in newRule.duties"
+              :key="index"
+              closable
+              :disable-transitions="false"
+              @close="handleDutiesSelectClose(tag)"
+            >{{ tag.name }}</el-tag>
+          </div>
         </el-form-item>
         <el-form-item label="职务类型">
           <el-select
@@ -305,7 +307,7 @@ import {
   addStreamSolutionRule,
   editStreamSolutionRule,
   deleteStreamSolutionRule,
-  buildFilter
+  buildFilter,
 } from '@/api/applyAuditStream'
 export default {
   name: 'ApplyStreamSolution',
@@ -316,7 +318,7 @@ export default {
     AuthCode,
     CompaniesSelector,
     DutiesSelector,
-    UserSelector
+    UserSelector,
   },
   props: {
     data: {
@@ -330,20 +332,20 @@ export default {
           allSolution: [],
           allSolutionDic: {},
           allActionNode: [],
-          allActionNodeDic: {}
+          allActionNodeDic: {},
         }
-      }
+      },
     },
     loading: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       nodeDialogShow: false,
       newRule: this.buildNewSolutionRule(),
-      userSelect: {}
+      userSelect: {},
     }
   },
   methods: {
@@ -352,7 +354,7 @@ export default {
     },
     checkAuditMembersIndex(id) {
       const node = this.newRule
-      const auditMembers = node.auditMembers.map(i => i.id)
+      const auditMembers = node.auditMembers.map((i) => i.id)
       return auditMembers.indexOf(id)
     },
     handleUserSelectChange(val) {
@@ -366,7 +368,7 @@ export default {
     },
     handleCompaniesSelectClose(tag) {
       const node = this.newRule
-      const companies = node.companies.map(i => i.code)
+      const companies = node.companies.map((i) => i.code)
       const code = tag.code
       node.companies.splice(companies.indexOf(code), 1)
     },
@@ -377,7 +379,7 @@ export default {
     },
     handleDutiesSelectClose(tag) {
       const node = this.newRule
-      const i = node.duties.map(i => i.code).indexOf(tag.code)
+      const i = node.duties.map((i) => i.code).indexOf(tag.code)
       node.duties.splice(i, 1)
     },
     refresh() {
@@ -446,7 +448,7 @@ export default {
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',
-          code: 0
+          code: 0,
         }
       }
       return {
@@ -467,10 +469,10 @@ export default {
         auditMembersCount: 1,
         auditMembers: [],
         auth: lastAuth,
-        loading: false
+        loading: false,
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
