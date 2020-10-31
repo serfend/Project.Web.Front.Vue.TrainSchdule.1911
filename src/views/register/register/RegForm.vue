@@ -66,9 +66,10 @@
     </el-dialog>
     <el-dialog :visible.sync="remove_account.show" append-to-body>
       <h2 slot="title">删除账号 - 敏感操作授权</h2>
-      <h2 style="color:#a33">您确定要删除用户吗 用户名：{{ current_select_id }}</h2>
-      <p style="color:#aaa">此操作将永久移除账号，移除后将不可恢复。出于安全考虑，建议将用户置于曾管人员或其他无关单位中暂挂，以保留用户信息。</p>
-      <el-form>
+      <div style="color:#c00">您确定要删除用户吗</div>
+      <div style="color:#c00">用户名：{{ current_select_id }}</div>
+      <div style="color:#c00;margin-top:1rem">此操作将永久移除账号，移除后将不可恢复。</div>
+      <el-form style="margin-top:1rem">
         <AuthCode v-model="remove_account.auth" />
       </el-form>
       <template slot="footer">
@@ -381,6 +382,7 @@ export default {
         })
         .finally(() => {
           this.loading = false
+          this.remove_account.show = false
         })
     },
     switch_login() {
