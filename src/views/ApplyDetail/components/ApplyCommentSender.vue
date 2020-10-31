@@ -55,14 +55,22 @@ export default {
         if (!f) return
       }
       this.sending = '发送中...'
+      const item = {
+        content: this.content,
+      }
       postComments({ apply: this.id, content: this.content })
         .then((data) => {
           this.sending = '发送成功'
+          item.model = data.model
+        })
+        .catch((e) => {
+          this.sending = e.message
         })
         .finally(() => {
           setTimeout(() => {
+            item.sending = this.sending
+            this.$emit('newContent', item)
             this.sending = null
-            this.$emit('newContent', this.content)
             this.content = ''
           }, 1e3)
         })

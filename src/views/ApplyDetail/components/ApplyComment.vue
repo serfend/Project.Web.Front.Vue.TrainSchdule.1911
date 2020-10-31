@@ -52,16 +52,9 @@ export default {
     this.load_page()
   },
   methods: {
-    newContent(content) {
-      console.log('new content', content)
-      const item = {
-        content,
-        create: new Date(),
-        like: 0,
-        myLike: false,
-        from: this.$store.state.user.data,
-      }
-      this.list.unshift(item)
+    newContent(item) {
+      item.model.create = new Date()
+      this.list.unshift(item.model)
       this.current_page = 0
     },
     async reload_page() {
