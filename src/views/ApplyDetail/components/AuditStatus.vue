@@ -8,46 +8,45 @@
       finish-status="success"
     >
       <el-step v-for="step in detail.steps" :key="step.id">
-        <el-tooltip slot="description" effect="light">
-          <template slot="content">
+        <el-popover slot="description" trigger="click">
+          <div style="width:12rem">
+            <div>
+              <span style="margin-left:2rem">审核人</span>
+              <span style="display:flex;float:right;margin-right:2rem">留言</span>
+            </div>
             <div
               v-for="(rec,index) in detail.response.filter(i=>i.index===step.index)"
               :key="index"
-              style="margin-top:0.5rem"
+              style="display:flex;margin-top:0.5rem"
             >
-              <UserFormItem
+              <el-tooltip
                 v-if="rec.auditingUserId"
-                :userid="rec.auditingUserId"
-                style="margin:0.5rem 0 0.5rem 0"
-              />
+                :content="rec.status===4?'通过':rec.status===8?'驳回':'未处理'"
+              >
+                <UserFormItem
+                  :userid="rec.auditingUserId"
+                  :type="rec.status===4?'success':rec.status===8?'danger':'info'"
+                />
+              </el-tooltip>
               <span v-else-if="rec.auditingUserRealName">{{ rec.auditingUserRealName }}</span>
               <span v-else style="color:#ccc">{{ rec.remark }}</span>
-              <el-tag
-                :type="rec.status===4?'success':rec.status===8?'danger':'info'"
-              >{{ rec.status===4?'通过':rec.status===8?'驳回':'未处理' }}</el-tag>
-              <el-tooltip v-if="rec.remark" effect="light" style="margin-left:0.5rem">
-                <div slot="content" class="audit-process-remark">
-                  <el-input
-                    v-model="rec.remark"
-                    placeholder="审批备注"
-                    autosize
-                    readonly
-                    type="textarea"
-                  />
-                </div>
-                <el-link type="success">留言</el-link>
-              </el-tooltip>
+              <span v-if="rec.auditingUserId||rec.auditingUserRealName" style="margin-left:1rem">
+                <el-popover v-if="rec.remark&&rec.remark.length>5" trigger="hover">
+                  <b>留言：</b>
+                  <p style="margin-left:1rem">{{ rec.remark }}</p>
+                  <el-button slot="reference" type="text">查看留言</el-button>
+                </el-popover>
+                <span v-else style="font-size:0.7rem">{{ rec.remark }}</span>
+              </span>
             </div>
-          </template>
-          <div class="audit-process-card">
+          </div>
+          <div slot="reference" class="audit-process-card">
             <div v-if="detail.nowStep" class="audit-process-status">
               <span v-if="step.index > detail.nowStep.index">
                 <i class="el-icon-more-outline title grey-text" />
                 <span>未收到审批</span>
               </span>
-              <span
-                v-if="step.index === detail.nowStep.index&&detail.status!==75"
-              >
+              <span v-if="step.index === detail.nowStep.index&&detail.status!==75">
                 <i class="el-icon-loading title red--text" />
                 <span>审批中</span>
               </span>
@@ -55,9 +54,7 @@
                 <i class="el-icon-success title green--text" />
                 <span>通过审核</span>
               </span>
-              <span
-                v-if="step.index === detail.nowStep.index&&detail.status===75"
-              >
+              <span v-if="step.index === detail.nowStep.index&&detail.status===75">
                 <i class="el-icon-circle-close title red--text" />
                 <span>驳回</span>
               </span>
@@ -87,7 +84,7 @@
               </span>
             </div>
           </div>
-        </el-tooltip>
+        </el-popover>
       </el-step>
     </el-steps>
     <div v-else-if="detail.response">
@@ -118,17 +115,17 @@ export default {
       type: Object,
       default() {
         return null
-      }
+      },
     },
     loading: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       nowActiveAudit: 0,
-      detail: {}
+      detail: {},
     }
   },
   computed: {
@@ -137,7 +134,7 @@ export default {
     },
     status() {
       return this.statusDic[this.detail.status]
-    }
+    },
   },
   watch: {
     data: {
@@ -147,8 +144,8 @@ export default {
           this.refresh()
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     format(date) {
@@ -158,7 +155,7 @@ export default {
       const res = this.detail.response
       if (!res || res.length === 0) return null
       const r = res.findIndex(
-        i => i.status === 0 || i.status === 1 || i.status === 8
+        (i) => i.status === 0 || i.status === 1 || i.status === 8
       )
       return r < 0 ? res.length : r
     },
@@ -168,7 +165,7 @@ export default {
       return `${requireAuditMemberCount}人`
     },
     GetHandleTimeAgo(step) {
-      const arr = this.detail.response.filter(r => r.index === step.index)
+      const arr = this.detail.response.filter((r) => r.index === step.index)
       if (arr.length > 0) {
         const item = arr.reduce((prev, cur) =>
           prev.handleStamp > cur.handleStamp ? prev : cur
@@ -196,8 +193,8 @@ export default {
           break
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -206,5 +203,6 @@ export default {
   margin: 10px;
   border-width: 1px;
   border-color: #3f3f3f;
+  cursor: pointer;
 }
 </style>
