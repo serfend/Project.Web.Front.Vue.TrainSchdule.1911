@@ -64,22 +64,22 @@ export default {
   props: {
     baseInfoId: {
       type: String,
-      default: null
+      default: null,
     },
     requestId: {
       type: String,
-      default: null
+      default: null,
     },
     disabled: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data: () => ({
     onLoading: false,
     submitId: '',
     showSuccessDialog: false,
-    errorMsg: null
+    errorMsg: null,
   }),
   computed: {
     iDisabled() {
@@ -90,14 +90,14 @@ export default {
     },
     applyDetailUrl() {
       return `#/vacation/applydetail?id=${this.submitId}`
-    }
+    },
   },
   watch: {
     submitId: {
       handler(val) {
         if (val) this.showSuccessDialog = true
-      }
-    }
+      },
+    },
   },
   methods: {
     skimDetail() {
@@ -111,6 +111,7 @@ export default {
       if (this.onLoading === true) {
         return this.$message.info('提交中，请等待')
       }
+      this.errorMsg = null
       const BaseId = this.baseInfoId
       const RequestId = this.requestId
       this.onLoading = true
@@ -118,10 +119,10 @@ export default {
         RequestId,
         BaseId,
         Verify: {
-          Code: 201700816
-        }
+          Code: 201700816,
+        },
       })
-        .then(data => {
+        .then((data) => {
           var applyId = data.id
           var fn = actionStatus === 1 ? 'save' : 'publish'
           this.$message.success('提交成功')
@@ -134,7 +135,7 @@ export default {
                 this.$message.success(`${msg}成功`)
                 this.$emit('complete', true)
               })
-              .catch(e => {
+              .catch((e) => {
                 this.$emit('complete', false)
                 this.errorMsg = e.message
               })
@@ -151,12 +152,12 @@ export default {
       this.$confirm('此操作将清空并重新填写, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
       }).then(() => {
         this.$emit('reset')
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

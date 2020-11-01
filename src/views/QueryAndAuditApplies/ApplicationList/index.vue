@@ -21,16 +21,10 @@
                 :href="`#/user/profile?id=${row.userBase.id}`"
                 target="_blank"
               >{{ row.userBase.realName }}</el-link>
-              <el-tooltip content="用户原姓名">
-                <span v-if="row.userBase.realName != row.base.realName">({{ row.base.realName }})</span>
+              <el-tooltip v-if="row.userBase.realName != row.base.realName" content="用户原姓名">
+                <span>({{ row.base.realName }})</span>
               </el-tooltip>
-              <div
-                :style="{
-                  'font-size': '0.8rem',
-                  margin: '2px',
-                  color: '#3f3f3f',
-                }"
-              >
+              <div>
                 <el-link
                   :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
                   target="_blank"
@@ -49,25 +43,15 @@
           </component>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="审批流程">
-        <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <ApplyAuditStreamPreview
-            slot="content"
-            :audit-status="row.steps"
-            :title="row.auditStreamSolution"
-            :now-step="row.nowStep ? row.nowStep.index : row.steps.length"
-          />
-        </template>
-      </el-table-column>
       <el-table-column header-align="center" align="center" label="休假时间">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-row>
-            <el-tooltip :content="`创建于:${row.create}`">
+            <el-tooltip effect="light" :content="`创建于:${row.create}`">
               <span>{{ format(row.create) }}</span>
             </el-tooltip>
           </el-row>
           <el-row>
-            <el-tooltip content="休假起始和结束的时间">
+            <el-tooltip effect="light" content="休假起始和结束的时间">
               <span>{{ parseTime(row.stampLeave) }}-{{ parseTime(row.stampReturn) }}</span>
             </el-tooltip>
           </el-row>
@@ -75,13 +59,28 @@
       </el-table-column>
       <el-table-column align="center" label="休假地点">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <el-tooltip
-            :content="`详细地址:${
-              row.request.vacationPlaceName
-                ? row.request.vacationPlaceName
-                : '未填写'
-            }`"
-          >
+          <el-tooltip effect="light">
+            <div slot="content">
+              <div v-if="row.request.vacationPlaceName">
+                <b>详细地址</b>
+                <span>{{ row.request.vacationPlaceName }}</span>
+              </div>
+              <div v-if="row.request.reason">
+                <b>休假原因</b>
+                <span>{{ row.request.reason }}</span>
+              </div>
+              <div>
+                <b>出行方式</b>
+                <span v-if="row.request.byTransportation===0">火车</span>
+                <span v-else-if="row.request.byTransportation===1">飞机</span>
+                <span v-else-if="row.request.byTransportation===2">汽车</span>
+                <span v-else>其他</span>
+              </div>
+              <div v-if="row.request.vacationDescription">
+                <b>假期描述</b>
+                <p style="width:8rem">{{ row.request.vacationDescription }}</p>
+              </div>
+            </div>
             <span>{{ row.request.vacationPlace ? row.request.vacationPlace.name : '未选择' }}</span>
           </el-tooltip>
         </template>
@@ -139,11 +138,19 @@
           <el-tooltip content="此申请可能为休假结束后创建">
             <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
           </el-tooltip>
-          <el-tag
+          <ApplyAuditStreamPreview
             v-if="row.statusDesc"
-            :color="row.statusColor"
-            class="white--text"
-          >{{ row.statusDesc }}</el-tag>
+            :audit-status="row.steps"
+            :title="row.auditStreamSolution"
+            :now-step="row.nowStep ? row.nowStep.index : row.steps.length"
+          >
+            <el-tag
+              slot="content"
+              :color="row.statusColor"
+              class="white--text"
+              style="cursor:pointer"
+            >{{ row.statusDesc }}</el-tag>
+          </ApplyAuditStreamPreview>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">

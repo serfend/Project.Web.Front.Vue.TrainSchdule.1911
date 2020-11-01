@@ -1,7 +1,14 @@
 <template>
   <span>
-    <el-popover v-if="v" v-model="show" trigger="hover" placement="top" @hide="onHide">
-      <VacationTypeDetail v-model="v" />
+    <el-popover
+      v-if="v"
+      v-model="show"
+      trigger="hover"
+      placement="top"
+      @hide="onHide"
+      @show="hasShow = true"
+    >
+      <VacationTypeDetail v-if="hasShow" v-model="v" />
       <span slot="reference">
         <el-tag v-if="showTag" :type="v.primary?'success':'danger'">{{ v.alias }}</el-tag>
         <span v-else>
@@ -22,28 +29,29 @@ export default {
   components: { VacationTypeDetail },
   model: {
     prop: 'type',
-    event: 'change'
+    event: 'change',
   },
   props: {
     type: {
       type: String,
-      default: null
+      default: null,
     },
     showTag: {
       type: Boolean,
-      default: true
+      default: true,
     },
     leftLength: {
       type: Number,
-      default: 0
+      default: 0,
     },
     directShow: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data: () => ({
-    show: false
+    show: false,
+    hasShow: false,
   }),
   computed: {
     v() {
@@ -56,24 +64,24 @@ export default {
       const types = this.vacationTypesDic
       if (!types) return null
       const keys = Object.keys(types)
-      return keys.map(i => types[i])
+      return keys.map((i) => types[i])
     },
     vacationTypesDic() {
       return this.$store.state.vacation.vacationTypes
-    }
+    },
   },
   watch: {
     directShow: {
       handler(val) {
         this.show = val
-      }
-    }
+      },
+    },
   },
   methods: {
     onHide() {
       this.$emit('update:directShow', false)
-    }
-  }
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>
