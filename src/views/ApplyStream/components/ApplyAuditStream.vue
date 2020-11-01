@@ -15,6 +15,9 @@
         <el-table-column label="名称">
           <template slot-scope="scope">{{ scope.row.name }}</template>
         </el-table-column>
+        <el-table-column label="作用域">
+          <CompanyFormItem :id="scope.row.regionOnCompany" slot-scope="scope" />
+        </el-table-column>
         <el-table-column label="说明">
           <template slot-scope="scope">{{ scope.row.description }}</template>
         </el-table-column>
@@ -82,8 +85,8 @@
         <el-form-item label="审批节点">
           <el-select v-model="newSolution.nodeSelect" @change="selectNodeChanged">
             <el-option
-              v-for="item in data.allActionNode"
-              :key="item.name"
+              v-for="(item,i) in data.allActionNode"
+              :key="i"
               :label="item.name"
               :value="item.name"
             >
@@ -126,16 +129,17 @@
 </template>
 
 <script>
+import CompanyFormItem from '@/components/Company/CompanyFormItem'
 import AuthCode from '@/components/AuthCode'
 import { formatTime } from '@/utils'
 import {
   addStreamSolution,
   editStreamSolution,
-  deleteStreamSolution
+  deleteStreamSolution,
 } from '@/api/applyAuditStream'
 export default {
   name: 'ApplyAuditStream',
-  components: { AuthCode },
+  components: { AuthCode, CompanyFormItem },
   props: {
     data: {
       type: Object,
@@ -148,19 +152,19 @@ export default {
           allSolution: [],
           allSolutionDic: {},
           allActionNode: [],
-          allActionNodeDic: {}
+          allActionNodeDic: {},
         }
-      }
+      },
     },
     loading: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       nodeDialogShow: false,
-      newSolution: this.buildNewSolution()
+      newSolution: this.buildNewSolution(),
     }
   },
   methods: {
@@ -181,7 +185,7 @@ export default {
         node.name,
         region.code,
         node.description,
-        node.nodes.map(i => i.label),
+        node.nodes.map((i) => i.label),
         node.auth
       )
         .then(() => {
@@ -200,7 +204,7 @@ export default {
         node.id = target.id
         node.name = target.name
         node.description = target.description
-        node.nodes = target.nodes.map(i => {
+        node.nodes = target.nodes.map((i) => {
           if (!i) i = { name: '无效的节点' }
           return this.buildNodeSelect(i.name)
         })
@@ -216,12 +220,12 @@ export default {
       }
       deleteStreamSolution(node.name, auth.authByUserId, auth.code)
         .then(() => {
-          this.$message(`${node.name}已删除`)
+          this.$message.success(`${node.name}已删除`)
           this.nodeDialogShow = false
           this.refresh()
         })
-        .catch(e => {
-          this.newSolution.loading = false
+        .finally(() => {
+          node.loading = false
         })
     },
     buildNodeSelect(val) {
@@ -229,7 +233,7 @@ export default {
       return {
         id: Math.random(),
         label: val,
-        description: s && s.description
+        description: s && s.description,
       }
     },
     selectNodeChanged(val) {
@@ -240,7 +244,7 @@ export default {
     handleSelectNodeClose(node) {
       const no = this.newSolution
       var id = node.data.id
-      var index = no.nodes.findIndex(n => n.id === id)
+      var index = no.nodes.findIndex((n) => n.id === id)
       no.nodes.splice(index, 1)
     },
     buildNewSolution() {
@@ -249,7 +253,7 @@ export default {
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',
-          code: 0
+          code: 0,
         }
       }
       return {
@@ -259,10 +263,10 @@ export default {
         nodeSelect: '',
         nodes: [],
         auth: lastAuth,
-        loading: false
+        loading: false,
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -74,6 +74,7 @@ export default {
     tagChange(val) {
       this.iTag = val
       this.$emit('update:tag', val)
+      this.$emit('tagChange', val)
       this.iDuties = null
     },
     tagFilter(val) {

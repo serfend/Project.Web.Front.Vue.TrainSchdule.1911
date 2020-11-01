@@ -24,6 +24,9 @@
             </el-tooltip>
           </template>
         </el-table-column>
+        <el-table-column label="作用域">
+          <CompanyFormItem :id="scope.row.regionOnCompany" slot-scope="scope" />
+        </el-table-column>
         <el-table-column label="单位">
           <template slot-scope="scope">
             <div v-if="!scope.row.companies||scope.row.companies.length==0">
@@ -37,10 +40,10 @@
                   <div slot="content">
                     <el-form>
                       <el-form-item v-if="scope.row.companyCodeLength.length>0" label="代码长度">
-                        <el-tag v-for="l in scope.row.companyCodeLength" :key="l">{{ l }}</el-tag>
+                        <el-tag v-for="(l,i) in scope.row.companyCodeLength" :key="i">{{ l }}</el-tag>
                       </el-form-item>
                       <el-form-item v-if="scope.row.companyTags.length>0" label="单位类别">
-                        <el-tag v-for="t in scope.row.companyTags" :key="t">{{ t }}</el-tag>
+                        <el-tag v-for="(t,index) in scope.row.companyTags" :key="index">{{ t }}</el-tag>
                       </el-form-item>
                     </el-form>
                   </div>
@@ -55,7 +58,7 @@
             <el-dropdown v-else-if="scope.row.companies.length>1">
               <div>{{ scope.row.companies[0].name }}等{{ scope.row.companies.length }}个单位</div>
               <el-dropdown-menu>
-                <el-dropdown-item v-for="cmp in scope.row.companies" :key="cmp.id">
+                <el-dropdown-item v-for="(cmp,index) in scope.row.companies" :key="index">
                   <CompanyFormItem :data="cmp" />
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -79,7 +82,7 @@
                 <div v-if="scope.row.dutyTags.length>0">
                   <el-tooltip effect="light">
                     <div slot="content">
-                      <el-tag v-for="t in scope.row.dutyTags" :key="t">{{ t }}</el-tag>
+                      <el-tag v-for="(t,i) in scope.row.dutyTags" :key="i">{{ t }}</el-tag>
                     </div>
                     <el-tag>{{ scope.row.dutyTags.length }}种类别</el-tag>
                   </el-tooltip>
@@ -93,7 +96,7 @@
             <el-dropdown v-else-if="scope.row.duties.length>1">
               <div>{{ scope.row.duties[0].name }}等{{ scope.row.duties.length }}个职务</div>
               <el-dropdown-menu>
-                <el-dropdown-item v-for="duty in scope.row.duties" :key="duty.id">
+                <el-dropdown-item v-for="(duty,i) in scope.row.duties" :key="i">
                   <DutyFormItem :data="duty" />
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -111,7 +114,7 @@
             <el-dropdown v-else-if="scope.row.auditMembers.length>1">
               <div>{{ scope.row.auditMembers[0].realName }}等{{ scope.row.auditMembers.length }}名成员</div>
               <el-dropdown-menu>
-                <el-dropdown-item v-for="cmp in scope.row.auditMembers" :key="cmp.id">
+                <el-dropdown-item v-for="(cmp,i) in scope.row.auditMembers" :key="i">
                   <UserFormItem :data="cmp" />
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -172,14 +175,14 @@
         </el-form-item>
         <el-form-item label="长度">
           <el-select v-model="newNode.companyCodeLength" multiple placeholder="单位代码的位数">
-            <el-option v-for="item in 10" :key="item" :label="item" :value="item" />
+            <el-option v-for="item in 15" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
         <el-form-item label="相对路径">
           <el-select v-model="newNode.companyRefer" placeholder="相对查询何种">
             <el-option
-              v-for="item in companyReferDic"
-              :key="item.value"
+              v-for="(item,i) in companyReferDic"
+              :key="i"
               :label="item.label"
               :value="item.value"
             />
@@ -215,13 +218,13 @@
           </div>
         </el-form-item>
         <el-form-item label="职务类型">
-          <DutiesSelector :tag.sync="newNode.dutyTags" :only-tag="true" />
+          <DutiesSelector :only-tag="true" @tagChange="v=>newNode.dutyTags.push(v)" />
           <el-tag
             v-for="(tag,index) in newNode.dutyTags"
             :key="index"
             closable
             :disable-transitions="false"
-            @close="newNode.dutyTag.splice(newNode.dutyTag.indexOf(tag))"
+            @close="newNode.dutyTags.splice(newNode.dutyTags.indexOf(tag))"
           >{{ tag }}</el-tag>
         </el-form-item>
         <el-form-item label="指定审核人">
@@ -232,8 +235,8 @@
             @change="handleUserSelectChange"
           />
           <el-tag
-            v-for="tag in newNode.auditMembers"
-            :key="tag.id"
+            v-for="(tag,i) in newNode.auditMembers"
+            :key="i"
             closable
             :disable-transitions="false"
             @close="handleAuditMembersSelectClosed(tag)"

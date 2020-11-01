@@ -36,6 +36,9 @@
             </el-tooltip>
           </template>
         </el-table-column>
+        <el-table-column label="作用域">
+          <CompanyFormItem :id="scope.row.regionOnCompany" slot-scope="scope" />
+        </el-table-column>
         <el-table-column label="单位">
           <template slot-scope="scope">
             <div v-if="!scope.row.companies||scope.row.companies.length==0">
@@ -250,14 +253,18 @@
           </div>
         </el-form-item>
         <el-form-item label="职务类型">
-          <el-select
-            v-model="newRule.dutyTags"
-            multiple
-            filterable
-            allow-create
-            default-first-option
+          <DutiesSelector
+            :only-tag="true"
             placeholder="职务类型选取，输入后按回车键确认"
+            @tagChange="v=>newRule.dutyTags.push(v)"
           />
+          <el-tag
+            v-for="(tag,index) in newRule.dutyTags"
+            :key="index"
+            closable
+            :disable-transitions="false"
+            @close="newRule.dutyTags.splice(newRule.dutyTags.indexOf(tag))"
+          >{{ tag }}</el-tag>
         </el-form-item>
         <el-form-item label="休假申请来源">
           <UserSelector
