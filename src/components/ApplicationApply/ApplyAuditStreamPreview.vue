@@ -15,7 +15,8 @@
         :now-step="nowStep"
         :solution-name.sync="solutionName"
       />
-      <span slot="reference" class="preview-btn">{{ title }}</span>
+      <span v-if="!$slots.content" slot="reference" class="preview-btn">{{ title }}</span>
+      <slot v-else slot="reference" name="content" />
     </el-popover>
   </div>
 </template>
@@ -28,36 +29,37 @@ export default {
   props: {
     userid: {
       type: String,
-      default: null
+      default: null,
     },
     auditStatus: {
       type: Array,
-      default: null
+      default: null,
     },
     showDetail: {
       type: Boolean,
-      default: false
+      default: false,
     },
     nowStep: {
       type: Number,
-      default: -1
+      default: -1,
     },
     title: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data: () => ({
     solutionName: null,
-    userHasHover: false
+    userHasHover: false,
   }),
   watch: {
     solutionName: {
       handler(val) {
         this.$emit('update:solutionName', val)
-      }, immediate: true
-    }
-  }
+      },
+      immediate: true,
+    },
+  },
 }
 </script>
 
