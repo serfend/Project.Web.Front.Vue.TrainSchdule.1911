@@ -48,8 +48,13 @@ export default {
       return this.totalCount > this.current_page * this.current_page_size
     },
   },
-  mounted() {
-    this.load_page()
+  watch: {
+    id: {
+      handler(val) {
+        this.reload_page()
+      },
+      immediate: true,
+    },
   },
   methods: {
     newContent(item) {
