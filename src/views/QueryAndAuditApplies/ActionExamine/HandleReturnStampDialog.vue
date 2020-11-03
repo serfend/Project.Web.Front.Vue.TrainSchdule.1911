@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="innerShow" :title="`${displayName}休假`">
+  <el-dialog :visible.sync="innerShow" :title="`${displayName}休假`" append-to-body>
     <el-card v-loading="loading">
       <el-form ref="auditForm" label-width="6rem">
         <el-form-item :label="`被${displayName}人`">
@@ -60,42 +60,42 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false
+      default: false,
     },
     onlyView: {
       type: Boolean,
-      default: false
+      default: false,
     },
     row: {
       type: Object,
       default() {
         return {}
-      }
+      },
     },
     defaultStampReturn: {
       type: [String, Date],
-      default: ''
+      default: '',
     },
     defaultReason: {
       type: String,
-      default: ''
+      default: '',
     },
     displayName: {
       type: String,
-      required: true
+      required: true,
     },
     dataGetter: {
       type: Function,
-      required: true
+      required: true,
     },
     dataSetter: {
       type: Function,
-      required: true
+      required: true,
     },
     handleId: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
@@ -103,13 +103,13 @@ export default {
       auditForm: {
         auth: {
           authByUserId: null,
-          code: null
+          code: null,
         },
         recallData: {},
         stampReturn: null,
         remark: null,
-        handleBy: null
-      }
+        handleBy: null,
+      },
     }
   },
   computed: {
@@ -119,26 +119,26 @@ export default {
       },
       set(val) {
         this.$emit('update:show', val)
-      }
-    }
+      },
+    },
   },
   watch: {
     'auditForm.auth.authByUserId': {
       handler(val) {
         if (!this.onlyView) this.auditForm.handleBy = val
-      }
+      },
     },
     defaultStampReturn: {
       handler(val) {
         this.auditForm.stampReturn = val
       },
-      immediate: true
+      immediate: true,
     },
     defaultReason: {
       handler(val) {
         this.auditForm.remark = val
       },
-      immediate: true
+      immediate: true,
     },
     show: {
       handler(val) {
@@ -150,8 +150,8 @@ export default {
           }
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     SubmitRecall() {
@@ -159,13 +159,13 @@ export default {
         apply: this.auditForm.applyId,
         reason: this.auditForm.remark,
         returnStamp: this.auditForm.stampReturn,
-        handleBy: this.auditForm.handleBy
+        handleBy: this.auditForm.handleBy,
       }
       const fn = this.dataSetter
       fn({
         data: model,
-        Auth: this.auditForm.auth
-      }).then(result => {
+        Auth: this.auditForm.auth,
+      }).then((result) => {
         this.$notify.success(`${this.displayName}操作已提交`)
         this.innerShow = false
         this.$emit('updated')
@@ -176,7 +176,7 @@ export default {
       const sr = row.request.stampReturn
       this.auditForm.applyId = row.id
       this.auditForm.recallData = {
-        rawStampReturn: sr
+        rawStampReturn: sr,
       }
     },
     showRecallMsg() {
@@ -186,7 +186,7 @@ export default {
       this.loading = true
       const fn = this.dataGetter
       fn(this.handleId)
-        .then(res => {
+        .then((res) => {
           const { create, returnStamp, reason, handleBy } = res
           const { realName, id } = handleBy
           auditForm.recallData.create = create
@@ -198,8 +198,8 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    }
-  }
+    },
+  },
 }
 </script>
 

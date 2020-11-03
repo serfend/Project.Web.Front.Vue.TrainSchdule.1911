@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <el-dialog :visible.sync="auditShow" title="审批">
+  <span>
+    <el-dialog :visible.sync="auditShow" append-to-body @closed="$emit('update:show',false)">
+      <span slot="title">审批</span>
       <el-form ref="auditForm" :model="auditForm" label-width="80px">
         <el-form-item label="同意" align="left">
           <el-switch
@@ -21,7 +22,7 @@
         <el-button type="primary" @click="SubmitAuditForm">确 定</el-button>
       </span>
     </el-dialog>
-  </div>
+  </span>
 </template>
 
 <script>
@@ -33,22 +34,22 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: true
+      default: true,
     },
     applyId: {
       type: String,
       default: '',
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       auditForm: {
         action: 1,
         remark: '',
-        auth: {}
+        auth: {},
       },
-      auditShow: false
+      auditShow: false,
     }
   },
   watch: {
@@ -56,22 +57,16 @@ export default {
       handler(val) {
         this.auditShow = val
       },
-      immediate: true
+      immediate: true,
     },
-    auditShow: {
-      handler(val) {
-        this.$emit('update:show', val)
-      },
-      immediate: true
-    }
   },
   methods: {
     SubmitAuditForm() {
       const { action, remark, auth } = this.auditForm
       const list = [{ id: this.applyId, action, remark }]
       audit({ list }, auth)
-        .then(resultlist => {
-          resultlist.forEach(result => {
+        .then((resultlist) => {
+          resultlist.forEach((result) => {
             if (result.status === 0) {
               this.$message.success('审批成功')
             } else {
@@ -82,8 +77,8 @@ export default {
           this.auditShow = false
         })
         .finally(() => {})
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -13,18 +13,11 @@
       :handle-id="handleId"
       @updated="requireUpdate"
     />
+    <span v-if="row.status>30&&row.status<75">
+      <AuditApplyDialog :apply-id="row.id" :show.sync="showAudit" @updated="requireUpdate" />
+      <el-link v-show="!showAudit" type="success" @click="showAudit=true">审批</el-link>
+    </span>
 
-    <AuditApplyDialog
-      v-if="showAudit"
-      :apply-id="row.id"
-      :show.sync="showAudit"
-      @updated="requireUpdate"
-    />
-    <el-link
-      v-if="row.status>30&&row.status<75&&!showAudit"
-      type="success"
-      @click="showAudit=true"
-    >审批</el-link>
     <span v-if="row.status==100">
       <span v-if="!row.executeStatus&1">
         <el-tooltip content="填写召回单交终审人审批完成后，确认召回生效">
@@ -49,7 +42,7 @@ import {
   postRecallOrder,
   getRecallOrder,
   postExecuteStatus,
-  getExecuteStatus
+  getExecuteStatus,
 } from '@/api/apply/recall'
 const INFO_delay_return = '因XXXX，需延迟归队'
 const INFO_ontime_return = '按时归队'
@@ -64,8 +57,8 @@ export default {
       type: Object,
       default() {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -77,7 +70,7 @@ export default {
       dataGetter: null,
       dataSetter: null,
       handleId: null,
-      onlyView: false
+      onlyView: false,
     }
   },
   watch: {
@@ -91,8 +84,8 @@ export default {
         ) {
           this.defaultReason = INFO_need_recall_return
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     requireUpdate() {
@@ -117,8 +110,8 @@ export default {
       this.recallOrExecute = false
       this.onlyView = isOnlyShow
       this.showExecuteStatus = true
-    }
-  }
+    },
+  },
 }
 </script>
 
