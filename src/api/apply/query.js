@@ -31,7 +31,7 @@ export function excelReport(params) {
  */
 export function queryList(data, ignoreErr) {
   return request.post('/apply/list', data, {
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 

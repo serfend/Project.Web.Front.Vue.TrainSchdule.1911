@@ -156,7 +156,7 @@ export function postAuthKey(params) {
  */
 export function getAuthKey(ignoreErr) {
   return request.get('account/AuthKey', {
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 

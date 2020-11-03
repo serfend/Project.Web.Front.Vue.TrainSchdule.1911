@@ -92,12 +92,13 @@ export function requestFile(filepath, filename) {
  * @param {*} filename
  * @returns
  */
-export function downloadByPath(path, filename) {
+export function downloadByPath(path, filename, ignoreError) {
   return request.get('file/frompath', {
     params: {
       path,
       filename
-    }
+    },
+    ignoreError
   })
 }
 

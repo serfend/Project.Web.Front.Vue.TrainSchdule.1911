@@ -107,7 +107,7 @@ service.interceptors.response.use(
       return Promise.resolve(res.data)
     } else {
       // 通过缓存方式解决频繁报同一个错误的问题
-      if (!response.config.respondErrorIngore && !warningInfoLog[res.message]) {
+      if (!response.config.ignoreError && !warningInfoLog[res.message]) {
         warningInfoLog[res.message] = new Date()
         setTimeout(() => {
           delete warningInfoLog[res.message]

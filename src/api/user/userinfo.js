@@ -13,7 +13,7 @@ export function getUserSummary(id, ignoreErr) {
     params: {
       id
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 /**
@@ -32,7 +32,7 @@ export function getUserBase(id, ignoreErr) {
     params: {
       id
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
@@ -41,7 +41,7 @@ export function getUserDiy(id, ignoreErr) {
     params: {
       id
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 /**
@@ -62,7 +62,7 @@ export function getUserSocial(id, ignoreErr) {
     params: {
       id
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
@@ -81,7 +81,7 @@ export function getUserDuties(id, ignoreErr) {
     params: {
       id
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
@@ -97,7 +97,7 @@ export function getUserApplication(id, ignoreErr) {
     params: {
       id
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
@@ -120,7 +120,7 @@ export function getUserCompany(id, ignoreErr) {
     params: {
       id
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
@@ -137,7 +137,7 @@ export function getUserIdByCid(cid, ignoreErr) {
     params: {
       cid
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
@@ -158,7 +158,7 @@ export function getUserIdByRealName(realName, pageIndex, pageSize, ignoreErr) {
       pageIndex,
       pageSize
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
@@ -171,7 +171,7 @@ export function getUsersVacationLimit(id, ignoreErr) {
     params: {
       id
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
@@ -189,7 +189,7 @@ export function getUserAvatar(id, avatarId, ignoreErr) {
       userId: id,
       avatarId
     },
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 /**
@@ -203,7 +203,7 @@ export function postUserAvatar(newAvatar, ignoreErr) {
   return request.post('/users/avatar', {
     url: newAvatar
   }, {
-    respondErrorIngore: ignoreErr
+    ignoreError: ignoreErr
   })
 }
 
