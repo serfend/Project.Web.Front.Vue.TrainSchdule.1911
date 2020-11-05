@@ -58,7 +58,7 @@ export function getUserAllInfo(id) {
       getUserDiy(id),
       getUserApplication(id)
     ]).then(([base, company, duties, social, diy, application]) => {
-      var UserInfoes = {
+      var u = {
         application,
         base,
         company,
@@ -66,8 +66,9 @@ export function getUserAllInfo(id) {
         social,
         diy
       }
-      UserInfoes.base.base.time_Birthday = UserInfoes.base.base.time_BirthDay // bug prop name fix
-      resolve(UserInfoes)
+      u.base.base.time_Birthday = u.base.base.time_BirthDay // bug prop name fix
+      u.company.company.accountStatus = u.application.accountStatus // TODO move to application show whole account status instead of show only vacation issue
+      resolve(u)
     }).catch(err => reject(err))
   })
 }

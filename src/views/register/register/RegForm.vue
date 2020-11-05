@@ -19,6 +19,7 @@
               <component
                 :is="opt.component"
                 :form.sync="registerForm[opt.component]"
+                :is-register="is_register"
                 :child-index="opt.childIndex"
               />
             </div>
@@ -81,6 +82,21 @@
 </template>
 
 <script>
+const createForm = () => ({
+  Base: {},
+  Social: {},
+  Company: {
+    // company component require this prop
+    company: {},
+    title: {},
+    duties: {},
+  },
+  Application: {},
+  Diy: {},
+  Auth: {},
+  password: '',
+  confirmPassword: '',
+})
 import SvgIcon from '@/components/SvgIcon'
 import Base from '../components/Base'
 import Application from '../components/Application'
@@ -99,6 +115,7 @@ import NotLoginRegisterNotice from '../NotLoginRegisterNotice'
 import Login from '@/views/login'
 import { checkUserValid } from '@/utils/validate'
 import AuthCode from '@/components/AuthCode'
+const Const_DisabledVacation = 4
 export default {
   name: 'Register',
   components: {
@@ -126,7 +143,7 @@ export default {
   data() {
     return {
       loading: false,
-      registerForm: this.createForm(),
+      registerForm: createForm(),
       selectIsInvalidAccount: false,
       current_select_id: null,
       nowStep: '0',
@@ -254,18 +271,6 @@ export default {
         this.nowStep = now_index.toString()
       }
     },
-    createForm() {
-      return {
-        Base: {},
-        Social: {},
-        Company: {},
-        Application: {},
-        Diy: {},
-        Auth: {},
-        password: '',
-        confirmPassword: '',
-      }
-    },
     // 授权当前账号
     submitValidAccount(valid) {
       if (this.current_select_id === '') {
@@ -305,10 +310,7 @@ export default {
           const duties = data.duties || {}
           const company = data.company.company
           f.Company = {
-            company: {
-              name: company.name,
-              code: company.code,
-            },
+            company,
             duties: {
               name: duties.name,
             },
@@ -336,6 +338,18 @@ export default {
       const f = this.registerForm
       f.password = f.Application.password
       f.confirmPassword = f.Application.confirmPassword
+      // debugger
+      // reset status to normal
+      if (!f.Application.accountStatus) f.Application.accountStatus = 0
+      if ((f.Application.accountStatus & Const_DisabledVacation) > 0) {
+        console.log('reset vacation')
+        f.Application.accountStatus -= Const_DisabledVacation
+      }
+      // syn status to disabled vacation
+      if (f.Company.disabledVacation) {
+        console.log('disabled vacation')
+        f.Application.accountStatus += Const_DisabledVacation
+      }
       const submitForm = {
         Data: f,
         verify: {
