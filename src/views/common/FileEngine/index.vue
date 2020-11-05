@@ -70,40 +70,6 @@
           </div>
         </el-card>
       </el-col>
-      <el-col class="row">
-        <el-card>
-          <template slot="header">
-            近期
-            <el-button
-              :loading="statusLoading"
-              style="float:right"
-              type="primary"
-              icon="el-icon-refresh-left"
-              circle
-              @click="refreshStatus"
-            />
-          </template>
-          <div v-for="i in statusList" :key="i.id">
-            <el-form-item :label="i.fileInfo.name">
-              <el-row>
-                <el-tag>{{ i.fileInfo.path }}</el-tag>
-                {{ i.fileInfo.create }}
-              </el-row>
-              <el-row>
-                <span>{{ i.current }} / {{ i.total }}</span>
-                <el-button
-                  type="info"
-                  icon="el-icon-document-copy"
-                  @click="clipBoard(i.fileInfo.id,`${i.fileInfo.path}_${i.fileInfo.name}`,$event)"
-                >复制链接</el-button>
-              </el-row>
-              <el-row>
-                <el-progress :percentage="i.total<=0?0:100*i.current/i.total" show-text />
-              </el-row>
-            </el-form-item>
-          </div>
-        </el-card>
-      </el-col>
       <el-col>
         <el-card :header="`文件:${file.filePath}`">
           <Explorer :path.sync="file.filePath" @select="fileSelect" />
@@ -119,11 +85,9 @@ import clipboard from '@/utils/clipboard'
 import AuthCode from '@/components/AuthCode'
 import Explorer from './Explorer'
 import {
-  upload,
   requestFile,
-  status,
   getClientKey,
-  deleteFile
+  deleteFile,
 } from '@/api/common/file'
 export default {
   name: 'FileEngine',
@@ -136,8 +100,8 @@ export default {
         filePath: '',
         auth: {
           authByUserId: '',
-          code: ''
-        }
+          code: '',
+        },
       },
       fileDownloading: false,
       fileInfo: {
@@ -146,17 +110,17 @@ export default {
         length: '',
         create: '',
         id: '',
-        clientKey: ''
+        clientKey: '',
       },
       uploadurl: '',
       statusList: [],
-      lastQueryDate: new Date()
+      lastQueryDate: new Date(),
     }
   },
   computed: {
     nowLoadingFile() {
       return `文件下载 ${this.file.filePath}/${this.file.fileName}`
-    }
+    },
   },
   watch: {
     file: {
@@ -170,8 +134,8 @@ export default {
         }, 1000)
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     this.uploadurl = process.env.VUE_APP_BASE_API + '/file/upload'
@@ -199,22 +163,19 @@ export default {
       a.href = this.downloadUrl(fileid)
       a.click()
     },
-    upload,
-    requestFile,
-    status,
     updateFile() {
       if (!this.file || !this.file.filePath || !this.file.fileName) return
-      requestFile(this.file.filePath, this.file.fileName).then(data => {
+      requestFile(this.file.filePath, this.file.fileName).then((data) => {
         var id = data.file.id
         data.file.clientKey = '加载中...'
         this.$nextTick(() => {
           getClientKey(id, this.file.auth)
-            .then(ck => {
+            .then((ck) => {
               this.fileInfo.clientKey = ck
               this.file.clientKey = ck
               this.$forceUpdate()
             })
-            .catch(e => {
+            .catch((e) => {
               this.fileInfo.clientKey = `无法加载(${e.message})`
             })
           this.fileInfo = data.file
@@ -236,12 +197,8 @@ export default {
 
       return true
     },
-    refreshStatus() {
-      status().then(data => {
-        this.statusList = data.fileStatus
-      })
-    }
-  }
+    refreshStatus() {},
+  },
 }
 </script>
 <style scoped>
