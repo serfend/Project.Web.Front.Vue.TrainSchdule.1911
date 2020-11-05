@@ -150,6 +150,7 @@ export default {
     nowSelectCompany: {
       handler(val) {
         if (val) {
+          this.MembersQuery.pageIndex = 0
           this.requireLoadWaitToAUthRegisterUsers()
         }
       },
@@ -166,7 +167,7 @@ export default {
   },
   methods: {
     handleCurrentChange(val) {
-      console.log('approve user change to', val)
+      // console.log('approve user change to', val)
       if (!val) return
       this.current_select_id = val
     },

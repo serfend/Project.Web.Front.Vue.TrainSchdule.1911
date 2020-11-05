@@ -209,7 +209,7 @@ import DutiesSelector from '@/components/Duty/DutiesSelector'
 import {
   queryList,
   queryMyAudit,
-  createQueryApplyModel
+  createQueryApplyModel,
 } from '@/api/apply/query'
 import { debounce } from '@/utils'
 export default {
@@ -219,21 +219,21 @@ export default {
     CompanyTagSelector,
     AuthCode,
     UserSelector,
-    DutiesSelector
+    DutiesSelector,
   },
   props: {
     list: {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     pages: {
       type: Object,
       default() {
         return this.innerPages
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -242,16 +242,16 @@ export default {
         { code: '', desc: '所有申请' },
         {
           code: 'UnReceive',
-          desc: '未轮到我审核的'
+          desc: '未轮到我审核的',
         },
         {
           code: 'Accept',
-          desc: '同意的'
+          desc: '同意的',
         },
         {
           code: 'Deny',
-          desc: '驳回的'
-        }
+          desc: '驳回的',
+        },
       ],
       onLoading: false,
       onFormModifying: false,
@@ -270,16 +270,16 @@ export default {
         companyType: null,
         auth: {
           authByUserId: '',
-          code: ''
-        }
+          code: '',
+        },
       },
       queryFormStartRecord: false,
       innerPages: {
         pageIndex: 0,
-        pageSize: 20
+        pageSize: 20,
       },
       adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
-      active_pane: '0'
+      active_pane: '0',
     }
   },
   computed: {
@@ -302,7 +302,7 @@ export default {
     },
     currentUserCmp() {
       return this.$store.state.user.companyid
-    }
+    },
   },
   watch: {
     adminQuery(val) {
@@ -321,8 +321,9 @@ export default {
     },
     queryForm: {
       handler(val) {
+        this.innerPages.pageIndex = 0 // reset page if form modify
         const item = this.queryForm.CreateCompanyItem || []
-        const codes = item.map(i => i.code)
+        const codes = item.map((i) => i.code)
         if (
           JSON.stringify(codes) !== JSON.stringify(this.queryForm.createCompany)
         ) {
@@ -332,7 +333,7 @@ export default {
         this.requireSearchData()
       },
       immediate: true,
-      deep: true
+      deep: true,
     },
     pages: {
       handler(val) {
@@ -342,8 +343,8 @@ export default {
         } else this.$emit('update:pages', this.innerPages)
       },
       immediate: true,
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
     const tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
@@ -398,7 +399,7 @@ export default {
         ? queryList(f)
         : queryMyAudit(f.pages, status, actionStatus, execStatus)
       action
-        .then(data => {
+        .then((data) => {
           callback(data)
         })
         .finally(() => {
@@ -407,7 +408,7 @@ export default {
             this.onFormModifying = false
           }, 1000)
         })
-    }
-  }
+    },
+  },
 }
 </script>
