@@ -32,16 +32,16 @@ export default {
   props: {
     size: {
       type: String,
-      default: '3em'
+      default: '3em',
     },
     checkCodeMethod: {
       type: Function,
-      required: true
+      required: true,
     },
     listenUserInput: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data: () => ({
     rgb: '0,0,0',
@@ -55,12 +55,12 @@ export default {
     isActive: false,
     status: 0, // 0:input 1:success -1:fail
     singleActiveShadow: '',
-    pswChrActiveBackColor: ''
+    pswChrActiveBackColor: '',
   }),
   computed: {
     hideDetail() {
       return !this.isActive
-    }
+    },
   },
   watch: {
     isActive: {
@@ -69,7 +69,7 @@ export default {
           this.update()
         })
       },
-      immediate: true
+      immediate: true,
     },
     status: {
       handler(val) {
@@ -77,7 +77,7 @@ export default {
           this.update()
         })
       },
-      immediate: true
+      immediate: true,
     },
     userClickActive: {
       handler(val) {
@@ -85,13 +85,13 @@ export default {
           this.update()
         })
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     const self = this
     this.update()
-    document.onpaste = function(e) {
+    document.onpaste = function (e) {
       const clip = e.clipboardData || window.clipboardData
       const text = clip.getData('Text')
       const code = text.substr(0, 6)
@@ -107,7 +107,7 @@ export default {
         })
       }
     }
-    document.onkeydown = function(e) {
+    document.onkeydown = function (e) {
       let key = e.keyCode
       if (key >= 96 && key <= 105) key -= 48
       let newCode = self.innerCode
@@ -185,7 +185,7 @@ export default {
             this.status = 1
             this.showText = ''
           })
-          .catch(err => {
+          .catch((err) => {
             this.status = -1
             this.innerCode = ''
             this.showText = err.message
@@ -216,8 +216,8 @@ export default {
       return this.innerCode.length < i
         ? '50%'
         : `${(100 - this.normalSize) / 2}%`
-    }
-  }
+    },
+  },
 }
 </script>
 

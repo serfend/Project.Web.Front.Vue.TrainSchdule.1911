@@ -16,7 +16,7 @@
     <el-button
       type="success"
       style="width:100%"
-      :disabled="!(editPwd.username&&editPwd.newPassword&&editPwd.confirmNewPassword===editPwd.newPassword&&(!oldPswInput||(editPwd.oldPassword||editPwd.auth.code)))"
+      :disabled="!(editPwd.username&&editPwd.newPassword&&editPwd.confirmNewPassword===editPwd.newPassword)"
       @click="savePwd"
     >修改</el-button>
   </el-form>
@@ -31,8 +31,8 @@ export default {
   props: {
     oldPswInput: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     var validatenewPassword = (rule, value, callback) => {
@@ -67,27 +67,27 @@ export default {
         confirmNewPassword: '',
         auth: {
           authByUserID: '',
-          code: ''
-        }
+          code: '',
+        },
       },
       rulePwd: {
         username: [{ required: true, message: '请输入账号' }],
         newPassword: [
-          { required: true, validator: validatenewPassword, trigger: 'blur' }
+          { required: true, validator: validatenewPassword, trigger: 'blur' },
         ],
         confirmNewPassword: [
           {
             required: true,
             validator: validateconfirmNewPassword,
-            trigger: 'blur'
-          }
-        ]
-      }
+            trigger: 'blur',
+          },
+        ],
+      },
     }
   },
   methods: {
     savePwd() {
-      this.$refs['editPwd'].validate(valid => {
+      this.$refs['editPwd'].validate((valid) => {
         if (valid) {
           const submitId = (this.editPwd.username === ''
             ? this.$store.state.user.userid
@@ -98,7 +98,7 @@ export default {
             auth: this.editPwd.auth,
             oldPassword: this.editPwd.oldPassword,
             newPassword: this.editPwd.newPassword,
-            confirmNewPassword: this.editPwd.confirmNewPassword
+            confirmNewPassword: this.editPwd.confirmNewPassword,
           }
           accountPassword(submitPwd).then(() => {
             this.$message.success('修改密码成功')
@@ -106,8 +106,8 @@ export default {
           })
         }
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
