@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data">
+  <div v-if="data" v-loading="loading">
     <el-row :gutter="20">
       <el-col :span="2.5" style="justify-content:center;display:flex">
         <el-image
@@ -23,10 +23,16 @@
           </span>
         </p>
         <div class="footer">
-          <span class="time">{{ formatTime(new Date(data.create)) }}</span>
+          <el-tooltip effect="light" :content="parseTime(data.create)">
+            <span class="time">{{ formatTime(new Date(data.create)) }}</span>
+          </el-tooltip>
           <span class="like" @click="handle_like">
             <SvgIcon :icon-class="liked?'like_filled':'like'" style-normal="color:#c33" />
             <span>{{ like_count }}</span>
+          </span>
+          <span class="like" @click="handle_delete">
+            <SvgIcon icon-class="delete" style-normal="color:#c33" />
+            <span>删除</span>
           </span>
         </div>
       </el-col>
@@ -36,9 +42,9 @@
 </template>
 
 <script>
-import { formatTime } from '@/utils'
+import { formatTime, parseTime } from '@/utils'
 import { getUserAvatar } from '@/api/user/userinfo'
-import { likeComments } from '@/api/apply/attach_info'
+import { likeComments, postComments } from '@/api/apply/attach_info'
 import SvgIcon from '@/components/SvgIcon'
 import User from '@/components/User'
 export default {
@@ -55,6 +61,7 @@ export default {
     liked: false,
     like_count: 0,
     loading_avatar: false,
+    loading: false,
     userIsActive: false,
   }),
   watch: {
@@ -71,6 +78,7 @@ export default {
   },
   methods: {
     formatTime,
+    parseTime,
     load_avatar() {
       const user = this.data.from
       this.loading_avatar = true
@@ -98,6 +106,20 @@ export default {
       this.like_count += this.liked ? 1 : -1
       this.sending_like()
     },
+    async handle_delete() {
+      const check = await this.$confirm('确定要删除评论吗', {
+        type: 'warning',
+      }).catch((e) => {})
+      if (!check) return
+      this.loading = true
+      postComments({ id: this.data.id, isRemove: true })
+        .then(() => {
+          this.$emit('requireDelete')
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
   },
 }
 </script>
@@ -119,6 +141,7 @@ export default {
   .like {
     color: #bbb;
     cursor: pointer;
+    margin-left: 1rem;
   }
 }
 </style>

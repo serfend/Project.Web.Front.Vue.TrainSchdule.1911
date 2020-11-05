@@ -2,7 +2,12 @@
   <div v-if="id" v-loading="loading_whole">
     <ApplyCommentSender :id="id" @newContent="newContent" />
     <el-divider />
-    <SingleComment v-for="(i,index) in list" :key="index" :data="i" />
+    <SingleComment
+      v-for="(i,index) in list"
+      :key="index"
+      :data="i"
+      @requireDelete="requireDelete(index)"
+    />
     <div class="footer">
       <el-button
         v-loading="loading_next"
@@ -60,6 +65,7 @@ export default {
     newContent(item) {
       item.model.create = new Date()
       this.list.unshift(item.model)
+      this.$emit('requireAdd', item)
       this.current_page = 0
     },
     async reload_page() {
@@ -86,6 +92,10 @@ export default {
           this.loading_next = false
           this.current_page++
         })
+    },
+    requireDelete(index) {
+      this.list.splice(index, 1)
+      this.$emit('requireDelete', index)
     },
   },
 }

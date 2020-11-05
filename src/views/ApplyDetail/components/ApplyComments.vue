@@ -9,6 +9,8 @@
           :ref="i.name"
           :order="i.name"
           :total-count.sync="totalCount"
+          @requireDelete="totalCount--"
+          @requireAdd="totalCount++"
         />
       </el-tab-pane>
     </el-tabs>
