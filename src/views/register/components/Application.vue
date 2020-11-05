@@ -56,29 +56,48 @@
         </template>
       </el-input>
     </el-form-item>
-    <!--<el-form-item prop="email" label="认证邮箱">
+
+    <el-form-item v-if="!isRegister">
+      <el-button type="danger" style="width:14rem" @click="modifyPassword">修改密码</el-button>
+    </el-form-item>
+    <el-form-item v-show="false" prop="email" label="邮箱">
       <el-input
         v-model="innerForm.email"
-        :style="{ width: '400px' }"
+        :style="{ width: '14rem' }"
         :placeholder="$t('register.checkemail')"
         auto-complete="on"
         type="text"
       />
-    </el-form-item>-->
+    </el-form-item>
+    <el-form-item v-show="false" prop="linkdood" label="豆豆账号">
+      <ThirdpardChecker
+        :id.sync="innerForm.linkdood"
+        name="豆豆"
+        placeholder="填写以第一时间收到休假信息"
+        style="width:14rem"
+      />
+    </el-form-item>
   </div>
 </template>
 
 <script>
 import { getUserSummary } from '@/api/user/userinfo'
+import { accountPassword } from '@/api/account'
+import ThirdpardChecker from '@/components/ThirdpardAccount/Checker'
 export default {
   name: 'Application',
+  components: { ThirdpardChecker },
   props: {
+    isRegister: {
+      type: Boolean,
+      default: false,
+    },
     form: {
       type: Object,
       default() {
         return this.innerForm
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -86,16 +105,16 @@ export default {
         userName: '',
         password: '',
         confirmPassword: '',
-        email: ''
+        email: '',
       },
       invalid: {
         userName: {
           status: false,
-          des: ''
-        }
+          des: '',
+        },
       },
       capsTooltip: false,
-      passwordType: 'password'
+      passwordType: 'password',
     }
   },
   watch: {
@@ -109,16 +128,28 @@ export default {
         }
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     innerForm: {
       handler(val) {
         this.$emit('update:form', val)
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   methods: {
+    modifyPassword() {
+      this.$confirm('确认修改密码吗', { type: 'warning' }).then(() => {
+        const f = this.innerForm
+        accountPassword({
+          id: f.userName,
+          newPassword: f.password,
+          confirmNewPassword: f.confirmPassword,
+        }).then((data) => {
+          this.$message.success('密码已修改')
+        })
+      })
+    },
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (
@@ -153,7 +184,7 @@ export default {
       }
       this.invalid.userName.des = '验证成功'
       getUserSummary(userName, true)
-        .then(data => {
+        .then((data) => {
           this.invalid.userName.status = true
           this.invalid.userName.des =
             '此账号已被' + data.companyName + data.realName + '使用'
@@ -161,7 +192,7 @@ export default {
         .catch(() => {
           this.invalid.userName.status = false
         })
-    }
-  }
+    },
+  },
 }
 </script>
