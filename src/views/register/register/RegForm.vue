@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-card v-if="currentUser&&currentUser.id||!init_page_over" style="max-width:60rem">
-      <div class="reg-header">
-        <h2>{{ is_register?'欢迎注册':'审批注册' }}</h2>
-        <p v-if="is_register">
+      <div v-if="is_register" class="reg-header">
+        <h2>欢迎注册</h2>
+        <p>
           已有账号
           <el-button type="text" @click="switch_login">登录</el-button>
         </p>

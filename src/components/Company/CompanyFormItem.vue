@@ -3,7 +3,7 @@
     <Company v-model="id" :data.sync="form" :can-load="canLoad" />
     <span slot="reference">
       <el-tag v-if="form">{{ form.name }}</el-tag>
-      <el-tag v-else>{{ id }}�</el-tag>
+      <el-tag v-else>{{ id }}无效</el-tag>
     </span>
   </el-popover>
 </template>
@@ -15,40 +15,40 @@ export default {
   components: { Company },
   model: {
     prop: 'id',
-    event: 'change'
+    event: 'change',
   },
   props: {
     data: {
       type: Object,
       default() {
         return {
-          realName: 'null'
+          realName: 'null',
         }
-      }
+      },
     },
     id: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data: () => ({
     form: null,
-    canLoad: false
+    canLoad: false,
   }),
   watch: {
     data: {
       handler(val) {
         this.form = val
       },
-      immediate: true
+      immediate: true,
     },
     id: {
       handler(val) {
         if (val) this.canLoad = true
       },
-      immediate: true
-    }
-  }
+      immediate: true,
+    },
+  },
 }
 </script>
 

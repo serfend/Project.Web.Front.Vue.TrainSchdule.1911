@@ -106,37 +106,6 @@ export function getUserInfo() {
 }
 
 /**
- * 获取权限
- * @param {{
- * id: String,
- * Auth: {
- *   Code: String,
- *   AuthByUserID: String
- * },
- * }} params
- */
-export function getPermission(params) {
-  return request.get('account/Permission', {
-    params
-  })
-}
-
-/**
- * 新增权限
- * @param {{
- * id: String,
- * Auth: {
- *   Code: String,
- *   AuthByUserID: String,
- * },
- * newPermission: String
- * }} params
- */
-export function postPermission(params) {
-  return request.post('account/Permission', params)
-}
-
-/**
  * 修改授权码
  * @param { {
  * NewKey: String,

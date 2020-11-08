@@ -70,11 +70,25 @@
     </el-card>
     <Login v-else />
     <el-dialog :visible.sync="approve_show">
-      <register
-        :user-info="current_select_id"
-        @requireUpdate="requireLoadWaitToAUthRegisterUsers"
-        @requireHide="approve_show = false"
-      />
+      <el-tabs v-model="detail_pane">
+        <el-tab-pane label="基本信息">
+          <register
+            v-if="detail_pane=='0'"
+            :user-info="current_select_id"
+            @requireUpdate="requireLoadWaitToAUthRegisterUsers"
+            @requireHide="approve_show = false"
+          />
+        </el-tab-pane>
+        <el-tab-pane label="权限管理">
+          <PermissionManager
+            v-if="detail_pane=='1'"
+            :user-id="current_select_id&&current_select_id.id"
+          />
+        </el-tab-pane>
+        <el-tab-pane label="操作日志">
+          <div v-if="detail_pane=='2'">建设中</div>
+        </el-tab-pane>
+      </el-tabs>
     </el-dialog>
   </div>
 </template>
@@ -91,6 +105,7 @@ import { getUsersVacationLimit, getUserAvatar } from '@/api/user/userinfo'
 import { checkUserValid } from '@/utils/validate'
 import { debounce } from '@/utils'
 import register from '../register/RegForm'
+import PermissionManager from './PermissionManager'
 export default {
   name: 'Approve',
   components: {
@@ -101,6 +116,7 @@ export default {
     Login,
     User,
     register,
+    PermissionManager,
   },
   data: () => ({
     MembersQuery: {
@@ -113,6 +129,7 @@ export default {
     current_select_id: null,
     nowSelectCompany: null,
     loading: false,
+    detail_pane: '',
   }),
   computed: {
     currentUser() {
