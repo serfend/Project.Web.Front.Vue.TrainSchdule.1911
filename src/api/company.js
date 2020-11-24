@@ -39,11 +39,14 @@ export function companyDetail(id) {
  * @param {string} id 单位id
  * @returns
  */
-export function Managers(id) {
+export function Managers(id, userid) {
   return request({
     url: '/company/Managers',
     method: 'get',
-    id
+    params: {
+      id,
+      userid
+    }
   })
 }
 

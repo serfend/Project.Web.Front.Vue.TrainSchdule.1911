@@ -80,7 +80,7 @@
           />
         </el-tab-pane>
         <el-tab-pane label="权限管理">
-          <PermissionManager
+          <UserPermission
             v-if="detail_pane=='1'"
             :user-id="current_select_id&&current_select_id.id"
           />
@@ -105,7 +105,7 @@ import { getUsersVacationLimit, getUserAvatar } from '@/api/user/userinfo'
 import { checkUserValid } from '@/utils/validate'
 import { debounce } from '@/utils'
 import register from '../register/RegForm'
-import PermissionManager from './PermissionManager'
+import UserPermission from './UserPermission'
 export default {
   name: 'Approve',
   components: {
@@ -116,7 +116,7 @@ export default {
     Login,
     User,
     register,
-    PermissionManager,
+    UserPermission,
   },
   data: () => ({
     MembersQuery: {

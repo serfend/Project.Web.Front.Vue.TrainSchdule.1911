@@ -295,7 +295,6 @@ export default {
       )
     },
     handleCurrentChange(val) {
-      console.log('user select', val)
       if (!val) return
       this.current_select_id = val.id
       this.loading = true

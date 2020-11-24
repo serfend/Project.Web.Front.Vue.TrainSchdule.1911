@@ -28,14 +28,14 @@ export function allPermissions() {
 
 /**
  * 新增权限
- * @param {{
+ * @param
  * id: String,
  * Auth: {
  *   Code: String,
  *   AuthByUserID: String,
  * },
  * newPermission: String
- * }} params
+ *
  */
 export function postPermission(params) {
   return request.post('account/Permission', params)

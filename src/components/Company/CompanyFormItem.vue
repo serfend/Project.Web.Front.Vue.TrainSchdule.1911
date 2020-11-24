@@ -1,6 +1,6 @@
 <template>
   <el-popover placement="right" trigger="hover" @show="canLoad=true">
-    <Company v-model="id" :data.sync="form" :can-load="canLoad" />
+    <Company v-model="id" :data.sync="form" :can-load="canLoad" @formUpdate="handleChange" />
     <span slot="reference">
       <el-tag v-if="form">{{ form.name }}</el-tag>
       <el-tag v-else>{{ id }}无效</el-tag>
@@ -47,6 +47,11 @@ export default {
         if (val) this.canLoad = true
       },
       immediate: true,
+    },
+  },
+  methods: {
+    handleChange() {
+      this.$emit('update:data', this.form)
     },
   },
 }

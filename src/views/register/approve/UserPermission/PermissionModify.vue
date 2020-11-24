@@ -8,17 +8,18 @@
       <CompaniesSelector v-model="companies" @change="hasChange" />
     </div>
     <div class="card-item">
-      <div>当前已有权限的作用范围:{{ companies.length }}条</div>
+      <div style="margin-bottom:1rem">当前已有权限的作用范围:{{ companies.length }}条</div>
       <CompanyFormItem
         v-for="(i,index) in companies"
         :key="index"
         v-model="i.code"
+        :data.sync="companies[index]"
         style="margin:0.5rem"
       >{{ i.code }}</CompanyFormItem>
     </div>
     <el-card class="card-item">
-      <el-button type="text" @click="$emit('require-update')">保存</el-button>
-      <el-button type="success" @click="$emit('require-close')">取消</el-button>
+      <el-button type="success" style="width:10rem" @click="$emit('require-update')">保存</el-button>
+      <el-button type="info" style="width:10rem;float:right" @click="$emit('require-close')">取消</el-button>
     </el-card>
   </div>
 </template>
@@ -56,7 +57,8 @@ export default {
   watch: {
     value: {
       handler(val) {
-        this.companies = val.permissions.map((i) => ({ code: i }))
+        const p = val.permissions
+        this.companies = (p && p.map((i) => ({ code: i }))) || []
       },
       immediate: true,
     },

@@ -104,6 +104,7 @@ export default {
         .then(data => {
           const c = data.model
           this.$emit('update:data', c)
+          this.$emit('formUpdate', c)
           this.loaded = true
         })
         .finally(() => {
