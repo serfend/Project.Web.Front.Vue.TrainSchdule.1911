@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import './js/flexible'
+import Flexible from './js/flexible'
 import Square from './components/Square'
 
 import TimeCenter from './components/NumberCounter/TimeCenter'
@@ -108,6 +108,7 @@ export default {
     VacationStatisticsLine
   },
   data: () => ({
+    flexible: new Flexible(window, document),
     loading: false,
     echartGeoComplete: false,
     initStatus: 'wait init',
@@ -291,7 +292,11 @@ export default {
       this.init()
     }, 2000)
   },
+  created() {
+    this.flexible.init()
+  },
   beforeDestroy() {
+    this.flexible.terminate()
     window.removeEventListener('resize', this.resize)
   },
   methods: {

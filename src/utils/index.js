@@ -3,7 +3,7 @@
  */
 
 export const getDateDelta = (s, e) => {
-  const yearDelta = e.getRFullYear() - s.getFullYear()
+  const yearDelta = e.getFullYear() - s.getFullYear()
   const monthDelta = e.getMonth() - s.getMonth()
   const dayDelta = e.getDate() - s.getDate()
   return [yearDelta, monthDelta, dayDelta]

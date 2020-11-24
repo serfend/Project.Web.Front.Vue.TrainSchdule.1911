@@ -1,33 +1,44 @@
-(function flexible(window, document) {
+
+export default function flexible(window, document) {
   var docEl = document.documentElement
   var dpr = window.devicePixelRatio || 1
-
+  this.pre_setting = {}
   // adjust body font size
-  function setBodyFontSize() {
+  this.setBodyFontSize = function () {
     if (document.body) {
+      this.pre_setting.docFontSize = document.body.style.fontSize
       document.body.style.fontSize = 12 * dpr + 'px'
     } else {
-      document.addEventListener('DOMContentLoaded', setBodyFontSize)
+      document.addEventListener('DOMContentLoaded', this.setBodyFontSize)
     }
   }
-  setBodyFontSize()
 
   // set 1rem = viewWidth / 10
-  function setRemUnit() {
+  this.setRemUnit = function () {
     var rem = docEl.clientWidth / 24
+    this.pre_setting.docElFontSize = docEl.style.fontSize
     docEl.style.fontSize = rem + 'px'
   }
 
-  setRemUnit()
-
   // reset rem unit on page resize
-  window.addEventListener('resize', setRemUnit)
-  window.addEventListener('pageshow', function(e) {
+  window.addEventListener('resize', () => this.setRemUnit)
+  window.addEventListener('pageshow', function (e) {
     if (e.persisted) {
-      setRemUnit()
+      this.setRemUnit()
     }
   })
-
+  this.init = function () {
+    this.pre_setting.inited = true
+    this.setBodyFontSize()
+    this.setRemUnit()
+  }
+  this.terminate = function () {
+    if (this.pre_setting.inited) {
+      this.pre_setting.inited = false
+      document.body.style.fontSize = this.pre_setting.docFontSize
+      docEl.style.fontSize = this.pre_setting.docElFontSize
+    }
+  }
   // detect 0.5px supports
   if (dpr >= 2) {
     var fakeBody = document.createElement('body')
@@ -40,4 +51,4 @@
     }
     docEl.removeChild(fakeBody)
   }
-})(window, document)
+}

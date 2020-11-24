@@ -1,6 +1,6 @@
 <template>
   <el-tooltip placement="top" effect="light" :content="description">
-    <div :style="{ width:size+'em',height:size+'em'}">
+    <div :style="{ width:size+'rem',height:size+'rem'}">
       <el-image
         v-if="icon"
         :class="isActive?'icon-buttonactive':'icon-button'"
@@ -19,7 +19,7 @@
       />
       <div
         :class="isActive?'icon-labelactive':'icon-label'"
-        :style="{'font-size':(size/5)+'em'}"
+        :style="{'font-size':(size/5)+'rem'}"
       >{{ label }}</div>
     </div>
   </el-tooltip>
@@ -71,8 +71,8 @@ export default {
 <style lang="scss" scoped>
 .icon-button {
   border-radius: 10%;
-  color: #3f3fff;
-  background-color: #ffffff;
+  color: #fff;
+  background-color: #33f;
   opacity: 0.7;
   width: 100%;
   height: 100%;
@@ -82,8 +82,8 @@ export default {
 }
 .icon-buttonactive {
   border-radius: 10%;
-  color: #00009f;
-  background-color: #8f8fef;
+  color: #fff;
+  background-color: #009;
   opacity: 1;
   width: 100%;
   height: 100%;
@@ -94,23 +94,23 @@ export default {
   user-select: none;
 }
 .icon-label {
-  border-radius: 0.2em;
-  background-color: #00009f;
+  border-radius: 0.2rem;
+  background-color: #33f;
   opacity: 0.8;
   text-align: center;
-  color: #ffffff;
+  color: #fff;
   transition: all 0.5s;
   box-shadow: 2px 2px 1px 1px rgba(0, 0, 0, 0.7);
-  margin: 1em 0;
+  margin: 1rem 0;
   user-select: none;
 }
 
 .icon-labelactive {
-  border-radius: 0.2em;
-  background-color: #0000ff;
+  border-radius: 0.1rem;
+  background-color: #33a;
   opacity: 0.8;
   text-align: center;
-  color: #ffffff;
+  color: #fff;
   transform: translateY(4px);
   transform: scale(1.5);
   transition: all 0.5s;

@@ -1,7 +1,7 @@
 <template>
   <el-container>
-    <div style="width:100%">
-      <el-main>
+    <div style="width:100%;height:100%">
+      <el-main style="height:100%;user-select:none">
         <el-row v-if="showTitle" type="flex">
           <div>
             <span style="color:#ffffff;font-size:2em">{{ $store.state.settings.title }}</span>
@@ -22,12 +22,20 @@
         </el-row>
         <el-divider v-if="showTitle" />
         <el-row>
-          <el-col v-for="i in innerList" :key="i.id" :xs="12" :sm="8" :md="6" :lg="4">
+          <el-col
+            v-for="i in innerList"
+            :key="i.id"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            style="display:flex;justify-content:center"
+          >
             <AppIcon
-              style="margin:3em 2em"
+              style="margin:3em 2em;"
               :icon="i.icon"
               :svg="i.svg"
-              :size="8"
+              :size="12"
               :label="i.label"
               :description="i.description"
               @click="lintTo(i)"
