@@ -1,5 +1,5 @@
 <template>
-  <el-tooltip placement="top" effect="light" :content="description">
+  <el-tooltip placement="top" effect="dark" :content="description">
     <div :style="{ width:size+'rem',height:size+'rem'}">
       <el-image
         v-if="icon"
@@ -111,8 +111,7 @@ export default {
   opacity: 0.8;
   text-align: center;
   color: #fff;
-  transform: translateY(4px);
-  transform: scale(1.5);
+  transform: translateY(2rem) scale(1.2);
   transition: all 0.5s;
   user-select: none;
 }

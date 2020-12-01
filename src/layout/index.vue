@@ -7,7 +7,6 @@
         <navbar />
       </div>
       <app-main />
-      <Footer :show="true" />
     </div>
   </div>
 </template>
@@ -16,7 +15,6 @@
 import { AppMain, Navbar, Sidebar } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
-import Footer from '@/views/welcome/Footer'
 
 export default {
   name: 'Layout',
@@ -24,7 +22,6 @@ export default {
     AppMain,
     Navbar,
     Sidebar,
-    Footer,
   },
   mixins: [ResizeMixin],
   computed: {

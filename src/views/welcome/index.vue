@@ -91,13 +91,13 @@ export default {
             svg: 'auditapply',
             href: '/vacation/queryAndAuditApplies',
           },
-          {
-            label: '统计信息',
-            description: '各单位休假情况统计驾驶舱',
-            // icon: '/favicon.png',
-            svg: 'HTTPcuowushuai',
-            href: '/dashboard',
-          },
+          // {
+          //   label: '统计信息',
+          //   description: '各单位休假情况统计驾驶舱',
+          //   // icon: '/favicon.png',
+          //   svg: 'HTTPcuowushuai',
+          //   href: '/dashboard',
+          // },
         ]
       },
     },
@@ -144,11 +144,7 @@ export default {
   left: 0px;
   width: 100%;
   height: 100%;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgb(30, 30, 144),
-    rgb(185, 157, 201),
-    rgb(162, 104, 180)
-  );
+  background: url(~@/assets/jpg/app/reg_bg_min_blur.jpg) no-repeat;
+  background-size: 100%;
 }
 </style>

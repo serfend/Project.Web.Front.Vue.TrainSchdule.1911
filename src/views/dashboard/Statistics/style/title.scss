@@ -15,11 +15,12 @@
   background-size: 100% 100%;
 }
 .statistics-title h1 {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-family: "Sacramento", cursive;
   text-shadow: 0 0 0.02rem rgb(0, 183, 255);
   color: #fff;
   text-align: center;
+  margin: 0.05rem;
 }
 .dv-border-box-11-title {
   font-family: "Sacramento", cursive;
@@ -28,8 +29,8 @@
 %statistics-title-panel {
   @extend %statistics-title-panel-span;
   position: absolute;
-  top: 0;
-  line-height: 0.9375rem;
+  top: 0.25rem;
+  line-height: 0.5rem;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.325rem;
   font-family: "electronicFont";
