@@ -34,7 +34,18 @@ export function queryList(data, ignoreErr) {
     ignoreError: ignoreErr
   })
 }
-
+/**
+ *按筛选查询申请列表的id
+ *
+ * @export
+ * @param {*} data
+ * @param {*} ignoreErr
+ */
+export function queryListId(data, ignoreErr) {
+  return request.post('/apply/listShadow', data, {
+    ignoreError: ignoreErr
+  })
+}
 /**
  * 构造一个查询模型
  *

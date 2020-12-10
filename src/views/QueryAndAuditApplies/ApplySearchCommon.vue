@@ -208,6 +208,7 @@ import UserSelector from '@/components/User/UserSelector'
 import DutiesSelector from '@/components/Duty/DutiesSelector'
 import {
   queryList,
+  queryListId,
   queryMyAudit,
   createQueryApplyModel,
 } from '@/api/apply/query'
@@ -376,7 +377,7 @@ export default {
       // this.$emit('update:pages', f.pages)
       this.$emit('update:pagesTotalCount', data.totalCount)
     },
-    searchData(userAct, callback, pages) {
+    searchData(userAct, callback, pages, only_id) {
       // if (!userAct && this.onFormModifying) {
       //   this.$message.error('操作太快啦,歇歇吧~')
       //   return
@@ -395,9 +396,12 @@ export default {
       const status = form.status
       const actionStatus = form.actionStatus
       const execStatus = form.executeStatus
-      const action = this.adminQuery
-        ? queryList(f)
-        : queryMyAudit(f.pages, status, actionStatus, execStatus)
+      let action
+      if (this.adminQuery) {
+        action = only_id ? queryListId(f) : queryList(f)
+      } else {
+        action = queryMyAudit(f.pages, status, actionStatus, execStatus)
+      }
       action
         .then((data) => {
           callback(data)
