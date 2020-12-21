@@ -21,6 +21,13 @@ const commentsRouter =
         title: 'comments.bbs.title',
         icon: 'group'
       }
+    }, {
+      path: 'suggest',
+      component: () => import('@/views/Suggest'),
+      meta: {
+        title: 'comments.suggest.title',
+        icon: 'dispose'
+      }
     }]
 }
 

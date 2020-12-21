@@ -17,7 +17,7 @@ const state = {
     loading: false,
     content: null
   },
-  focus: true
+  focus: true,
 }
 
 const mutations = {

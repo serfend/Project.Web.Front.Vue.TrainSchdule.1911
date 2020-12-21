@@ -42,7 +42,6 @@
             />
           </el-col>
         </el-row>
-        <Footer />
       </el-main>
     </div>
   </el-container>
@@ -50,11 +49,10 @@
 
 <script>
 import AppIcon from '@/components/AppIcon'
-import Footer from './Footer'
 import { formatTime } from '@/utils'
 export default {
   name: 'Welcome',
-  components: { AppIcon, Footer },
+  components: { AppIcon },
   props: {
     showTitle: {
       type: Boolean,
@@ -145,6 +143,6 @@ export default {
   width: 100%;
   height: 100%;
   background: url(~@/assets/jpg/app/reg_bg_min_blur.jpg) no-repeat;
-  background-size: 100%;
+  background-size: cover;
 }
 </style>

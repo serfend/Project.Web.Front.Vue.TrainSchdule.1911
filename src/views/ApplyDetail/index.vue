@@ -124,7 +124,7 @@ import AuditStatus from './components/AuditStatus'
 import MyApply from '@/views/MyApply'
 import DetailShare from './components/DetailShare'
 import { debounce } from '../../utils'
-import ApplyComments from './components/ApplyComments'
+import ApplyComments from '@/components/BiliComment'
 export default {
   name: 'ApplyDetail',
   components: {

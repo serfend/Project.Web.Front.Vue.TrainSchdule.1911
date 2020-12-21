@@ -4,15 +4,18 @@
       <router-view />
     </transition>
     <ClipboardMonitor />
+    <Footer v-if="!$route.meta.hide_footer" />
   </div>
 </template>
 
 <script>
 import ClipboardMonitor from '@/views/common/ClipboardMonitor'
+import Footer from '@/views/welcome/Footer'
 export default {
   name: 'App',
-  components: { ClipboardMonitor },
+  components: { ClipboardMonitor, Footer },
   mounted() {
+    console.log(this.$route)
     this.$store.dispatch('settings/initProject')
     this.show_tip()
     this.$store.dispatch('user/initUserInfo')

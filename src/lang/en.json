@@ -150,6 +150,9 @@
     },
     "bbs": {
       "title": "bbs"
+    },
+    "suggest": {
+      "title": "suggest"
     }
   },
   "settings": {

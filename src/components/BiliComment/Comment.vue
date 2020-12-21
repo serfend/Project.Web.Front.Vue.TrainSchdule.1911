@@ -1,6 +1,7 @@
 <template>
   <div v-if="id" v-loading="loading_whole">
-    <ApplyCommentSender :id="id" @newContent="newContent" />
+    <slot v-if="$slots.sender" name="sender" />
+    <CommentSender v-else :id="id" @newContent="newContent" />
     <el-divider />
     <SingleComment
       v-for="(i,index) in list"
@@ -16,17 +17,20 @@
         @click="load_page(false)"
       >{{ hasNextPage?'查看更多':'没有更多啦~' }}</el-button>
     </div>
-    <ApplyCommentSender v-if="list.length>10" :id="id" @newContent="newContent" />
+    <div v-if="list.length>10">
+      <slot v-if="$slots.sender" name="sender" />
+      <CommentSender v-else :id="id" @newContent="newContent" />
+    </div>
   </div>
 </template>
 
 <script>
-import ApplyCommentSender from './ApplyCommentSender'
+import CommentSender from './CommentSender'
 import SingleComment from './SingleComment'
 import { getComments } from '@/api/apply/attach_info'
 export default {
-  name: 'ApplyComment',
-  components: { SingleComment, ApplyCommentSender },
+  name: 'BiliComment',
+  components: { SingleComment, CommentSender },
   props: {
     id: {
       type: String,
@@ -60,6 +64,9 @@ export default {
       },
       immediate: true,
     },
+  },
+  mounted() {
+    console.log(this.$slots)
   },
   methods: {
     newContent(item) {

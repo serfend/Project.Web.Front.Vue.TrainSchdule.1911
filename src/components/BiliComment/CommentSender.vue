@@ -30,7 +30,7 @@
 <script>
 import { postComments } from '@/api/apply/attach_info'
 export default {
-  name: 'ApplyCommentSender',
+  name: 'CommentSender',
   props: {
     id: {
       type: String,

@@ -10,7 +10,7 @@
         content="https://serfend.top/s/b4afa7"
         description="扫码反馈意见/问题"
       />
-      <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs/">意见反馈</el-link>
+      <el-link slot="reference" type="primary" href="/#/system/comments/suggest">意见反馈</el-link>
     </el-popover>
     <el-popover placement="top" trigger="hover" @show="policyHasShow = true">
       <ContactMe

@@ -19,7 +19,6 @@ const messages = {
 }
 for (let i = 0; i < lang.length; i++) {
   const l = lang[i]
-
   const lastLang = localStorage.getItem(`lang.${l}`)
   if (lastLang) {
     Object.assign(messages[l], JSON.parse(lastLang))
@@ -41,7 +40,7 @@ for (let i = 0; i < lang.length; i++) {
     console.warn('lang file load fail', e)
   })
 }
-console.log('default lang loaded', JSON.stringify(messages))
+// console.log('default lang loaded', JSON.stringify(messages))
 
 export function getLanguage() {
   const chooseLanguage = Cookies.get('language')

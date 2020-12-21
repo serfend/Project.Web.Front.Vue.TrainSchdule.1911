@@ -3,7 +3,7 @@
     <span style="font-size:1.5rem">{{ totalCount }} 评论</span>
     <el-tabs v-model="active_tab" @tab-click="handleClick">
       <el-tab-pane v-for="i in comment_pan" :key="i.name" :label="i.alias" :name="i.name">
-        <ApplyComment
+        <Comment
           v-show="active_tab==i.name"
           :id="id"
           :ref="i.name"
@@ -11,21 +11,23 @@
           :total-count.sync="totalCount"
           @requireDelete="totalCount--"
           @requireAdd="totalCount++"
-        />
+        >
+          <slot v-if="$slots.sender" slot="sender" name="sender" />
+        </Comment>
       </el-tab-pane>
     </el-tabs>
   </el-card>
 </template>
 
 <script>
-import ApplyComment from './ApplyComment'
+import Comment from './Comment'
 const comment_pan = [
   { name: 'as_popularity', alias: '按热度排序' },
   { name: 'as_date', alias: '按时间排序' },
 ]
 export default {
-  name: 'ApplyComments',
-  components: { ApplyComment },
+  name: 'Comments',
+  components: { Comment },
   props: {
     id: {
       type: String,

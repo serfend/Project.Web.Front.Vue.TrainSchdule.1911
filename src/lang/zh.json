@@ -150,6 +150,9 @@
     },
     "bbs": {
       "title": "论坛"
+    },
+    "suggest": {
+      "title": "意见建议"
     }
   },
   "settings": {

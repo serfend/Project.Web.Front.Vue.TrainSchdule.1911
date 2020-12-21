@@ -20,7 +20,8 @@ export const constantRoutes = [
     name: 'Dashboard',
     meta: {
       title: 'dashboard',
-      icon: 'chart'
+      icon: 'chart',
+      hide_footer: true
     }
   }, user, application, system, game, phy_grade, application_setting, member_rate
 ].concat(others)
