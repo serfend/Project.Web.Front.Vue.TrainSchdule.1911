@@ -306,7 +306,8 @@ export default {
     },
     // call by base info ,DO NOT REMOVE
     refreshVacation() {
-      getUsersVacationLimit(this.userid)
+      const user_select_leave_year = (this.formApply && new Date(this.formApply.StampLeave).getFullYear()) || new Date().getFullYear()
+      getUsersVacationLimit(this.userid, user_select_leave_year)
         .then((data) => {
           this.usersvacation = data
         })
@@ -414,6 +415,7 @@ export default {
     },
     updateChangeDirect() {
       const caculaingDate = this.caculaingDate()
+      this.refreshVacation()
       if (caculaingDate.length < 0) return
       this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
       getStampReturn(caculaingDate).then((data) => {
