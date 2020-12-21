@@ -9,7 +9,7 @@ export default [
     }]
   }, {
     path: '/markdown',
-    component: () => import('@/views/ApplyStream/components/ApplyStreamAbout'),
+    component: () => import('@/components/MarkdownEditor'),
     hidden: true
   }, {
     path: '/contactme',
