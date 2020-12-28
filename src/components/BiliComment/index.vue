@@ -4,7 +4,7 @@
     <el-tabs v-model="active_tab" @tab-click="handleClick">
       <el-tab-pane v-for="i in comment_pan" :key="i.name" :label="i.alias" :name="i.name">
         <Comment
-          v-show="active_tab==i.name"
+          v-if="active_tab==i.name"
           :id="id"
           :ref="i.name"
           :order="i.name"
@@ -40,13 +40,17 @@ export default {
     comment_pan: comment_pan,
   }),
   methods: {
+    comp() {
+      const t = comment_pan.find(i => this.$refs[i.name].length > 0)
+      return this.$refs[t.name]
+    },
     handleClick(tab) {
-      const c = this.$refs[tab.name][0]
-      if (!c || !c.reload_page) {
-        this.$message.error('评论加载失败')
-        return
-      }
-      c.reload_page()
+      // const c = this.$refs[tab.name][0]
+      // if (!c || !c.reload_page) {
+      //   this.$message.error('评论加载失败')
+      //   return
+      // }
+      // c.reload_page()
     },
   },
 }

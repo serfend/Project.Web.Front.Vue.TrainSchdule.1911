@@ -16,12 +16,9 @@
             <span class="user-name">{{ data.from?data.from.realName:'未知用户' }}</span>
           </span>
         </el-popover>
-        <p style="margin-top:1rem">
-          <span v-for="(i,index) in data.content.split('\n')" :key="index">
-            {{ i }}
-            <br>
-          </span>
-        </p>
+        <el-card style="margin:1rem 0">
+          <MarkdownViewer :content="data.content" />
+        </el-card>
         <div class="footer">
           <el-tooltip effect="light" :content="parseTime(data.create)">
             <span class="time">{{ formatTime(new Date(data.create)) }}</span>
@@ -47,9 +44,10 @@ import { getUserAvatar } from '@/api/user/userinfo'
 import { likeComments, postComments } from '@/api/apply/attach_info'
 import SvgIcon from '@/components/SvgIcon'
 import User from '@/components/User'
+import MarkdownViewer from '@/components/MarkdownEditor/Viewer'
 export default {
   name: 'SingleComment',
-  components: { SvgIcon, User },
+  components: { SvgIcon, User, MarkdownViewer },
   props: {
     data: {
       type: Object,
@@ -109,7 +107,7 @@ export default {
     async handle_delete() {
       const check = await this.$confirm('确定要删除评论吗', {
         type: 'warning',
-      }).catch((e) => {})
+      }).catch((e) => { })
       if (!check) return
       this.loading = true
       postComments({ id: this.data.id, isRemove: true })
@@ -135,6 +133,15 @@ export default {
 
 .footer {
   user-select: none;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 8rem;
+  opacity: 0.5;
+  transition: all ease 0.5s;
+  &:hover {
+    width: 100%;
+    opacity: 1;
+  }
   .time {
     color: #aaa;
   }

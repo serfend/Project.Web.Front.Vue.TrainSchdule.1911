@@ -3,6 +3,7 @@
     ref="Editor"
     :options="Object.assign(defaultOptions,options)"
     :initial-value="value"
+    :initial-edit-type="'wysiwyg'"
     @load="init"
   />
 </template>
@@ -35,24 +36,25 @@ export default {
       useCommandShortcut: true,
       useDefaultHTMLSanitizer: true,
       usageStatistics: true,
+
       hideModeSwitch: true,
       toolbarItems: [
-        // 'heading',
-        // 'bold',
-        // 'italic',
-        // 'strike',
-        // 'divider',
-        // 'hr',
-        // 'quote',
-        // 'divider',
-        // 'ul',
-        // 'ol',
-        // 'task',
-        // 'indent',
-        // 'outdent',
-        // 'divider',
+        'heading',
+        'bold',
+        'italic',
+        'strike',
+        'divider',
+        'hr',
+        'quote',
+        'divider',
+        'ul',
+        'ol',
+        'task',
+        'indent',
+        'outdent',
+        'divider',
         'table',
-        'image',
+        // 'image',
         'link',
         // 'divider',
         // 'code',
@@ -68,7 +70,7 @@ export default {
       console.log(editor)
     },
     get_content() {
-      return ''
+      return this.$refs.Editor.editor.getMarkdown()
     }
   }
 }

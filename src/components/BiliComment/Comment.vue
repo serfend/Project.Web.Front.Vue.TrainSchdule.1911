@@ -1,11 +1,11 @@
 <template>
   <div v-if="id" v-loading="loading_whole">
     <slot v-if="$slots.sender" name="sender" />
-    <CommentSender v-else :id="id" @newContent="newContent" />
+    <CommentSender v-show="!$slots.sender" :id="id" ref="default_sender" @newContent="newContent" />
     <el-divider />
     <SingleComment
       v-for="(i,index) in list"
-      :key="index"
+      :key="i.id"
       :data="i"
       @requireDelete="requireDelete(index)"
     />
@@ -69,6 +69,10 @@ export default {
     console.log(this.$slots)
   },
   methods: {
+    send_content(content, cb) {
+      console.log(this.$refs.default_sender)
+      this.$refs.default_sender.send_to(content, cb)
+    },
     newContent(item) {
       item.model.create = new Date()
       this.list.unshift(item.model)

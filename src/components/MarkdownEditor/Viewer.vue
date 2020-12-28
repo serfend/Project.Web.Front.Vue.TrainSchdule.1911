@@ -1,5 +1,5 @@
 <template>
-  <Viewer ref="Viewer" :initial-value="value" />
+  <Viewer ref="Viewer" :initial-value="fileName?value:content" />
 </template>
 
 <script>
@@ -18,6 +18,10 @@ export default {
       type: String,
       default: 'client-sfvue'
     },
+    content: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -43,6 +47,7 @@ export default {
   methods: {
     refreshDoc(targetFile) {
       targetFile = targetFile || this.fileName
+      if (!targetFile) return
       loadDocument(this.path, targetFile)
         .then(i => {
           this.$refs.Viewer.editor.setMarkdown(i)

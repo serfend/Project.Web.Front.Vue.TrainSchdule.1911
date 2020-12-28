@@ -42,6 +42,7 @@
             />
           </el-col>
         </el-row>
+        <Footer />
       </el-main>
     </div>
   </el-container>
@@ -50,9 +51,10 @@
 <script>
 import AppIcon from '@/components/AppIcon'
 import { formatTime } from '@/utils'
+import Footer from '@/views/welcome/Footer'
 export default {
   name: 'Welcome',
-  components: { AppIcon },
+  components: { AppIcon, Footer },
   props: {
     showTitle: {
       type: Boolean,

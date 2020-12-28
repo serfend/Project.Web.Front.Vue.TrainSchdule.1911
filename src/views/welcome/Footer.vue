@@ -4,13 +4,17 @@
       <ContactMe v-if="contactMeHasShow" content="https://u.wechat.com/MKXY9nIvV-9oPgMNhB4cd58" />
       <el-link slot="reference" type="primary">联系我们</el-link>
     </el-popover>
-    <el-popover placement="top" trigger="hover" @show="helpMeHasShow = true">
-      <ContactMe
-        v-if="helpMeHasShow"
-        content="https://serfend.top/s/b4afa7"
-        description="扫码反馈意见/问题"
-      />
-      <el-link slot="reference" type="primary" href="/#/system/comments/suggest">意见反馈</el-link>
+    <el-popover v-model="show_suggest" trigger="hover">
+      <SvgIcon icon-class="community_line" />
+      <span>意见反馈在这里</span>
+      <el-popover slot="reference" placement="top" trigger="hover" @show="helpMeHasShow = true">
+        <ContactMe
+          v-if="helpMeHasShow"
+          content="https://serfend.top/s/b4afa7"
+          description="扫码反馈意见/问题"
+        />
+        <el-link slot="reference" type="primary" href="/#/system/comments/suggest">意见反馈</el-link>
+      </el-popover>
     </el-popover>
     <el-popover placement="top" trigger="hover" @show="policyHasShow = true">
       <ContactMe
@@ -22,6 +26,7 @@
     </el-popover>
     <div style="float:right;color:#bbb">
       <span>©2020 sf</span>
+      <a v-if="ICP" href="http://beian.miit.gov.cn">{{ ICP }}</a>
       <span>{{ $store.state.settings.title }}</span>
       <el-popover trigger="hover">
         <p>{{ $store.state.settings.notice }}</p>
@@ -33,10 +38,10 @@
 
 <script>
 import ContactMe from '@/components/ContactMe'
-
+import SvgIcon from '@/components/SvgIcon'
 export default {
   name: 'Footer',
-  components: { ContactMe },
+  components: { ContactMe, SvgIcon },
   props: {
     show: { type: Boolean, default: true },
   },
@@ -44,7 +49,22 @@ export default {
     contactMeHasShow: false,
     helpMeHasShow: false,
     policyHasShow: false,
+    show_suggest: false
   }),
+  computed: {
+    ICP() {
+      return process.env.VUE_APP_ICP
+    }
+  },
+  mounted() {
+    const user = this.$store.state.user.id
+    const id = `current_account_last_show_suggest:${user}`
+    const current_account_last_show_suggest = localStorage.getItem(id)
+    if (new Date() - new Date(current_account_last_show_suggest) > 56e7) {
+      localStorage.setItem(id, new Date())
+      this.show_suggest = true
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

@@ -1,11 +1,12 @@
 <template>
   <div>
-    <el-alert type="warning">意见反馈栏目建设中...</el-alert>
-    <BiliComment id="7927df03-bb1e-4a2a-b8cb-04a1039c3d23">
+    <BiliComment id="7927df03-bb1e-4a2a-b8cb-04a1039c3d23" ref="comment">
       <template slot="sender">
-        <MarkdownEditor v-model="comment" :options="options" />
-        <div class="cmd-bar">
-          <el-button type="success" class="cmd-btn">发送</el-button>
+        <MarkdownEditor ref="editor" v-model="comment" :options="options" />
+        <div style="height:5rem">
+          <div class="cmd-bar">
+            <el-button v-loading="loading" type="success" class="cmd-btn" @click="send_comment">发送</el-button>
+          </div>
         </div>
       </template>
     </BiliComment>
@@ -21,14 +22,24 @@ export default {
   data: () => ({
     comment: '',
     options: {
-      placeholder: '发一条评论，友善的说说你的看法吧~'
+      placeholder: '意见反馈,图像上传格式【![名称](网址链接)】',
+    },
+    loading: false
+  }),
+  methods: {
+    send_comment() {
+      this.loading = true
+      const comment = this.$refs.editor.get_content()
+      const comp = this.$refs.comment
+      const cp = comp.comp()[0]
+      cp.send_content(comment, () => { this.loading = false })
     }
-  })
+  }
 }
 </script>
 <style lang="scss" scoped>
 .cmd-bar {
-  margin-top: 1rem;
+  margin-top: 2rem;
   float: right;
   .cmd-btn {
     min-width: 8rem;

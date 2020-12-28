@@ -47,18 +47,22 @@ export default {
     },
   },
   methods: {
-    async send_to() {
-      if (!this.content || this.content.length < 1) {
+    async send_to(content, cb) {
+      content = content || this.content
+      if (!content || content < 1) {
         const f = await this.$confirm(
           '评论没有内容，确定要发送吗？'
-        ).catch((e) => {})
-        if (!f) return
+        ).catch((e) => { })
+        if (!f) {
+          cb()
+          return
+        }
       }
       this.sending = '发送中...'
       const item = {
-        content: this.content,
+        content: content,
       }
-      postComments({ apply: this.id, content: this.content })
+      postComments({ apply: this.id, content: content })
         .then((data) => {
           this.sending = '发送成功'
           item.model = data.model
@@ -72,6 +76,7 @@ export default {
             this.$emit('newContent', item)
             this.sending = null
             this.content = ''
+            cb(item)
           }, 1e3)
         })
     },
