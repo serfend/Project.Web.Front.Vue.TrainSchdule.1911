@@ -311,8 +311,13 @@ export default {
         .then((data) => {
           this.usersvacation = data
         })
-        .finally(() => {
+        .catch(() => {
           this.resetLoading()
+        }).finally(() => {
+          if (user_select_leave_year !== this.user_select_leave_year) {
+            this.user_select_leave_year = user_select_leave_year
+            this.resetLoading()
+          }
         })
     },
     resetSettle(val) {
