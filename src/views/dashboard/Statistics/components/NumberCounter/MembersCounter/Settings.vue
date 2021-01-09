@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-for="(item,index) in data" :key="index">
-      <SingleSetting v-model="data[index]" @deleted="deleteItem(index)" />
+    <div v-for="(item, index) in data" :key="index">
+      <SingleSetting :value.sync="data[index]" @deleted="deleteItem(index)" />
     </div>
-    <el-button type="success" icon="el-icon-plus" style="width:100%" @click="addNew">添加</el-button>
+    <el-button type="success" icon="el-icon-plus" style="width: 100%" @click="addNew">添加</el-button>
   </div>
 </template>
 
@@ -14,13 +14,13 @@ export default {
   components: { SingleSetting },
   model: {
     prop: 'data',
-    event: 'change'
+    event: 'change',
   },
   props: {
     data: {
       type: Array,
-      default: null
-    }
+      default: null,
+    },
   },
   methods: {
     addNew() {
@@ -32,10 +32,9 @@ export default {
       const newData = this.data
       newData.splice(index, 1)
       this.$emit('update:data', newData)
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style>
-</style>
+<style></style>

@@ -12,21 +12,26 @@
         >
           <i slot="reference" class="el-icon-delete delete-btn" />
         </el-popconfirm>
-        <el-color-picker v-model="data.color" />
+        <el-color-picker :value.sync="data.color" />
       </el-col>
       <el-col :span="6">
-        <el-input v-model="data.title" placeholder="标题" />
+        <el-input :value.sync="data.title" placeholder="标题" />
       </el-col>
       <el-col :span="5">
-        <el-select v-model="data.collection" placeholder="使用集合">
-          <el-option v-for="opt in opts" :key="opt.value" :label="opt.label" :value="opt.value" />
+        <el-select :value.sync="data.collection" placeholder="使用集合">
+          <el-option
+            v-for="opt in opts"
+            :key="opt.value"
+            :label="opt.label"
+            :value="opt.value"
+          />
         </el-select>
       </el-col>
       <el-col :span="5">
-        <el-input v-model="data.filter" placeholder="条件" />
+        <el-input :value.sync="data.filter" placeholder="条件" />
       </el-col>
       <el-col :span="5">
-        <el-select v-model="data.binding" placeholder="绑定到">
+        <el-select :value.sync="data.binding" placeholder="绑定到">
           <el-option
             v-for="opt in props[data.collection]"
             :key="opt.key"
@@ -45,17 +50,17 @@ export default {
   name: 'MembersCardSetting',
   model: {
     prop: 'data',
-    event: 'change'
+    event: 'change',
   },
   props: {
     data: {
       type: Object,
-      default: null
-    }
+      default: null,
+    },
   },
   data: () => ({
     opts: [],
-    props: {}
+    props: {},
   }),
   created() {
     const keys = Object.keys(apiOption)
@@ -68,8 +73,8 @@ export default {
   methods: {
     confirmDelete() {
       this.$emit('deleted')
-    }
-  }
+    },
+  },
 }
 </script>
 

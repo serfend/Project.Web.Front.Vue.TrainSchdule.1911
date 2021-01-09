@@ -14,13 +14,14 @@
     </el-form-item>
     <el-form-item label="上次登录">
       <el-tag>{{ formatDate(innerUserInfo.lastLogin) }}</el-tag>
-      <el-button
-        :type="innerUserInfo.isLoginToday?'info':'success'"
-        @click="login"
-      >{{ innerUserInfo.isLoginToday?'今日已签到啦':'点击签到' }}</el-button>
+      <el-button :type="innerUserInfo.isLoginToday ? 'info' : 'success'" @click="login">{{
+        innerUserInfo.isLoginToday ? '今日已签到啦' : '点击签到'
+      }}</el-button>
     </el-form-item>
     <el-form-item label="预计领取">
-      <el-tag>{{ formatDate(innerUserInfo.lastHandleStamp+innerUserInfo.handleInterval) }}</el-tag>
+      <el-tag>{{
+        formatDate(innerUserInfo.lastHandleStamp + innerUserInfo.handleInterval)
+      }}</el-tag>
     </el-form-item>
   </el-form>
 </template>
@@ -37,13 +38,13 @@ export default {
       type: Object,
       default() {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       innerUserInfo: {},
-      userinfoLoading: false
+      userinfoLoading: false,
     }
   },
   watch: {
@@ -51,21 +52,22 @@ export default {
       handler(val) {
         this.innerUserInfo = val
       },
-      deep: true
+      deep: true,
     },
     innerUserInfo: {
       handler(val) {
         this.$emit('update:userinfo', val)
       },
-      deep: true
+      deep: true,
     },
     'innerUserInfo.gameid'() {
       this.updateGameR3User()
-    }
+    },
   },
   mounted() {
-    this.userinfo.gameid = localStorage.getItem('lastUser')
-    if (this.userinfo.gameid === 'null') this.userinfo.gameid = ''
+    const userinfo = this.userinfo
+    userinfo.gameid = localStorage.getItem('lastUser')
+    if (userinfo.gameid === 'null') userinfo.gameid = ''
     this.updateGameR3User()
   },
   methods: {
@@ -75,8 +77,8 @@ export default {
       return formatTime(date)
     },
     login() {
-      signIn(this.userinfo.gameid).then(d => {
-        updateHandleInterval(this.userinfo.gameid).then(f => {
+      signIn(this.userinfo.gameid).then((d) => {
+        updateHandleInterval(this.userinfo.gameid).then((f) => {
           this.updateGameR3User()
         })
       })
@@ -86,25 +88,28 @@ export default {
       localStorage.setItem('lastUser', this.userinfo.gameid)
       if (this.userinfo.gameid.length === 9) {
         this.userinfoLoading = true
-        userinfo(this.userinfo.gameid).then(data => {
-          var d = data.user
+        userinfo(this.userinfo.gameid).then((data) => {
+          const d = data.user
           if (d.nickName === null) {
             this.$message.error('没有查到这个忍忍哦~')
           }
-          this.userinfo.nickName = d.nickName
-          this.userinfo.level = d.level
-          this.userinfo.lastHandleStamp = parseTime(d.user.lastHandleStamp)
-          this.userinfo.handleInterval = parseTime(d.user.handleInterval)
-          this.userinfo.enable = d.user.enable
+          const last = new Date(this.userinfo.lastLogin)
+          const now = new Date()
+          const userinfo = {
+            nickname: d.nickName,
+            level: d.level,
+            lastHandleStamp: parseTime(d.user.lastHandleStamp),
+            handleInterval: parseTime(d.user.handleInterval),
+            enable: d.user.enable,
+            lastLogin: d.user.lastLogin,
+            isLoginToday:
+              (now - last) / 86400000 <= 1 && now.getDate() === last.getDate(),
+          }
           this.userinfoLoading = false
-          this.userinfo.lastLogin = d.user.lastLogin
-          var last = new Date(this.userinfo.lastLogin)
-          var now = new Date()
-          this.userinfo.isLoginToday =
-            (now - last) / 86400000 <= 1 && now.getDate() === last.getDate()
+          this.$emit('update:userinfo', userinfo)
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>

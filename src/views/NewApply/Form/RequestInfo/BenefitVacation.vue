@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div v-if="innerList&&innerList.length>0">
+    <div v-if="innerList && innerList.length > 0">
       <el-collapse v-model="nowIndex" accordion>
-        <el-collapse-item v-for="(item,index) in innerList" :key="index" :name="index">
+        <el-collapse-item v-for="(item, index) in innerList" :key="index" :name="index">
           <template slot="title">
-            <span v-if="item.name&&item.length">{{ item.name }} {{ item.length }}天</span>
+            <span v-if="item.name && item.length">{{ item.name }} {{ item.length }}天</span>
             <span v-else>无效的信息</span>
           </template>
           <el-form label-width="6rem">
@@ -31,7 +31,7 @@
               <el-button
                 icon="el-icon-delete"
                 type="info"
-                style="width:100%"
+                style="width: 100%"
                 @click="removeSingle(index)"
               >删除</el-button>
             </el-form-item>
@@ -39,7 +39,7 @@
         </el-collapse-item>
       </el-collapse>
     </div>
-    <el-button icon="el-icon-plus" style="width:100%" @click="addSingle">添加</el-button>
+    <el-button icon="el-icon-plus" style="width: 100%" @click="addSingle">添加</el-button>
   </div>
 </template>
 
@@ -95,8 +95,9 @@ export default {
       cb(results)
     },
     selectChange(item) {
-      this.list[this.nowIndex].description = item.description
-      this.list[this.nowIndex].length = item.length
+      const list_item = this.list[this.nowIndex]
+      list_item.description = item.description
+      list_item.length = item.length
     },
     addSingle() {
       this.innerList.push({
@@ -112,5 +113,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>

@@ -1,4 +1,4 @@
-import echarts from 'echarts'
+import echarts from 'echarts/index.blank'
 
 /**
  * create a liner series base on user set

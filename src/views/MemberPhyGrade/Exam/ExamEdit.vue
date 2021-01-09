@@ -2,10 +2,10 @@
   <el-dialog :visible.sync="show">
     <el-form v-if="data" label-width="5rem">
       <el-form-item label="名称">
-        <el-input v-model="data.name" />
+        <el-input :value.sync="data.name" />
       </el-form-item>
       <el-form-item label="描述">
-        <el-input v-model="data.description" type="textarea" />
+        <el-input :value.sync="data.description" type="textarea" />
       </el-form-item>
       <el-form-item label="负责单位">
         <CompanySelector :code.sync="data.holdBy" />
@@ -15,7 +15,7 @@
       </el-form-item>
       <el-form-item label="考核日期">
         <el-date-picker
-          v-model="data.executeTime"
+          :value.sync="data.executeTime"
           format="yyyy年MM月dd日"
           value-format="yyyy-MM-dd"
           clearable
@@ -41,24 +41,24 @@ export default {
   components: { UserSelector, CompanySelector, AuthCode },
   model: {
     prop: 'data',
-    event: 'change'
+    event: 'change',
   },
   props: {
     data: {
       type: Object,
-      default: null
-    }
+      default: null,
+    },
   },
   data: () => ({
     show: false,
     loading: false,
-    auth: null
+    auth: null,
   }),
   computed: {
     valid() {
       const f = this.data
       return f && f.name && f.holdBy && f.handleBy && f.executeTime
-    }
+    },
   },
   methods: {
     remove() {
@@ -81,10 +81,9 @@ export default {
             this.loading = false
           })
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style>
-</style>
+<style></style>

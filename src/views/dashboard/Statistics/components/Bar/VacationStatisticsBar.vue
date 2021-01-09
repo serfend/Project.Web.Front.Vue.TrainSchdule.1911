@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import echarts from 'echarts'
+import echarts from 'echarts/index.blank'
 export default {
   name: 'VacationStatisticsBar',
   props: {

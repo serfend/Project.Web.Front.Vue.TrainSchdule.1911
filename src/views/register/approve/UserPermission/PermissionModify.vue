@@ -66,7 +66,8 @@ export default {
   methods: {
     hasChange() {
       this.$nextTick(() => {
-        this.value.permissions = this.companies.map((i) => i.code)
+        const v = this.value
+        v.permissions = this.companies.map((i) => i.code)
       })
     },
   },
