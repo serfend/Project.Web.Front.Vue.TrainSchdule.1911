@@ -22,21 +22,25 @@
         split-button
         trigger="click"
         @click="exportApply(row)"
+        @command="c=>handle_action(c,row)"
       >
         <i class="el-icon-download" />
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-for="item in statusDic[row.status].acessable" :key="item.desc">
-            <el-popconfirm
-              v-if="actionDic[item]"
-              :title="`${actionDic[item].description} 确定要${actionDic[item].alias}吗？`"
-              :confirm-button-text="actionDic[item].alias"
-              @onConfirm="hendleExecute(item,row)"
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              v-for="item in statusDic[row.status].acessable"
+              :key="item.desc"
+              :command="item"
             >
-              <el-link slot="reference" :type="actionDic[item].type">{{ actionDic[item].alias }}</el-link>
-            </el-popconfirm>
-            <div v-else>未知操作选项:{{ item }}</div>
-          </el-dropdown-item>
-        </el-dropdown-menu>
+              <el-link
+                v-if="actionDic[item]"
+                :type="actionDic[item].type"
+                style="width:100%"
+              >{{ actionDic[item].alias }}</el-link>
+              <div v-else>未知操作选项:{{ item }}</div>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
       </el-dropdown>
       <el-button v-else v-loading="loading" icon="el-icon-download" @click="exportApply(row)">下载</el-button>
     </el-tooltip>
@@ -45,6 +49,7 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
+import { MessageBox } from 'element-ui'
 import { exportApplyDetail } from '@/api/common/static'
 import { deleteApply, doAction } from '@/api/apply/handle'
 export default {
@@ -81,9 +86,20 @@ export default {
   },
   methods: {
     exportApplyDetail,
+    handle_action(item, row) {
+      const action = this.actionDic[item]
+      if (!action) return
+      const message = `${action.description} 确定要${action.alias}吗？`
+      this.$confirm(message, {
+        title: `确认${action.alias}`,
+        type: 'warning',
+      }).then(() => {
+        this.hendleExecute(item, row)
+      })
+    },
     hendleExecute(method, row) {
       if (this.loading) return
-      var params = row.id
+      let params = row.id
       const fnName = method
       if (fnName === 'Delete') {
         if (!this.authFormShow) {
@@ -98,7 +114,7 @@ export default {
         }
       }
       this.loading = true
-      var fn =
+      const fn =
         fnName === 'Delete' ? deleteApply(params) : doAction(fnName, params)
       fn.then(data => {
         this.$message.success(`${this.actionDic[method].alias}成功`)
@@ -108,12 +124,26 @@ export default {
       })
     },
     exportApply(row) {
-      var dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
-      var applyId = row.id
-      this.loading = true
-      exportApplyDetail(dutiesRawType, applyId).finally(() => {
-        this.loading = false
-      })
+      const decider = {
+        'confirm': 0,
+        'cancel': 1,
+        'close': -1
+      }
+      // TODO 此处应根据人员类别直接选取
+      // TODO 允许用户选取自定义任意导出模板
+      const opt = {
+        message: '选择是否下载干部类型', type: 'info', title: '导出', confirmButtonText: '干部', cancelButtonText: '其他人员',
+        distinguishCancelAndClose: true, showCancelButton: true, callback: action => {
+          const dutiesType = decider[action]
+          if (dutiesType === -1) return
+          const applyId = row.id
+          this.loading = true
+          exportApplyDetail(dutiesType, applyId).finally(() => {
+            this.loading = false
+          })
+        }
+      }
+      MessageBox(opt)
     }
   }
 }

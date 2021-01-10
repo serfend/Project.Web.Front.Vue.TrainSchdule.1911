@@ -9,37 +9,48 @@
     >
       <el-step v-for="step in detail.steps" :key="step.id">
         <el-popover slot="description" trigger="click">
-          <div style="width:12rem">
-            <div>
-              <span style="margin-left:2rem">审核人</span>
-              <span style="display:flex;float:right;margin-right:2rem">留言</span>
-            </div>
-            <div
-              v-for="(rec,index) in detail.response.filter(i=>i.index===step.index)"
-              :key="index"
-              style="display:flex;margin-top:0.5rem"
-            >
-              <el-tooltip
-                v-if="rec.auditingUserId"
-                :content="rec.status===4?'通过':rec.status===8?'驳回':'未处理'"
-              >
-                <UserFormItem
-                  :userid="rec.auditingUserId"
-                  :type="rec.status===4?'success':rec.status===8?'danger':'info'"
-                />
-              </el-tooltip>
-              <span v-else-if="rec.auditingUserRealName">{{ rec.auditingUserRealName }}</span>
-              <span v-else style="color:#ccc">{{ rec.remark }}</span>
-              <span v-if="rec.auditingUserId||rec.auditingUserRealName" style="margin-left:1rem">
-                <el-popover v-if="rec.remark&&rec.remark.length>5" trigger="hover">
-                  <b>留言：</b>
-                  <p style="margin-left:1rem">{{ rec.remark }}</p>
-                  <el-button slot="reference" type="text">查看留言</el-button>
-                </el-popover>
-                <span v-else style="font-size:0.7rem">{{ rec.remark }}</span>
-              </span>
-            </div>
-          </div>
+          <el-table :data="get_audit_list(step)" stripe style="width:32rem">
+            <el-table-column header-align="center" align="center" label="审核人">
+              <template slot-scope="{row}" style="display:flex;margin-top:0.5rem">
+                <el-tooltip v-if="row.auditingUserId" :content="get_status_desc(row)">
+                  <UserFormItem :userid="row.auditingUserId" :type="get_status_type(row)" />
+                </el-tooltip>
+                <span v-else-if="row.auditingUserRealName">{{ row.auditingUserRealName }}</span>
+                <span v-else>无</span>
+              </template>
+            </el-table-column>
+            <el-table-column header-align="center" align="center" label="时间">
+              <template slot-scope="{row}">
+                <el-tooltip v-if="row.handleStamp" effect="light">
+                  <span slot="content">{{ row.handleStamp }}</span>
+                  <span>{{ formatTime(row.handleStamp) }}</span>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column header-align="center" align="center" label="留言">
+              <template slot-scope="{row}">
+                <span v-if="row.auditingUserId||row.auditingUserRealName" style="margin-left:1rem">
+                  <el-popover v-if="row.remark&&row.remark.length>5" trigger="hover">
+                    <p style="margin-left:1rem">{{ row.remark }}</p>
+                    <el-button slot="reference" type="text">查看留言</el-button>
+                  </el-popover>
+                  <span v-else style="font-size:0.7rem">{{ row.remark }}</span>
+                </span>
+                <span v-else style="color:#ccc;font-size:0.7rem">{{ row.remark }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column header-align="center" align="center" label="操作" width="60rem">
+              <template slot-scope="{row}">
+                <el-tooltip content="通过站内信和豆豆通知其尽快审批此申请">
+                  <el-button
+                    :disabled="row.status_urged"
+                    type="text"
+                    @click="send_notice_urged(row)"
+                  >催促</el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
           <div slot="reference" class="audit-process-card">
             <div v-if="detail.nowStep" class="audit-process-status">
               <span v-if="step.index > detail.nowStep.index">
@@ -78,7 +89,7 @@
               <span class="audit-process-handleStamp">
                 <el-tooltip v-if="step.timeStamp" effect="light">
                   <span slot="content">{{ step.timeStamp }}</span>
-                  <span>{{ format(step.timeStamp) }}</span>
+                  <span>{{ formatTime(step.timeStamp) }}</span>
                 </el-tooltip>
                 <span v-else>无</span>
               </span>
@@ -91,7 +102,7 @@
       <el-steps :space="200" :active="getStatus()" finish-status="success">
         <el-step v-for="(v,i) in detail.response" :key="i">
           <div slot="description">
-            <div>时间 {{ format(v.handleStamp) }}</div>
+            <div>时间 {{ formatTime(v.handleStamp) }}</div>
             <div>状态 {{ v.status==0?'待接收':v.status===1?'待审核':v.status==4?'通过':'驳回' }}</div>
             <div>备注 {{ v.remark }}</div>
           </div>
@@ -105,7 +116,7 @@
 </template>
 
 <script>
-import { formatTime } from '@/utils'
+import { formatTime, parseTime } from '@/utils'
 import UserFormItem from '@/components/User/UserFormItem'
 export default {
   name: 'AuditStatus',
@@ -148,9 +159,7 @@ export default {
     },
   },
   methods: {
-    format(date) {
-      return formatTime(date)
-    },
+    formatTime, parseTime,
     getStatus() {
       const res = this.detail.response
       if (!res || res.length === 0) return null
@@ -158,6 +167,29 @@ export default {
         (i) => i.status === 0 || i.status === 1 || i.status === 8
       )
       return r < 0 ? res.length : r
+    },
+    send_notice_urged(row) {
+      row.status_urged = true
+      this.$message.error('开发中')
+      setTimeout(() => {
+        row.status_urged = false
+      }, 3000)
+    },
+    get_status_desc(row) {
+      return row.status === 4 ? '通过' : row.status === 8 ? '驳回' : '未处理'
+    },
+    get_status_type(row) {
+      return row.status === 4 ? 'success' : row.status === 8 ? 'danger' : 'info'
+    },
+    get_audit_list(step) {
+      let list = this.detail.response
+      list = list.filter(i => i.index === step.index)
+      const unhandle_list = step.membersFitToAudit.map(i => ({ auditingUserId: i }))
+      list = list.concat(unhandle_list)
+      return list.map(i => {
+        i.status_urged = this.get_status_desc(i) !== '未处理'
+        return i
+      })
     },
     getNeedAudit(requireAuditMemberCount) {
       if (requireAuditMemberCount < 0) return '无需'
