@@ -8,7 +8,7 @@
           icon="el-icon-info"
           icon-color="red"
           title="确定要删除这个翻牌器吗"
-          @onConfirm="confirmDelete"
+          @confirm="confirmDelete"
         >
           <i slot="reference" class="el-icon-delete delete-btn" />
         </el-popconfirm>
