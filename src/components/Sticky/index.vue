@@ -1,8 +1,8 @@
 <template>
-  <div :style="{height:height+'px',zIndex:zIndex}">
+  <div :style="{zIndex:zIndex}">
     <div
       :class="className"
-      :style="{top:(isSticky ? stickyTop +'px' : ''),zIndex:zIndex,position:position,width:width,height:height+'px'}"
+      :style="{top:(isSticky ? stickyTop +'px' : ''),zIndex:zIndex,position:position,width:width}"
     >
       <slot>
         <div>sticky</div>
@@ -32,13 +32,11 @@ export default {
     return {
       position: '',
       width: undefined,
-      height: undefined,
       isSticky: false
     }
   },
   mounted() {
     const element = this.$root.$el // only on scrolling element can it works
-    this.height = this.$el.getBoundingClientRect().height
     element.addEventListener('scroll', this.handleScroll)
     element.addEventListener('resize', this.handleResize)
   },
