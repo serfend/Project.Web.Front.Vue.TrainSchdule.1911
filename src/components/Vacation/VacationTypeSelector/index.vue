@@ -198,7 +198,7 @@ export default {
   .item-content {
     transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
     height: 100%;
-    background-color: rgba(0, 139, 204, 0.8);
+    background-color: rgba(0, 139, 204, 0.5);
     margin-top: 15.5rem;
     &:hover {
       margin-top: 0;
@@ -207,19 +207,17 @@ export default {
   }
   .outer-description {
     font-size: 0.9rem;
-    line-height: 1.2rem;
+    line-height: 1rem;
     color: #fff;
     text-align: left;
   }
   .item-title {
     overflow-wrap: normal;
-    margin-bottom: 0.3rem;
+    color: #fff;
+    padding-top: 0.5rem;
   }
   .inner-description {
     padding: 0 0.5rem;
-    ul {
-      list-style: none;
-    }
   }
 }
 .text-gradient {
