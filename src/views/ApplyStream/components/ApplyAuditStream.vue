@@ -96,18 +96,20 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-tree
-          :data="newSolution.nodes"
-          node-key="id"
-          draggable
-          default-expand-all
-          :expand-on-click-node="false"
-        >
-          <div slot-scope="{node}" class="custom-tree-node">
-            <el-tag closable effect="plain" @close="handleSelectNodeClose(node)">{{ node.label }}</el-tag>
-            <span>{{ node.data.description }}</span>
-          </div>
-        </el-tree>
+        <el-card>
+          <el-tree
+            :data="newSolution.nodes"
+            node-key="id"
+            draggable
+            default-expand-all
+            :expand-on-click-node="false"
+          >
+            <div slot-scope="{node}" class="custom-tree-node">
+              <el-tag closable effect="plain" @close="handleSelectNodeClose(node)">{{ node.label }}</el-tag>
+              <span>{{ node.data.description }}</span>
+            </div>
+          </el-tree>
+        </el-card>
         <AuthCode :form.sync="newSolution.auth" />
         <el-button-group style="width:100%">
           <el-button

@@ -1,15 +1,22 @@
 <template>
   <el-card class="content-card">
-    <CompanySelector
-      v-model="data.companyRegion"
-      placeholder="选择管理的主单位（单位作用域是界定当前规则有效范围的配置）"
-      @change="requireRefresh"
-    />
-    <CompanySelector
-      v-model="data.newCompanyRegion"
-      placeholder="选择变动到新的单位作用域"
-      @change="requireRefresh"
-    />
+    <el-form>
+      <el-form-item label="查询单位">
+        <CompanySelector
+          v-model="data.companyRegion"
+          default-select-first
+          placeholder="选择管理的主单位（单位作用域是界定当前规则有效范围的配置）"
+          @change="requireRefresh"
+        />
+      </el-form-item>
+      <el-form-item label="转移到..">
+        <CompanySelector
+          v-model="data.newCompanyRegion"
+          placeholder="选择变动到新的单位作用域"
+          @change="requireRefresh"
+        />
+      </el-form-item>
+    </el-form>
     <el-tabs v-model="activeName" class="tab-container">
       <el-tab-pane label="说明" name="ApplyStreamAbout">
         <ApplyStreamAbout v-show="activeName=='ApplyStreamAbout'" />

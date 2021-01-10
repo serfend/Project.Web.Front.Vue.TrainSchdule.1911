@@ -11,8 +11,13 @@
           @click="refresh"
         />
       </div>
-      <el-table v-loading="loading" :data="data.allSolutionRule">
+      <el-table
+        v-loading="loading"
+        :data="data.allSolutionRule"
+        :default-sort="{prop: 'priority', order: 'descending'}"
+      >
         <el-table-column
+          prop="priority"
           label="优先"
           width="80px"
           sortable
