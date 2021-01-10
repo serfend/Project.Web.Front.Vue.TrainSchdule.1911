@@ -183,8 +183,13 @@ export default {
     },
     get_audit_list(step) {
       let list = this.detail.response
-      list = list.filter(i => i.index === step.index)
-      const unhandle_list = step.membersFitToAudit.map(i => ({ auditingUserId: i }))
+      const user_dict = {}
+      list = list.filter(i => {
+        const cur = i.index === step.index
+        if (cur) user_dict[i.auditingUserId] = 1
+        return cur
+      })
+      const unhandle_list = step.membersFitToAudit.filter(i => !user_dict[i]).map(i => ({ auditingUserId: i }))
       list = list.concat(unhandle_list)
       return list.map(i => {
         i.status_urged = this.get_status_desc(i) !== '未处理'
