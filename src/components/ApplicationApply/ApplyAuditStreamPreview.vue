@@ -7,7 +7,7 @@
       :now-step="nowStep"
       :solution-name.sync="solutionName"
     />
-    <el-popover v-else trigger="click" @show="userHasHover=true">
+    <el-popover v-else trigger="hover" @show="userHasHover=true">
       <ApplyAuditStreamPreviewInner
         v-if="userHasHover"
         :userid="userid"
@@ -65,10 +65,14 @@ export default {
 
 <style lang="scss" scoped>
 .preview-btn {
-  transition: all 0.5s;
+  text-decoration: underline;
+  transition: all 0.2s ease;
   cursor: pointer;
+  font-size: 1rem;
   &:hover {
+    text-decoration: none;
     color: #00f;
+    opacity: 0.8;
   }
 }
 </style>

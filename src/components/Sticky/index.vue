@@ -16,7 +16,7 @@ export default {
   name: 'Sticky',
   props: {
     stickyTop: {
-      type: Number,
+      type: [Number, String],
       default: 0
     },
     zIndex: {
@@ -30,7 +30,6 @@ export default {
   },
   data() {
     return {
-      active: false,
       position: '',
       width: undefined,
       height: undefined,
@@ -38,37 +37,35 @@ export default {
     }
   },
   mounted() {
+    const element = this.$root.$el // only on scrolling element can it works
     this.height = this.$el.getBoundingClientRect().height
-    window.addEventListener('scroll', this.handleScroll)
-    window.addEventListener('resize', this.handleResize)
+    element.addEventListener('scroll', this.handleScroll)
+    element.addEventListener('resize', this.handleResize)
   },
   activated() {
     this.handleScroll()
   },
   destroyed() {
-    window.removeEventListener('scroll', this.handleScroll)
-    window.removeEventListener('resize', this.handleResize)
+    const element = this.$root.$el // same to above
+    element.removeEventListener('scroll', this.handleScroll)
+    element.removeEventListener('resize', this.handleResize)
   },
   methods: {
     sticky() {
-      if (this.active) {
-        return
-      }
+      if (this.isSticky) return
+      this.$emit('sticky')
       this.position = 'fixed'
-      this.active = true
       this.width = this.width + 'px'
       this.isSticky = true
     },
     handleReset() {
-      if (!this.active) {
-        return
-      }
+      if (!this.isSticky) return
+      this.$emit('reset')
       this.reset()
     },
     reset() {
       this.position = ''
       this.width = 'auto'
-      this.active = false
       this.isSticky = false
     },
     handleScroll() {
@@ -76,8 +73,7 @@ export default {
       this.width = width || 'auto'
       const offsetTop = this.$el.getBoundingClientRect().top
       if (offsetTop < this.stickyTop) {
-        this.sticky()
-        return
+        return this.sticky()
       }
       this.handleReset()
     },

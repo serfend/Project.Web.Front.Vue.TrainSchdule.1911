@@ -4,13 +4,14 @@
       <el-collapse-transition>
         <el-card v-show="show">
           <div v-if="innerData">
+            <el-link :href="applyDetailUrl(innerData.id)" target="_blank">查看详情</el-link>
             <el-row class="row">
               <el-col :xl="5" :lg="7" :md="8" :sm="9" :xs="24">
                 <ActionUser style="width:100%" :row="innerData" @updated="userUpdate" />
               </el-col>
               <el-col :xl="19" :lg="17" :md="16" :sm="15" :xs="24">
                 <el-progress
-                  :percentage="spent<0?0:(spent>total?100:((spent/total)*100))"
+                  :percentage="percent"
                   :format="formatPercent"
                   :stroke-width="24"
                   text-inside
@@ -19,20 +20,20 @@
             </el-row>
             <el-row>
               <el-form>
-                <el-form-item label="审批流">
+                <el-form-item v-if="innerData.status!==20" label="休假类别">
+                  <VacationType v-model="innerData.request.vacationType" />
+                  <svg-icon v-if="data.request.byTransportation==0" icon-class="huoche" />
+                  <svg-icon v-else-if="innerData.request.byTransportation==1" icon-class="feiji" />
+                  <svg-icon v-else-if="innerData.request.byTransportation==2" icon-class="qiche" />
+                  <svg-icon v-else-if="innerData.request.byTransportation==-1" icon-class="guide" />
+                </el-form-item>
+                <el-form-item label="审批流程">
                   <ApplyAuditStreamPreview
                     :show-detail="false"
                     :now-step="innerData.nowStep?(innerData.nowStep.index):(innerData.steps.length)"
                     :audit-status="innerData.steps"
                     :title="innerData.auditStreamSolution"
                   />
-                </el-form-item>
-                <el-form-item v-if="innerData.status!==20" label="类别">
-                  <VacationType v-model="innerData.request.vacationType" />
-                  <svg-icon v-if="data.request.byTransportation==0" icon-class="huoche" />
-                  <svg-icon v-else-if="innerData.request.byTransportation==1" icon-class="feiji" />
-                  <svg-icon v-else-if="innerData.request.byTransportation==2" icon-class="qiche" />
-                  <svg-icon v-else-if="innerData.request.byTransportation==-1" icon-class="guide" />
                 </el-form-item>
                 <el-form-item
                   v-if="innerData.status!==20"
@@ -99,6 +100,11 @@ export default {
     }
   },
   computed: {
+    percent() {
+      const total = this.total
+      const spent = this.spent
+      return total === 0 ? 10 : spent < 0 ? 0 : (spent > total ? 100 : ((spent / total) * 100))
+    },
     total() {
       const request = this.innerData.request
       if (!request) return 1
@@ -131,6 +137,9 @@ export default {
   },
   methods: {
     datedifference,
+    applyDetailUrl(id) {
+      return `/#/vacation/applydetail?id=${id}`
+    },
     userUpdate() {
       this.$emit('updated')
     },
@@ -149,7 +158,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .row {
   margin: 10px;
 }
