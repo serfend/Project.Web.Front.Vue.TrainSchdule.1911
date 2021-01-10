@@ -1,15 +1,10 @@
 <template>
   <el-popover placement="right" trigger="hover" @show="canLoad = true">
-    <Company
-      v-model="inner_id"
-      :data.sync="form"
-      :can-load="canLoad"
-      @formUpdate="handleChange"
-    />
-    <span slot="reference">
+    <Company v-model="inner_id" :data.sync="form" :can-load="canLoad" @formUpdate="handleChange" />
+    <template #reference>
       <el-tag v-if="form">{{ form.name }}</el-tag>
       <el-tag v-else>{{ id }}无效</el-tag>
-    </span>
+    </template>
   </el-popover>
 </template>
 

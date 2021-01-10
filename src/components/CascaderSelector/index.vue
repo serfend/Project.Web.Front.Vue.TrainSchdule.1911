@@ -20,6 +20,10 @@ export default {
     event: 'change',
   },
   props: {
+    defaultSelectFirst: {
+      type: Boolean,
+      default: false
+    },
     data: {
       type: [Array, Object],
       default: null,
@@ -47,7 +51,7 @@ export default {
     childGetterMethod: {
       type: Function,
       default() {
-        return () => {}
+        return () => { }
       },
     },
   },
@@ -76,6 +80,8 @@ export default {
         },
       },
     }
+  },
+  mounted() {
   },
   methods: {
     handleItemChange(val) {

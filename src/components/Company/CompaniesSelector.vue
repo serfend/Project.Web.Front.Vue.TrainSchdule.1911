@@ -2,6 +2,7 @@
   <CascaderSelector
     ref="companyInnerSelector"
     v-model="companySelectItem"
+    :default-select-first="defaultSelectFirst"
     :child-getter-method="companyChild"
     :multiple="true"
     :placeholder="placeholder.map(i=>i.name).join(' ')"
@@ -20,6 +21,10 @@ export default {
     event: 'change'
   },
   props: {
+    defaultSelectFirst: {
+      type: Boolean,
+      default: false
+    },
     companies: {
       type: Array,
       default: null
