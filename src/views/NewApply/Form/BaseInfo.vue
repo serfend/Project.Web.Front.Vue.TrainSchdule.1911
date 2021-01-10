@@ -72,6 +72,16 @@ export default {
     CardTooltipAlert,
     SettleFormItem
   },
+  props: {
+    defailtId: {
+      type: String,
+      default: null
+    },
+    userid: {
+      type: String,
+      default: null
+    }
+  },
   data() {
     return {
       onLoading: true,
@@ -92,6 +102,11 @@ export default {
     }
   },
   watch: {
+    userid: {
+      handler(val) {
+        console.log('userid', val)
+      }
+    },
     form: {
       handler(val) {
         if (val && !this.onLoading) {
@@ -131,7 +146,7 @@ export default {
       }
     },
     createNewBase(fetch) {
-      var f = {
+      const f = {
         id: '',
         realName: '',
         company: '',
@@ -151,9 +166,11 @@ export default {
       return f
     },
     setCurrentUser(tryTime) {
-      if (!tryTime) tryTime = 3
+      if (!tryTime) tryTime = 8
       tryTime--
-      if (!this.currentUser || !this.currentUser.id) {
+      console.log(this.userid)
+      const to_user_id = this.userid || (this.currentUser && this.currentUser.id)
+      if (!to_user_id) {
         if (tryTime > 0) {
           setTimeout(() => {
             this.setCurrentUser(tryTime)
@@ -164,7 +181,7 @@ export default {
         return
       }
       this.$nextTick(() => {
-        this.form.id = this.currentUser.id
+        this.form.id = to_user_id
       })
     },
     fetchUserInfoesDerect() {
@@ -202,7 +219,7 @@ export default {
       if (!id || !Phone) return
       if (validPhone(Phone)) return
       this.onLoading = true
-      var payload = {
+      const payload = {
         id,
         Phone
       }

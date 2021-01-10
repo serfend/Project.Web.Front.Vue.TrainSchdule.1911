@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-col :xl="12" :lg="24">
+      <el-col :xl="singleColumn?24:12" :lg="24">
         <BaseInfo
           ref="BaseInfo"
           :submit-id.sync="formFinal.BaseInfoId"
@@ -11,7 +11,7 @@
           @submited="baseInfoSubmit"
         />
       </el-col>
-      <el-col :xl="12" :lg="24">
+      <el-col :xl="singleColumn?24:12" :lg="24">
         <VacationPreview
           v-show="nowStep>=1"
           ref="VacationPreview"
@@ -19,7 +19,7 @@
           style="margin:2rem 1.25rem"
         />
       </el-col>
-      <el-col :xl="12" :lg="24">
+      <el-col :xl="singleColumn?24:12" :lg="24">
         <RequestInfo
           v-show="nowStep>=1"
           ref="RequestInfo"
@@ -56,12 +56,22 @@ export default {
     VacationPreview,
     SubmitApply
   },
+  props: {
+    defaultId: {
+      type: String,
+      default: null
+    },
+    singleColumn: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       nowStep: 0,
       onLoading: false,
       childOnLoading: true,
-      userid: '',
+      userid: null,
       selfSettle: null,
       formFinal: {
         BaseInfoId: '',
@@ -69,8 +79,8 @@ export default {
       }
     }
   },
-  computed: {},
   mounted() {
+    this.userid = this.defaultId
     setTimeout(() => {
       this.createNewDirect()
     }, 1000)
@@ -105,6 +115,7 @@ export default {
     },
     userSubmit() {
       this.nowStep = 3
+      this.$emit('userSubmit')
     }
   }
 }

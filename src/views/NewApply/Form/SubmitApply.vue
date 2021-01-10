@@ -29,7 +29,7 @@
     <el-button :disabled="iDisabled" type="success" style="width:40%" @click="submitApply(2)">发布</el-button>
     <el-button type="info" @click="createNew">新建申请</el-button>
     <el-button v-show="submitId" type="success" @click="skimDetail">查 看 详 情</el-button>
-    <el-dialog :visible.sync="showSuccessDialog">
+    <el-dialog :visible.sync="showSuccessDialog" append-to-body>
       <SvgIcon
         icon-class="Message_success"
         style-normal="width:6rem;height:6rem;margin: auto;color:#67c23a"

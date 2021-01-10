@@ -357,7 +357,6 @@ export default {
       }
     },
     checkParamValid(params) {
-      console.log(params)
       const id = !params.id
       const place =
         !params.vacationPlace ||
