@@ -1,24 +1,20 @@
 <template>
-  <div v-if="form && form.company">
+  <div v-if="innerForm && innerForm.company">
     <el-form-item prop="company" label="单位" style="width: 25.2rem">
       <CompanySelector
-        :value.sync="form.company"
-        :placeholder="form.company.name || '仅当前登录的用户的单位可见'"
+        v-model="innerForm.company"
+        :placeholder="innerForm.company.name || '仅当前登录的用户的单位可见'"
       />
     </el-form-item>
     <el-form-item prop="duties" label="职务">
       <el-tooltip content="需选用下拉框中的建议" placement="right">
-        <DutiesSelector
-          :value.sync="form.duties"
-          class="inline-input"
-          placeholder="请输入并选中职务名称"
-        />
+        <DutiesSelector v-model="innerForm.duties" class="inline-input" placeholder="请输入并选中职务名称" />
       </el-tooltip>
     </el-form-item>
     <el-form-item prop="title" label="职务等级">
       <el-tooltip content="需选用下拉框中的建议" placement="right">
         <el-autocomplete
-          :value.sync="form.title.name"
+          v-model="innerForm.title.name"
           class="inline-input"
           :fetch-suggestions="companyTitleQuery"
           style="width: 14rem"
@@ -28,7 +24,7 @@
     </el-form-item>
     <el-form-item prop="titleDate" label="等级时间">
       <el-date-picker
-        :value.sync="form.titleDate"
+        v-model="innerForm.titleDate"
         placeholder="职务等级生效时间"
         format="yyyy年MM月dd日"
         value-format="yyyy-MM-dd"
@@ -40,9 +36,8 @@
         <el-radio-button :label="true">是</el-radio-button>
         <el-radio-button :label="false">否</el-radio-button>
       </el-radio-group>
-      <i class="el-icon-info" style="color: #33c">{{
-        $t('register.company.disabledVacation')
-      }}</i>
+      <i class="el-icon-info" style="color: #33c" />
+      <span>{{ $t('register.company.disabledVacation') }}</span>
     </el-form-item>
   </div>
 </template>
@@ -71,16 +66,31 @@ export default {
   },
   data: () => ({
     disabledVacation: null,
+    innerForm: createForm()
   }),
   watch: {
-    'form.company.accountStatus': {
+    form: {
       handler(val) {
-        if (val === undefined) {
+        if (!val || !val.company) return
+        const accountStatus = val.company.accountStatus
+        if (undefined === accountStatus) {
           this.disabledVacation = null
-          return
+        } else {
+          const status = (accountStatus & Const_DisabledVacation) > 0
+          this.disabledVacation = status
         }
-        this.disabledVacation = !!(val & Const_DisabledVacation)
+        this.innerForm = val
       },
+      deep: true,
+      immediate: true
+    },
+    innerForm: {
+      handler(val, oldVal) {
+        this.$nextTick(() => {
+          this.$emit('update:form', this.innerForm)
+        })
+      },
+      deep: true,
       immediate: true,
     },
   },

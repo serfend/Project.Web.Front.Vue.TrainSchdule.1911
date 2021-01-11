@@ -284,9 +284,9 @@ export default {
           this.loading = true
           authUserRegister(username, valid)
             .then(() => {
-              this.$message.success(
-                valid ? '授权成功，可通知登录' : '驳回成功，可通知重新注册'
-              )
+              const msg = valid ? '授权成功，可通知登录' : '驳回成功，可通知重新注册'
+              this.$message.success(msg)
+              this.$emit('requireUpdate')
             })
             .finally(() => {
               this.loading = false
@@ -327,17 +327,15 @@ export default {
         })
     },
     async submitRegister(regOrModify) {
-      const confirm_action = await this.$confirm('确定要提交吗？').catch(
-        (e) => {
+      const confirm_action = await this.$confirm('确定要提交吗？')
+        .catch((e) => {
           this.$message.error('已取消')
-        }
-      )
+        })
       if (!confirm_action) return
       this.loading = true
       const f = this.registerForm
       f.password = f.Application.password
       f.confirmPassword = f.Application.confirmPassword
-      // debugger
       // reset status to normal
       if (!f.Application.accountStatus) f.Application.accountStatus = 0
       if ((f.Application.accountStatus & Const_DisabledVacation) > 0) {
@@ -367,6 +365,7 @@ export default {
       submitMethod(submitForm)
         .then((data) => {
           this.$message.success(regOrModify ? '注册成功' : '修改成功')
+          this.$emit('requireUpdate')
           if (regOrModify) {
             this.$router.push('/')
           }

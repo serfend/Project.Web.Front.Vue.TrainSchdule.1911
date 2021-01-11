@@ -84,12 +84,12 @@ export default {
       })
     },
     async dutiesQuery(queryString, cb) {
-      var data = await dutiesQuery(queryString, this.iTag)
+      const data = await dutiesQuery(queryString, this.iTag)
       await this.queryItem(data, cb)
     },
     async queryItem(data, cb) {
-      var list = data.list
-      var result = list.map((item) => {
+      const list = data.list
+      const result = list.map((item) => {
         return {
           value: item.name,
           code: item.code,
@@ -104,15 +104,14 @@ export default {
         name: val.value,
         code: val.code,
       }
-      if (!isObj) {
+      if (list && !isObj) {
         const existed = list.map((i) => i.code).indexOf(c.code)
         if (existed > -1) {
           return this.$message.warning(`已存在${c.name}`)
         }
       }
       this.$message.success(`已选中${c.name}(${c.code})`)
-
-      this.$emit('change', isObj ? c : list.concat([c]))
+      this.$emit('change', (isObj || !list) ? c : list.concat([c]))
     },
   },
 }

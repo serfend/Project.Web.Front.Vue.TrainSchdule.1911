@@ -58,6 +58,7 @@ export default {
         item.name = val.label
       }
       this.$emit('change', item)
+      this.$emit('update:data', item)
       this.$emit('update:code', item.code)
     },
     checkName() {
