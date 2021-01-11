@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import echarts from 'echarts'
+import * as echarts from 'echarts/index.blank'
 import resize from './mixins/resize'
 
 export default {
@@ -57,11 +57,11 @@ export default {
           text: 'statistics',
           x: '20',
           top: '20',
-          textStyle: {
+          
             color: '#fff',
             fontSize: '22'
           },
-          subtextStyle: {
+          sub
             color: '#90979c',
             fontSize: '16'
           }
@@ -69,7 +69,7 @@ export default {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            textStyle: {
+            
               color: '#fff'
             }
           }
@@ -80,14 +80,14 @@ export default {
           borderWidth: 0,
           top: 150,
           bottom: 95,
-          textStyle: {
+          
             color: '#fff'
           }
         },
         legend: {
           x: '5%',
           top: '10%',
-          textStyle: {
+          
             color: '#90979c'
           },
           data: ['female', 'male', 'average']
@@ -150,7 +150,7 @@ export default {
             color: '#d3dee5'
 
           },
-          textStyle: {
+          
             color: '#fff' },
           borderColor: '#90979c'
 
@@ -172,7 +172,7 @@ export default {
               color: 'rgba(255,144,128,1)',
               label: {
                 show: true,
-                textStyle: {
+                
                   color: '#fff'
                 },
                 position: 'insideTop',
@@ -205,7 +205,7 @@ export default {
           itemStyle: {
             normal: {
               color: 'rgba(0,191,183,1)',
-              barBorderRadius: 0,
+              borderRadius: 0,
               label: {
                 show: true,
                 position: 'top',
@@ -238,7 +238,7 @@ export default {
           itemStyle: {
             normal: {
               color: 'rgba(252,230,48,1)',
-              barBorderRadius: 0,
+              borderRadius: 0,
               label: {
                 show: true,
                 position: 'top',

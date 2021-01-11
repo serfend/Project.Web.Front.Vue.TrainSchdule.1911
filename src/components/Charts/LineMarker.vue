@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import echarts from 'echarts'
+import * as echarts from 'echarts/index.blank'
 import resize from './mixins/resize'
 
 export default {
@@ -108,9 +108,7 @@ export default {
           },
           axisLabel: {
             margin: 10,
-            textStyle: {
-              fontSize: 14
-            }
+            fontSize: 14
           },
           splitLine: {
             lineStyle: {

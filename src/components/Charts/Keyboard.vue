@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import echarts from 'echarts'
+import * as echarts from 'echarts/index.blank'
 import resize from './mixins/resize'
 
 export default {
@@ -80,7 +80,7 @@ export default {
             show: false
           },
           axisLabel: {
-            textStyle: {
+            
               color: '#4a657a'
             }
           },
@@ -102,7 +102,7 @@ export default {
           itemStyle: {
             normal: {
               opacity: 0.4,
-              barBorderRadius: 5,
+              borderRadius: 5,
               shadowBlur: 3,
               shadowColor: '#111'
             }
@@ -136,7 +136,7 @@ export default {
           z: 3,
           itemStyle: {
             normal: {
-              barBorderRadius: 5
+              borderRadius: 5
             }
           }
         }],

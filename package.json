@@ -51,7 +51,7 @@
     "crypto-js": "^4.0.0",
     "dropzone": "5.5.1",
     "echarts": "5.0.0",
-    "echarts-gl": "^1.1.2",
+    "echarts-gl": "^2.0.0-rc.3",
     "element-ui": "2.14.1",
     "file-saver": "2.0.1",
     "fuse.js": "3.4.4",

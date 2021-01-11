@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import echarts from 'echarts/index.blank'
+import * as echarts from 'echarts/index.blank'
 import { createLinerSeries } from '../../js/linerGradient'
 import { groupByPredict } from '@/utils/data-handle'
 import { debounce } from '@/utils'
@@ -152,7 +152,7 @@ export default {
         },
         tooltip: {
           trigger: 'axis',
-          formatter: function(series, ticket, callback) {
+          formatter: function (series, ticket, callback) {
             const result = []
             result.push(series[0].value[2])
             result.push('<br/>')
@@ -182,7 +182,7 @@ export default {
           type: 'scroll',
           bottom: 0,
           inactiveColor: '#aaa',
-          textStyle: { color: '#fff' }
+          color: '#fff'
         },
         dataZoom: [
           {
@@ -211,10 +211,8 @@ export default {
             // data: date,
             // 文本颜色为rgba(255,255,255,.6)  文字大小为 12
             axisLabel: {
-              textStyle: {
-                color: 'rgba(255,255,255,.6)',
-                fontSize: 12
-              }
+              color: 'rgba(255,255,255,.6)',
+              fontSize: 12
             },
             // x轴线的颜色为   rgba(255,255,255,.2)
             axisLine: {
@@ -227,7 +225,7 @@ export default {
         yAxis: [
           {
             type: 'value',
-            min: function(value) {
+            min: function (value) {
               const v = value.min - 20
               return v < 0 ? 0 : v
             },
@@ -238,10 +236,8 @@ export default {
               }
             },
             axisLabel: {
-              textStyle: {
-                color: 'rgba(255,255,255,.6)',
-                fontSize: 12
-              }
+              color: 'rgba(255,255,255,.6)',
+              fontSize: 12
             },
             // 修改分割线的颜色
             splitLine: {

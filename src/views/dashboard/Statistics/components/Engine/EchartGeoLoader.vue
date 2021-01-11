@@ -2,7 +2,7 @@
   <div v-loading="loading" class="display-item">geo data loader</div>
 </template>
 <script>
-import echarts from 'echarts/index.blank'
+import * as echarts from 'echarts/index.blank'
 export default {
   name: 'StatisticsDataDriver',
   props: {

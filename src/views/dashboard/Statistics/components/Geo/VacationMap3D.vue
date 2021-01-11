@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import echarts from 'echarts/index.blank'
+import * as echarts from 'echarts/index.blank'
 import 'echarts-gl'
 import { geoProvince } from '../../js/variables'
 import { debounce } from '@/utils'
@@ -34,7 +34,7 @@ export default {
     },
     data: {
       type: Object,
-      default: () => {} // {#typeName#:{from,to,value}}省份对应的坐标
+      default: () => { } // {#typeName#:{from,to,value}}省份对应的坐标
     }
   },
   data() {
@@ -112,7 +112,7 @@ export default {
               opacity: 0.5,
               color: this.color[
                 (index_api * this.data.types.length + index_type) %
-                  this.color.length
+                this.color.length
               ]
             },
             data: v.value[k].map(line => {
