@@ -45,7 +45,7 @@
         <el-button type="info" @click="$emit('update:show',false)">取 消</el-button>
         <el-button type="warning" @click="SubmitRecall">确 定</el-button>
       </el-button-group>
-      <el-button v-else @click="$emit('update:onlyView',false)">取 消</el-button>
+      <el-button v-else @click="$emit('update:show',false)">取 消</el-button>
     </span>
   </el-dialog>
 </template>

@@ -33,6 +33,7 @@
         type="danger"
         @click="confirmExecuteStatus(true)"
       >推迟归队</el-link>
+      <el-link v-else-if="row.executeStatus&1" type="info" @click="confirmExecuteStatus(true)">已确认</el-link>
     </span>
   </span>
 </template>
