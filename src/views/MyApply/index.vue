@@ -111,7 +111,12 @@
     </div>
     <Login v-else />
     <el-dialog :visible.sync="show_apply_new">
-      <ApplyNew v-if="show_apply_new" :default-id="inner_id" :single-column="true" @userSubmit="reload" />
+      <ApplyNew
+        v-if="show_apply_new"
+        :default-id="inner_id"
+        :single-column="true"
+        @userSubmit="reload"
+      />
     </el-dialog>
   </div>
 </template>
@@ -197,7 +202,7 @@ export default {
     id: {
       handler(val) {
         this.iId = val
-      }
+      }, immediate: true
     },
     inner_id: {
       handler(val) {

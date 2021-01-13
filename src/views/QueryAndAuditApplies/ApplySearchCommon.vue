@@ -80,6 +80,13 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="填报类型">
+            <el-radio-group v-model="queryForm.mainStatus">
+              <el-radio :label="-1">不限</el-radio>
+              <el-radio :label="0">正式填报</el-radio>
+              <el-radio :label="2">填报计划休假</el-radio>
+            </el-radio-group>
+          </el-form-item>
         </el-tab-pane>
         <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="人员">
           <el-form-item label="审核人">
@@ -261,6 +268,7 @@ export default {
         stampLeaveTime: null,
         stampReturnTime: null,
         status: [], // 状态
+        mainStatus: -1,
         actionStatus: 'Received', // 我的状态
         auditBy: null,
         nowAuditBy: null,

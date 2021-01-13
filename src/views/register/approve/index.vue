@@ -196,7 +196,7 @@ export default {
             const item = this.waitToAuthRegisterUsers[i]
             return Promise.all([
               getUserAvatar(item.id),
-              getUsersVacationLimit(item.id),
+              getUsersVacationLimit(item.id, null, false),
             ])
               .then(([avatar, vacation]) => {
                 item.avatar = avatar.url

@@ -38,7 +38,7 @@ export default {
         if (val) {
           this.loading = true
           this.loading_result = '加载中...'
-          getUsersVacationLimit(val)
+          getUsersVacationLimit(val, null, false)
             .then((data) => {
               this.usersvacation = {
                 yearlyLength: 0,

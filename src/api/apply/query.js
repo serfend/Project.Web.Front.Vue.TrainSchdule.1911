@@ -83,6 +83,7 @@ export function createQueryApplyModel(model, pages) {
   f.stampLeave = form.toQueryStartEndByArray(model.stampLeaveTime)
   f.stampReturn = form.toQueryStartEndByArray(model.stampReturnTime)
   f.status = form.toQueryArrays(model.status)
+  f.mainStatus = (undefined === model.mainStatus || model.mainStatus < 0) ? null : { start: model.mainStatus }
   f.executeStatus = form.toQueryValue(model.executeStatus)
   f.auditBy = form.toQueryValue(model.auditBy)
   f.nowAuditBy = form.toQueryValue(model.nowAuditBy)

@@ -30,6 +30,7 @@
                       : 'danger'
                   "
                 >{{ detail.request.vacationType }}</el-tag>
+                <el-tag v-if="detail.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
                 <div v-if="staticData.vacationStart">
                   <el-tooltip effect="light">
                     <template slot="content">
@@ -117,6 +118,7 @@
 import { detail } from '@/api/apply/query'
 import { exportUserApplies } from '@/api/common/static'
 import { datedifference, parseTime } from '@/utils'
+import { get_item_type } from '@/utils/vacation'
 import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
 import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'
@@ -242,13 +244,13 @@ export default {
       this.loading = true
       const loadDetail = detail(id).then((data) => {
         if (!data.requestInfo) data.requestInfo = {}
-        this.detail = data
-        const d = this.detail
-        d.request = data.requestInfo
-        if (d.request) {
-          d.stampReturn = new Date(d.request.stampReturn)
-          d.stampLeave = new Date(d.request.stampLeave)
+        data.request = data.requestInfo
+        if (data.request) {
+          data.stampReturn = new Date(data.request.stampReturn)
+          data.stampLeave = new Date(data.request.stampLeave)
         }
+        data.type = get_item_type(data)
+        this.detail = data
         this.initstaticDataData()
       })
       loadDetail.finally(() => {
