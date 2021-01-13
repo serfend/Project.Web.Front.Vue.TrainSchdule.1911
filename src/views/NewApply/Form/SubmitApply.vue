@@ -70,6 +70,10 @@ export default {
       type: String,
       default: null,
     },
+    mainType: {
+      type: Number,
+      default: 0
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -114,10 +118,12 @@ export default {
       this.errorMsg = null
       const BaseId = this.baseInfoId
       const RequestId = this.requestId
+      const main_type = this.mainType
       this.onLoading = true
       submitApply({
         RequestId,
         BaseId,
+        isPlan: main_type === 2,
         Verify: {
           Code: 201700816,
         },

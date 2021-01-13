@@ -40,22 +40,28 @@
               inactive-color="#ff4949"
               @change="r.modefiedByUser=true"
             />
-            <el-tag>{{ r.apply.base.realName }}</el-tag>
-            <el-tag>{{ r.apply.request.vacationPlace.name }}</el-tag>
-            <el-tag>{{ datedifference(r.apply.request.stampReturn,r.apply.request.stampLeave) + 1 }}天{{ r.apply.request.onTripLength>0?`(路途${r.apply.request.onTripLength}天)`:'(无路途)' }}</el-tag>
+            <el-tag
+              :type="r.apply.type.isPlan?'info':'primary'"
+              class="info-tag"
+            >{{ r.apply.type.isPlan?'计划':'正式' }}</el-tag>
+            <el-tag class="info-tag">{{ r.apply.base.realName }}</el-tag>
+            <el-tag class="info-tag">{{ r.apply.request.vacationPlace.name }}</el-tag>
+            <el-tag
+              class="info-tag"
+            >{{ datedifference(r.apply.request.stampReturn,r.apply.request.stampLeave) + 1 }}天{{ r.apply.request.onTripLength>0?`(路途${r.apply.request.onTripLength}天)`:'(无路途)' }}</el-tag>
           </template>
           <el-form style>
             <el-form-item label="批复内容">
               <el-input v-model="r.remark" type="textarea" @change="r.modefiedByUser=true" />
             </el-form-item>
-            <el-form-item label="部职别">
+            <el-form-item label="单位职务">
               {{ r.apply.base.companyName }}
               {{ r.apply.base.dutiesName }}
             </el-form-item>
             <el-form-item label="休假原因">{{ r.apply.request.reason }}</el-form-item>
             <el-form-item label="休假地点">{{ r.apply.request.vacationPlace.name }}</el-form-item>
-            <el-form-item label="开始时间">{{ r.apply.request.stampLeave }}</el-form-item>
-            <el-form-item label="结束时间">{{ r.apply.request.stampReturn }}</el-form-item>
+            <el-form-item label="离队时间">{{ r.apply.request.stampLeave }}</el-form-item>
+            <el-form-item label="归队时间">{{ r.apply.request.stampReturn }}</el-form-item>
             <el-form-item
               label="总天数"
             >{{ datedifference(r.apply.request.stampReturn,r.apply.request.stampLeave) + 1 }}天</el-form-item>
@@ -116,7 +122,7 @@ export default {
         this.multiAuditForm.responseList = []
         for (let i = 0; i < val.length; i++) {
           const item = val[i]
-          if (item.status !== 100) {
+          if (item.status === 40 || item.status === 50) {
             this.multiAuditForm.responseList.push({
               apply: item,
               id: item.id,
@@ -145,7 +151,6 @@ export default {
     },
   },
   methods: {
-    audit,
     datedifference,
     SubmitMultiAuditForm() {
       this.$refs['auditForm'].validate((valid) => {
@@ -207,5 +212,8 @@ export default {
 <style scope>
 .el-form-item {
   margin-bottom: 1rem;
+}
+.info-tag {
+  margin-left: 0.5rem;
 }
 </style>

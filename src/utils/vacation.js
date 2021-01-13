@@ -21,6 +21,14 @@ export function get_item_summary(i) {
   } else detail = '无详细信息'
   return `${title}\n${detail}`
 }
+const MainStatus_IsPlan = 2
+export function get_item_type(i) {
+  const result = {
+    isPlan: (i.mainStatus & MainStatus_IsPlan) > 0
+  }
+  return result
+}
+
 export function get_item_stamp(i) {
   let result = i.tag && i.tag.stamp
   if (!result) {

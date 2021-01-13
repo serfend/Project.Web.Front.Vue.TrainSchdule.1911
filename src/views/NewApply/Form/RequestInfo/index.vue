@@ -5,8 +5,25 @@
     @mouseenter="isHover=true"
     @mouseleave="leaveCard"
   >
-    <el-card v-loading="onLoading" header="休假信息" style="position:relative">
-      <el-container>
+    <el-card v-loading="loading" header="休假信息" style="position:relative">
+      <el-form label-width="5rem">
+        <el-form-item label="填报类型">
+          <el-tooltip content="正式填报休假申请，审批通过后计入全年休假情况。">
+            <el-radio v-model="main_type" :label="0" border>正式报假</el-radio>
+          </el-tooltip>
+          <el-tooltip content="用于填报年度休假计划，不计入全年休假情况。">
+            <el-radio v-model="main_type" :label="2" border>计划报假</el-radio>
+          </el-tooltip>
+        </el-form-item>
+        <el-form-item v-show="main_type==0" label="选择计划">
+          <el-tooltip content="【开发中】您可以从之前填报的计划中直接选取作为正式填报项提交">
+            <el-select v-model="direct_select_apply" disabled>
+              <el-option value="1" label="8月1日正休15天" />
+            </el-select>
+          </el-tooltip>
+        </el-form-item>
+      </el-form>
+      <el-container v-show="main_type>-1">
         <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
             <template slot="content">鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
@@ -36,11 +53,6 @@
                 style="width:30rem"
               />
             </el-form-item>
-            <el-alert
-              title="注意：正休天数范围内可含的法定节假日。若您核实到前期未被正常包含法定节假日的，请联系业务口处理补回。"
-              type="warning"
-              show-icon
-            />
             <el-form-item label="休假天数">
               <el-slider
                 v-model="formApply.vacationLength"
@@ -179,7 +191,7 @@ export default {
   },
   data() {
     return {
-      onLoading: true,
+      loading: true,
       formApply: null,
       vacationPlaceDefault: null,
       usersvacation: {
@@ -195,6 +207,8 @@ export default {
       isHover: false,
       anyChanged: false,
       nowMaxLength: 30,
+      main_type: -1, // 0:正式报 1:计划报
+      direct_select_apply: null
     }
   },
   computed: {
@@ -253,6 +267,11 @@ export default {
     filtedBenefitList() {
       return this.benefitList.filter((i) => i && i.name && i.length)
     },
+    checkIsPlan() {
+      const i = this.main_type
+      const main_type_dict = { 0: false, 2: true }
+      return main_type_dict[i]
+    }
   },
   watch: {
     vacationTypes: {
@@ -266,10 +285,18 @@ export default {
         })
       },
     },
+    main_type: {
+      handler(val) {
+        this.$nextTick(() => {
+          this.updatedChange()
+        })
+      }
+    },
     formApply: {
       handler(val) {
-        if (val && !this.onLoading) {
+        if (val && !this.loading) {
           this.anyChanged = true
+          this.submitId = null
           this.$nextTick(() => {
             this.updatedApply()
           })
@@ -307,7 +334,7 @@ export default {
     // call by base info ,DO NOT REMOVE
     refreshVacation() {
       const user_select_leave_year = (this.formApply && new Date(this.formApply.StampLeave).getFullYear()) || new Date().getFullYear()
-      getUsersVacationLimit(this.userid, user_select_leave_year)
+      getUsersVacationLimit(this.userid, user_select_leave_year, this.checkIsPlan)
         .then((data) => {
           this.usersvacation = data
         })
@@ -329,7 +356,7 @@ export default {
         if (target) {
           const likely = Object.assign({}, target)
           this.formApply.vacationPlace = likely
-          likely.name = `${likely.name}(已为您默认填写可能休假的地点)`
+          likely.name = `${likely.name}(默认休假地点)`
           this.vacationPlaceDefault = likely
         }
       }
@@ -339,7 +366,7 @@ export default {
       this.resetLoading()
     },
     resetLoading() {
-      this.onLoading = false
+      this.loading = false
       this.anyChanged = false
     },
     createNewRequest() {
@@ -354,6 +381,7 @@ export default {
         vacationPlaceName: '',
         reason: '',
         ByTransportation: 0,
+        isPlan: null
       }
     },
     checkParamValid(params) {
@@ -376,7 +404,7 @@ export default {
      * 提交请求信息
      */
     submitRequestInfo() {
-      if (this.onLoading || !this.anyChanged) return
+      if (this.loading || !this.anyChanged) return
       this.anyChanged = false
       this.submitId = null
       this.$emit('update:submitId', null)
@@ -385,6 +413,8 @@ export default {
       if (caculaingDate.length < 0) return
 
       const model = Object.assign({ id: this.userid }, this.formApply)
+
+      model.isPlan = this.checkIsPlan
       model.vacationAdditionals = this.filtedBenefitList
       const items = this.checkParamValid(model)
       if (items.length > 0) {
@@ -394,12 +424,13 @@ export default {
       }
 
       model.vacationPlace = model.vacationPlace.code
-      this.onLoading = true
+      this.loading = true
       postRequestInfo(model)
         .then((data) => {
           this.$message.success('休假信息验证成功')
           this.submitId = data.id
           this.$emit('update:submitId', data.id)
+          this.$emit('update:mainType', this.main_type)
           setTimeout(() => {
             this.$emit('submited', true)
           }, 200)
@@ -408,7 +439,7 @@ export default {
           this.$emit('submited', false)
         })
         .finally(() => {
-          this.onLoading = false
+          this.loading = false
         })
     },
     /**

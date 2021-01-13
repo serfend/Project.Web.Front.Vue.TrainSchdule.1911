@@ -24,6 +24,7 @@
           v-show="nowStep>=1"
           ref="RequestInfo"
           :submit-id.sync="formFinal.RequestId"
+          :main-type.sync="formFinal.mainType"
           :userid.sync="userid"
           :self-settle.sync="selfSettle"
           style="margin:2rem 1.25rem"
@@ -35,6 +36,7 @@
       <SubmitApply
         :request-id="formFinal.RequestId"
         :base-info-id="formFinal.BaseInfoId"
+        :main-type="formFinal.mainType"
         :disabled="nowStep<2||childOnLoading"
         @reset="createNewDirect"
         @submit="userSubmit"
@@ -75,7 +77,8 @@ export default {
       selfSettle: null,
       formFinal: {
         BaseInfoId: '',
-        RequestId: ''
+        RequestId: '',
+        mainType: -1
       }
     }
   },
@@ -109,7 +112,8 @@ export default {
       this.$refs.RequestInfo.reset()
       this.formFinal = {
         BaseInfoId: '',
-        RequestId: ''
+        RequestId: '',
+        mainType: -1
       }
       this.onLoading = false
     },

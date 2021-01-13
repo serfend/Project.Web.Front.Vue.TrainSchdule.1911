@@ -47,7 +47,7 @@
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-row>
             <el-tooltip effect="light" :content="`创建于:${row.create}`">
-              <span>{{ format(row.create) }}</span>
+              <span>{{ formatTime(row.create) }}</span>
             </el-tooltip>
           </el-row>
           <el-row>
@@ -138,6 +138,7 @@
           <el-tooltip content="此申请可能为休假结束后创建">
             <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
           </el-tooltip>
+          <el-tag v-if="row.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
           <ApplyAuditStreamPreview
             v-if="row.statusDesc"
             :audit-status="row.steps"
@@ -186,6 +187,7 @@
 import { formatTime } from '@/utils'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
+import { get_item_type } from '@/utils/vacation'
 import Pagination from '@/components/Pagination'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 import VacationType from '@/components/Vacation/VacationType'
@@ -267,9 +269,7 @@ export default {
     },
   },
   methods: {
-    format(d) {
-      return formatTime(d)
-    },
+    formatTime,
     parseTime(d) {
       const now = new Date()
       const nowY = now.getFullYear()
@@ -319,6 +319,7 @@ export default {
       li.stampLeave = stampLeave
       li.stampReturn = stampReturn
       li.checkIfIsReplentApply = stampLeave <= new Date(li.create)
+      li.type = get_item_type(li)
       return li
     },
     countOtherTime(row) {
@@ -329,11 +330,8 @@ export default {
       )
     },
     showMutilAudit() {
-      this.multiAuditFormSelection = this.getChecked()
+      this.multiAuditFormSelection = this.$refs.singleTable.selection
       this.multiAuditFormShow = true
-    },
-    getChecked() {
-      return this.$refs['singleTable'].selection
     },
     showDetail(row, column, event) {
       if (column.label === '操作') return
