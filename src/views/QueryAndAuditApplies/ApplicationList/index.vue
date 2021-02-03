@@ -63,11 +63,11 @@
             <div slot="content">
               <div v-if="row.request.vacationPlaceName">
                 <b>详细地址</b>
-                <span>{{ row.request.vacationPlaceName }}</span>
+                <span style="width:10rem">{{ row.request.vacationPlaceName }}</span>
               </div>
               <div v-if="row.request.reason">
                 <b>休假原因</b>
-                <span>{{ row.request.reason }}</span>
+                <span style="width:10rem">{{ row.request.reason }}</span>
               </div>
               <div>
                 <b>出行方式</b>
@@ -78,7 +78,7 @@
               </div>
               <div v-if="row.request.vacationDescription">
                 <b>假期描述</b>
-                <p style="width:8rem">{{ row.request.vacationDescription }}</p>
+                <p style="width:10rem">{{ row.request.vacationDescription }}</p>
               </div>
             </div>
             <span>{{ row.request.vacationPlace ? row.request.vacationPlace.name : '未选择' }}</span>
