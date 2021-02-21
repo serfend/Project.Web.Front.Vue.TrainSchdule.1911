@@ -13,7 +13,7 @@ export function newContent({ title, content, replySubject, replyTo }) {
  * 删除帖子
  *
  * @export
- * @param {*} id 
+ * @param {*} id
  * @returns
  */
 export function removeContent(id) {
