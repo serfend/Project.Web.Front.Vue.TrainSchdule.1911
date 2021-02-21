@@ -10,14 +10,14 @@
         :class="{'submenu-title-noDropdown':!isNest}"
       >
         <SvgIcon :icon-class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" />
-        <span>{{ generateTitle(onlyOneChild.meta.title) }}</span>
+        <span>{{ item.meta.ctitle||generateTitle(onlyOneChild.meta.title) }}</span>
       </el-menu-item>
     </app-link>
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template v-if="item.meta" slot="title">
         <SvgIcon :icon-class="item.meta && item.meta.icon" />
-        <span>{{ generateTitle(item.meta.title) }}</span>
+        <span>{{ item.meta.ctitle||generateTitle(item.meta.title) }}</span>
       </template>
       <sidebar-item
         v-for="child in item.children"

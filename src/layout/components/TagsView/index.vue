@@ -12,7 +12,7 @@
         @click.middle.native="closeSelectedTag(tag)"
         @contextmenu.prevent.native="openMenu(tag,$event)"
       >
-        {{ generateTitle(tag.title) }}
+        {{ tag.ctitle||generateTitle(tag.title) }}
         <span
           v-if="!tag.meta.affix"
           class="el-icon-close"
