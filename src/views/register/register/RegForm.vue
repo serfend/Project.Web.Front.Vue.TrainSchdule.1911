@@ -67,9 +67,17 @@
     </el-dialog>
     <el-dialog :visible.sync="remove_account.show" append-to-body>
       <h2 slot="title">删除账号 - 敏感操作授权</h2>
-      <div style="color:#c00">您确定要删除用户吗</div>
-      <div style="color:#c00">用户名：{{ current_select_id }}</div>
-      <div style="color:#c00;margin-top:1rem">此操作将永久移除账号，移除后将不可恢复。</div>
+      <div style="color:#c00">
+        <h3>您确定要删除用户吗</h3>
+        <h3>{{ registerForm.Base.realName }} ({{ current_select_id }})</h3>
+      </div>
+
+      <el-input
+        v-model="remove_account.reason"
+        rows="6"
+        type="textarea"
+        :placeholder="`填写删除${registerForm.Base.realName}的原因`"
+      />
       <el-form style="margin-top:1rem">
         <AuthCode v-model="remove_account.auth" />
       </el-form>
@@ -89,13 +97,13 @@ const createForm = () => ({
     // company component require this prop
     company: {},
     title: {},
-    duties: {},
+    duties: {}
   },
   Application: {},
   Diy: {},
   Auth: {},
   password: '',
-  confirmPassword: '',
+  confirmPassword: ''
 })
 import SvgIcon from '@/components/SvgIcon'
 import Base from '../components/Base'
@@ -108,7 +116,7 @@ import {
   regnew,
   modifyUser,
   removeAccount,
-  authUserRegister,
+  authUserRegister
 } from '@/api/account'
 import { getUserAllInfo } from '@/api/user/usercompany'
 import NotLoginRegisterNotice from '../NotLoginRegisterNotice'
@@ -128,17 +136,17 @@ export default {
     Auth,
     NotLoginRegisterNotice,
     Login,
-    AuthCode,
+    AuthCode
   },
   props: {
     showSubmitButton: {
       type: Boolean,
-      default: true,
+      default: true
     },
     userInfo: {
       type: Object,
-      default: null,
-    },
+      default: null
+    }
   },
   data() {
     return {
@@ -154,7 +162,7 @@ export default {
           childIndex: 0,
           childNum: 1,
           icon: 'el-icon-s-custom',
-          component: 'Base',
+          component: 'Base'
         },
         {
           name: '系统',
@@ -162,7 +170,7 @@ export default {
           childIndex: 0,
           childNum: 1,
           icon: 'el-icon-document-copy',
-          component: 'Application',
+          component: 'Application'
         },
         {
           name: '单位',
@@ -170,7 +178,7 @@ export default {
           childIndex: 0,
           childNum: 1,
           icon: 'el-icon-office-building',
-          component: 'Company',
+          component: 'Company'
         },
         {
           name: '家庭',
@@ -178,7 +186,7 @@ export default {
           childIndex: 0,
           childNum: 4,
           icon: 'el-icon-s-home',
-          component: 'Social',
+          component: 'Social'
         },
         {
           name: '其他(可不填)',
@@ -186,7 +194,7 @@ export default {
           childIndex: 0,
           childNum: 1,
           icon: 'el-icon-s-grid',
-          component: 'Diy',
+          component: 'Diy'
         },
         {
           name: '授权(可不填)',
@@ -194,8 +202,8 @@ export default {
           childIndex: 0,
           childNum: 1,
           icon: 'el-icon-s-check',
-          component: 'Auth',
-        },
+          component: 'Auth'
+        }
       ],
       not_login_show: false,
       init_page_over: false,
@@ -203,7 +211,8 @@ export default {
       remove_account: {
         auth: null,
         show: false,
-      },
+        reason: ''
+      }
     }
   },
   computed: {
@@ -232,7 +241,7 @@ export default {
           return c + '已通过'
       }
       return '未知状态:' + s
-    },
+    }
   },
   watch: {
     init_page_over(val) {
@@ -245,8 +254,8 @@ export default {
       handler(val) {
         return this.handleCurrentChange(val)
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   mounted() {
     setTimeout(() => {
@@ -277,14 +286,18 @@ export default {
         return this.$message.error('未选中用户')
       }
       const actionName = valid ? '认证' : '退回'
-      const tip_auth = `即将对用户${this.registerForm.Base.realName}(${this.current_select_id})的注册进行【${actionName}】操作`
+      const tip_auth = `即将对用户${this.registerForm.Base.realName}(${
+        this.current_select_id
+      })的注册进行【${actionName}】操作`
       this.$confirm(tip_auth, `${actionName}提示`, { type: 'warning' }).then(
         () => {
           const username = this.current_select_id
           this.loading = true
           authUserRegister(username, valid)
             .then(() => {
-              const msg = valid ? '授权成功，可通知登录' : '驳回成功，可通知重新注册'
+              const msg = valid
+                ? '授权成功，可通知登录'
+                : '驳回成功，可通知重新注册'
               this.$message.success(msg)
               this.$emit('requireUpdate')
             })
@@ -300,7 +313,7 @@ export default {
       this.loading = true
       this.selectIsInvalidAccount = 0
       getUserAllInfo(this.current_select_id)
-        .then((data) => {
+        .then(data => {
           const f = this.registerForm
           f.Social = data.social
           f.Diy = data.diy
@@ -311,12 +324,12 @@ export default {
           f.Company = {
             company,
             duties: {
-              name: duties.name,
+              name: duties.name
             },
             title: {
-              name: duties.title,
+              name: duties.title
             },
-            titleDate: duties.titleDate,
+            titleDate: duties.titleDate
           }
           const { invitedBy } = data.application
           this.selectIsInvalidAccount = checkUserValid(invitedBy)
@@ -327,10 +340,9 @@ export default {
         })
     },
     async submitRegister(regOrModify) {
-      const confirm_action = await this.$confirm('确定要提交吗？')
-        .catch((e) => {
-          this.$message.error('已取消')
-        })
+      const confirm_action = await this.$confirm('确定要提交吗？').catch(e => {
+        this.$message.error('已取消')
+      })
       if (!confirm_action) return
       this.loading = true
       const f = this.registerForm
@@ -350,9 +362,9 @@ export default {
       const submitForm = {
         Data: f,
         verify: {
-          code: '201700816',
+          code: '201700816'
         },
-        Auth: f.Auth,
+        Auth: f.Auth
       }
       const submitMethod = regOrModify ? regnew : modifyUser
       // var confirmPassword = submitForm.Data.confirmPassword
@@ -363,7 +375,7 @@ export default {
       //   return this.$message.warning('密码填写有误')
       // }
       submitMethod(submitForm)
-        .then((data) => {
+        .then(data => {
           this.$message.success(regOrModify ? '注册成功' : '修改成功')
           this.$emit('requireUpdate')
           if (regOrModify) {
@@ -375,8 +387,8 @@ export default {
         })
     },
     removeAccount() {
-      this.$confirm('删除后将不可恢复，确定要删除此账号吗？', '警告', {
-        type: 'error',
+      this.$confirm('确定要删除此账号吗？', '警告', {
+        type: 'error'
       }).then(() => {
         this.remove_account.show = true
       })
@@ -386,6 +398,7 @@ export default {
       removeAccount({
         id: this.current_select_id,
         auth: this.remove_account.auth,
+        reason: this.remove_account.reason
       })
         .then(() => {
           this.$emit('requireUpdate')
@@ -400,8 +413,8 @@ export default {
     switch_login() {
       this.$store.dispatch('user/logout')
       this.$router.push({ path: '/vacation/myApply' })
-    },
-  },
+    }
+  }
 }
 </script>
 

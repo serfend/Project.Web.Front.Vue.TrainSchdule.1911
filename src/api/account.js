@@ -71,7 +71,23 @@ export function removeAccount(params) {
     data: params
   })
 }
-
+/**
+ * 恢复用户
+ * @param { {
+  * id: String,
+  * Auth: {
+  *   Code: String,
+  *   AuthByUserID: String
+  * }
+  * } } params
+  */
+export function restoreAccount(params) {
+  return request({
+    method: 'PUT',
+    url: 'Account/Restore',
+    data: params
+  })
+}
 /**
  * 注册
  *
