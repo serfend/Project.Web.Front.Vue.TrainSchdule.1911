@@ -396,9 +396,11 @@ export default {
     remove_account_confirm() {
       this.loading = true
       removeAccount({
-        id: this.current_select_id,
-        auth: this.remove_account.auth,
-        reason: this.remove_account.reason
+        data: {
+          id: this.current_select_id,
+          reason: this.remove_account.reason
+        },
+        auth: this.remove_account.auth
       })
         .then(() => {
           this.$emit('requireUpdate')

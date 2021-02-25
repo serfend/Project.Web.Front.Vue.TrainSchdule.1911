@@ -22,6 +22,11 @@
           </div>
 
           <el-form label-width="5rem">
+            <el-alert
+              v-if="account.id && account.id.length>5"
+              :type="is_removed?'success':'error'"
+              style="margin-bottom:1rem"
+            >{{ errorinfo }}</el-alert>
             <el-form-item label="账号">
               <el-input v-model="account.id" placeholder="输入已被删除的账号" />
             </el-form-item>
@@ -29,7 +34,13 @@
               <el-input v-model="account.reason" type="textarea" rows="5" />
             </el-form-item>
             <AuthCode v-model="account.auth" />
-            <el-button type="success" style="margin-top:1rem;width:100%" @click="restore_account">恢复</el-button>
+            <el-button
+              v-loading="loading"
+              :disabled="!is_removed"
+              type="success"
+              style="margin-top:1rem;width:100%"
+              @click="restore_account"
+            >恢复</el-button>
           </el-form>
         </el-card>
       </el-col>
@@ -39,7 +50,8 @@
 
 <script>
 import { restoreAccount } from '@/api/account'
-
+import { getUserBase } from '@/api/user/userinfo'
+import { debounce } from '@/utils'
 export default {
   name: 'UserRestore',
   components: { AuthCode: () => import('@/components/AuthCode') },
@@ -48,14 +60,59 @@ export default {
       auth: {},
       id: '',
       reason: ''
-    }
+    },
+    loading: false,
+    is_removed: true
   }),
+  computed: {
+    errorinfo() {
+      return this.is_removed
+        ? '当前账号处于不存在状态，可尝试恢复。'
+        : '当前账号存在，不可恢复'
+    },
+    requireCheck() {
+      return debounce(() => {
+        this.check()
+      }, 300)
+    }
+  },
+  watch: {
+    'account.id': {
+      handler(val) {
+        this.$nextTick(() => {
+          this.check()
+        })
+      }
+    }
+  },
   methods: {
     restoreAccount,
+    check() {
+      this.loading = true
+      getUserBase(this.account.id, true)
+        .then(data => {
+          this.is_removed = !data || !data.base || !data.base.cid
+        })
+        .catch(e => {
+          this.is_removed = true
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     restore_account() {
-      restoreAccount({ auth: this.account, data: this.account }).then(() => {
-        this.$message.success('已成功恢复')
-      })
+      this.loading = true
+      const data = Object.assign({}, this.account)
+      delete data.auth
+      const auth = this.account.auth
+      restoreAccount({ auth, data })
+        .then(() => {
+          this.$message.success('已成功恢复')
+        })
+        .finally(() => {
+          this.loading = false
+          this.check()
+        })
     }
   }
 }
