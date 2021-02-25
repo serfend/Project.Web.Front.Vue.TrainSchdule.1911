@@ -74,7 +74,7 @@ export function removeAccount(params) {
 /**
  * 恢复用户
  * @param { {
-  * id: String,
+  * data: UserRemoveDataModel,
   * Auth: {
   *   Code: String,
   *   AuthByUserID: String

@@ -53,7 +53,7 @@ export default {
   methods: {
     restoreAccount,
     restore_account() {
-      restoreAccount(this.account).then(() => {
+      restoreAccount({ auth: this.account, data: this.account }).then(() => {
         this.$message.success('已成功恢复')
       })
     }
