@@ -49,6 +49,7 @@
     "codemirror": "5.45.0",
     "core-js": "^2.6.11",
     "crypto-js": "^4.0.0",
+    "driver.js": "^0.9.8",
     "dropzone": "5.5.1",
     "echarts": "5.0.0",
     "echarts-gl": "^2.0.0-rc.3",

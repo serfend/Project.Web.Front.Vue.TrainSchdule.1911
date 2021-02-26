@@ -124,8 +124,8 @@
           </el-form-item>
         </el-tab-pane>
         <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="单位">
-          <el-form-item v-show="adminQuery" label="来自单位">
-            <CompaniesSelector v-model="queryForm.CreateCompanyItem" />
+          <el-form-item v-show="adminQuery" id="companiesSelector" label="来自单位">
+            <CompaniesSelector ref="companiesSelector" v-model="queryForm.CreateCompanyItem" />
           </el-form-item>
           <el-form-item label="单位类别">
             <CompanyTagSelector v-model="queryForm.companyType" />
@@ -208,6 +208,8 @@
 </template>
 
 <script>
+import Driver from 'driver.js' // import driver.js
+import 'driver.js/dist/driver.min.css' // import driver.js css
 import AuthCode from '@/components/AuthCode'
 import CompaniesSelector from '@/components/Company/CompaniesSelector'
 import CompanyTagSelector from '@/components/Company/CompanyTagSelector'
@@ -217,7 +219,7 @@ import {
   queryList,
   queryListId,
   queryMyAudit,
-  createQueryApplyModel,
+  createQueryApplyModel
 } from '@/api/apply/query'
 import { debounce } from '@/utils'
 export default {
@@ -227,21 +229,21 @@ export default {
     CompanyTagSelector,
     AuthCode,
     UserSelector,
-    DutiesSelector,
+    DutiesSelector
   },
   props: {
     list: {
       type: Array,
       default() {
         return []
-      },
+      }
     },
     pages: {
       type: Object,
       default() {
         return this.innerPages
-      },
-    },
+      }
+    }
   },
   data() {
     return {
@@ -250,16 +252,16 @@ export default {
         { code: '', desc: '所有申请' },
         {
           code: 'UnReceive',
-          desc: '未轮到我审核的',
+          desc: '未轮到我审核的'
         },
         {
           code: 'Accept',
-          desc: '同意的',
+          desc: '同意的'
         },
         {
           code: 'Deny',
-          desc: '驳回的',
-        },
+          desc: '驳回的'
+        }
       ],
       onLoading: false,
       onFormModifying: false,
@@ -279,16 +281,17 @@ export default {
         companyType: null,
         auth: {
           authByUserId: '',
-          code: '',
-        },
+          code: ''
+        }
       },
       queryFormStartRecord: false,
       innerPages: {
         pageIndex: 0,
-        pageSize: 20,
+        pageSize: 20
       },
       adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
       active_pane: '0',
+      driver: null
     }
   },
   computed: {
@@ -311,7 +314,7 @@ export default {
     },
     currentUserCmp() {
       return this.$store.state.user.companyid
-    },
+    }
   },
   watch: {
     adminQuery(val) {
@@ -332,7 +335,7 @@ export default {
       handler(val) {
         this.innerPages.pageIndex = 0 // reset page if form modify
         const item = this.queryForm.CreateCompanyItem || []
-        const codes = item.map((i) => i.code)
+        const codes = item.map(i => i.code)
         if (
           JSON.stringify(codes) !== JSON.stringify(this.queryForm.createCompany)
         ) {
@@ -342,7 +345,7 @@ export default {
         this.requireSearchData()
       },
       immediate: true,
-      deep: true,
+      deep: true
     },
     pages: {
       handler(val) {
@@ -352,8 +355,8 @@ export default {
         } else this.$emit('update:pages', this.innerPages)
       },
       immediate: true,
-      deep: true,
-    },
+      deep: true
+    }
   },
   mounted() {
     const tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
@@ -363,6 +366,9 @@ export default {
       this.queryForm = tmp
     }
     this.queryFormStartRecord = true
+    this.driver = new Driver({
+      closeBtnText: '我知道了'
+    })
   },
   methods: {
     setFormRecord() {
@@ -411,8 +417,30 @@ export default {
         action = queryMyAudit(f.pages, status, actionStatus, execStatus)
       }
       action
-        .then((data) => {
+        .then(data => {
           callback(data)
+        })
+        .catch(e => {
+          if (e.status === 12100) {
+            this.active_pane = '2'
+            this.$notify.info('当前权限不足，可尝试选择指定单位后再次查询。')
+
+            this.$refs.companiesSelector.$el.click()
+            setTimeout(() => {
+              const steps = [
+                {
+                  element: '#companiesSelector',
+                  popover: {
+                    title: '选取单位',
+                    description:
+                      '仅在此处显示了的单位是可以被选取的，*表示具有此单位的管理权限'
+                  }
+                }
+              ]
+              this.driver.defineSteps(steps)
+              this.driver.start()
+            }, 500)
+          }
         })
         .finally(() => {
           this.onLoading = false
@@ -420,7 +448,7 @@ export default {
             this.onFormModifying = false
           }, 1000)
         })
-    },
-  },
+    }
+  }
 }
 </script>

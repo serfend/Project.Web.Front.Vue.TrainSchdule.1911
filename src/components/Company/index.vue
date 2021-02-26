@@ -96,6 +96,10 @@ export default {
   methods: {
     OnStatusChange() {
       const id = this.id
+      if (!id) {
+        this.$emit('update:data', null)
+        return
+      }
       const canLoad = this.canLoad
       if (!canLoad || this.lastId === id) return
       this.loading = true

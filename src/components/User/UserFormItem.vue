@@ -69,6 +69,7 @@ export default {
   methods: {
     loadUser(userid) {
       if (!userid) {
+        this.innerData = null
         return
       }
       getUserSummary(userid, true).then(data => {
