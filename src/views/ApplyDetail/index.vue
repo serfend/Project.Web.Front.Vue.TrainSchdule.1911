@@ -2,7 +2,7 @@
   <div style="padding: 10px">
     <el-card v-if="detail && detail.id">
       <el-dialog :visible.sync="show_share" title="分享休假申请详情" append-to-body>
-        <DetailShare :id="detail.id" />
+        <ClipboardShare default-content="我把我的休假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。" />
       </el-dialog>
       <el-button type="text" icon="el-icon-share" @click="show_share=true">分享此休假详情</el-button>
       <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出休假登记卡</el-button>
@@ -124,7 +124,6 @@ import ActionUser from '../QueryAndAuditApplies/ActionUser'
 import SettleFormItem from '@/components/SettleFormItem'
 import AuditStatus from './components/AuditStatus'
 import MyApply from '@/views/MyApply'
-import DetailShare from './components/DetailShare'
 import { debounce } from '../../utils'
 import ApplyComments from '@/components/BiliComment'
 export default {
@@ -135,14 +134,15 @@ export default {
     ActionUser,
     AuditStatus,
     MyApply,
-    DetailShare,
-    ApplyComments,
+    ClipboardShare: () =>
+      import('@/views/common/ClipboardMonitor/ClipboardShare'),
+    ApplyComments
   },
   props: {
     focusId: {
       type: String,
-      default: null,
-    },
+      default: null
+    }
   },
   data() {
     return {
@@ -156,8 +156,8 @@ export default {
         vacationLength: 0,
         vacationSpent: 0,
         vacationProgress: 0,
-        vacationStart: false,
-      },
+        vacationStart: false
+      }
     }
   },
   computed: {
@@ -171,7 +171,7 @@ export default {
     },
     settle() {
       return this.detail.social.settle
-    },
+    }
   },
   watch: {
     focusId: {
@@ -179,7 +179,7 @@ export default {
         console.log('modify focusId', val)
         this.id = val
       },
-      immediate: true,
+      immediate: true
     },
     route_id(val) {
       if (this.focusId !== null) return
@@ -190,8 +190,8 @@ export default {
       handler(val) {
         this.requestUpdate()
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   mounted() {
     if (!this.$route || !this.$route.query) return
@@ -235,14 +235,11 @@ export default {
       if (!his || his.length === 0) {
         return this.$message.warning('当前无申请可导出')
       }
-      exportUserApplies(
-        dutiesRawType,
-        his.map((i) => i.id)
-      )
+      exportUserApplies(dutiesRawType, his.map(i => i.id))
     },
     loadDetail(id) {
       this.loading = true
-      const loadDetail = detail(id).then((data) => {
+      const loadDetail = detail(id).then(data => {
         if (!data.requestInfo) data.requestInfo = {}
         data.request = data.requestInfo
         if (data.request) {
@@ -256,8 +253,8 @@ export default {
       loadDetail.finally(() => {
         this.loading = false
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

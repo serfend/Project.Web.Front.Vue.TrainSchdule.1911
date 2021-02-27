@@ -42,35 +42,41 @@ export default {
   name: 'DetailShare',
   components: { ShortUrl, SvgIcon },
   props: {
-    id: {
+    defaultContent: {
       type: String,
       default: null,
+      require: true
     },
+    shareUrl: {
+      type: String,
+      default: null
+    }
   },
   data: () => ({
     loading: true,
     urlKey: null,
     fail_load: false,
-    been_copy: false,
+    been_copy: false
   }),
   computed: {
     url() {
-      const current_origin = document.location.origin
-      return `${current_origin}/#/vacation/applyDetail?id=${this.id}`
+      return this.shareUrl
+        ? `${window.location.origin}/${this.shareUrl}`
+        : window.location.href
     },
     short_url() {
       return `${process.env.VUE_APP_BASE_API}/s/${this.urlKey}`
-    },
+    }
   },
   watch: {
-    id: {
+    defaultContent: {
       handler(val) {
         this.$nextTick(() => {
           this.requireUpdate()
         })
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   activated() {
     this.loading = true
@@ -79,16 +85,20 @@ export default {
   methods: {
     show_scanner() {
       // TODO 扫码枪设备接入
-      this.$notify.error('没有发现扫码枪设备')
+      this.loading = true
+      setTimeout(() => {
+        this.$notify.error('没有发现扫码枪设备')
+        this.loading = false
+      }, Math.random() * 3000)
     },
     requireUpdate() {
       this.loading = true
       const expire = new Date(new Date() - 0 + 86400 * 7 * 1000)
       createDwz(this.url, null, expire)
-        .then((data) => {
+        .then(data => {
           this.urlKey = data.key
         })
-        .catch((e) => {
+        .catch(e => {
           this.fail_load = true
         })
         .finally(() => {
@@ -100,12 +110,15 @@ export default {
       setTimeout(() => {
         this.been_copy = false
       }, 1000)
-      const final_content = `我把我的休假申请发给你啦~复制本段￥${content}￥打开系统查看。或点击链接${this.short_url} 到浏览器。`
+      content = `￥${content}￥`
+      const final_content = this.defaultContent
+        .replace('{url}', this.short_url)
+        .replace('{key}', content)
       clipboard(final_content, event).then(() => {
         this.$message.success(`分享码已复制，快发给小伙伴吧~`)
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
