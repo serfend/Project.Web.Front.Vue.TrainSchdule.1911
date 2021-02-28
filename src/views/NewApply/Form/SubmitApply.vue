@@ -30,45 +30,61 @@
     <el-button type="info" @click="createNew">新建申请</el-button>
     <el-button v-show="submitId" type="success" @click="skimDetail">查 看 详 情</el-button>
     <el-dialog :visible.sync="showSuccessDialog" append-to-body>
-      <SvgIcon
-        icon-class="Message_success"
-        style-normal="width:6rem;height:6rem;margin: auto;color:#67c23a"
-        class-name="item-put-center"
-      />
-      <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">申 请 提 交 成 功</div>
+      <div v-if="!errorMsg">
+        <div style="display:flex;justify-content:center">
+          <LottieIcon
+            path="/assets/lottie/lottie.success.json"
+            :animate-speed="0.5"
+            style="width:15rem"
+          />
+        </div>
+        <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">申 请 提 交 成 功</div>
+      </div>
+      <div v-else>
+        <div style="display:flex;justify-content:center">
+          <LottieIcon
+            path="/assets/lottie/lottie.fail.json"
+            :animate-speed="0.5"
+            style="width:15rem"
+          />
+        </div>
+        <el-alert
+          v-if="errorMsg"
+          type="error"
+          center
+          effect="dark"
+          show-icon
+          style="margin-top:1rem"
+        >{{ errorMsg }}</el-alert>
+      </div>
+
       <div class="item-put-center">
         <el-button type="success" style="width:60%" @click="skimDetail">查 看 详 情</el-button>
       </div>
       <div class="item-put-center">
         <el-button type="info" style="width:60%" @click="showSuccessDialog=false">关 闭</el-button>
       </div>
-      <el-alert
-        v-if="errorMsg"
-        type="error"
-        center
-        effect="dark"
-        show-icon
-        style="margin-top:1rem"
-      >{{ errorMsg }}</el-alert>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import SvgIcon from '@/components/SvgIcon'
 import { doAction } from '@/api/apply/handle'
 import { submitApply } from '@/api/apply/create'
 export default {
   name: 'SubmitApply',
-  components: { SvgIcon },
+  components: {
+    // SvgIcon: () => import('@/components/SvgIcon'),
+    LottieIcon: () => import('@/components/LottieIcon')
+  },
   props: {
     baseInfoId: {
       type: String,
-      default: null,
+      default: null
     },
     requestId: {
       type: String,
-      default: null,
+      default: null
     },
     mainType: {
       type: Number,
@@ -76,14 +92,14 @@ export default {
     },
     disabled: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data: () => ({
     onLoading: false,
     submitId: '',
     showSuccessDialog: false,
-    errorMsg: null,
+    errorMsg: null
   }),
   computed: {
     iDisabled() {
@@ -94,14 +110,14 @@ export default {
     },
     applyDetailUrl() {
       return `#/vacation/applydetail?id=${this.submitId}`
-    },
+    }
   },
   watch: {
     submitId: {
       handler(val) {
         if (val) this.showSuccessDialog = true
-      },
-    },
+      }
+    }
   },
   methods: {
     skimDetail() {
@@ -125,10 +141,10 @@ export default {
         BaseId,
         isPlan: main_type === 2,
         Verify: {
-          Code: 201700816,
-        },
+          Code: 201700816
+        }
       })
-        .then((data) => {
+        .then(data => {
           var applyId = data.id
           var fn = actionStatus === 1 ? 'save' : 'publish'
           this.$message.success('提交成功')
@@ -141,7 +157,7 @@ export default {
                 this.$message.success(`${msg}成功`)
                 this.$emit('complete', true)
               })
-              .catch((e) => {
+              .catch(e => {
                 this.$emit('complete', false)
                 this.errorMsg = e.message
               })
@@ -158,12 +174,12 @@ export default {
       this.$confirm('此操作将清空并重新填写, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
+        type: 'warning'
       }).then(() => {
         this.$emit('reset')
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
