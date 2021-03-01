@@ -1,28 +1,34 @@
 <template>
-  <div>建设中</div>
+  <div>
+    <Loading />
+  </div>
 </template>
 
 <script>
 export default {
+  name: 'ProfileAccount',
+  components: {
+    Loading: () => import('@/views/Loading')
+  },
   props: {
     user: {
       type: Object,
       default: () => {
         return {
           name: '',
-          email: '',
+          email: ''
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     submit() {
       this.$message({
         message: '功能被禁用，修改数据失败',
         type: 'warning',
-        duration: 5 * 1000,
+        duration: 5 * 1000
       })
-    },
-  },
+    }
+  }
 }
 </script>

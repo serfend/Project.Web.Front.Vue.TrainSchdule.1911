@@ -1,5 +1,6 @@
 <template>
   <el-card>
+    <Loading />
     <template slot="header">
       <h3>{{ $t('default.app.phyGrade.list.title') }}</h3>
     </template>
@@ -19,7 +20,7 @@
 import CompanySelector from '@/components/Company/CompanySelector'
 export default {
   name: 'ListByCompany',
-  components: { CompanySelector },
+  components: { CompanySelector, Loading: () => import('@/views/Loading') },
   data: () => ({
     company: null
   })

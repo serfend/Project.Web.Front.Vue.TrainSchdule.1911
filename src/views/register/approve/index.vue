@@ -86,7 +86,9 @@
           />
         </el-tab-pane>
         <el-tab-pane label="操作日志">
-          <div v-if="detail_pane=='2'">建设中</div>
+          <div v-if="detail_pane=='2'">
+            <Loading />
+          </div>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -117,11 +119,12 @@ export default {
     User,
     register,
     UserPermission,
+    Loading: () => import('@/views/Loading')
   },
   data: () => ({
     MembersQuery: {
       pageIndex: 0,
-      pageSize: 10,
+      pageSize: 10
     },
     nowSelectRealName: '', // 通过姓名选择器选中的人员
     MembersQueryTotalCount: 0,
@@ -129,7 +132,7 @@ export default {
     current_select_id: null,
     nowSelectCompany: null,
     loading: false,
-    detail_pane: '',
+    detail_pane: ''
   }),
   computed: {
     currentUser() {
@@ -151,18 +154,18 @@ export default {
         if (!val) {
           this.current_select_id = null
         }
-      },
-    },
+      }
+    }
   },
   watch: {
     currentCmp: {
       handler(val) {
         this.nowSelectCompany = {
-          code: val,
+          code: val
         }
         this.not_login_show = !val
       },
-      immediate: true,
+      immediate: true
     },
     nowSelectCompany: {
       handler(val) {
@@ -171,7 +174,7 @@ export default {
           this.requireLoadWaitToAUthRegisterUsers()
         }
       },
-      immediate: true,
+      immediate: true
     },
     MembersQuery: {
       handler(val) {
@@ -179,8 +182,8 @@ export default {
           this.requireLoadWaitToAUthRegisterUsers()
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   methods: {
     handleCurrentChange(val) {
@@ -196,26 +199,26 @@ export default {
             const item = this.waitToAuthRegisterUsers[i]
             return Promise.all([
               getUserAvatar(item.id),
-              getUsersVacationLimit(item.id, null, false),
+              getUsersVacationLimit(item.id, null, false)
             ])
               .then(([avatar, vacation]) => {
                 item.avatar = avatar.url
                 item.vacation = vacation
                 resolve()
               })
-              .catch((err) => reject(err))
+              .catch(err => reject(err))
           })
         )
       }
       await Promise.all(fn)
     },
     loadUserList(list) {
-      const result = list.map((item) => {
+      const result = list.map(item => {
         const obj = {
           userHasShow: false,
           avatar: '',
           vacation: {},
-          accountAuthStatus: checkUserValid(item.inviteBy),
+          accountAuthStatus: checkUserValid(item.inviteBy)
         }
         return Object.assign(item, obj)
       })
@@ -227,9 +230,9 @@ export default {
       getMembers({
         code: this.nowSelectCompany.code,
         page: this.MembersQuery.pageIndex,
-        pageSize: this.MembersQuery.pageSize,
+        pageSize: this.MembersQuery.pageSize
       })
-        .then(async (data) => {
+        .then(async data => {
           this.MembersQueryTotalCount = data.totalCount
           this.waitToAuthRegisterUsers = this.loadUserList(data.list)
           await this.loadSingleUser()
@@ -237,8 +240,8 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-  },
+    }
+  }
 }
 </script>
 

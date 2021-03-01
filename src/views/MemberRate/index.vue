@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loading />
     <el-card class="content-card">
       <el-tabs v-model="activeName" class="tab-container">
         <el-tab-pane label="说明" name="ApplyStreamAbout">施工中</el-tab-pane>
@@ -13,7 +14,10 @@
 
 <script>
 export default {
-  name: 'MemberRate'
+  name: 'MemberRate',
+  components: {
+    Loading: () => import('@/views/Loading')
+  }
 }
 </script>
 

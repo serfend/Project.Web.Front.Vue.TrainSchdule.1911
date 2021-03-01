@@ -6,6 +6,7 @@
           <h2 slot="header">账号恢复</h2>
           <p>账号被删除后可通过管理员在此处操作恢复</p>
           <p>功能完善开发中...</p>
+          <Loading />
         </el-card>
       </el-col>
       <el-col :lg="6" :md="10" :sm="16" :xs="24">
@@ -54,7 +55,10 @@ import { getUserBase } from '@/api/user/userinfo'
 import { debounce } from '@/utils'
 export default {
   name: 'UserRestore',
-  components: { AuthCode: () => import('@/components/AuthCode') },
+  components: {
+    AuthCode: () => import('@/components/AuthCode'),
+    Loading: () => import('@/views/Loading')
+  },
   data: () => ({
     account: {
       auth: {},

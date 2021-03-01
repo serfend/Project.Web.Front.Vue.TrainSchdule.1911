@@ -86,11 +86,15 @@
       </div>
       <div v-else class="right-menu-item">
         <el-popover trigger="hover">
-          <span>建设中</span>
+          <span>
+            <Loading />
+          </span>
           <el-link slot="reference">消息</el-link>
         </el-popover>
         <el-popover trigger="hover">
-          <span>建设中</span>
+          <span>
+            <Loading />
+          </span>
           <el-link slot="reference">收藏</el-link>
         </el-popover>
       </div>
@@ -128,6 +132,7 @@ export default {
     ResetPassword,
     UserSummary,
     Login,
+    Loading: () => import('@/views/Loading')
   },
   data() {
     return {
@@ -140,16 +145,16 @@ export default {
       loading: false,
       check: {
         check_sync_time: 0,
-        check_user_login: 0,
+        check_user_login: 0
       },
-      currentTime: null,
+      currentTime: null
     }
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'device']),
     hasLogin() {
       return this.$store.state.user.userid
-    },
+    }
   },
   watch: {
     // hasLogin: {
@@ -197,7 +202,11 @@ export default {
       this.$store.dispatch('settings/sync_time')
     },
     check_user_login() {
-      const d = datedifference(new Date(), this.check.check_user_login, 'minute')
+      const d = datedifference(
+        new Date(),
+        this.check.check_user_login,
+        'minute'
+      )
       if (d < 10) return
       // console.log('check login status')
       this.check.check_user_login = new Date()
@@ -225,7 +234,7 @@ export default {
     },
     handleReg(isToRegister) {
       this.$router.push({
-        path: `/register/${isToRegister ? 'user' : 'approve'}`,
+        path: `/register/${isToRegister ? 'user' : 'approve'}`
       })
     },
     async logout() {
@@ -236,8 +245,8 @@ export default {
         this.userCardShow = false
         this.userCardShowing(false)
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
