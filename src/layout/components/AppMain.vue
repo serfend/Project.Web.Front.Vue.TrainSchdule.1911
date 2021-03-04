@@ -12,7 +12,7 @@
 export default {
   name: 'AppMain',
   data: () => ({
-    isAlive: true,
+    isAlive: true
   }),
   computed: {
     cachedViews() {
@@ -20,7 +20,7 @@ export default {
     },
     key() {
       return this.$route.fullPath
-    },
+    }
   },
   methods: {
     reload() {
@@ -29,8 +29,8 @@ export default {
         this.isAlive = true
         this.$store.dispatch('user/initUserInfo')
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -54,7 +54,7 @@ export default {
   }
 
   .fixed-header + .app-main {
-    padding-top: 84px;
+    padding-top: 50px;
   }
 }
 </style>
