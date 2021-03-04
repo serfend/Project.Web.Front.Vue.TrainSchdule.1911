@@ -2,19 +2,25 @@ import Layout from '@/layout'
 
 const router = {
   path: '/memberRate',
-  hidden: true,
   component: Layout,
   children: [{
     path: 'summary',
     meta: {
-      title: 'default.app.memberRate.summary.title',
+      ctitle: '周考月评',
       icon: 'component'
     },
     component: () => import('@/views/MemberRate')
   }, {
+    path: 'upload',
+    meta: {
+      ctitle: '上传评级',
+      icon: 'component'
+    },
+    component: () => import('@/views/MemberRate/Upload')
+  }, {
     path: 'config',
     meta: {
-      title: 'default.app.memberRate.config.title',
+      ctitle: '设置',
       icon: 'component'
     },
     component: () => import('@/views/MemberRate/Config')

@@ -23,7 +23,7 @@ export const constantRoutes = [
       icon: 'chart',
       hide_footer: true
     }
-  }, user, application, system, game, phy_grade, application_setting, member_rate
+  }, user, application, member_rate, system, game, phy_grade, application_setting
 ].concat(others)
 
 /**
