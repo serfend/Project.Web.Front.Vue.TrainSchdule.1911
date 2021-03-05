@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'has-logo':showLogo}" style="user-select:none">
+  <el-scrollbar :class="{'has-logo':showLogo}" style="user-select:none">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-menu
       :default-active="activeMenu"
@@ -18,7 +18,7 @@
         :base-path="route.path"
       />
     </el-menu>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script>
