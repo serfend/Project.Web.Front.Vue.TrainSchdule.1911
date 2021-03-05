@@ -7,17 +7,40 @@ const router = {
     path: 'summary',
     meta: {
       ctitle: '周考月评',
-      icon: 'component'
+      icon: 'exam'
     },
     component: () => import('@/views/MemberRate')
   }, {
     path: 'upload',
     meta: {
-      ctitle: '上传评级',
+      ctitle: '管理评比',
       icon: 'component'
     },
     component: () => import('@/views/MemberRate/Upload')
   }, {
+    path: 'summary-quarter',
+    meta: {
+      ctitle: '季度考评',
+      icon: 'exam'
+    },
+    component: () => import('@/views/MemberRate/Upload')
+  }, {
+    path: 'summary-special',
+    meta: {
+      ctitle: '专项考评',
+      icon: 'exam'
+    },
+    component: () => import('@/views/MemberRate/Upload')
+  }, {
+    path: 'summary-annual',
+    meta: {
+      ctitle: '年度考评',
+      icon: 'exam'
+    },
+    component: () => import('@/views/MemberRate/Upload')
+  },
+
+  {
     path: 'config',
     meta: {
       ctitle: '设置',
@@ -27,7 +50,7 @@ const router = {
   }],
   name: 'MemberRate',
   meta: {
-    title: 'default.app.memberRate.title',
+    ctitle: '考核纪实',
     icon: 'component'
   }
 }
