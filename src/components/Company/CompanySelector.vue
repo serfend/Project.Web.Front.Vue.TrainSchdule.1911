@@ -3,7 +3,7 @@
     ref="companyInnerSelector"
     v-model="companySelectItem"
     :child-getter-method="companyChild"
-    :placeholder="showInfo.name||placeholder"
+    :placeholder="value.name||placeholder"
     @change="updateItem"
   />
 </template>
@@ -35,18 +35,28 @@ export default {
   },
   data: () => ({
     companySelectItem: null,
-    value: null,
-    showPlaceholder: []
+    value: {}
   }),
   computed: {
     requireCheckName() {
       return debounce(() => {
         this.checkName()
       }, 500)
-    },
-    showInfo() {
-      const cn = this.data
-      return cn || this.showPlaceholder
+    }
+  },
+  watch: {
+    data: {
+      handler(val) {
+        if (!val || !val.code) {
+          this.value = {}
+          return
+        }
+        companyChild(val.code).then(d => {
+          this.value = d.list && d.list[0]
+        })
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
