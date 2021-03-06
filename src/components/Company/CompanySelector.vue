@@ -10,7 +10,7 @@
 
 <script>
 import CascaderSelector from '@/components/CascaderSelector'
-import { companyChild } from '@/api/company'
+import { companyChild, companyDetail } from '@/api/company'
 import { debounce } from '@/utils'
 export default {
   name: 'CompanySelector',
@@ -65,8 +65,8 @@ export default {
         this.value = {}
         return
       }
-      companyChild(val.code).then(d => {
-        this.value = d.list && d.list[0]
+      companyDetail(val.code).then(d => {
+        this.value = d.model
       })
     },
     updateItem(val) {

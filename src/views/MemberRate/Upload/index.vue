@@ -41,7 +41,7 @@
             <el-form-item required label="类别">
               <RatingTypeSelector v-model="file.ratingType" />
             </el-form-item>
-            <el-form-item required label="评比期数">
+            <el-form-item v-if="file.ratingType" required label="评比期数">
               <RatingCycleSelector v-model="file.ratingCycleCount" :rating-type="file.ratingType" />
             </el-form-item>
             <el-form-item label="评比单位">

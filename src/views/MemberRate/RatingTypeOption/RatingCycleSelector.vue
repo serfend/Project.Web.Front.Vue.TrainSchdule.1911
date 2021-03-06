@@ -62,6 +62,7 @@ export default {
     // TODO 其他类别的选取
     convertDateToCycle() {
       const v = this.ratingCycleDate
+      if (!v) return 0
       switch (this.ratingType) {
         case 4: {
           return (v.getFullYear() - 2000) * 12 + v.getMonth() + 1

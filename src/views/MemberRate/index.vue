@@ -14,38 +14,44 @@
           <el-date-picker v-model="search.date" type="month" placeholder="选择年月" />
         </el-form-item>
         <el-form-item label="单位">
-          <CompanySelector v-model="search.company" />
+          <CompanySelector :code.sync="search.company" />
         </el-form-item>
         <el-form-item label="被考评人">
           <UserSelector :code.sync="search.user" />
+        </el-form-item>
+        <el-form-item label="类别">
+          <RatingTypeSelector v-model="search.ratingType" />
+        </el-form-item>
+        <el-form-item v-if="search.ratingType" label="评比期数">
+          <RatingCycleSelector v-model="search.ratingCycleCount" :rating-type="search.ratingType" />
         </el-form-item>
       </el-form>
     </el-card>
     <el-card v-loading="loading" style="margin-top:1rem">
       <el-table :data="list">
-        <el-table-column label="姓名">
+        <el-table-column label="姓名" width="120rem">
           <template #default="scope">
-            <el-tooltip content="查看个人详情">
-              <el-button type="text">{{ scope.row.realName }}</el-button>
-            </el-tooltip>
+            <UserFormItem :userid="scope.row.userId" />
           </template>
         </el-table-column>
-        <el-table-column label="职务">
-          <template #default="scope">{{ scope.row.duty }}</template>
+        <el-table-column label="单位" width="200rem">
+          <template #default="scope">
+            <CompanyFormItem :id="scope.row.companyCode" />
+          </template>
         </el-table-column>
-        <el-table-column label="单位">
-          <template #default="scope">{{ scope.row.company }}</template>
-        </el-table-column>
-        <el-table-column label="单位内排序">
+        <el-table-column label="排序" width="50rem">
           <template #default="scope">{{ scope.row.rank }}</template>
         </el-table-column>
-        <el-table-column label="评级">
-          <template #default="scope">{{ scope.row.result }}</template>
+        <el-table-column label="评级" width="70rem">
+          <template #default="scope">
+            <MemberRateStatusTag v-model="scope.row.level" />
+          </template>
         </el-table-column>
         <el-table-column label="备注">
           <template #default="scope">{{ scope.row.remark }}</template>
         </el-table-column>
       </el-table>
+      <Pagination :pagesetting.sync="page" :total-count="totalCount" />
     </el-card>
     <el-dialog :visible.sync="help_dialog_show">
       <template #title>
@@ -59,12 +65,19 @@
 <script>
 import { FormRecorder } from '@/utils/form'
 import { ratingTypeDict } from './setting'
+import { get_rates } from '@/api/memberRate/query'
 export default {
   name: 'MemberRate',
   components: {
     CompanySelector: () => import('@/components/Company/CompanySelector'),
     UserSelector: () => import('@/components/User/UserSelector'),
-    Help: () => import('./Help')
+    CompanyFormItem: () => import('@/components/Company/CompanyFormItem'),
+    UserFormItem: () => import('@/components/User/UserFormItem'),
+    Help: () => import('./Help'),
+    RatingCycleSelector: () => import('./RatingTypeOption/RatingCycleSelector'),
+    RatingTypeSelector: () => import('./RatingTypeOption/RatingTypeSelector'),
+    MemberRateStatusTag: () => import('./MemberRateStatusTag'),
+    Pagination: () => import('@/components/Pagination')
   },
   data: () => ({
     loading: false,
@@ -74,13 +87,24 @@ export default {
       date: null,
       company: null,
       user: null,
-      ratingType: 0,
+      ratingType: 4,
       ratingTypeCycleCount: 0
     },
+    page: {
+      pageIndex: 0,
+      pageSize: 50
+    },
+    totalCount: 0,
     list: [],
     help_dialog_show: false
   }),
   watch: {
+    page: {
+      deep: true,
+      handler(val) {
+        this.refresh()
+      }
+    },
     search: {
       handler(val) {
         this.refresh()
@@ -90,19 +114,28 @@ export default {
   },
   mounted() {
     this.searchForm = new FormRecorder('memberRate.summary', this.search)
-    this.search = this.searchForm.getRecord()
+    setTimeout(() => {
+      this.search = this.searchForm.getRecord()
+    }, 100)
   },
   methods: {
+    get_rates,
     show_help() {
       this.help_dialog_show = true
     },
     refresh() {
+      if (this.loading) return
       this.searchForm.setRecord(this.search)
       this.loading = true
-      setTimeout(() => {
-        this.list = [{ realName: '施工中' }]
-        this.loading = false
-      }, 500)
+      const s = Object.assign({}, this.search)
+      this.get_rates(Object.assign(s, { page: this.page }))
+        .then(d => {
+          this.list = d.list
+          this.totalCount = d.totalCount
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }

@@ -14,3 +14,10 @@ export function get_rates({ company, user, ratingCycleCount, ratingType, page })
     }
   })
 }
+
+export function status_dict() {
+  return request({
+    url: `${api}/statusDict`,
+    method: 'get'
+  })
+}

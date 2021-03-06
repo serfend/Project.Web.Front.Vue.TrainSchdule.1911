@@ -3,7 +3,7 @@
     <Company v-model="inner_id" :data.sync="form" :can-load="canLoad" @formUpdate="handleChange" />
     <template #reference>
       <el-tag v-if="form">{{ form.name }}</el-tag>
-      <el-tag v-else>{{ id }}无效</el-tag>
+      <el-tag v-else>{{ inner_id }}无效</el-tag>
     </template>
   </el-popover>
 </template>
