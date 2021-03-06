@@ -16,6 +16,9 @@
         <el-form-item label="单位">
           <CompanySelector v-model="search.company" />
         </el-form-item>
+        <el-form-item label="被考评人">
+          <UserSelector :code.sync="search.user" />
+        </el-form-item>
       </el-form>
     </el-card>
     <el-card v-loading="loading" style="margin-top:1rem">
@@ -55,18 +58,24 @@
 
 <script>
 import { FormRecorder } from '@/utils/form'
+import { ratingTypeDict } from './setting'
 export default {
   name: 'MemberRate',
   components: {
     CompanySelector: () => import('@/components/Company/CompanySelector'),
+    UserSelector: () => import('@/components/User/UserSelector'),
     Help: () => import('./Help')
   },
   data: () => ({
     loading: false,
+    ratingType: ratingTypeDict,
     searchForm: null,
     search: {
       date: null,
-      company: null
+      company: null,
+      user: null,
+      ratingType: 0,
+      ratingTypeCycleCount: 0
     },
     list: [],
     help_dialog_show: false
