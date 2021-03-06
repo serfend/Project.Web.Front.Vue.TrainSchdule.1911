@@ -46,8 +46,8 @@
             </el-form-item>
             <el-form-item label="评比单位">
               <CompanySelector
-                v-model="judgeCompany"
                 v-loading="loading_company"
+                :code.sync="file.company"
                 placeholder="本次评比的实施单位"
               />
             </el-form-item>
@@ -176,15 +176,6 @@ export default {
     existDialog: false
   }),
   computed: {
-    judgeCompany: {
-      get() {
-        const c = this.file.company
-        return { code: c }
-      },
-      set(val) {
-        this.file.company = val.code
-      }
-    },
     existIsForDuplicate() {
       return this.existList[0] && this.existList[0].userId
     },

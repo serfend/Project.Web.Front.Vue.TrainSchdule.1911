@@ -45,15 +45,14 @@ export default {
     }
   },
   watch: {
+    code: {
+      handler(val) {
+        this.handleDataChange({ code: val })
+      }
+    },
     data: {
       handler(val) {
-        if (!val || !val.code) {
-          this.value = {}
-          return
-        }
-        companyChild(val.code).then(d => {
-          this.value = d.list && d.list[0]
-        })
+        this.handleDataChange(val)
       },
       deep: true,
       immediate: true
@@ -61,6 +60,15 @@ export default {
   },
   methods: {
     companyChild,
+    handleDataChange(val) {
+      if (!val || !val.code) {
+        this.value = {}
+        return
+      }
+      companyChild(val.code).then(d => {
+        this.value = d.list && d.list[0]
+      })
+    },
     updateItem(val) {
       const item = {}
       if (val) {
