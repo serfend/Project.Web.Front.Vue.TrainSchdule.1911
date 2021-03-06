@@ -19,3 +19,17 @@ export function upload_data_by_xls({ xls, create, ratingCycleCount, ratingType, 
     }
   })
 }
+
+/**
+ *当上传xls后提示需要确认时使用
+ *
+ * @export
+ * @return {*}
+ */
+export function upload_data_by_last() {
+  return request({
+    url: `${api}/confirmLastXlsUpload`,
+    method: 'patch'
+  })
+}
+
