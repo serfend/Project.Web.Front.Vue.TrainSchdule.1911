@@ -11,13 +11,6 @@ const router = {
     },
     component: () => import('@/views/MemberRate')
   }, {
-    path: 'upload',
-    meta: {
-      ctitle: '管理评比',
-      icon: 'component'
-    },
-    component: () => import('@/views/MemberRate/Upload')
-  }, {
     path: 'summary-quarter',
     meta: {
       ctitle: '季度考评',
@@ -38,15 +31,13 @@ const router = {
       icon: 'exam'
     },
     component: () => import('@/views/MemberRate/Upload')
-  },
-
-  {
-    path: 'config',
+  }, {
+    path: 'upload',
     meta: {
-      ctitle: '设置',
-      icon: 'component'
+      ctitle: '评级上传',
+      icon: 'namecard'
     },
-    component: () => import('@/views/MemberRate/Config')
+    component: () => import('@/views/MemberRate/Upload')
   }],
   name: 'MemberRate',
   meta: {
