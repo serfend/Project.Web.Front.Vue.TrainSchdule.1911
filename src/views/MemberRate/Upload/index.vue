@@ -2,6 +2,33 @@
   <div>
     <el-row :gutter="20">
       <el-col :xl="8" :lg="13" :md="18" :sm="24">
+        <el-card style="margin-top:1rem;height:24.8rem">
+          <div>
+            <el-button
+              type="primary"
+              style="width:100%;margin-top:3rem;"
+              @click="download_template"
+            >默认模板下载</el-button>
+          </div>
+          <div>
+            <el-button
+              type="primary"
+              disabled
+              style="width:100%;margin-top:4rem;"
+              @click="download_template"
+            >本单位样例模板下载</el-button>
+          </div>
+          <div>
+            <el-button
+              type="primary"
+              disabled
+              style="width:100%;margin-top:4rem;"
+              @click="download_template"
+            >本单位上期提交内容下载</el-button>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :xl="8" :lg="13" :md="18" :sm="24" style="margin-top:1rem">
         <LottieIcon
           path="assets/lottie/lottie-rating.json"
           style="position:absolute;width:15rem;height:30rem;margin-top:-13rem;margin-left:10rem"
@@ -11,36 +38,11 @@
             <h2>单位评级上传</h2>
           </template>
           <el-form label-width="5rem">
-            <el-form-item label="模板下载">
-              <el-button type="primary" @click="download_template">默认模板</el-button>
-              <el-button type="primary" disabled @click="download_template">本单位样例模板</el-button>
-              <el-button type="primary" disabled @click="download_template">本单位上期提交</el-button>
+            <el-form-item required label="类别">
+              <RatingTypeSelector v-model="file.ratingType" />
             </el-form-item>
-            <el-form-item label="类别">
-              <el-radio-group v-model="file.ratingType">
-                <el-tooltip
-                  v-for="i in Object.keys(ratingType)"
-                  :key="i"
-                  :disabled="!ratingType[i][1]"
-                  content="未开放此类评比"
-                >
-                  <el-radio-button :label="i" :disabled="ratingType[i][1]">{{ ratingType[i][0] }}</el-radio-button>
-                </el-tooltip>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="评比期数">
-              <el-radio-group v-if="file.ratingType==8" v-model="ratingCycleDate">
-                <el-radio-button label="一季度" />
-                <el-radio-button label="二季度" />
-                <el-radio-button label="三季度" />
-                <el-radio-button label="四季度" />
-              </el-radio-group>
-              <el-date-picker
-                v-else
-                v-model="ratingCycleDate"
-                :type="ratingType[file.ratingType][2]"
-              />
-              <span v-if="file.ratingCycleCount" style="color:#eee">{{ file.ratingCycleCount }}期</span>
+            <el-form-item required label="评比期数">
+              <RatingCycleSelector v-model="file.ratingCycleCount" :rating-type="file.ratingType" />
             </el-form-item>
             <el-form-item label="评比单位">
               <CompanySelector
@@ -50,7 +52,7 @@
               />
             </el-form-item>
             <el-form-item label="上传数据">
-              <span v-if="!canSubmit">信息不全，不可提交</span>
+              <el-tag v-if="!canSubmit" type="danger">信息不全，不可提交</el-tag>
               <el-upload
                 v-else
                 v-loading="loading_company"
@@ -142,13 +144,6 @@
 </template>
 
 <script>
-const ratingType = {
-  1: ['每日', true, 'date'],
-  2: ['周考', true, 'week'],
-  4: ['月评', false, 'month'],
-  8: ['季度', true, 'season'],
-  16: ['年终', true, 'year']
-}
 import { download_template, upload_data_by_last } from '@/api/memberRate/xls'
 import { downloadUrl } from '@/api/common/static'
 export default {
@@ -157,10 +152,12 @@ export default {
     LottieIcon: () => import('@/components/LottieIcon'),
     UserFormItem: () => import('@/components/User/UserFormItem'),
     CopyableLabel: () => import('@/components/Label/CopyableLabel'),
-    CompanySelector: () => import('@/components/Company/CompanySelector')
+    CompanySelector: () => import('@/components/Company/CompanySelector'),
+    RatingCycleSelector: () =>
+      import('../RatingTypeOption/RatingCycleSelector'),
+    RatingTypeSelector: () => import('../RatingTypeOption/RatingTypeSelector')
   },
   data: () => ({
-    ratingType,
     file: {
       file: null,
       create: null,
@@ -170,7 +167,6 @@ export default {
       confirm: false
     },
     loading_company: false,
-    ratingCycleDateValue: new Date(),
     uploadurl: '',
     loading: false,
     errorList: [],
@@ -195,15 +191,6 @@ export default {
     canSubmit() {
       const f = this.file
       return f.ratingCycleCount && f.ratingType
-    },
-    ratingCycleDate: {
-      get() {
-        return this.ratingCycleDateValue
-      },
-      set(v) {
-        this.ratingCycleDateValue = v
-        this.file.ratingCycleCount = this.convertDateToCycle()
-      }
     }
   },
   watch: {
@@ -242,14 +229,6 @@ export default {
     download_callback() {
       const url = this.errorFileCallback
       downloadUrl(url)
-    },
-    convertDateToCycle() {
-      const v = this.ratingCycleDate
-      switch (this.file.ratingType) {
-        case 4: {
-          return (v.getFullYear() - 2000) * 12 + v.getMonth() + 1
-        }
-      }
     },
     convertMessage(msg) {
       if (!msg) return '无'
@@ -301,7 +280,6 @@ export default {
       return true
     },
     beforeAvatarUpload(file) {
-      this.file.ratingCycleCount = this.convertDateToCycle()
       this.loading = true
       return true
     }
