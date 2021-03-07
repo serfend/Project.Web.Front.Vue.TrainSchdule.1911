@@ -250,18 +250,9 @@ export default {
       myAuditActionDic: [
         { code: 'Received', desc: '等待我审核的' },
         { code: '', desc: '所有申请' },
-        {
-          code: 'UnReceive',
-          desc: '未轮到我审核的'
-        },
-        {
-          code: 'Accept',
-          desc: '同意的'
-        },
-        {
-          code: 'Deny',
-          desc: '驳回的'
-        }
+        { code: 'UnReceive', desc: '未轮到我审核的' },
+        { code: 'Accept', desc: '同意的' },
+        { code: 'Deny', desc: '驳回的' }
       ],
       onLoading: false,
       onFormModifying: false,
@@ -423,8 +414,6 @@ export default {
         .catch(e => {
           if (e.status === 12100) {
             this.active_pane = '2'
-            this.$notify.info('当前权限不足，可尝试选择指定单位后再次查询。')
-
             this.$refs.companiesSelector.$el.click()
             setTimeout(() => {
               const steps = [
