@@ -1,87 +1,61 @@
 <template>
   <div>
-    <el-row :gutter="20">
-      <el-col :xl="8" :lg="13" :md="18" :sm="24">
-        <el-card style="margin-top:1rem;height:24.8rem">
-          <div>
-            <el-button
-              type="primary"
-              style="width:100%;margin-top:3rem;"
-              @click="download_template"
-            >默认模板下载</el-button>
-          </div>
-          <div>
-            <el-button
-              type="primary"
-              disabled
-              style="width:100%;margin-top:4rem;"
-              @click="download_template"
-            >本单位样例模板下载</el-button>
-          </div>
-          <div>
-            <el-button
-              type="primary"
-              disabled
-              style="width:100%;margin-top:4rem;"
-              @click="download_template"
-            >本单位上期提交内容下载</el-button>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :xl="8" :lg="13" :md="18" :sm="24" style="margin-top:1rem">
-        <LottieIcon
-          path="assets/lottie/lottie-rating.json"
-          style="position:absolute;width:15rem;height:30rem;margin-top:-13rem;margin-left:10rem"
-        />
-        <el-card v-loading="loading">
-          <template #header>
-            <h2>单位评级上传</h2>
-          </template>
-          <el-form label-width="5rem">
-            <el-form-item required label="类别">
-              <RatingTypeSelector v-model="file.ratingType" />
-            </el-form-item>
-            <el-form-item v-if="file.ratingType" required label="评比期数">
-              <RatingCycleSelector v-model="file.ratingCycleCount" :rating-type="file.ratingType" />
-            </el-form-item>
-            <el-form-item label="评比单位">
-              <CompanySelector
-                v-loading="loading_company"
-                :code.sync="file.company"
-                placeholder="本次评比的实施单位"
-              />
-            </el-form-item>
-            <el-form-item label="上传数据">
-              <el-tag v-if="!canSubmit" type="danger">信息不全，不可提交</el-tag>
-              <el-upload
-                v-else
-                v-loading="loading_company"
-                drag
-                accept="xlsx"
-                :before-upload="beforeAvatarUpload"
-                :on-success="onUploadSuccess"
-                :action="uploadurl"
-                :data="file"
-                :show-file-list="false"
-                with-credentials
-              >
-                <i class="el-icon-upload" />
-                <div class="el-upload__text">
-                  将文档拖到此处，或
-                  <em>点击上传</em>
-                </div>
-              </el-upload>
-            </el-form-item>
-            <el-form-item label="覆盖历史">
-              <el-tooltip content="当存在历史已上传过的数据时，直接覆盖此数据">
-                <el-switch v-model="file.confirm" />
-              </el-tooltip>
-            </el-form-item>
-          </el-form>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-dialog :visible.sync="hasError">
+    <LottieIcon
+      path="assets/lottie/lottie-rating.json"
+      style="position:absolute;width:15rem;height:30rem;margin-top:-13rem;margin-left:10rem"
+    />
+    <el-card v-loading="loading">
+      <template #header>
+        <h2>单位评级上传</h2>
+      </template>
+      <div style="margin-bottom:0.5rem">
+        <el-button type="text" @click="download_template">默认模板下载</el-button>
+        <el-button type="text" disabled @click="download_template">本单位样例模板下载</el-button>
+        <el-button type="text" disabled @click="download_template">本单位上期提交内容下载</el-button>
+      </div>
+      <el-form label-width="5rem">
+        <el-form-item required label="类别">
+          <RatingTypeSelector v-model="file.ratingType" />
+        </el-form-item>
+        <el-form-item v-if="file.ratingType" required label="评比期数">
+          <RatingCycleSelector v-model="file.ratingCycleCount" :rating-type="file.ratingType" />
+        </el-form-item>
+        <el-form-item label="评比单位">
+          <CompanySelector
+            v-loading="loading_company"
+            :code.sync="file.company"
+            placeholder="本次评比的实施单位"
+          />
+        </el-form-item>
+        <el-form-item label="上传数据">
+          <el-tag v-if="!canSubmit" type="danger">信息不全，不可提交</el-tag>
+          <el-upload
+            v-else
+            v-loading="loading_company"
+            drag
+            accept="xlsx"
+            :before-upload="beforeAvatarUpload"
+            :on-success="onUploadSuccess"
+            :action="uploadurl"
+            :data="file"
+            :show-file-list="false"
+            with-credentials
+          >
+            <i class="el-icon-upload" />
+            <div class="el-upload__text">
+              将文档拖到此处，或
+              <em>点击上传</em>
+            </div>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="覆盖历史">
+          <el-tooltip content="当存在历史已上传过的数据时，直接覆盖此数据">
+            <el-switch v-model="file.confirm" />
+          </el-tooltip>
+        </el-form-item>
+      </el-form>
+    </el-card>
+    <el-dialog :visible.sync="hasError" append-to-body>
       <template #title>
         <h2>上传数据有误</h2>
       </template>
@@ -109,7 +83,7 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-    <el-dialog v-if="existList" :visible.sync="existDialog">
+    <el-dialog v-if="existList" :visible.sync="existDialog" append-to-body>
       <template #title>
         <h2 v-if="existIsForDuplicate">存在以下已存在项,是否覆盖</h2>
         <h2 v-else>下列身份证号未注册，无法上传</h2>
@@ -238,16 +212,18 @@ export default {
       if (this.checkDataExist(list)) return
     },
     checkDataValid(list) {
-      const s = list.splice(list.length - 1, 1)[0]
-      if (!s) return this.$message.error('上传文件异常')
-      const isDataInvalid = s.key
-      if (isDataInvalid && s.key.toLowerCase() === 'labelpath') {
-        this.errorFileCallback = s.message.replace('temp', '/sftemporary')
-      } else {
-        this.errorFileCallback = null
-        list.unshift(s)
-        if (!isDataInvalid) return false
-      }
+      if (!list[0]) return this.$message.error('上传文件异常')
+      const isDataInvalid = list[0].key
+      if (isDataInvalid) {
+        debugger
+        const sIndex = list.findIndex(
+          i => i.key && i.key.toLowerCase() === 'labelpath'
+        )
+        if (sIndex > -1) {
+          const s = list.splice(sIndex, 1)[0]
+          this.errorFileCallback = s.message.replace('temp', '/sftemporary')
+        } else this.errorFileCallback = null
+      } else return false
 
       let index = 0
       this.errorList = list.map(i => {

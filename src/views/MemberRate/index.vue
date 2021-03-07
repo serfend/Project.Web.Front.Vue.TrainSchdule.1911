@@ -1,6 +1,12 @@
 <template>
   <div>
     <el-card>
+      <el-button type="primary" icon="el-icon-upload" @click="upload_dialog_show = true">评级上传</el-button>
+      <el-dialog :visible.sync="upload_dialog_show" append-to-body>
+        <Upload v-if="upload_dialog_show" />
+      </el-dialog>
+    </el-card>
+    <el-card>
       <template #header>
         <div style="display:flex">
           <h2>周考月评</h2>
@@ -34,6 +40,7 @@
         v-loading="loading_export"
         type="primary"
         style="width:100%"
+        icon="el-icon-download"
         @click="export_current"
       >导出当前筛选查询</el-button>
     </el-card>
@@ -107,6 +114,7 @@ export default {
     RatingCycleSelector: () => import('./RatingTypeOption/RatingCycleSelector'),
     RatingTypeSelector: () => import('./RatingTypeOption/RatingTypeSelector'),
     MemberRateStatusTag: () => import('./MemberRateStatusTag'),
+    Upload: () => import('./Upload'),
     Pagination: () => import('@/components/Pagination')
   },
   data: () => ({
@@ -130,6 +138,7 @@ export default {
     totalCount: 0,
     list: [],
     help_dialog_show: false,
+    upload_dialog_show: false,
     driver: null,
     template: null
   }),
@@ -174,7 +183,7 @@ export default {
       // TODO Build Component:<TemplateSelector/>
       this.loading_export = true
       const actions = []
-      const filename = '周考月评标准'
+      const filename = '周考月评'
       if (!this.template) {
         actions.push(
           downloadByPath(
