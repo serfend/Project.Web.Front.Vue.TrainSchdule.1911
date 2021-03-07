@@ -23,6 +23,10 @@ export default {
     v: {
       type: Number,
       default: 0
+    },
+    item: {
+      type: Array,
+      default: null
     }
   },
   data: () => ({
@@ -33,6 +37,7 @@ export default {
     value: {
       handler(val) {
         this.$emit('change', Number(val))
+        this.$emit('update:item', this.ratingType[val])
       }
     },
     v: {

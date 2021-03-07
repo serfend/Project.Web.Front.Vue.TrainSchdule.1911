@@ -10,9 +10,6 @@
         </div>
       </template>
       <el-form inline>
-        <el-form-item label="考评时间">
-          <el-date-picker v-model="search.date" type="month" placeholder="选择年月" />
-        </el-form-item>
         <el-form-item id="companySelector" label="单位">
           <CompanySelector ref="companySelector" :code.sync="search.company" />
         </el-form-item>
@@ -20,15 +17,25 @@
           <UserSelector :code.sync="search.user" />
         </el-form-item>
         <el-form-item label="类别">
-          <RatingTypeSelector v-model="search.ratingType" />
+          <RatingTypeSelector v-model="search.ratingType" :item.sync="search.ratingTypeItem" />
         </el-form-item>
         <el-form-item v-if="search.ratingType" label="评比期数">
-          <RatingCycleSelector v-model="search.ratingCycleCount" :rating-type="search.ratingType" />
+          <RatingCycleSelector
+            v-model="search.ratingTypeCycleCount"
+            :rating-type="search.ratingType"
+            :date-name.sync="search.ratingTypeCycleDesc"
+          />
         </el-form-item>
         <el-form-item id="onlySelfSelector" label="只看自己">
           <el-switch v-model="search.onlySelf" />
         </el-form-item>
       </el-form>
+      <el-button
+        v-loading="loading_export"
+        type="primary"
+        style="width:100%"
+        @click="export_current"
+      >导出当前筛选查询</el-button>
     </el-card>
     <el-card v-loading="loading" style="margin-top:1rem">
       <el-table :data="list">
@@ -87,6 +94,8 @@ import { FormRecorder } from '@/utils/form'
 import { ratingTypeDict } from './setting'
 import { get_rates } from '@/api/memberRate/query'
 import { formatTime } from '@/utils'
+import { downloadByPath } from '@/api/common/file'
+import { downloadBlob, exportXlsByTemplate } from '@/utils/file'
 export default {
   name: 'MemberRate',
   components: {
@@ -102,14 +111,16 @@ export default {
   },
   data: () => ({
     loading: false,
+    loading_export: false,
     ratingType: ratingTypeDict,
     searchForm: null,
     search: {
-      date: null,
       company: null,
       user: null,
       ratingType: 4,
+      ratingTypeItem: null,
       ratingTypeCycleCount: 0,
+      ratingTypeCycleDesc: null,
       onlySelf: false
     },
     page: {
@@ -119,7 +130,8 @@ export default {
     totalCount: 0,
     list: [],
     help_dialog_show: false,
-    driver: null
+    driver: null,
+    template: null
   }),
   computed: {
     currentUser() {
@@ -135,6 +147,7 @@ export default {
     },
     search: {
       handler(val) {
+        this.page.pageIndex = 0
         this.refresh()
       },
       deep: true
@@ -157,17 +170,76 @@ export default {
     show_help() {
       this.help_dialog_show = true
     },
-    refresh() {
+    export_current() {
+      // TODO Build Component:<TemplateSelector/>
+      this.loading_export = true
+      const actions = []
+      const filename = '周考月评标准'
+      if (!this.template) {
+        actions.push(
+          downloadByPath(
+            'xlsTemplate',
+            `${filename}模板.xlsx`,
+            false,
+            'arraybuffer'
+          ).then(data => {
+            this.template = data
+          })
+        )
+      }
+      const a = new Promise((res, rej) => {
+        const cb = data => {
+          res(data)
+        }
+        this.refresh(cb, { pageIndex: 0, pageSize: 1e4 })
+      })
+      actions.push(a)
+      Promise.all(actions)
+        .then(data => {
+          data = data[0] || data[1]
+          if (this.template.byteLength < 1e2) {
+            return this.$message.error('加载模板失败')
+          }
+          const m = new Date().getMonth() + 1
+          data.createDate = `${m}月`
+          data.exportDate = `${m}月${new Date().getDate()}日`
+          data.list = data.list.map(i => {
+            const u = i.user
+            if (u) {
+              const f = this.formatTime(u.userTitleDate, '{y}.{m}')
+              u.titleAndDate = `${u.userTitle}\n${f}`
+              u.companyAndDuty = `${u.companyName}${u.dutiesName}`
+            }
+            return i
+          })
+          const ratingTypeCycleDesc = this.search.ratingTypeCycleDesc
+          const ratingType = this.search.ratingTypeItem[0]
+          const valid = ratingTypeCycleDesc && ratingType
+          const prefix = valid
+            ? `${ratingTypeCycleDesc}${ratingType} - `
+            : '常规 - '
+          data = exportXlsByTemplate(this.template, data)
+          downloadBlob(data, `${prefix}${filename}.xlsx`)
+        })
+        .finally(() => {
+          this.loading_export = false
+        })
+    },
+    refresh(cb, page) {
       if (this.loading) return
       this.searchForm.setRecord(this.search)
       this.loading = true
       const s = Object.assign({}, this.search)
       if (s.onlySelf) s.user = this.currentUser
-      this.get_rates(Object.assign(s, { page: this.page }))
-        .then(d => {
+      if (!cb) {
+        cb = d => {
           this.list = d.list
           this.totalCount = d.totalCount
-        })
+        }
+      }
+      page = page || this.page
+      this.get_rates(Object.assign(s, { page }))
+        .then(cb)
         .catch(e => {
           if (e.status === 12100) {
             setTimeout(() => {
