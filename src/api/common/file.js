@@ -22,12 +22,14 @@ export function upload(filepath, filename, filedata, lastuploadId) {
  * @param {*} fileid
  * @returns
  */
-export function download(fileid) {
-  var opt = {
+export function download(fileid, responseType) {
+  const opt = {
+    responseType,
     params: {
       fileid
     }
   }
+  if (!opt.responseType) delete opt.responseType
   return request.get('file/download', opt)
 }
 
@@ -92,14 +94,17 @@ export function requestFile(filepath, filename) {
  * @param {*} filename
  * @returns
  */
-export function downloadByPath(path, filename, ignoreError) {
-  return request.get('file/frompath', {
+export function downloadByPath(path, filename, ignoreError, responseType) {
+  const opt = {
+    responseType,
     params: {
       path,
       filename
     },
     ignoreError
-  })
+  }
+  if (!opt.responseType) delete opt.responseType
+  return request.get('file/frompath', opt)
 }
 
 /**
