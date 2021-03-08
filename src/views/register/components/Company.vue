@@ -31,10 +31,10 @@
         style="width: 14rem"
       />
     </el-form-item>
-    <el-form-item prop="disableVacation" label="附加项">
-      <el-radio-group v-model="disabledVacation" @change="selectDisabledVacation">
-        <el-radio-button :label="true">是</el-radio-button>
-        <el-radio-button :label="false">否</el-radio-button>
+    <el-form-item label="附加项">
+      <el-radio-group v-model="innerForm.disabledVacation">
+        <el-radio-button :label="1">是</el-radio-button>
+        <el-radio-button :label="-1">否</el-radio-button>
       </el-radio-group>
       <i class="el-icon-info" style="color: #33c" />
       <span>{{ $t('register.company.disabledVacation') }}</span>
@@ -46,9 +46,8 @@
 const createForm = () => ({
   company: {},
   duties: {},
-  title: {},
+  title: {}
 })
-const Const_DisabledVacation = 4
 import CompanySelector from '@/components/Company/CompanySelector'
 import DutiesSelector from '@/components/Duty/DutiesSelector'
 import { companyChild, companyTitleQuery } from '@/api/company'
@@ -56,29 +55,21 @@ export default {
   name: 'Company',
   components: {
     CompanySelector,
-    DutiesSelector,
+    DutiesSelector
   },
   props: {
     form: {
       type: Object,
-      default: createForm(),
-    },
+      default: createForm()
+    }
   },
   data: () => ({
-    disabledVacation: null,
     innerForm: createForm()
   }),
   watch: {
     form: {
       handler(val) {
         if (!val || !val.company) return
-        const accountStatus = val.company.accountStatus
-        if (undefined === accountStatus) {
-          this.disabledVacation = null
-        } else {
-          const status = (accountStatus & Const_DisabledVacation) > 0
-          this.disabledVacation = status
-        }
         this.innerForm = val
       },
       deep: true,
@@ -91,8 +82,8 @@ export default {
         })
       },
       deep: true,
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     companyChild,
@@ -102,20 +93,15 @@ export default {
     },
     async queryItem(data, cb) {
       var list = data.list
-      var result = list.map((item) => {
+      var result = list.map(item => {
         return {
           value: item.name,
-          code: item.code,
+          code: item.code
         }
       })
       cb(result)
-    },
-    selectDisabledVacation(select) {
-      const d = Object.assign({}, this.form)
-      d.disabledVacation = select
-      this.$emit('update:form', d)
-    },
-  },
+    }
+  }
 }
 </script>
 

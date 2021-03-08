@@ -62,7 +62,7 @@
         @click="submitRegister(true)"
       >提交注册</el-button>
     </el-card>
-    <el-dialog :visible="card_should_show" append-to-body>
+    <el-dialog :visible.sync="card_should_show" append-to-body>
       <NotLoginRegisterNotice />
     </el-dialog>
     <el-dialog :visible.sync="remove_account.show" append-to-body>
@@ -230,17 +230,15 @@ export default {
       return s === 0 ? 'info' : s === 1 ? 'success' : 'danger'
     },
     selectIsInvalidAccountDescription() {
-      const s = this.selectIsInvalidAccount
+      const s =
+        this.selectIsInvalidAccount && this.selectIsInvalidAccount.toString()
       const c = '用户信息认证'
-      switch (s) {
-        case -1:
-          return c + '已驳回'
-        case 0:
-          return c + '待审批'
-        case 1:
-          return c + '已通过'
+      const dict = {
+        '-1': '已驳回',
+        '0': '待审批',
+        '1': '已通过'
       }
-      return '未知状态:' + s
+      return `${c} ${dict[s] || '未知状态'}`
     }
   },
   watch: {
@@ -321,6 +319,7 @@ export default {
           f.Application = data.application
           const duties = data.duties || {}
           const company = data.company.company
+          const { invitedBy, accountStatus } = data.application
           f.Company = {
             company,
             duties: {
@@ -329,15 +328,31 @@ export default {
             title: {
               name: duties.title
             },
-            titleDate: duties.titleDate
+            titleDate: duties.titleDate,
+            disabledVacation:
+              (accountStatus & Const_DisabledVacation) > 0 ? 1 : -1
           }
-          const { invitedBy } = data.application
           this.selectIsInvalidAccount = checkUserValid(invitedBy)
           this.nowSelectCompany = company
         })
         .finally(() => {
           this.loading = false
         })
+    },
+    set_account_status_disable_vacation(f) {
+      const app = f.Application
+      // reset status to normal
+      if (!app.accountStatus) app.accountStatus = 0
+      if ((app.accountStatus & Const_DisabledVacation) > 0) {
+        app.accountStatus -= Const_DisabledVacation
+      }
+      // syn status to disabled vacation
+      if (f.Company.disabledVacation > 0) {
+        app.accountStatus += Const_DisabledVacation
+      }
+    },
+    set_account_status(f) {
+      this.set_account_status_disable_vacation(f)
     },
     async submitRegister(regOrModify) {
       const confirm_action = await this.$confirm('确定要提交吗？').catch(e => {
@@ -346,19 +361,10 @@ export default {
       if (!confirm_action) return
       this.loading = true
       const f = this.registerForm
-      f.password = f.Application.password
-      f.confirmPassword = f.Application.confirmPassword
-      // reset status to normal
-      if (!f.Application.accountStatus) f.Application.accountStatus = 0
-      if ((f.Application.accountStatus & Const_DisabledVacation) > 0) {
-        console.log('reset vacation')
-        f.Application.accountStatus -= Const_DisabledVacation
-      }
-      // syn status to disabled vacation
-      if (f.Company.disabledVacation) {
-        console.log('disabled vacation')
-        f.Application.accountStatus += Const_DisabledVacation
-      }
+      const app = f.Application
+      f.password = app.password
+      f.confirmPassword = app.confirmPassword
+      this.set_account_status(f)
       const submitForm = {
         Data: f,
         verify: {
@@ -367,13 +373,6 @@ export default {
         Auth: f.Auth
       }
       const submitMethod = regOrModify ? regnew : modifyUser
-      // var confirmPassword = submitForm.Data.confirmPassword
-      // var password = submitForm.Data.password
-      // if (password !== confirmPassword || password === undefined) {
-      //   this.nowStep = 2
-      //   this.loading = false
-      //   return this.$message.warning('密码填写有误')
-      // }
       submitMethod(submitForm)
         .then(data => {
           this.$message.success(regOrModify ? '注册成功' : '修改成功')
