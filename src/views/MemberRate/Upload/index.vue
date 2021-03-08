@@ -41,14 +41,13 @@
             v-else
             v-loading="loading_company"
             drag
-            accept="xlsx"
             :before-upload="beforeAvatarUpload"
             :on-success="onUploadSuccess"
             :action="uploadurl"
             :data="file"
             :show-file-list="false"
             with-credentials
-          >
+          >AQFD20
             <i class="el-icon-upload" />
             <div class="el-upload__text">
               将文档拖到此处，或
@@ -214,7 +213,7 @@ export default {
             f.ratingTypeCycleDesc,
             f.ratingTypeItem
           )
-          const filename = '周考月评'
+          const filename = '周考月评上传'
           this.$store
             .dispatch('template/download_xlsx', {
               templateName: `${filename}模板.xlsx`,
@@ -235,7 +234,7 @@ export default {
         Object.assign({ code: this.file.company }, this.file)
       )
         .then(data => {
-          const filename = '周考月评'
+          const filename = '周考月评上传'
           this.$store.dispatch('template/download_xlsx', {
             templateName: `${filename}模板.xlsx`,
             data: data.data,
