@@ -11,33 +11,34 @@ const router = {
     },
     component: () => import('@/views/MemberRate')
   }, {
+    path: 'upload',
+    hidden: true,
+    meta: {
+      ctitle: '评级上传',
+      icon: 'namecard'
+    },
+    component: () => import('@/views/MemberRate/Upload')
+  }, {
     path: 'summary-quarter',
     meta: {
       ctitle: '季度考评',
       icon: 'exam'
     },
-    component: () => import('@/views/MemberRate/Upload')
+    component: () => import('@/views/Loading')
   }, {
     path: 'summary-special',
     meta: {
       ctitle: '专项考评',
       icon: 'exam'
     },
-    component: () => import('@/views/MemberRate/Upload')
+    component: () => import('@/views/Loading')
   }, {
     path: 'summary-annual',
     meta: {
       ctitle: '年度考评',
       icon: 'exam'
     },
-    component: () => import('@/views/MemberRate/Upload')
-  }, {
-    path: 'upload',
-    meta: {
-      ctitle: '评级上传',
-      icon: 'namecard'
-    },
-    component: () => import('@/views/MemberRate/Upload')
+    component: () => import('@/views/Loading')
   }],
   name: 'MemberRate',
   meta: {

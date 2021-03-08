@@ -101,8 +101,7 @@ import { FormRecorder } from '@/utils/form'
 import { ratingTypeDict } from './setting'
 import { get_rates } from '@/api/memberRate/query'
 import { formatTime } from '@/utils'
-import { downloadByPath } from '@/api/common/file'
-import { downloadBlob, exportXlsByTemplate } from '@/utils/file'
+import { templateToStandard } from './TemplateBuilder/standard'
 export default {
   name: 'MemberRate',
   components: {
@@ -139,8 +138,7 @@ export default {
     list: [],
     help_dialog_show: false,
     upload_dialog_show: false,
-    driver: null,
-    template: null
+    driver: null
   }),
   computed: {
     currentUser() {
@@ -182,57 +180,26 @@ export default {
     export_current() {
       // TODO Build Component:<TemplateSelector/>
       this.loading_export = true
-      const actions = []
-      const filename = '周考月评'
-      if (!this.template) {
-        actions.push(
-          downloadByPath(
-            'xlsTemplate',
-            `${filename}模板.xlsx`,
-            false,
-            'arraybuffer'
-          ).then(data => {
-            this.template = data
-          })
+      const cb = model_data => {
+        const { data, prefix } = templateToStandard(
+          model_data,
+          this.search.ratingTypeCycleDesc,
+          this.search.ratingTypeItem
         )
-      }
-      const a = new Promise((res, rej) => {
-        const cb = data => {
-          res(data)
-        }
-        this.refresh(cb, { pageIndex: 0, pageSize: 1e4 })
-      })
-      actions.push(a)
-      Promise.all(actions)
-        .then(data => {
-          data = data[0] || data[1]
-          if (this.template.byteLength < 1e2) {
-            return this.$message.error('加载模板失败')
-          }
-          const m = new Date().getMonth() + 1
-          data.createDate = `${m}月`
-          data.exportDate = `${m}月${new Date().getDate()}日`
-          data.list = data.list.map(i => {
-            const u = i.user
-            if (u) {
-              const f = this.formatTime(u.userTitleDate, '{y}.{m}')
-              u.titleAndDate = `${u.userTitle}\n${f}`
-              u.companyAndDuty = `${u.companyName}${u.dutiesName}`
-            }
-            return i
+        const filename = '周考月评'
+        this.$store
+          .dispatch('template/download_xlsx', {
+            templateName: `${filename}模板.xlsx`,
+            data,
+            filename: `${prefix}${filename}.xlsx`
           })
-          const ratingTypeCycleDesc = this.search.ratingTypeCycleDesc
-          const ratingType = this.search.ratingTypeItem[0]
-          const valid = ratingTypeCycleDesc && ratingType
-          const prefix = valid
-            ? `${ratingTypeCycleDesc}${ratingType} - `
-            : '常规 - '
-          data = exportXlsByTemplate(this.template, data)
-          downloadBlob(data, `${prefix}${filename}.xlsx`)
-        })
-        .finally(() => {
-          this.loading_export = false
-        })
+          .finally(() => {
+            this.loading_export = false
+          })
+      }
+      this.refresh(cb, { pageIndex: 0, pageSize: 1e4 }).catch(() => {
+        this.loading_export = false
+      })
     },
     refresh(cb, page) {
       if (this.loading) return
@@ -240,6 +207,11 @@ export default {
       this.loading = true
       const s = Object.assign({}, this.search)
       if (s.onlySelf) s.user = this.currentUser
+      let finallycb = () => {}
+      const promise = {
+        then: thencb => (cb = thencb),
+        catch: fcb => (finallycb = fcb)
+      }
       if (!cb) {
         cb = d => {
           this.list = d.list
@@ -276,8 +248,10 @@ export default {
           }
         })
         .finally(() => {
+          finallycb()
           this.loading = false
         })
+      return promise
     }
   }
 }

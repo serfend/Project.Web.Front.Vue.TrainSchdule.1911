@@ -2,7 +2,7 @@
   <div>
     <LottieIcon
       path="assets/lottie/lottie-rating.json"
-      style="position:absolute;width:15rem;height:30rem;margin-top:-13rem;margin-left:10rem"
+      style="position:absolute;width:15rem;height:30rem;margin-top:-13rem;margin-left:10rem;z-index: -1;"
     />
     <el-card v-loading="loading">
       <template #header>
@@ -10,15 +10,19 @@
       </template>
       <div style="margin-bottom:0.5rem">
         <el-button type="text" @click="download_template">默认模板下载</el-button>
-        <el-button type="text" disabled @click="download_template">本单位样例模板下载</el-button>
+        <el-button type="text" @click="download_user_company_template">本单位样例模板下载</el-button>
         <el-button type="text" disabled @click="download_template">本单位上期提交内容下载</el-button>
       </div>
       <el-form label-width="5rem">
         <el-form-item required label="类别">
-          <RatingTypeSelector v-model="file.ratingType" />
+          <RatingTypeSelector v-model="file.ratingType" :item.sync="file.ratingTypeItem" />
         </el-form-item>
         <el-form-item v-if="file.ratingType" required label="评比期数">
-          <RatingCycleSelector v-model="file.ratingCycleCount" :rating-type="file.ratingType" />
+          <RatingCycleSelector
+            v-model="file.ratingCycleCount"
+            :rating-type="file.ratingType"
+            :data-name.sync="file.ratingTypeDesc"
+          />
         </el-form-item>
         <el-form-item label="评比单位">
           <CompanySelector
@@ -120,6 +124,7 @@
 <script>
 import { download_template, upload_data_by_last } from '@/api/memberRate/xls'
 import { downloadUrl } from '@/api/common/static'
+import { load_template as load_user_company_template } from './user-company-members-template'
 export default {
   name: 'MemberRateUpload',
   components: {
@@ -136,6 +141,8 @@ export default {
       file: null,
       create: null,
       ratingCycleCount: null,
+      ratingTypeItem: null,
+      ratingTypeDesc: null,
       ratingType: 4,
       company: null,
       confirm: false
@@ -150,6 +157,9 @@ export default {
     existDialog: false
   }),
   computed: {
+    company() {
+      return this.$store.state.user.companyid
+    },
     existIsForDuplicate() {
       return this.existList[0] && this.existList[0].userId
     },
@@ -189,6 +199,23 @@ export default {
             this.loading = false
           })
       }
+    },
+    download_user_company_template() {
+      this.loading = true
+      load_user_company_template(
+        Object.assign({ code: this.company }, this.file)
+      )
+        .then(data => {
+          const filename = '周考月评'
+          this.$store.dispatch('template/download_xlsx', {
+            templateName: `${filename}模板.xlsx`,
+            data: data.data,
+            filename: `本单位样例 - ${filename}.xlsx`
+          })
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     download_template,
     download_callback() {
