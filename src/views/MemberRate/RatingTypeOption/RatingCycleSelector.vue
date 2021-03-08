@@ -13,6 +13,11 @@
 
 <script>
 import { ratingTypeDict } from '../setting'
+import {
+  descList,
+  dateValueToCycleCount,
+  dateValueToCycleDesc
+} from './converter'
 export default {
   name: 'RatingCycleSelector',
   model: {
@@ -37,7 +42,7 @@ export default {
     value: 0,
     ratingCycleDateValue: null,
     ratingCycleDesc: null,
-    descList: ['一季度', '二季度', '三季度', '四季度'],
+    descList,
     ratingTypeDict
   }),
   computed: {
@@ -47,7 +52,7 @@ export default {
       },
       set(v) {
         this.ratingCycleDateValue = v
-        this.value = this.convertDateToCycle()
+        this.onChange()
       }
     }
   },
@@ -57,86 +62,30 @@ export default {
         this.onChange()
       }
     },
-    value: {
-      handler(val) {
-        this.onChange()
-      }
-    },
     v: {
       handler(val) {
         this.value = val
+        this.onChange()
       },
       immediate: true
     }
   },
   methods: {
     onChange() {
+      this.value = this.convertDateToCycle()
       this.$emit('change', this.value)
       if (!this.value) return this.$emit('update:dateName', null)
       const val = this.ratingCycleDateValue
-      let descName = '无效'
-      switch (this.ratingType) {
-        case 0: {
-          break
-        }
-        // 日
-        case 1: {
-          break
-        }
-        // 周
-        case 2: {
-          break
-        }
-        // 月
-        case 4: {
-          descName = `${val.getFullYear()}年${val.getMonth() + 1}月`
-          break
-        }
-        // 季度
-        case 8: {
-          const s = this.descList.findIndex(i => i === this.ratingCycleDesc) + 1
-          descName = `${val.getFullYear()}年${s}季度`
-          break
-        }
-        // 年
-        case 16: {
-          descName = `${val.getFullYear()}`
-          break
-        }
-      }
+      const descName = dateValueToCycleDesc(
+        this.ratingType,
+        val,
+        this.ratingCycleDesc
+      )
       this.$emit('update:dateName', descName)
     },
-    // TODO 其他类别的选取
     convertDateToCycle() {
       const v = this.ratingCycleDate
-      if (!v) return 0
-      switch (this.ratingType) {
-        case 0: {
-          break
-        }
-        // 日
-        case 1: {
-          break
-        }
-        // 周
-        case 2: {
-          break
-        }
-        // 月
-        case 4: {
-          return (v.getFullYear() - 2000) * 12 + v.getMonth() + 1
-        }
-        // 季度
-        case 8: {
-          const y = (v.getFullYear() - 2000) * 4
-          const s = this.descList.findIndex(i => i === this.ratingCycleDesc)
-          return y + s + 1
-        }
-        // 年
-        case 16: {
-          return v.getFullYear() - 2000
-        }
-      }
+      return dateValueToCycleCount(this.ratingType, v, this.ratingCycleDesc)
     }
   }
 }
