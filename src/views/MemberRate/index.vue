@@ -27,9 +27,9 @@
         </el-form-item>
         <el-form-item v-if="search.ratingType" label="评比期数">
           <RatingCycleSelector
-            v-model="search.ratingTypeCycleCount"
+            v-model="search.ratingCycleCount"
             :rating-type="search.ratingType"
-            :date-name.sync="search.ratingTypeCycleDesc"
+            :date-name.sync="search.ratingCycleDesc"
           />
         </el-form-item>
         <el-form-item id="onlySelfSelector" label="只看自己">
@@ -46,6 +46,14 @@
     </el-card>
     <el-card v-loading="loading" style="margin-top:1rem">
       <el-table :data="list">
+        <el-table-column label="期数" width="100rem">
+          <template #default="scope">
+            <RatingTypeTag
+              :rating-type="scope.row.ratingType"
+              :rating-cycle-count="scope.row.ratingCycleCount"
+            />
+          </template>
+        </el-table-column>
         <el-table-column label="姓名" width="120rem">
           <template #default="scope">
             <UserFormItem :userid="scope.row.userId" />
@@ -114,6 +122,7 @@ export default {
     RatingTypeSelector: () => import('./RatingTypeOption/RatingTypeSelector'),
     MemberRateStatusTag: () => import('./MemberRateStatusTag'),
     Upload: () => import('./Upload'),
+    RatingTypeTag: () => import('./RatingTypeOption/RatingTypeTag'),
     Pagination: () => import('@/components/Pagination')
   },
   data: () => ({
@@ -126,8 +135,8 @@ export default {
       user: null,
       ratingType: 4,
       ratingTypeItem: null,
-      ratingTypeCycleCount: 0,
-      ratingTypeCycleDesc: null,
+      ratingCycleCount: 0,
+      ratingCycleDesc: null,
       onlySelf: false
     },
     page: {
@@ -182,7 +191,7 @@ export default {
       const cb = model_data => {
         const { data, prefix } = templateToStandard(
           model_data,
-          this.search.ratingTypeCycleDesc,
+          this.search.ratingCycleDesc,
           this.search.ratingTypeItem
         )
         const filename = '周考月评'

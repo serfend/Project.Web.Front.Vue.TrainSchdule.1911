@@ -72,20 +72,13 @@ export default {
   },
   methods: {
     onChange() {
-      this.value = this.convertDateToCycle()
+      const v = this.ratingCycleDateValue
+      const { ratingType, ratingCycleDesc } = this
+      this.value = dateValueToCycleCount(ratingType, v, ratingCycleDesc)
       this.$emit('change', this.value)
       if (!this.value) return this.$emit('update:dateName', null)
-      const val = this.ratingCycleDateValue
-      const descName = dateValueToCycleDesc(
-        this.ratingType,
-        val,
-        this.ratingCycleDesc
-      )
+      const descName = dateValueToCycleDesc(ratingType, v, ratingCycleDesc)
       this.$emit('update:dateName', descName)
-    },
-    convertDateToCycle() {
-      const v = this.ratingCycleDate
-      return dateValueToCycleCount(this.ratingType, v, this.ratingCycleDesc)
     }
   }
 }

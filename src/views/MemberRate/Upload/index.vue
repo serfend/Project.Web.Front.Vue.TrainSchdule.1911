@@ -25,7 +25,7 @@
           <RatingCycleSelector
             v-model="file.ratingCycleCount"
             :rating-type="file.ratingType"
-            :data-name.sync="file.ratingTypeDesc"
+            :data-name.sync="file.ratingDesc"
           />
         </el-form-item>
         <el-form-item label="评比单位">
@@ -47,7 +47,7 @@
             :data="file"
             :show-file-list="false"
             with-credentials
-          >AQFD20
+          >
             <i class="el-icon-upload" />
             <div class="el-upload__text">
               将文档拖到此处，或
@@ -147,7 +147,7 @@ export default {
       create: null,
       ratingCycleCount: null,
       ratingTypeItem: null,
-      ratingTypeDesc: null,
+      ratingDesc: null,
       ratingType: 4,
       company: null,
       confirm: false
