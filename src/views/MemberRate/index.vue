@@ -173,7 +173,6 @@ export default {
     formatTime(d) {
       return formatTime(d, '{y}.{m}')
     },
-    get_rates,
     show_help() {
       this.help_dialog_show = true
     },
@@ -219,7 +218,7 @@ export default {
         }
       }
       page = page || this.page
-      this.get_rates(Object.assign(s, { page }))
+      get_rates(Object.assign(s, { page }))
         .then(cb)
         .catch(e => {
           if (e.status === 12100) {

@@ -11,7 +11,11 @@
       <div style="margin-bottom:0.5rem">
         <el-button type="text" @click="download_template">默认模板下载</el-button>
         <el-button type="text" @click="download_user_company_template">本单位样例模板下载</el-button>
-        <el-button type="text" disabled @click="download_template">本单位上期提交内容下载</el-button>
+        <el-button
+          type="text"
+          :disabled="!(file.ratingType && file.ratingCycleCount)"
+          @click="download_current_data_xlsx"
+        >当前选中的提交内容下载</el-button>
       </div>
       <el-form label-width="5rem">
         <el-form-item required label="类别">
@@ -125,6 +129,8 @@
 import { download_template, upload_data_by_last } from '@/api/memberRate/xls'
 import { downloadUrl } from '@/api/common/static'
 import { load_template as load_user_company_template } from './user-company-members-template'
+import { templateToStandard } from '../TemplateBuilder/standard'
+import { get_rates } from '@/api/memberRate/query'
 export default {
   name: 'MemberRateUpload',
   components: {
@@ -157,9 +163,6 @@ export default {
     existDialog: false
   }),
   computed: {
-    company() {
-      return this.$store.state.user.companyid
-    },
     existIsForDuplicate() {
       return this.existList[0] && this.existList[0].userId
     },
@@ -200,10 +203,36 @@ export default {
           })
       }
     },
+    download_current_data_xlsx() {
+      this.loading = true
+      const page = { pageIndex: 0, pageSize: 1e3 }
+      const f = this.file
+      get_rates(Object.assign(f, { page }))
+        .then(model_data => {
+          const { data } = templateToStandard(
+            model_data,
+            f.ratingTypeCycleDesc,
+            f.ratingTypeItem
+          )
+          const filename = '周考月评'
+          this.$store
+            .dispatch('template/download_xlsx', {
+              templateName: `${filename}模板.xlsx`,
+              data,
+              filename: `当前选中数据 - ${filename}.xlsx`
+            })
+            .finally(() => {
+              this.loading = false
+            })
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
     download_user_company_template() {
       this.loading = true
       load_user_company_template(
-        Object.assign({ code: this.company }, this.file)
+        Object.assign({ code: this.file.company }, this.file)
       )
         .then(data => {
           const filename = '周考月评'

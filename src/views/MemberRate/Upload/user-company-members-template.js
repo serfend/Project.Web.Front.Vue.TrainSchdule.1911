@@ -20,7 +20,7 @@ export function userSummaryToStandard({ list, code, ratingCycleCount, ratingType
     rank: index++,
     remark: '在XXX工作突出',
     companyCode: code,
-    companyName: '单位名称',
+    companyName: '',
     ratingCycleCount,
     ratingType
   }))
