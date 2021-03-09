@@ -2,9 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import application from './modules/vacation'
 import game from './modules/others/Game'
-import system from './modules/system'
 import member_rate from './modules/member_rate'
-import phy_grade from './modules/phy_grade'
 import application_setting from './modules/application_setting'
 import user from './modules/user'
 import others from './modules/others/others'
@@ -18,12 +16,13 @@ export const constantRoutes = [
     path: '/dashboard',
     component: () => import('@/views/dashboard/index'),
     name: 'Dashboard',
+    hidden: true,
     meta: {
       title: 'dashboard',
       icon: 'chart',
       hide_footer: true
     }
-  }, user, application, member_rate, system, game, phy_grade, application_setting
+  }, user, application, member_rate, game, application_setting
 ].concat(others)
 
 /**

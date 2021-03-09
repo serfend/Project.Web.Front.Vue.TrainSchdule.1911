@@ -1,5 +1,3 @@
-import Layout from '@/layout'
-
 import log from './modules/log'
 import file from './modules/file'
 import qr_code from './modules/qrCode'
@@ -7,13 +5,14 @@ import dwz from './modules/dwz'
 import manage from './modules/manager'
 import comment from '../others/comment'
 import version from './modules/version'
+import phy_grade from '../phy_grade'
 
 const system = {
-  path: '/system',
-  component: Layout,
+  path: 'system',
+  component: () => import('@/views/blank'),
   name: 'System',
   meta: {
-    title: 'default.system.title',
+    ctitle: '工具管理',
     icon: 'setting'
   },
   children: [
@@ -29,7 +28,9 @@ const system = {
         title: 'default.app.iframepage.title',
         icon: 'component'
       }
-    }, version, file, dwz, qr_code, comment]
+    }, version, file, dwz, qr_code, comment,
+    phy_grade,
+  ]
 }
 
 export default system

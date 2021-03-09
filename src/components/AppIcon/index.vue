@@ -19,7 +19,10 @@
       />
       <div
         :class="isActive?'icon-labelactive':'icon-label'"
-        :style="{'font-size':(size/5)+'rem'}"
+        :style="{'font-size':(size/5)+'rem',cursor:'pointer'}"
+        @click="$emit('click')"
+        @mouseenter="activeMe"
+        @mouseleave="disactiveMe"
       >{{ label }}</div>
     </div>
   </el-tooltip>
@@ -111,7 +114,7 @@ export default {
   opacity: 0.8;
   text-align: center;
   color: #fff;
-  transform: translateY(2rem) scale(1.2);
+  transform: translateY(1rem) scale(1.2);
   transition: all 0.5s;
   user-select: none;
 }

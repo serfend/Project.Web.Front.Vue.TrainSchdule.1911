@@ -5,7 +5,7 @@ const route = {
   component: () => import('@/views/blank'),
   name: 'Application',
   meta: {
-    title: 'application.setting.application.title',
+    ctitle: '数据管理',
     icon: 'task_done'
   },
   children: [AuditStream, Export]

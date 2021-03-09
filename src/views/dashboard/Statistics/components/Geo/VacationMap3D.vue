@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import * as echarts from 'echarts/index.blank'
+import * as echarts from 'echarts'
 import 'echarts-gl'
 import { geoProvince } from '../../js/variables'
 import { debounce } from '@/utils'

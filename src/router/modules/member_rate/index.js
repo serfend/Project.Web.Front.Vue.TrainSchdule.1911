@@ -4,13 +4,6 @@ const router = {
   path: '/memberRate',
   component: Layout,
   children: [{
-    path: 'summary',
-    meta: {
-      ctitle: '周考月评',
-      icon: 'exam'
-    },
-    component: () => import('@/views/MemberRate')
-  }, {
     path: 'upload',
     hidden: true,
     meta: {
@@ -18,6 +11,13 @@ const router = {
       icon: 'namecard'
     },
     component: () => import('@/views/MemberRate/Upload')
+  }, {
+    path: 'summary',
+    meta: {
+      ctitle: '周考月评',
+      icon: 'exam'
+    },
+    component: () => import('@/views/MemberRate')
   }, {
     path: 'summary-quarter',
     meta: {

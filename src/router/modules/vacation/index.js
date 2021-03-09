@@ -1,7 +1,7 @@
 /** When your routing table is too long, you can split it into small modules **/
 
 import Layout from '@/layout'
-
+import application from '../application_setting/modules/application'
 /* Router Modules */
 const applicationRouter = {
   path: '/vacation',
@@ -49,7 +49,8 @@ const applicationRouter = {
         icon: 'menu-outoforder'
       },
       hidden: true
-    }
+    },
+    application
   ]
 }
 

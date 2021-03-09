@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import * as echarts from 'echarts/index.blank'
+import * as echarts from 'echarts'
 import { createSingleItem } from '../js/geoMapBuilder'
 import { geoCoordMap } from '../js/variables'
 export default {

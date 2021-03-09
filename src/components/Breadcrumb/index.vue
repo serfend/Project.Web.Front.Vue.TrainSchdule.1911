@@ -34,7 +34,7 @@ export default {
     getBreadcrumb() {
       // only show routes with meta.title
       var matched = this.$route.matched.filter(
-        item => item.meta && item.meta.title
+        item => item.meta && (item.meta.title || item.meta.ctitle)
       )
       // it seems not wise to push dashboard on the first
       // const first = matched[0]
@@ -49,7 +49,10 @@ export default {
       // }
 
       this.levelList = matched.filter(
-        item => item.meta && item.meta.title && item.meta.breadcrumb !== false
+        item =>
+          item.meta &&
+          (item.meta.title || item.meta.ctitle) &&
+          item.meta.breadcrumb !== false
       )
     },
     isDashboard(route) {
