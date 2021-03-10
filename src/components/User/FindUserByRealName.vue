@@ -56,7 +56,7 @@ export default {
     onNextPage() {
       return debounce(() => {
         this.loadNextPage()
-      }, 500)
+      }, 100)
     }
   },
   watch: {

@@ -7,7 +7,7 @@
         align-center
       >
         <el-step v-for="s in streams" :key="s.index">
-          <template slot="title">
+          <template #title>
             <div style="white-space:nowrap">{{ s.name }}</div>
             <el-tooltip
               :content="`需要${s.firstMemberCompanyName}${getNeedAudit(s.requireMembersAcceptCount)}进行审批`"
@@ -43,30 +43,30 @@ export default {
   props: {
     userid: {
       type: String,
-      default: null,
+      default: null
     },
     auditStatus: {
       type: Array,
-      default: null,
+      default: null
     },
     nowStep: {
       type: Number,
-      default: -1,
-    },
+      default: -1
+    }
   },
   data: () => ({
     loading: false,
     solutionName: null,
     streams: [],
     managers: {},
-    userStatus: [],
+    userStatus: []
   }),
   computed: {
     updatedStream() {
       return debounce(() => {
         this.streamModify()
       }, 500)
-    },
+    }
   },
   watch: {
     auditStatus: {
@@ -75,33 +75,33 @@ export default {
         this.solutionName = '审批流'
       },
       deep: true,
-      immediate: true,
+      immediate: true
     },
     userid: {
       handler(val) {
         if (val) {
           this.solutionName = null
-          auditStream(val).then((data) => {
+          auditStream(val).then(data => {
             this.solutionName = data.solutionName
             this.streams = data.steps
           })
         }
       },
-      immediate: true,
+      immediate: true
     },
     solutionName: {
       handler(val) {
         this.$emit('update:solutionName', val)
       },
-      immediate: true,
+      immediate: true
     },
     streams: {
       handler(val) {
         if (val) this.updatedStream()
       },
       deep: true,
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     auditStream,
@@ -137,10 +137,10 @@ export default {
         const mCode = streams[i].firstMemberCompanyCode
         if (waitToLoad.indexOf(mCode) === -1) waitToLoad.push(mCode)
       }
-      companiesManagers(waitToLoad).then((data) => {
+      companiesManagers(waitToLoad).then(data => {
         for (var c of Object.keys(data.companies)) {
           if (data.companies[c].list) {
-            this.managers[c] = data.companies[c].list.map((item) => item.id)
+            this.managers[c] = data.companies[c].list.map(item => item.id)
           } else {
             this.managers[c] = {}
           }
@@ -170,8 +170,8 @@ export default {
       } else {
         this.initCompanyManagerDirect()
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

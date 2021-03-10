@@ -38,6 +38,11 @@ export default {
       handler(val) {
         this.refreshDoc()
       }
+    },
+    content: {
+      handler(val) {
+        this.$refs.Viewer.editor.setMarkdown(val)
+      }
     }
   },
   mounted() {

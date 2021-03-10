@@ -3,7 +3,12 @@
     <User v-if="directShowCard" :data="innerData" :can-load-avatar="true" />
     <el-popover v-else :placement="placement" width="200" trigger="hover" @show="isActive=true">
       <User :data="innerData" :can-load-avatar="isActive" />
-      <el-tag v-show="innerData.realName" slot="reference" class="user-item" v-bind="$attrs">
+      <el-tag
+        v-if="innerData && innerData.realName"
+        slot="reference"
+        class="user-item"
+        v-bind="$attrs"
+      >
         <i class="el-icon-user-solid" />
         {{ innerData.realName }}
       </el-tag>
@@ -60,6 +65,8 @@ export default {
       handler(val) {
         if (val) {
           this.loadUser(val)
+        } else {
+          this.innerData = null
         }
       },
       immediate: true
