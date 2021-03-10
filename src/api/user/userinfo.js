@@ -1,5 +1,7 @@
 import request from '@/utils/request'
-
+import { cached_data } from '@/utils/cache'
+const api = 'users'
+const urlGetUserSummary = `${api}/summary`
 /**
  * 获取用户摘要信息
  *
@@ -9,13 +11,16 @@ import request from '@/utils/request'
  * @returns
  */
 export function getUserSummary(id, ignoreErr) {
-  return request.get('users/summary', {
-    params: {
-      id
-    },
-    ignoreError: ignoreErr
+  return cached_data(`${urlGetUserSummary}/${id}`, () => {
+    return request.get(urlGetUserSummary, {
+      params: {
+        id
+      },
+      ignoreError: ignoreErr
+    })
   })
 }
+const urlGetUserBase = `${api}/base`
 /**
  * 基础信息
  * @description > ``` response
@@ -28,11 +33,13 @@ export function getUserSummary(id, ignoreErr) {
   ```
  */
 export function getUserBase(id, ignoreErr) {
-  return request.get('users/base', {
-    params: {
-      id
-    },
-    ignoreError: ignoreErr
+  return cached_data(`${urlGetUserBase}/${id}`, () => {
+    request.get(urlGetUserBase, {
+      params: {
+        id
+      },
+      ignoreError: ignoreErr
+    })
   })
 }
 
@@ -161,23 +168,25 @@ export function getUserIdByRealName(realName, pageIndex, pageSize, ignoreErr) {
     ignoreError: ignoreErr
   })
 }
-
+const url_getUsersVacationLimit = `${api}/vacation`
 /**
  * 获取用户休假限制时长和次数
  * @param {*} id
  * @param {*} vacationYear 休假年度
  */
 export function getUsersVacationLimit(id, vacationYear, isPlan, ignoreErr) {
-  return request.get('/users/vacation', {
-    params: {
-      id,
-      vacationYear,
-      isPlan
-    },
-    ignoreError: ignoreErr
+  return cached_data(`${url_getUsersVacationLimit}/${id}/${vacationYear}/${isPlan}`, () => {
+    request.get(url_getUsersVacationLimit, {
+      params: {
+        id,
+        vacationYear,
+        isPlan
+      },
+      ignoreError: ignoreErr
+    })
   })
 }
-
+const url_getUserAvatar = `${api}/avatar`
 /**
  * 获取用户头像
  *
@@ -187,12 +196,14 @@ export function getUsersVacationLimit(id, vacationYear, isPlan, ignoreErr) {
  * @returns
  */
 export function getUserAvatar(id, avatarId, ignoreErr) {
-  return request.get('/users/avatar', {
-    params: {
-      userId: id,
-      avatarId
-    },
-    ignoreError: ignoreErr
+  return cached_data(`${url_getUserAvatar}/${id}/${avatarId}`, () => {
+    request.get(url_getUserAvatar, {
+      params: {
+        userId: id,
+        avatarId
+      },
+      ignoreError: ignoreErr
+    })
   })
 }
 /**

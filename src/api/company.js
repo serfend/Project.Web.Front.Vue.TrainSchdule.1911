@@ -1,4 +1,6 @@
 import request from '@/utils/request'
+import { cached_data } from '@/utils/cache'
+const api = 'company'
 /**
  * 获取单位的子单位
  *
@@ -11,27 +13,29 @@ import request from '@/utils/request'
  *      {string} list[i].code:""
  */
 export function companyChild(id) {
-  return request.get('company/companyChild', {
+  return request.get(`${api}/companyChild`, {
     params: {
       id: id
     }
   })
 }
 
+const urlCompanyDetail = `${api}/detail`
 /**
- * 获取单位信息
- *
- * @export
- * @param {*} id
- */
+* 获取单位信息
+*
+* @export
+* @param {*} id
+*/
 export function companyDetail(id) {
-  return request.get('company/detail', {
-    params: {
-      id
-    }
+  return cached_data(`${urlCompanyDetail}/${id}`, () => {
+    return request.get(urlCompanyDetail, {
+      params: {
+        id
+      }
+    })
   })
 }
-
 /**
  *获取单位主管列表
  *
