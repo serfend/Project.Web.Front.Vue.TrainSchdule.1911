@@ -33,7 +33,7 @@
 
 <script>
 import SvgIcon from '@/components/SvgIcon'
-import { generateTitle } from '@/utils/i18n'
+import { generateTitle } from '@/utils/get-page-title'
 import { isExternal } from '@/utils/validate'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'

@@ -26,7 +26,7 @@
 // fuse is a lightweight fuzzy-search module
 // make search results more in line with expectations
 import Fuse from 'fuse.js'
-import i18n from '@/lang'
+import { generateTitle } from '@/utils/get-page-title'
 
 export default {
   name: 'HeaderSearch',
@@ -134,9 +134,9 @@ export default {
           title: [...prefixTitle],
         }
 
-        if (router.meta && router.meta.title) {
+        if (router.meta) {
           // generate internationalized title
-          const i18ntitle = i18n.t(`route.${router.meta.title}`)
+          const i18ntitle = generateTitle(router.meta)
 
           data.title = [...data.title, i18ntitle]
 

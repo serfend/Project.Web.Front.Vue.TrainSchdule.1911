@@ -34,7 +34,7 @@
 
 <script>
 import ScrollPane from './ScrollPane'
-import { generateTitle } from '@/utils/i18n'
+import { generateTitle } from '@/utils/get-page-title'
 export default {
   components: { ScrollPane },
   data() {
