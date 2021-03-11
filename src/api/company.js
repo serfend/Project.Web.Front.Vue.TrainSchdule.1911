@@ -28,13 +28,13 @@ const urlCompanyDetail = `${api}/detail`
 * @param {*} id
 */
 export function companyDetail(id) {
-  return cached_data(`${urlCompanyDetail}/${id}`, () => {
-    return request.get(urlCompanyDetail, {
+  return cached_data(`${urlCompanyDetail}/${id}`, () =>
+    request.get(urlCompanyDetail, {
       params: {
         id
       }
     })
-  })
+  )
 }
 /**
  *获取单位主管列表

@@ -38,7 +38,7 @@ import { companiesManagers } from '@/api/company'
 import UserFormItem from '@/components/User/UserFormItem'
 import { debounce } from '@/utils'
 export default {
-  name: 'ApplyAuditStreamPreview',
+  name: 'ApplyAuditStreamPreviewInner',
   components: { UserFormItem },
   props: {
     userid: {

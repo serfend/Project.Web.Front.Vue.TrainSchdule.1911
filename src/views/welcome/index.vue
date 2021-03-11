@@ -93,7 +93,7 @@ export default {
         item.callback()
       }
       if (item.href) {
-        this.$router.push(item.href)
+        this.$router.push(`${item.href}/`)
       }
     }
   }

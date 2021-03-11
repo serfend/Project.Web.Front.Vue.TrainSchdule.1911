@@ -22,14 +22,14 @@ export default {
   props: {
     userid: {
       type: String,
-      default: null,
-    },
+      default: null
+    }
   },
   data() {
     return {
       usersvacation: null,
       loading: false,
-      loading_result: null,
+      loading_result: null
     }
   },
   watch: {
@@ -39,17 +39,18 @@ export default {
           this.loading = true
           this.loading_result = '加载中...'
           getUsersVacationLimit(val, null, false)
-            .then((data) => {
+            .then(data => {
               this.usersvacation = {
                 yearlyLength: 0,
                 nowTimes: 0,
                 leftLength: 0,
                 onTripTimes: 0,
                 maxTripTimes: 0,
-                ...data,
+                ...data
               }
+              console.log(this.usersvacation)
             })
-            .catch((e) => {
+            .catch(e => {
               this.loading_result = JSON.stringify(e)
             })
             .finally(() => {
@@ -59,9 +60,9 @@ export default {
           this.loading_result = '未登录'
         }
       },
-      immediate: true,
-    },
-  },
+      immediate: true
+    }
+  }
 }
 </script>
 

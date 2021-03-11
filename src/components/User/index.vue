@@ -44,7 +44,7 @@
 import ContactMe from '@/components/ContactMe'
 import { getUserAvatar, getUserSocial } from '@/api/user/userinfo'
 export default {
-  name: 'Duty',
+  name: 'UserItem',
   components: { ContactMe },
   props: {
     data: {

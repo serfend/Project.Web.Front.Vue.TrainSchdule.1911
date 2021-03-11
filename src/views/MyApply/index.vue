@@ -104,7 +104,7 @@ export default {
     },
     inner_id: {
       handler(val) {
-        this.reload()
+        // this.reload()
       }
     }
   },

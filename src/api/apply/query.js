@@ -106,10 +106,10 @@ export function createQueryApplyModel(model, pages) {
  * @param {int} executeStatus 落实状态
  */
 export function queryMyAudit(pages, status, myAuditStatus, executeStatus) {
-  pages = (!pages) ? {
+  pages = pages || {
     pageIndex: 0,
     pageSize: 20
-  } : pages
+  }
 
   return request.get('/apply/listOfMyAudit', {
     params: {

@@ -44,14 +44,13 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      isActive: false,
-      innerData: {
-        realName: 'null'
-      }
-    }
-  },
+  data: () => ({
+    isActive: false,
+    innerData: {
+      realName: 'null'
+    },
+    lastUserId: null
+  }),
   watch: {
     data: {
       handler(val) {
@@ -63,11 +62,7 @@ export default {
     },
     userid: {
       handler(val) {
-        if (val) {
-          this.loadUser(val)
-        } else {
-          this.innerData = null
-        }
+        this.loadUser(val)
       },
       immediate: true
     }
@@ -76,9 +71,10 @@ export default {
   methods: {
     loadUser(userid) {
       if (!userid) {
-        this.innerData = null
+        if (this.lastUserId) this.innerData = null
         return
       }
+      this.lastUserId = userid
       getUserSummary(userid, true).then(data => {
         this.innerData = data
       })

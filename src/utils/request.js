@@ -45,7 +45,7 @@ var warningInfoLog = {
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASEURL, // api 的 base_url
   withCredentials: true, // 跨域请求时发送 cookies
-  timeout: 120 * 1000 // request timeout
+  timeout: 120e3 // request timeout
 })
 // const defaultOptions = {
 //   time: 3e3 // 设置为0，不清除缓存
@@ -110,7 +110,10 @@ service.interceptors.response.use(
 export function extract_result(res, ignoreError) {
   return new Promise((resolve, reject) => {
     // 如果不存在status，说明是直接文件，直接返回
-    if (res.status === undefined) return res
+    if (res.status === undefined) {
+      console.warn('api data return without status description:[unexpected]', res)
+      return resolve(res)
+    }
     if (res.status === 0) {
       return resolve(res.data)
     } else {

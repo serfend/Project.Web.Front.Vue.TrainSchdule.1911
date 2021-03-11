@@ -11,14 +11,14 @@ const urlGetUserSummary = `${api}/summary`
  * @returns
  */
 export function getUserSummary(id, ignoreErr) {
-  return cached_data(`${urlGetUserSummary}/${id}`, () => {
-    return request.get(urlGetUserSummary, {
+  return cached_data(`${urlGetUserSummary}/${id}`, () =>
+    request.get(urlGetUserSummary, {
       params: {
         id
       },
       ignoreError: ignoreErr
     })
-  })
+  )
 }
 const urlGetUserBase = `${api}/base`
 /**
@@ -33,14 +33,14 @@ const urlGetUserBase = `${api}/base`
   ```
  */
 export function getUserBase(id, ignoreErr) {
-  return cached_data(`${urlGetUserBase}/${id}`, () => {
+  return cached_data(`${urlGetUserBase}/${id}`, () =>
     request.get(urlGetUserBase, {
       params: {
         id
       },
       ignoreError: ignoreErr
     })
-  })
+  )
 }
 
 export function getUserDiy(id, ignoreErr) {
@@ -175,7 +175,7 @@ const url_getUsersVacationLimit = `${api}/vacation`
  * @param {*} vacationYear 休假年度
  */
 export function getUsersVacationLimit(id, vacationYear, isPlan, ignoreErr) {
-  return cached_data(`${url_getUsersVacationLimit}/${id}/${vacationYear}/${isPlan}`, () => {
+  return cached_data(`${url_getUsersVacationLimit}/${id}/${vacationYear}/${isPlan}`, () =>
     request.get(url_getUsersVacationLimit, {
       params: {
         id,
@@ -184,7 +184,7 @@ export function getUsersVacationLimit(id, vacationYear, isPlan, ignoreErr) {
       },
       ignoreError: ignoreErr
     })
-  })
+  )
 }
 const url_getUserAvatar = `${api}/avatar`
 /**
@@ -196,7 +196,7 @@ const url_getUserAvatar = `${api}/avatar`
  * @returns
  */
 export function getUserAvatar(id, avatarId, ignoreErr) {
-  return cached_data(`${url_getUserAvatar}/${id}/${avatarId}`, () => {
+  return cached_data(`${url_getUserAvatar}/${id}/${avatarId}`, () =>
     request.get(url_getUserAvatar, {
       params: {
         userId: id,
@@ -204,7 +204,7 @@ export function getUserAvatar(id, avatarId, ignoreErr) {
       },
       ignoreError: ignoreErr
     })
-  })
+  )
 }
 /**
  *修改用户头像

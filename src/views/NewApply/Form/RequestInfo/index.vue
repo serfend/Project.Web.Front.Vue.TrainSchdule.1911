@@ -244,12 +244,12 @@ export default {
         if (vl > 0.7 * nm || (vl < 2 * nm && nm > 30)) {
           this.updateMaxLen()
         }
-      }, 500)
+      }, 100)
     },
     requireSubmit() {
       return debounce(() => {
         this.submitRequestInfo()
-      }, 500)
+      }, 200)
     },
     updatedChange() {
       return debounce(this.updateChangeDirect, 200)

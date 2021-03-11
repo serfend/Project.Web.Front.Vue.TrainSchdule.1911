@@ -1,6 +1,8 @@
 <template>
   <el-tooltip placement="top" effect="dark" :content="description">
-    <div :style="{ width:size+'rem',height:size+'rem'}">
+    <div
+      :style="{ width:size+'rem',height:size+'rem',cursor:disabled?'not-allowed':'pointer',filter:disabled?'grayscale(1)':'',opacity:disabled?0.5:1}"
+    >
       <el-image
         v-if="icon"
         :class="isActive?'icon-buttonactive':'icon-button'"
@@ -51,6 +53,10 @@ export default {
     description: {
       type: String,
       default: '无'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
