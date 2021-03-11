@@ -1,16 +1,11 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <User v-if="directShowCard" :data="innerData" :can-load-avatar="true" />
     <el-popover v-else :placement="placement" width="200" trigger="hover" @show="isActive=true">
-      <User :data="innerData" :can-load-avatar="isActive" />
-      <el-tag
-        v-if="innerData && innerData.realName"
-        slot="reference"
-        class="user-item"
-        v-bind="$attrs"
-      >
+      <User v-if="isActive" :data="innerData" :can-load-avatar="isActive" />
+      <el-tag slot="reference" class="user-item" v-bind="$attrs">
         <i class="el-icon-user-solid" />
-        {{ innerData.realName }}
+        <span v-if="innerData">{{ innerData.realName }}</span>
       </el-tag>
     </el-popover>
   </div>
@@ -25,11 +20,9 @@ export default {
   props: {
     data: {
       type: Object,
-      default() {
-        return {
-          realName: null
-        }
-      }
+      default: () => ({
+        realName: null
+      })
     },
     userid: {
       type: String,
@@ -49,7 +42,8 @@ export default {
     innerData: {
       realName: 'null'
     },
-    lastUserId: null
+    lastUserId: null,
+    loading: false
   }),
   watch: {
     data: {
@@ -74,10 +68,15 @@ export default {
         if (this.lastUserId) this.innerData = null
         return
       }
+      this.loading = true
       this.lastUserId = userid
-      getUserSummary(userid, true).then(data => {
-        this.innerData = data
-      })
+      getUserSummary(userid, true)
+        .then(data => {
+          this.innerData = data
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }
