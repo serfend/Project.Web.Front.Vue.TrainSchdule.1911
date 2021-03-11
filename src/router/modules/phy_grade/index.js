@@ -3,11 +3,10 @@ import detail from './modules/detail'
 import rules from './modules/rules'
 import statistics from './modules/statistics'
 import exams from './modules/exams'
-import Layout from '@/layout'
 
 const phyGrade = {
-  path: '/phyGrade',
-  component: Layout,
+  path: 'phyGrade',
+  component: () => import('@/views/blank'),
   name: 'MemberPhyGrade',
   hidden: false,
   meta: {

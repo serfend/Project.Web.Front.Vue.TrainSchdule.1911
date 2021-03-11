@@ -8,6 +8,16 @@ const route = {
     ctitle: '数据管理',
     icon: 'task_done'
   },
-  children: [AuditStream, Export]
+  children: [AuditStream, Export,
+    {
+      path: 'dashboard',
+      component: () => import('@/views/dashboard/redirect'),
+      name: 'Dashboard',
+      meta: {
+        title: 'dashboard',
+        icon: 'chart',
+        hide_footer: true
+      }
+    }]
 }
 export default route

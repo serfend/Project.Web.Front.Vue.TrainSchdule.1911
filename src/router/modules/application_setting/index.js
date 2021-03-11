@@ -16,6 +16,7 @@ const router = {
   },
   children: [{
     path: 'application-manage',
+    component: () => import('@/views/blank'),
     meta: {
       ctitle: '系统数据',
       icon: 'workset'
