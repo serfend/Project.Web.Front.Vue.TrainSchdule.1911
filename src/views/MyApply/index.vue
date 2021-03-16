@@ -37,7 +37,7 @@
           </el-col>
         </el-row>
       </div>
-      <AppliesList :id.sync="iId" />
+      <AppliesList :id.sync="iId" ref="AppliesList" :show-apply-new.sync="show_apply_new" />
     </div>
     <Login v-else />
     <el-dialog :visible.sync="show_apply_new">
@@ -77,7 +77,7 @@ export default {
     return {
       inner_id: '',
       loading: false,
-      show_apply_new: null
+      show_apply_new: false
     }
   },
   computed: {
@@ -104,12 +104,16 @@ export default {
     },
     inner_id: {
       handler(val) {
-        // this.reload()
+        this.reload()
       }
     }
   },
   destroyed() {},
-  methods: {}
+  methods: {
+    reload() {
+      this.$refs.AppliesList.reload()
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

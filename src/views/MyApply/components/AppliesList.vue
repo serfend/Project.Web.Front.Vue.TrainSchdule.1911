@@ -102,7 +102,8 @@ export default {
     list: {
       type: Array,
       default: () => []
-    }
+    },
+    showApplyNew: { type: Boolean, default: false }
   },
   data: () => ({
     inner_id: '',
@@ -205,7 +206,7 @@ export default {
       }
     },
     user_add_new_item() {
-      this.show_apply_new = true
+      this.$emit('update:showApplyNew', true)
     },
     year_banner_sticky(index) {
       this.now_active_year.push(index)
