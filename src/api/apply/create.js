@@ -9,11 +9,11 @@ import request from '@/utils/request'
  *      boolean params.caculateLawVacation
  * @returns
  */
-export function getStampReturn(params) {
+export function getStampReturn({ start, length, benefits, lawVacationSet, caculateLawvacation }) {
   return request({
     url: '/static/vacationDate',
-    method: 'get',
-    params: params
+    method: 'post',
+    data: { start, length, benefits, lawVacationSet: getLawVacationSetDict(lawVacationSet), caculateLawvacation }
   })
 }
 
@@ -30,9 +30,18 @@ export function postBaseInfo(data) {
  * @param {*} data 请求参数
  */
 export function postRequestInfo(data) {
-  return request.post('/apply/RequestInfo', data)
+  let s = Object.assign({}, data)
+  s = Object.assign(s, { lawVacationSet: getLawVacationSetDict(data.lawVacationSet) })
+  return request.post('/apply/RequestInfo', s)
 }
-
+function getLawVacationSetDict(lawVacationSet) {
+  const dict = {}
+  lawVacationSet = lawVacationSet || []
+  lawVacationSet.forEach(i => {
+    dict[i.id] = i.useLength
+  })
+  return dict
+}
 /**
  * 提交申请
  * @param {

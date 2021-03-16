@@ -1,18 +1,18 @@
 <template>
-  <el-popover trigger="click">
-    <el-alert type="error" :closable="false">不允许仅休部分法定节假日</el-alert>
-    <div>{{ name }}:{{ description }}</div>
-    <div>共 {{ maxLength }} 天</div>
+  <el-card>
+    <span style="font-weight:600">{{ name }}:{{ description }}</span>
+    <span>
+      <span>共 {{ maxLength }} 天</span>
+      <span v-if="length!==maxLength">当前为 {{ length }} 天</span>
+    </span>
     <el-slider
       v-model="length"
-      disabled
       show-stops
       :max="maxLength"
       :min="0"
       :format-tooltip="formatTooltip"
     />
-    <el-tag slot="reference" style="cursor:pointer">{{ name }} {{ length }} 天</el-tag>
-  </el-popover>
+  </el-card>
 </template>
 
 <script>

@@ -29,7 +29,7 @@
             <template slot="content">鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
           </CardTooltipAlert>
           <el-alert v-if="formApply.isArchitect" center type="error">补充申请 申请将会被标记为【补充记录】</el-alert>
-          <el-form ref="formApply" :model="formApply" label-width="5rem">
+          <el-form ref="formApply" :model="formApply" label-width="6rem">
             <el-form-item label="年休假率">
               <VacationDescription
                 :users-vacation="usersvacation"
@@ -59,7 +59,7 @@
                 show-input
                 :max="maxVacationLength"
                 :min="0"
-                @input="handleChange"
+                @input="updateChange"
               />
             </el-form-item>
             <el-form-item v-if="nowVacationType.canUseOnTrip" label="路途天数">
@@ -68,11 +68,11 @@
                 show-input
                 :max="14"
                 :min="0"
-                @input="handleChange"
+                @input="updateChange"
               />
             </el-form-item>
             <el-form-item v-if="nowVacationType.caculateBenefit" label="其他假">
-              <BenefitVacation v-model="benefitList" @change="handleChange" />
+              <BenefitVacation v-model="benefitList" @change="updateChange" />
             </el-form-item>
             <el-form-item
               label="离队时间"
@@ -85,10 +85,9 @@
                 type="date"
                 format="yyyy年MM月dd日"
                 value-format="yyyy-MM-dd"
-                @change="handleChange"
+                @change="updateChange"
               />
-            </el-form-item>
-            <el-form-item label="预计归队">
+              <span>预计归队</span>
               <el-date-picker
                 v-model="formApply.StampReturn"
                 disabled
@@ -98,20 +97,17 @@
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
-            <el-form-item
-              v-if="lawVacations.length>0&&nowVacationType.caculateBenefit"
-              label="法定节假日"
-            >
-              <LawVacation
-                v-for="(item,i) in lawVacations"
-                :key="i"
-                v-model="lawVacations[i].useLength"
-                :max-length="item.length"
-                :name="item.name"
-                :description="item.description"
-                :start="item.start"
-                style="margin:0.2rem"
-              />
+            <el-form-item v-if="nowVacationType.caculateBenefit">
+              <el-collapse-transition v-for="(item,i) in lawVacations" :key="item.id">
+                <LawVacation
+                  v-model="lawVacations[i].useLength"
+                  :max-length="item.length"
+                  :name="item.name"
+                  :description="item.description"
+                  :start="item.start"
+                  style="margin:0.2rem"
+                />
+              </el-collapse-transition>
             </el-form-item>
             <el-form-item label="目的地" :rules="[{required:true,trigger:'blur'}]">
               <CascaderSelector
@@ -167,7 +163,6 @@ import BenefitVacation from './BenefitVacation'
 import LawVacation from './LawVacation'
 import { locationChildren } from '@/api/common/static'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
-import { debounce } from '@/utils'
 
 export default {
   name: 'RequestInfo',
@@ -237,23 +232,6 @@ export default {
       const leftLength = Math.min(this.usersvacation.leftLength, type.maxLength)
       return isPrimary ? leftLength : this.nowMaxLength
     },
-    updatedApply() {
-      return debounce(() => {
-        const vl = this.formApply.vacationLength
-        const nm = this.nowMaxLength
-        if (vl > 0.7 * nm || (vl < 2 * nm && nm > 30)) {
-          this.updateMaxLen()
-        }
-      }, 100)
-    },
-    requireSubmit() {
-      return debounce(() => {
-        this.submitRequestInfo()
-      }, 200)
-    },
-    updatedChange() {
-      return debounce(this.updateChangeDirect, 200)
-    },
     hideDetail() {
       return this.submitId && !this.isHover
     },
@@ -288,16 +266,19 @@ export default {
     main_type: {
       handler(val) {
         this.$nextTick(() => {
-          this.updatedChange()
+          this.updateChange()
         })
       }
+    },
+    lawVacations: {
+      handler(val) {
+        this.updateChange()
+      },
+      deep: true
     },
     formApply: {
       handler(val) {
         if (val && !this.loading) {
-          this.anyChanged = true
-          this.submitId = null
-          this.$emit('update:submitId', null)
           this.$nextTick(() => {
             this.updatedApply()
           })
@@ -314,6 +295,17 @@ export default {
   },
   methods: {
     locationChildren,
+    updatedApply() {
+      this.anyChanged = true
+      console.log('modify')
+      this.submitId = null
+      this.$emit('update:submitId', null)
+      const vl = this.formApply.vacationLength
+      const nm = this.nowMaxLength
+      if (vl > 0.7 * nm || (vl < 2 * nm && nm > 30)) {
+        this.updateMaxLen()
+      }
+    },
     updateMaxLen() {
       const type = this.nowVacationType
       if (!type) return
@@ -330,7 +322,7 @@ export default {
     },
     leaveCard() {
       this.isHover = false
-      this.requireSubmit()
+      this.submitRequestInfo()
     },
     // call by base info ,DO NOT REMOVE
     refreshVacation() {
@@ -376,6 +368,7 @@ export default {
     resetLoading() {
       this.loading = false
       this.anyChanged = false
+      this.updatedApply()
     },
     createNewRequest() {
       const types = this.vacationTypes
@@ -387,6 +380,7 @@ export default {
         vacationType: types ? types[0].name : '',
         vacationPlace: null,
         vacationPlaceName: '',
+        lawVacaion: [],
         reason: '',
         ByTransportation: 0,
         isPlan: null
@@ -413,27 +407,26 @@ export default {
      */
     submitRequestInfo() {
       if (this.loading || !this.anyChanged) return
-      this.anyChanged = false
       this.submitId = null
       this.$emit('update:submitId', null)
 
       const caculaingDate = this.caculaingDate()
       if (caculaingDate.length < 0) return
 
-      const model = Object.assign({ id: this.userid }, this.formApply)
+      let s = Object.assign({ id: this.userid }, this.formApply)
 
-      model.isPlan = this.checkIsPlan
-      model.vacationAdditionals = this.filtedBenefitList
-      const items = this.checkParamValid(model)
+      s.isPlan = this.checkIsPlan
+      s.vacationAdditionals = this.filtedBenefitList
+      const items = this.checkParamValid(s)
       if (items.length > 0) {
         this.anyChanged = false
         this.$message.error(items.join(' '))
         return
       }
-
-      model.vacationPlace = model.vacationPlace.code
+      s.vacationPlace = s.vacationPlace.code
       this.loading = true
-      postRequestInfo(model)
+      s = Object.assign({ lawVacationSet: this.lawVacations }, s)
+      postRequestInfo(s)
         .then(data => {
           this.$message.success('休假信息验证成功')
           this.submitId = data.id
@@ -448,26 +441,23 @@ export default {
         })
         .finally(() => {
           this.loading = false
+          this.anyChanged = false
         })
     },
-    /**
-     * 用户计算预期归队日期
-     */
-    handleChange() {
-      this.updatedChange()
-    },
-    updateChangeDirect() {
+    updateChange() {
       const caculaingDate = this.caculaingDate()
       this.refreshVacation()
       if (caculaingDate.length < 0) return
       this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
-      getStampReturn(caculaingDate).then(data => {
+      let s = Object.assign({}, caculaingDate)
+      s = Object.assign({ lawVacationSet: this.lawVacations }, s)
+      getStampReturn(s).then(data => {
         this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
         const des = data.descriptions ? data.descriptions : []
-        this.lawVacations = des.map(i => {
-          i.useLength = i.length
-          return i
-        })
+        const t = this.lawVacations.length !== des.length
+        if (t || des.find(i => !this.lawVacations.find(l => i.id === l.id))) {
+          this.lawVacations = des
+        }
       })
     },
     caculaingDate() {
@@ -495,6 +485,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

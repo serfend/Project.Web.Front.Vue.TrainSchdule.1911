@@ -61,7 +61,7 @@ export default {
     iType: null,
     defaultUrl: null,
     urlDict: {},
-    hide: false
+    hide: true
   }),
   computed: {
     requireHide() {
