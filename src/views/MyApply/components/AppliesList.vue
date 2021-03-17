@@ -166,7 +166,9 @@ export default {
     },
     reload() {
       this.clear_data()
-      this.load()
+      this.$nextTick(() => {
+        this.load()
+      })
     },
     clear_data() {
       this.innerList = []

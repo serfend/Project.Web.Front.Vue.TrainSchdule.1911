@@ -6,8 +6,8 @@
       </el-dialog>
       <el-button type="text" icon="el-icon-share" @click="show_share=true">分享此休假详情</el-button>
       <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出休假登记卡</el-button>
-      <action-examine :row="detail" style="display: inline" @updated="requestUpdate" />
-      <action-user :row="detail" style="display: inline" @updated="requestUpdate" />
+      <action-examine :row="detail" style="display: inline" @updated="updateDetail" />
+      <action-user :row="detail" style="display: inline" @updated="updateDetail" />
     </el-card>
 
     <div style="padding-top: 0.5rem">
@@ -119,24 +119,17 @@ import { detail } from '@/api/apply/query'
 import { exportUserApplies } from '@/api/common/static'
 import { datedifference, parseTime } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
-import ActionExamine from '../QueryAndAuditApplies/ActionExamine'
-import ActionUser from '../QueryAndAuditApplies/ActionUser'
-import SettleFormItem from '@/components/SettleFormItem'
-import AuditStatus from './components/AuditStatus'
-import MyApply from '@/views/MyApply'
-import { debounce } from '../../utils'
-import ApplyComments from '@/components/BiliComment'
 export default {
   name: 'ApplyDetail',
   components: {
-    SettleFormItem,
-    ActionExamine,
-    ActionUser,
-    AuditStatus,
-    MyApply,
+    SettleFormItem: () => import('@/components/SettleFormItem'),
+    ActionExamine: () => import('../QueryAndAuditApplies/ActionExamine'),
+    ActionUser: () => import('../QueryAndAuditApplies/ActionUser'),
+    AuditStatus: () => import('./components/AuditStatus'),
+    MyApply: () => import('@/views/MyApply'),
     ClipboardShare: () =>
       import('@/views/common/ClipboardMonitor/ClipboardShare'),
-    ApplyComments
+    ApplyComments: () => import('@/components/BiliComment')
   },
   props: {
     focusId: {
@@ -161,11 +154,6 @@ export default {
     }
   },
   computed: {
-    requestUpdate() {
-      return debounce(() => {
-        this.updateDetail()
-      }, 500)
-    },
     statusDic() {
       return this.$store.state.vacation.statusDic
     },
@@ -188,7 +176,7 @@ export default {
     },
     id: {
       handler(val) {
-        this.requestUpdate()
+        this.updateDetail()
       },
       immediate: true
     }

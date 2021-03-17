@@ -73,13 +73,11 @@ export default {
       default: null
     }
   },
-  data() {
-    return {
-      inner_id: '',
-      loading: false,
-      show_apply_new: false
-    }
-  },
+  data: () => ({
+    inner_id: null,
+    loading: false,
+    show_apply_new: false
+  }),
   computed: {
     currentUser() {
       return this.$store.state.user.data
