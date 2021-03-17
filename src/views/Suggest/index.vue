@@ -1,6 +1,10 @@
 <template>
   <div>
-    <BiliComment id="7927df03-bb1e-4a2a-b8cb-04a1039c3d23" ref="comment">
+    <BiliComment
+      v-if="currentUser&&currentUser.id"
+      id="7927df03-bb1e-4a2a-b8cb-04a1039c3d23"
+      ref="comment"
+    >
       <template slot="sender">
         <MarkdownEditor ref="editor" v-model="comment" :options="options" />
         <div style="height:5rem">
@@ -10,29 +14,39 @@
         </div>
       </template>
     </BiliComment>
+    <Login v-else />
   </div>
 </template>
 
 <script>
-import BiliComment from '@/components/BiliComment'
-import MarkdownEditor from '@/components/MarkdownEditor/Editor'
 export default {
   name: 'Suggest',
-  components: { BiliComment, MarkdownEditor },
+  components: {
+    BiliComment: () => import('@/components/BiliComment'),
+    MarkdownEditor: () => import('@/components/MarkdownEditor/Editor'),
+    Login: () => import('@/views/login')
+  },
   data: () => ({
     comment: '',
     options: {
-      placeholder: '意见反馈,图像上传格式【![名称](网址链接)】',
+      placeholder: '意见反馈,图像上传格式【![名称](网址链接)】'
     },
     loading: false
   }),
+  computed: {
+    currentUser() {
+      return this.$store.state.user.data
+    }
+  },
   methods: {
     send_comment() {
       this.loading = true
       const comment = this.$refs.editor.get_content()
       const comp = this.$refs.comment
       const cp = comp.comp()[0]
-      cp.send_content(comment, () => { this.loading = false })
+      cp.send_content(comment, () => {
+        this.loading = false
+      })
     }
   }
 }
