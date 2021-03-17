@@ -1,5 +1,5 @@
 <template>
-  <el-card style="margin-top:1rem">
+  <el-card v-loading="loading" style="margin-top:1rem">
     <span slot="header">操作权限</span>
     <el-tree :data="list" :expand-on-click-node="false">
       <span slot-scope="{ node,data }" class="custom-tree-node">
@@ -35,23 +35,23 @@ const createPermission = () => [
   {
     title: '执行新增操作',
     name: 'create',
-    permissions: [],
+    permissions: []
   },
   {
     title: '执行编辑操作',
     name: 'update',
-    permissions: [],
+    permissions: []
   },
   {
     title: '执行移除操作',
     name: 'remove',
-    permissions: [],
+    permissions: []
   },
   {
     title: '执行查询操作',
     name: 'query',
-    permissions: [],
-  },
+    permissions: []
+  }
 ]
 import PermissionModify from './PermissionModify'
 
@@ -59,22 +59,22 @@ import { allPermissions, getPermission, postPermission } from '@/api/permission'
 export default {
   name: 'PermissionManager',
   components: {
-    PermissionModify,
+    PermissionModify
   },
   props: {
     userId: {
       type: String,
-      default: null,
+      default: null
     },
     auth: {
       type: Object,
-      default: null,
-    },
+      default: null
+    }
   },
 
   data: () => ({
+    loading: false,
     lastUpdate: '',
-    lastUser: null,
     list: [],
     raw_data: null,
     itemDict: null, // key=>permission item
@@ -82,10 +82,18 @@ export default {
     currentPermission: {
       data: null,
       name: null,
-      title: null,
+      title: null
     },
-    show_permission_dialog: false,
+    show_permission_dialog: false
   }),
+  watch: {
+    userId: {
+      handler(val) {
+        this.load()
+      },
+      immediate: true
+    }
+  },
   mounted() {
     this.init_load()
   },
@@ -98,7 +106,7 @@ export default {
         return prev + (cur.permissions && cur.permissions.length) || 0
       }
       const new_permissions = Object.keys(this.permissionDict).filter(
-        (k) => this.permissionDict[k].children.reduce(sumchild, 0) > 0
+        k => this.permissionDict[k].children.reduce(sumchild, 0) > 0
       )
       const result = {}
       for (let i = 0; i < new_permissions.length; i++) {
@@ -114,13 +122,11 @@ export default {
       return newPermissionSubmit
     },
     requireUpdate(directUpdate = false) {
-      console.log('require update')
-      if (!this.lastUpdate || !this.lastUser) return
-      const id = this.lastUser
+      const id = this.userId
       const f = this.check_update()
       if (!directUpdate && f !== this.lastUpdate) {
         this.$confirm('权限有修改，是否更新', '更新提醒', {
-          type: 'info',
+          type: 'info'
         }).then(() => {
           this.do_submit(f, id)
         })
@@ -133,10 +139,11 @@ export default {
       postPermission({
         id,
         auth: this.auth,
-        NewPermission,
+        NewPermission
       })
         .then(() => {
           this.$message.success('已提交')
+          this.lastUpdate = NewPermission
         })
         .finally(() => {
           this.loading = false
@@ -148,7 +155,7 @@ export default {
         data,
         title: node.parent.data.title,
         name: node.parent.data.name,
-        total: 0,
+        total: 0
       }
       this.show_permission_dialog = true
     },
@@ -157,40 +164,47 @@ export default {
         setTimeout(() => this.load(), 200)
         return
       }
-      this.requireUpdate()
       this.load_config()
       const id = this.userId
       if (!id) return
-      getPermission({ id }).then((data) => {
-        const list = Object.keys(data)
-        for (let i = 0; i < list.length; i++) {
-          const item = data[list[i]]
-          const raw_permit = this.permissionDict[list[i]]
-          if (raw_permit) {
-            const c = raw_permit.children
-            c[0].permissions = item.create
-            c[1].permissions = item.update
-            c[2].permissions = item.remove
-            c[3].permissions = item.query
-            const total_permitcount = c.reduce(
-              (prev, cur) =>
-                prev + (cur.permissions && cur.permissions.length) || 0,
-              0
-            )
-            let node = raw_permit
-            do {
-              node.total += total_permitcount
-              node = node.parent
-            } while (node.parent)
+      this.loading = true
+      getPermission({ id })
+        .then(data => {
+          const list = Object.keys(data)
+          for (let i = 0; i < list.length; i++) {
+            const item = data[list[i]]
+            const raw_permit = this.permissionDict[list[i]]
+            if (raw_permit) {
+              const c = raw_permit.children
+              c[0].permissions = item.create
+              c[1].permissions = item.update
+              c[2].permissions = item.remove
+              c[3].permissions = item.query
+              const total_permitcount = c.reduce(
+                (prev, cur) =>
+                  prev + (cur.permissions && cur.permissions.length) || 0,
+                0
+              )
+              let node = raw_permit
+              do {
+                node.total += total_permitcount
+                node = node.parent
+              } while (node.parent)
+            }
           }
-        }
-        this.lastUpdate = this.check_update()
-      })
+          this.$nextTick(() => {
+            this.lastUpdate = this.check_update()
+          })
+        })
+        .finally(() => {
+          this.loading = false
+          this.requireUpdate()
+        })
     },
     init_load() {
       this.loading = true
       allPermissions()
-        .then((data) => {
+        .then(data => {
           this.raw_data = data
           this.load_config()
         })
@@ -212,7 +226,7 @@ export default {
           newListDict[key] = {
             name: key,
             title: infos[1],
-            children: [],
+            children: []
           }
           itemDict[infos[1]] = newListDict[key]
           newList.push(newListDict[key])
@@ -224,7 +238,7 @@ export default {
           title: list[i].item2.description,
           children: createPermission(),
           parent: newListDict[key],
-          total: 0,
+          total: 0
         }
         permissionDict[permit_name] = tmp
         newListDict[key].children.push(tmp)
@@ -232,8 +246,8 @@ export default {
       this.list = newList
       this.itemDict = itemDict
       this.permissionDict = permissionDict
-    },
-  },
+    }
+  }
 }
 </script>
 
