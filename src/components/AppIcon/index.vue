@@ -7,7 +7,7 @@
         v-if="icon"
         :class="isActive?'icon-buttonactive':'icon-button'"
         :src="icon"
-        @click="$emit('click')"
+        @click="onClick"
         @mouseenter="activeMe"
         @mouseleave="disactiveMe"
       />
@@ -15,14 +15,14 @@
         v-if="svg"
         :icon-class="svg"
         :class="isActive?'icon-buttonactive':'icon-button'"
-        @click="$emit('click')"
+        @click="onClick"
         @mouseenter="activeMe"
         @mouseleave="disactiveMe"
       />
       <div
         :class="isActive?'icon-labelactive':'icon-label'"
         :style="{'font-size':(size/5)+'rem',cursor:'pointer'}"
-        @click="$emit('click')"
+        @click="onClick"
         @mouseenter="activeMe"
         @mouseleave="disactiveMe"
       >{{ label }}</div>
@@ -65,11 +65,17 @@ export default {
     }
   },
   methods: {
+    onClick() {
+      if (this.disabled) return this.$message.error('选项被禁用')
+      this.$emit('click')
+    },
     activeMe() {
+      if (this.disabled) return
       this.isActive = true
       this.$forceUpdate()
     },
     disactiveMe() {
+      if (this.disabled) return
       this.isActive = false
       this.$forceUpdate()
     }

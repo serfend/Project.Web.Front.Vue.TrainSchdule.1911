@@ -6,6 +6,11 @@
       <el-tag slot="reference" class="user-item" v-bind="$attrs">
         <i class="el-icon-user-solid" />
         <span v-if="innerData">{{ innerData.realName }}</span>
+        <span v-else>
+          <el-tooltip :content="errorMsg">
+            <span>{{ userid }}无效</span>
+          </el-tooltip>
+        </span>
       </el-tag>
     </el-popover>
   </div>
@@ -43,7 +48,8 @@ export default {
       realName: 'null'
     },
     lastUserId: null,
-    loading: false
+    loading: false,
+    errorMsg: null
   }),
   watch: {
     data: {
@@ -64,15 +70,19 @@ export default {
 
   methods: {
     loadUser(userid) {
+      this.loading = true
       if (!userid) {
         if (this.lastUserId) this.innerData = null
         return
       }
-      this.loading = true
       this.lastUserId = userid
       getUserSummary(userid, true)
         .then(data => {
           this.innerData = data
+        })
+        .catch(e => {
+          this.innerData = null
+          this.errorMsg = e.message
         })
         .finally(() => {
           this.loading = false

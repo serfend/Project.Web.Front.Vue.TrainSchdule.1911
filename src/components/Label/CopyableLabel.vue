@@ -1,13 +1,5 @@
 <template>
-  <el-tooltip effect="light">
-    <template #content>
-      <div style="text-align:center">
-        <div style="font-size:0.8rem;">↑点击复制</div>
-        <span>{{ label }}</span>
-      </div>
-    </template>
-    <el-button type="text" @click="clipBoard(content||label,$event)">{{ label }}</el-button>
-  </el-tooltip>
+  <span class="clickable" @dblclick="clipBoard(content||label,$event)">{{ label }}</span>
 </template>
 
 <script>
@@ -29,3 +21,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.clickable {
+  cursor: pointer;
+}
+</style>
