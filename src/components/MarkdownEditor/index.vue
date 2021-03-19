@@ -1,5 +1,7 @@
 <template>
-  <component :is="component" v-if="component" :file-name="fileName" v-bind="$attrs" />
+  <el-card style="margin:2%">
+    <component :is="component" v-if="component" :file-name="fileName" v-bind="$attrs" />
+  </el-card>
 </template>
 
 <script>
@@ -24,7 +26,7 @@ export default {
     } else {
       this.component = 'Editor'
     }
-  },
+  }
 }
 </script>
 

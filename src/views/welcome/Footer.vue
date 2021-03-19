@@ -22,7 +22,7 @@
         content="https://serfend.top/s/policy_vacation.md"
         description="扫码查看相关政策"
       />
-      <el-link slot="reference" type="primary" href="http://192.168.8.8/newbbs/">相关政策</el-link>
+      <el-link slot="reference" type="primary" href="/#/markdown?filename=policy_vacation.md">相关政策</el-link>
     </el-popover>
     <div style="float:right;color:#bbb">
       <span>©2020 sf</span>
