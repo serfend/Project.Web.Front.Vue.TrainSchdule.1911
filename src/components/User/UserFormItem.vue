@@ -70,11 +70,11 @@ export default {
 
   methods: {
     loadUser(userid) {
-      this.loading = true
       if (!userid) {
         if (this.lastUserId) this.innerData = null
         return
       }
+      this.loading = true
       this.lastUserId = userid
       getUserSummary(userid, true)
         .then(data => {

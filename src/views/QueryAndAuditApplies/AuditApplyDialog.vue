@@ -27,7 +27,7 @@
 
 <script>
 import AuthCode from '@/components/AuthCode'
-import { audit } from '@/api/apply/handle'
+import { audit } from '@/api/audit/handle'
 export default {
   name: 'AuditApplyDialog',
   components: { AuthCode },

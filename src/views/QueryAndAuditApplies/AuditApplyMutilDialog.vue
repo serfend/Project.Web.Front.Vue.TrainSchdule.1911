@@ -83,7 +83,7 @@
 <script>
 import AuthCode from '@/components/AuthCode'
 import { datedifference } from '@/utils'
-import { audit } from '@/api/apply/handle'
+import { audit } from '@/api/audit/handle'
 export default {
   name: 'AuditApplyMutilDialog',
   components: {

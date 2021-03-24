@@ -320,7 +320,7 @@ import {
   editStreamSolutionRule,
   deleteStreamSolutionRule,
   buildFilter,
-} from '@/api/applyAuditStream'
+} from '@/api/audit/applyAuditStream'
 export default {
   name: 'ApplyStreamSolution',
   components: {

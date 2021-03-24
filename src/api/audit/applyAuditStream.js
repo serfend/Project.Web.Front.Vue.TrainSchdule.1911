@@ -1,5 +1,5 @@
-import request from '../utils/request'
-
+import request from '@/utils/request'
+const api = '/applyAuditStream'
 /**
  * 获取审批节点
  *
@@ -8,7 +8,7 @@ import request from '../utils/request'
  * @returns
  */
 export function getStreamNode(name) {
-  return request.get('ApplyAuditStream/StreamNode', {
+  return request.get(`${api}/StreamNode`, {
     params: {
       name
     }
@@ -23,7 +23,7 @@ export function getStreamNode(name) {
  * @returns
  */
 export function getStreamSolution(name) {
-  return request.get('ApplyAuditStream/StreamSolution', {
+  return request.get(`${api}/StreamSolution`, {
     params: {
       name
     }
@@ -38,7 +38,7 @@ export function getStreamSolution(name) {
  * @returns
  */
 export function getStreamSolutionRule(name) {
-  return request.get('ApplyAuditStream/StreamSolutionRule', {
+  return request.get(`${api}/StreamSolutionRule`, {
     params: {
       name
     }
@@ -85,7 +85,7 @@ export function buildFilter(data) {
  * @returns
  */
 export function addStreamNode(id, name, companyRegion, description, filter, auth) {
-  return request.post('ApplyAuditStream/StreamNode', {
+  return request.post(`${api}//StreamNode`, {
     name,
     companyRegion,
     description,
@@ -107,7 +107,7 @@ export function addStreamNode(id, name, companyRegion, description, filter, auth
  * @returns
  */
 export function editStreamNode(id, name, companyRegion, description, filter, auth) {
-  return request.put('ApplyAuditStream/StreamNode', {
+  return request.put(`${api}/StreamNode`, {
     id,
     name,
     companyRegion,
@@ -129,7 +129,7 @@ export function editStreamNode(id, name, companyRegion, description, filter, aut
  * @returns
  */
 export function addStreamSolution(id, name, companyRegion, description, nodes, auth) {
-  return request.post('ApplyAuditStream/StreamSolution', {
+  return request.post(`${api}/StreamSolution`, {
     name,
     companyRegion,
     description,
@@ -151,7 +151,7 @@ export function addStreamSolution(id, name, companyRegion, description, nodes, a
  * @returns
  */
 export function editStreamSolution(id, name, companyRegion, description, nodes, auth) {
-  return request.put('ApplyAuditStream/StreamSolution', {
+  return request.put(`${api}/StreamSolution`, {
     id,
     name,
     companyRegion,
@@ -176,7 +176,7 @@ export function editStreamSolution(id, name, companyRegion, description, nodes, 
  * @returns
  */
 export function addStreamSolutionRule(id, name, companyRegion, description, solutionName, priority, enable, filter, auth) {
-  return request.post('ApplyAuditStream/StreamSolutionRule', {
+  return request.post(`${api}/StreamSolutionRule`, {
     name,
     companyRegion,
     description,
@@ -204,7 +204,7 @@ export function addStreamSolutionRule(id, name, companyRegion, description, solu
  * @returns
  */
 export function editStreamSolutionRule(id, name, companyRegion, description, solutionName, priority, enable, filter, auth) {
-  return request.put('ApplyAuditStream/StreamSolutionRule', {
+  return request.put(`${api}/StreamSolutionRule`, {
     id,
     name,
     companyRegion,
@@ -218,7 +218,7 @@ export function editStreamSolutionRule(id, name, companyRegion, description, sol
 }
 
 export function queryStreamNode(companyRegion) {
-  return request.get('ApplyAuditStream/StreamNodeQuery', {
+  return request.get(`${api}/StreamNodeQuery`, {
     params: {
       companyRegion
     }
@@ -226,7 +226,7 @@ export function queryStreamNode(companyRegion) {
 }
 
 export function queryStreamSolution(companyRegion) {
-  return request.get('ApplyAuditStream/StreamSolutionQuery', {
+  return request.get(`${api}/StreamSolutionQuery`, {
     params: {
       companyRegion
     }
@@ -234,7 +234,7 @@ export function queryStreamSolution(companyRegion) {
 }
 
 export function queryStreamSolutionRule(companyRegion) {
-  return request.get('ApplyAuditStream/StreamSolutionRuleQuery', {
+  return request.get(`${api}/StreamSolutionRuleQuery`, {
     params: {
       companyRegion
     }
@@ -242,7 +242,7 @@ export function queryStreamSolutionRule(companyRegion) {
 }
 
 export function deleteStreamNode(name, authByUserid, code) {
-  return request.delete('ApplyAuditStream/StreamNode', {
+  return request.delete(`${api}/StreamNode`, {
     params: {
       name,
       authByUserid,
@@ -252,7 +252,7 @@ export function deleteStreamNode(name, authByUserid, code) {
 }
 
 export function deleteStreamSolution(name, authByUserid, code) {
-  return request.delete('ApplyAuditStream/StreamSolution', {
+  return request.delete(`${api}/StreamSolution`, {
     params: {
       name,
       authByUserid,
@@ -262,7 +262,7 @@ export function deleteStreamSolution(name, authByUserid, code) {
 }
 
 export function deleteStreamSolutionRule(name, authByUserid, code) {
-  return request.delete('ApplyAuditStream/StreamSolutionRule', {
+  return request.delete(`${api}/StreamSolutionRule`, {
     params: {
       name,
       authByUserid,

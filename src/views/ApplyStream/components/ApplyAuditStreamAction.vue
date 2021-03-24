@@ -271,7 +271,7 @@ import {
   editStreamNode,
   deleteStreamNode,
   buildFilter,
-} from '@/api/applyAuditStream'
+} from '@/api/audit/applyAuditStream'
 import CompaniesSelector from '@/components/Company/CompaniesSelector'
 import DutiesSelector from '@/components/Duty/DutiesSelector'
 import AuthCode from '@/components/AuthCode'

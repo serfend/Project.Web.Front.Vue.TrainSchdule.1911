@@ -154,10 +154,11 @@ export function querySelf(pages, id, start, end) {
  * @param {*} id
  * @returns
  */
-export function detail(id) {
+export function detail(id, ignoreError) {
   return request('/apply/detail', {
     params: {
       id
-    }
+    },
+    ignoreError
   })
 }

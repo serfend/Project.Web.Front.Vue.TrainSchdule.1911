@@ -51,7 +51,8 @@
 import AuthCode from '@/components/AuthCode'
 import { MessageBox } from 'element-ui'
 import { exportApplyDetail } from '@/api/common/static'
-import { deleteApply, doAction } from '@/api/apply/handle'
+import { doAction } from '@/api/audit/handle'
+import { deleteApply } from '@/api/apply/handle'
 export default {
   name: 'ActionUser',
   components: {
@@ -92,7 +93,7 @@ export default {
       const message = `${action.description} 确定要${action.alias}吗？`
       this.$confirm(message, {
         title: `确认${action.alias}`,
-        type: 'warning',
+        type: 'warning'
       }).then(() => {
         this.hendleExecute(item, row)
       })
@@ -125,15 +126,21 @@ export default {
     },
     exportApply(row) {
       const decider = {
-        'confirm': 0,
-        'cancel': 1,
-        'close': -1
+        confirm: 0,
+        cancel: 1,
+        close: -1
       }
       // TODO 此处应根据人员类别直接选取
       // TODO 允许用户选取自定义任意导出模板
       const opt = {
-        message: '选择是否下载干部类型', type: 'info', title: '导出', confirmButtonText: '干部', cancelButtonText: '其他人员',
-        distinguishCancelAndClose: true, showCancelButton: true, callback: action => {
+        message: '选择是否下载干部类型',
+        type: 'info',
+        title: '导出',
+        confirmButtonText: '干部',
+        cancelButtonText: '其他人员',
+        distinguishCancelAndClose: true,
+        showCancelButton: true,
+        callback: action => {
           const dutiesType = decider[action]
           if (dutiesType === -1) return
           const applyId = row.id

@@ -138,7 +138,7 @@ import {
   addStreamSolution,
   editStreamSolution,
   deleteStreamSolution,
-} from '@/api/applyAuditStream'
+} from '@/api/audit/applyAuditStream'
 export default {
   name: 'ApplyAuditStream',
   components: { AuthCode, CompanyFormItem },

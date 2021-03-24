@@ -44,7 +44,7 @@ import {
   queryStreamNode,
   queryStreamSolution,
   queryStreamSolutionRule
-} from '@/api/applyAuditStream'
+} from '@/api/audit/applyAuditStream'
 import { debounce } from '@/utils'
 export default {
   name: 'ApplyStream',

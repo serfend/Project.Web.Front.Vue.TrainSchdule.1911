@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import { auditStream, getUserCompany } from '@/api/user/userinfo'
+import { getUserCompany } from '@/api/user/userinfo'
+import { auditStream } from '@/api/audit/handle'
 import { companiesManagers } from '@/api/company'
 import UserFormItem from '@/components/User/UserFormItem'
 import { debounce } from '@/utils'
