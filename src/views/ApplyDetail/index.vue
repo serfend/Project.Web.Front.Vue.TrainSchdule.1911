@@ -101,10 +101,12 @@
             >
               <template slot="inner">
                 <el-card>
-                  <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
-                  <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
-                  <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
-                  <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
+                  <el-form label-width="8rem">
+                    <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
+                    <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
+                    <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
+                    <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
+                  </el-form>
                 </el-card>
               </template>
             </MyApply>
