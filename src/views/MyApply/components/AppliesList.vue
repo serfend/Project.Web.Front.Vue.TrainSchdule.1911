@@ -53,7 +53,7 @@
                 :data="i"
                 :show="i.show"
                 style="width:100%"
-                @updated="applyUpdate(i.itemIndex)"
+                @updated="applyUpdate(index,i.id)"
               />
             </div>
           </el-tooltip>
@@ -73,7 +73,7 @@
 
 <script>
 import { formatTime } from '@/utils'
-import { querySelf } from '@/api/apply/query'
+import { querySelf, detail } from '@/api/apply/query'
 import { get_item_summary, tag_single_item } from '@/utils/vacation'
 export default {
   name: 'AppliesList',
@@ -175,30 +175,47 @@ export default {
       this.lastPage = 0
       this.haveNext = true
     },
-    load() {
+    applyUpdate(index, id) {
+      detail(id, true)
+        .then(data => {
+          data.show = false
+          this.innerList[index] = Object.assign(this.innerList[index], data)
+          setTimeout(() => {
+            this.innerList[index].show = true
+          }, 1000)
+        })
+        .catch(e => {
+          this.innerList.splice(index, 1)
+          return
+        })
+    },
+    load(cb, pages) {
       if (this.loading) return
+      pages = pages || { pageIndex: this.lastPage, pageSize: 10 }
+      if (!cb) {
+        cb = data => {
+          this.lastPage++
+          const newList = data.list.map((v, i) => {
+            v.itemIndex = i + pages.pageIndex * pages.pageSize
+            v.show = false
+            return v
+          })
+          newList.map((v, i) => tag_single_item(newList, i))
+          this.iList = this.iList.concat(newList)
+          if (data.list.length < pages.pageSize) {
+            this.haveNext = false
+          }
+          if (pages.pageIndex === 0 && this.autoExpand) {
+            setTimeout(() => {
+              if (this.iList[0]) this.iList[0].show = true
+            }, 1000)
+          }
+        }
+      }
       if (this.haveNext) {
         this.loading = true
-        const pages = { pageIndex: this.lastPage, pageSize: 10 }
         querySelf(pages, this.inner_id, this.vacaStart, this.vacaEnd)
-          .then(data => {
-            this.lastPage++
-            const newList = data.list.map((v, i) => {
-              v.itemIndex = i + pages.pageIndex * pages.pageSize
-              v.show = false
-              return v
-            })
-            newList.map((v, i) => tag_single_item(newList, i))
-            this.iList = this.iList.concat(newList)
-            if (data.list.length < pages.pageSize) {
-              this.haveNext = false
-            }
-            if (pages.pageIndex === 0 && this.autoExpand) {
-              setTimeout(() => {
-                if (this.iList[0]) this.iList[0].show = true
-              }, 1000)
-            }
-          })
+          .then(cb)
           .finally(() => {
             // avoid load next page trice
             setTimeout(() => {
