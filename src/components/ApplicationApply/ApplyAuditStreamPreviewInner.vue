@@ -19,9 +19,7 @@
           </template>
           <template v-if="!loading" slot="description">
             <div v-for="u in s.membersFitToAudit" :key="u">
-              <span
-                v-if="managers[s.firstMemberCompanyCode]&&managers[s.firstMemberCompanyCode].indexOf(u)===-1&&userStatus[s.index]"
-              >
+              <span v-if="user_should_show(u,s)">
                 <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
               </span>
             </div>
@@ -106,6 +104,16 @@ export default {
   },
   methods: {
     auditStream,
+    user_should_show(u, s) {
+      const managers = this.managers
+      const userStatus = this.userStatus
+      const env_init = managers[s.firstMemberCompanyCode] && userStatus[s.index]
+      if (!env_init) return false
+      const is_manager = managers[s.firstMemberCompanyCode].indexOf(u) > -1
+      const status = userStatus[s.index][u]
+      const is_handled = status === 'success' || status === 'danger'
+      return !is_manager || is_handled
+    },
     getNeedAudit(requireAuditMemberCount) {
       if (requireAuditMemberCount < 0) return '无需'
       if (requireAuditMemberCount === 0) return '所有人'

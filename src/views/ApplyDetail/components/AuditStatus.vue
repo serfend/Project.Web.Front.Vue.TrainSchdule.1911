@@ -1,6 +1,8 @@
 <template>
   <el-card v-if="detail" v-loading="loading" shadow="hover">
-    <h3 slot="header">{{ `审批进度(${detail.auditSolution||'审批流程'})` }} {{ detail.status == 20?'(已撤回)':null }}</h3>
+    <h3
+      slot="header"
+    >{{ `审批进度(${detail.auditSolution||'审批流程'})` }} {{ detail.status == 20?'(已撤回)':null }}</h3>
     <el-steps
       v-if="detail.steps&&detail.steps.length>0"
       :space="200"
@@ -126,17 +128,17 @@ export default {
       type: Object,
       default() {
         return null
-      },
+      }
     },
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
       nowActiveAudit: 0,
-      detail: {},
+      detail: {}
     }
   },
   computed: {
@@ -145,7 +147,7 @@ export default {
     },
     status() {
       return this.statusDic[this.detail.status]
-    },
+    }
   },
   watch: {
     data: {
@@ -155,16 +157,17 @@ export default {
           this.refresh()
         }
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
-    formatTime, parseTime,
+    formatTime,
+    parseTime,
     getStatus() {
       const res = this.detail.response
       if (!res || res.length === 0) return null
       const r = res.findIndex(
-        (i) => i.status === 0 || i.status === 1 || i.status === 8
+        i => i.status === 0 || i.status === 1 || i.status === 8
       )
       return r < 0 ? res.length : r
     },
@@ -179,6 +182,7 @@ export default {
       return row.status === 4 ? '通过' : row.status === 8 ? '驳回' : '未处理'
     },
     get_status_type(row) {
+      console.log(row)
       return row.status === 4 ? 'success' : row.status === 8 ? 'danger' : 'info'
     },
     get_audit_list(step) {
@@ -189,7 +193,9 @@ export default {
         if (cur) user_dict[i.auditingUserId] = 1
         return cur
       })
-      const unhandle_list = step.membersFitToAudit.filter(i => !user_dict[i]).map(i => ({ auditingUserId: i }))
+      const unhandle_list = step.membersFitToAudit
+        .filter(i => !user_dict[i])
+        .map(i => ({ auditingUserId: i }))
       list = list.concat(unhandle_list)
       return list.map(i => {
         i.status_urged = this.get_status_desc(i) !== '未处理'
@@ -202,7 +208,7 @@ export default {
       return `${requireAuditMemberCount}人`
     },
     GetHandleTimeAgo(step) {
-      const arr = this.detail.response.filter((r) => r.index === step.index)
+      const arr = this.detail.response.filter(r => r.index === step.index)
       if (arr.length > 0) {
         const item = arr.reduce((prev, cur) =>
           prev.handleStamp > cur.handleStamp ? prev : cur
@@ -230,8 +236,8 @@ export default {
           break
         }
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

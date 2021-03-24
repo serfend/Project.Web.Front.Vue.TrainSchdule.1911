@@ -178,9 +178,7 @@ export function getUsersVacationLimit(id, vacationYear, isPlan, ignoreErr) {
   return cached_data(`${url_getUsersVacationLimit}/${id}/${vacationYear}/${isPlan}`, () =>
     request.get(url_getUsersVacationLimit, {
       params: {
-        id,
-        vacationYear,
-        isPlan
+        id, vacationYear, isPlan
       },
       ignoreError: ignoreErr
     })
