@@ -1,6 +1,6 @@
 <template>
   <el-popover
-    v-if="inner_id"
+    v-if="inner_id||(data&&data.code)"
     v-loading="loading"
     placement="right"
     trigger="hover"

@@ -97,6 +97,8 @@ export default {
     OnStatusChange() {
       const id = this.id
       if (!id) {
+        const data = this.data
+        if (data) return
         this.$emit('update:data', null)
         return
       }
