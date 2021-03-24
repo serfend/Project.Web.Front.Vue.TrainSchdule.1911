@@ -297,7 +297,6 @@ export default {
     locationChildren,
     updatedApply() {
       this.anyChanged = true
-      console.log('modify')
       this.submitId = null
       this.$emit('update:submitId', null)
       const vl = this.formApply.vacationLength
@@ -450,12 +449,18 @@ export default {
       if (caculaingDate.length < 0) return
       this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
       let s = Object.assign({}, caculaingDate)
-      s = Object.assign({ lawVacationSet: this.lawVacations }, s)
+      const lawVacations = this.lawVacations
+      s = Object.assign({ lawVacationSet: lawVacations }, s)
       getStampReturn(s).then(data => {
         this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
         const des = data.descriptions ? data.descriptions : []
-        const t = this.lawVacations.length !== des.length
-        if (t || des.find(i => !this.lawVacations.find(l => i.id === l.id))) {
+        const t =
+          lawVacations.length !== des.length ||
+          des.find(i => {
+            const item = lawVacations.find(l => i.id === l.id)
+            return !item || item.length !== i.length
+          })
+        if (t) {
           this.lawVacations = des
         }
       })
