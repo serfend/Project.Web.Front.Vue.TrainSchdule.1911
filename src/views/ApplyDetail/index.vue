@@ -11,82 +11,86 @@
     </el-card>
 
     <div style="padding-top: 0.5rem">
-      <el-form type="flex" label-width="8rem">
-        <div class="content-card">
-          <el-card
-            v-if="detail && detail.id && detail.status !== 20"
-            v-loading="loading"
-            shadow="hover"
-          >
+      <div type="flex">
+        <el-row
+          v-if="detail && detail.id && detail.status !== 20"
+          :gutter="20"
+          class="content-card"
+        >
+          <el-card v-loading="loading" shadow="hover">
             <h3 slot="header">本次休假</h3>
-            <div v-if="detail.id">
-              <el-form-item label="基本">
-                <el-tag
-                  v-if="detail.request.vacationType"
-                  effect="dark"
-                  :type="
-                    detail.request.vacationType === '正休'
-                      ? 'primary'
-                      : 'danger'
-                  "
-                >{{ detail.request.vacationType }}</el-tag>
-                <el-tag v-if="detail.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
-                <div v-if="staticData.vacationStart">
-                  <el-tooltip effect="light">
-                    <template slot="content">
-                      <span>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</span>
-                    </template>
-                    <el-col v-if="staticData.vacationSpent >= 0" :lg="6" :md="12" :sm="24">
-                      <el-progress :width="100" :percentage="staticData.vacationProgress" />
-                    </el-col>
-
-                    <span v-else>距离离队时间:{{ -staticData.vacationSpent }}天</span>
-                  </el-tooltip>
-                </div>
-                <span v-else>
+            <el-col :xl="18" :lg="16" :md="14" :sm="12" :xs="24">
+              <el-form v-if="detail.id" label-width="8rem">
+                <el-form-item label="基本">
                   <el-tag
-                    v-if="statusDic[detail.status]"
-                    :color="statusDic[detail.status].color"
-                    class="white--text"
-                  >{{ statusDic[detail.status].desc }}</el-tag>
-                </span>
-              </el-form-item>
-              <el-form-item label="原因">{{ detail.request.reason ? detail.request.reason : '未填写' }}</el-form-item>
-              <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
-              <el-form-item label="假期天数">
-                <span>{{ `净假期${detail.request.vacationLength}天 在途${detail.request.onTripLength}天` }}</span>
-                <el-tooltip
-                  v-for="a in detail.request.additialVacations"
-                  :key="a.id"
-                  :content="`开始于${parseTime(a.start)}的${a.length}天${
-                    a.name
-                  },${a.description}`"
-                >
-                  <el-tag style="margin-left: 10px">{{ `${a.length}天${a.name}` }}</el-tag>
-                </el-tooltip>
-              </el-form-item>
-              <el-form-item label="休假日期">
-                <span>
-                  {{ parseTime(detail.request.stampLeave) }} -
-                  {{ parseTime(detail.request.stampReturn) }}
-                </span>
-              </el-form-item>
-              <el-form-item label="休假地点">
-                <span>{{ detail.request.vacationPlace && detail.request.vacationPlace.name }}</span>
-                <span
-                  v-if="detail.request.vacationPlaceName"
-                >{{ `(${detail.request.vacationPlaceName})` }}</span>
-              </el-form-item>
-              <el-form-item label="交通工具">
-                <span>{{ detail.request.byTransportation === 0 ? '火车' : detail.request.byTransportation === 1? '飞机': '其他' }}</span>
-              </el-form-item>
-            </div>
+                    v-if="detail.request.vacationType"
+                    effect="dark"
+                    :type="detail.request.vacationType === '正休'? 'primary': 'danger'"
+                  >{{ detail.request.vacationType }}</el-tag>
+                  <el-tag v-if="detail.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
+                  <div v-if="staticData.vacationStart">
+                    <el-tooltip effect="light">
+                      <template slot="content">
+                        <span>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</span>
+                      </template>
+                      <el-col v-if="staticData.vacationSpent >= 0" :lg="6" :md="12" :sm="24">
+                        <el-progress :width="100" :percentage="staticData.vacationProgress" />
+                      </el-col>
+
+                      <span v-else>距离离队时间:{{ -staticData.vacationSpent }}天</span>
+                    </el-tooltip>
+                  </div>
+                  <span v-else>
+                    <el-tag
+                      v-if="statusDic[detail.status]"
+                      :color="statusDic[detail.status].color"
+                      class="white--text"
+                    >{{ statusDic[detail.status].desc }}</el-tag>
+                  </span>
+                </el-form-item>
+                <el-form-item label="原因">{{ detail.request.reason ? detail.request.reason : '未填写' }}</el-form-item>
+                <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
+                <el-form-item label="假期天数">
+                  <span>{{ `净假期${detail.request.vacationLength}天 在途${detail.request.onTripLength}天` }}</span>
+                  <el-tooltip
+                    v-for="a in detail.request.additialVacations"
+                    :key="a.id"
+                    :content="`开始于${parseTime(a.start)}的${a.length}天${a.name},${a.description}`"
+                  >
+                    <el-tag style="margin-left: 10px">{{ `${a.length}天${a.name}` }}</el-tag>
+                  </el-tooltip>
+                </el-form-item>
+                <el-form-item label="休假日期">
+                  <span>
+                    {{ parseTime(detail.request.stampLeave) }} -
+                    {{ parseTime(detail.request.stampReturn) }}
+                  </span>
+                </el-form-item>
+                <el-form-item label="休假地点">
+                  <span>{{ detail.request.vacationPlace && detail.request.vacationPlace.name }}</span>
+                  <span
+                    v-if="detail.request.vacationPlaceName"
+                  >{{ `(${detail.request.vacationPlaceName})` }}</span>
+                </el-form-item>
+                <el-form-item label="交通工具">
+                  <span>{{ detail.request.byTransportation === 0 ? '火车' : detail.request.byTransportation === 1? '飞机': '其他' }}</span>
+                </el-form-item>
+              </el-form>
+            </el-col>
+
+            <el-col :xl="6" :lg="8" :md="10" :sm="12" :xs="24">
+              <UserFormItem
+                :userid="detail.base.id"
+                :direct-show-card="true"
+                :can-load-avatar="true"
+              />
+            </el-col>
           </el-card>
-        </div>
+        </el-row>
         <div class="content-card">
           <AuditStatus :loading="loading" :data="detail" />
         </div>
-        <div class="content-card">
+        <div v-if="showUser" class="content-card">
           <el-card v-if="detail && detail.id">
             <h3 slot="header">申请人信息</h3>
             <MyApply
@@ -106,10 +110,10 @@
             </MyApply>
           </el-card>
         </div>
-        <div class="content-card">
+        <div v-if="showComment" class="content-card">
           <ApplyComments :id="detail.id" />
         </div>
-      </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -129,9 +133,22 @@ export default {
     MyApply: () => import('@/views/MyApply'),
     ClipboardShare: () =>
       import('@/views/common/ClipboardMonitor/ClipboardShare'),
-    ApplyComments: () => import('@/components/BiliComment')
+    ApplyComments: () => import('@/components/BiliComment'),
+    UserFormItem: () => import('@/components/User/UserFormItem')
   },
   props: {
+    showUser: {
+      type: Boolean,
+      default: true
+    },
+    showComment: {
+      type: Boolean,
+      default: false
+    },
+    canShow: {
+      type: Boolean,
+      default: true
+    },
     focusId: {
       type: String,
       default: null
@@ -179,6 +196,11 @@ export default {
         this.updateDetail()
       },
       immediate: true
+    },
+    canShow: {
+      handler(val) {
+        this.updateDetail()
+      }
     }
   },
   mounted() {
@@ -191,7 +213,7 @@ export default {
     },
     datedifference,
     updateDetail() {
-      if (this.id) {
+      if (this.id && this.canShow) {
         this.loadDetail(this.id)
       }
     },

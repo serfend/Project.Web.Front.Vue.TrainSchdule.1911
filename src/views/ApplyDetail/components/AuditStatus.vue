@@ -1,6 +1,6 @@
 <template>
   <el-card v-if="detail" v-loading="loading" shadow="hover">
-    <h3 slot="header">{{ `审批进度(${detail.auditSolution||'审批流程'})` }}</h3>
+    <h3 slot="header">{{ `审批进度(${detail.auditSolution||'审批流程'})` }} {{ detail.status == 20?'(已撤回)':null }}</h3>
     <el-steps
       v-if="detail.steps&&detail.steps.length>0"
       :space="200"
