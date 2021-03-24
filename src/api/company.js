@@ -53,7 +53,7 @@ export function Managers(id, userid) {
     }
   })
 }
-
+const urlCompaniesManagers = `${api}/companiesManagers`
 /**
  * 获取多个单位的管理
  *
@@ -62,11 +62,12 @@ export function Managers(id, userid) {
  * @returns
  */
 export function companiesManagers(ids) {
-  return request.get('/company/companiesManagers', {
-    params: {
-      ids: ids.join('##')
-    }
-  })
+  const ids_str = ids.join('##')
+  return cached_data(`${urlCompaniesManagers}/${ids_str}`, () =>
+    request.get(urlCompaniesManagers, {
+      params: { ids: ids_str }
+    })
+  )
 }
 
 /**
