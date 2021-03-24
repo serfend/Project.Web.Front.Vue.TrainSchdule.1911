@@ -54,12 +54,35 @@
           center
           effect="dark"
           show-icon
-          style="margin-top:1rem"
+          closable
         >{{ errorMsg }}</el-alert>
       </div>
-
       <div class="item-put-center">
-        <el-button type="success" style="width:60%" @click="skimDetail">查 看 详 情</el-button>
+        <el-popover
+          v-for="(i,index) in errorList"
+          :key="i.id"
+          trigger="hover"
+          placement="top"
+          @show="i.can_show=true"
+        >
+          <ApplyDetail
+            :can-show="i.can_show"
+            :show-user="false"
+            :show-comment="false"
+            :focus-id="i.id"
+            style="width:80rem"
+          />
+          <template #reference>
+            <el-button
+              style="cursor:pointer;margin-left:0.3rem"
+              type="text"
+              @click="show_detail(i)"
+            >第{{ index+1 }}项</el-button>
+          </template>
+        </el-popover>
+      </div>
+      <div class="item-put-center">
+        <el-button type="success" style="width:60%" @click="skimDetail">查看本次提交的详情</el-button>
       </div>
       <div class="item-put-center">
         <el-button type="info" style="width:60%" @click="showSuccessDialog=false">关 闭</el-button>
@@ -69,13 +92,14 @@
 </template>
 
 <script>
-import { doAction } from '@/api/apply/handle'
+import { doAction } from '@/api/audit/handle'
 import { submitApply } from '@/api/apply/create'
 export default {
   name: 'SubmitApply',
   components: {
     // SvgIcon: () => import('@/components/SvgIcon'),
-    LottieIcon: () => import('@/components/LottieIcon')
+    LottieIcon: () => import('@/components/LottieIcon'),
+    ApplyDetail: () => import('@/views/ApplyDetail')
   },
   props: {
     baseInfoId: {
@@ -99,7 +123,8 @@ export default {
     onLoading: false,
     submitId: '',
     showSuccessDialog: false,
-    errorMsg: null
+    errorMsg: null,
+    errorList: []
   }),
   computed: {
     iDisabled() {
@@ -124,6 +149,7 @@ export default {
       const url = this.applyDetailUrl
       window.open(url)
     },
+    show_detail(id) {},
     /**
      * 提交申请 0:仅提交，1:提交并保存，2:提交并发布
      */
@@ -152,10 +178,22 @@ export default {
           this.submitId = data.id
           if (actionStatus > 0) {
             doAction(fn, applyId)
-              .then(() => {
-                const msg = actionStatus === 1 ? '提交并保存' : '提交并发布'
-                this.$message.success(`${msg}成功`)
-                this.$emit('complete', true)
+              .then(data => {
+                if (!data || !data.list) {
+                  const msg = actionStatus === 1 ? '提交并保存' : '提交并发布'
+                  this.$message.success(`${msg}成功`)
+                  this.errorList = []
+                  this.$emit('complete', true)
+                  return
+                }
+                this.errorList = data.list.map(i => ({
+                  id: i,
+                  can_show: true
+                }))
+                this.$emit('complete', false)
+                this.errorMsg = `存在${
+                  this.errorList.length
+                }条与本次提交的离队时间或归队时间冲突的休假申请`
               })
               .catch(e => {
                 this.$emit('complete', false)

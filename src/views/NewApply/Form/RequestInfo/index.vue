@@ -405,7 +405,7 @@ export default {
      * 提交请求信息
      */
     submitRequestInfo() {
-      if (this.loading || !this.anyChanged) return
+      if (this.loading || !this.anyChanged || this.main_type === -1) return
       this.submitId = null
       this.$emit('update:submitId', null)
 
