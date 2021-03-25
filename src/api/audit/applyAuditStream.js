@@ -150,7 +150,7 @@ export function addStreamSolution(id, name, companyRegion, description, nodes, a
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamSolution(id, name, companyRegion, description, nodes, auth) {
+export function editStreamSolution({ id, name, companyRegion, description, nodes, auth }) {
   return request.put(`${api}/StreamSolution`, {
     id,
     name,
@@ -167,6 +167,7 @@ export function editStreamSolution(id, name, companyRegion, description, nodes, 
  * @export
  * @param {String} name 名称
  * @param {String} companyRegion 单位作用域
+ * @param {String} entityType 审批类别/应用名称
  * @param {String} description 描述
  * @param {String} solutionName 规则符合后使用的解决方案
  * @param {Int} priority 优先级
@@ -175,13 +176,14 @@ export function editStreamSolution(id, name, companyRegion, description, nodes, 
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamSolutionRule(id, name, companyRegion, description, solutionName, priority, enable, filter, auth) {
+export function addStreamSolutionRule({ id, name, companyRegion, entityType, description, solutionName, priority, enable, filter, auth }) {
   return request.post(`${api}/StreamSolutionRule`, {
     name,
     companyRegion,
+    entityType,
     description,
     solutionName,
-    priority,
+    priority: Number(priority),
     enable,
     filter,
     auth
@@ -195,6 +197,7 @@ export function addStreamSolutionRule(id, name, companyRegion, description, solu
  * @param {String} id
  * @param {String} name 名称
  * @param {String} companyRegion 单位作用域
+ * @param {String} entityType 审批类别/应用名称
  * @param {String} description 描述
  * @param {String} solutionName 规则符合后使用的解决方案
  * @param {Int} priority 优先级
@@ -203,14 +206,15 @@ export function addStreamSolutionRule(id, name, companyRegion, description, solu
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamSolutionRule(id, name, companyRegion, description, solutionName, priority, enable, filter, auth) {
+export function editStreamSolutionRule({ id, name, companyRegion, entityType, description, solutionName, priority, enable, filter, auth }) {
   return request.put(`${api}/StreamSolutionRule`, {
     id,
     name,
     companyRegion,
+    entityType,
     description,
     solutionName,
-    priority,
+    priority: Number(priority),
     enable,
     filter,
     auth
@@ -233,10 +237,11 @@ export function queryStreamSolution(companyRegion) {
   })
 }
 
-export function queryStreamSolutionRule(companyRegion) {
+export function queryStreamSolutionRule(companyRegion, entityType) {
   return request.get(`${api}/StreamSolutionRuleQuery`, {
     params: {
-      companyRegion
+      companyRegion,
+      entityType
     }
   })
 }

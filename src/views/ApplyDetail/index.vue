@@ -253,6 +253,7 @@ export default {
       this.loading = true
       this.detail = null
       const loadDetail = detail(id).then(data => {
+        data = data.model
         if (!data.requestInfo) data.requestInfo = {}
         data.request = data.requestInfo
         if (data.request) {

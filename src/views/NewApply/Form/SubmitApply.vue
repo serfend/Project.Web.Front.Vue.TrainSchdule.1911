@@ -117,6 +117,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    vacationEntityType: {
+      type: String,
+      default: 'vacation'
     }
   },
   data: () => ({
@@ -166,6 +170,7 @@ export default {
         RequestId,
         BaseId,
         isPlan: main_type === 2,
+        entityType: 'vacation',
         Verify: {
           Code: 201700816
         }
@@ -177,7 +182,7 @@ export default {
           this.$emit('submit')
           this.submitId = data.id
           if (actionStatus > 0) {
-            doAction(fn, applyId)
+            doAction(fn, applyId, this.vacationEntityType)
               .then(data => {
                 if (!data || !data.list) {
                   const msg = actionStatus === 1 ? '提交并保存' : '提交并发布'

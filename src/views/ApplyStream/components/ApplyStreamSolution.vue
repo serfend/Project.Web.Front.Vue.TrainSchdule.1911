@@ -319,7 +319,7 @@ import {
   addStreamSolutionRule,
   editStreamSolutionRule,
   deleteStreamSolutionRule,
-  buildFilter,
+  buildFilter
 } from '@/api/audit/applyAuditStream'
 export default {
   name: 'ApplyStreamSolution',
@@ -330,34 +330,33 @@ export default {
     AuthCode,
     CompaniesSelector,
     DutiesSelector,
-    UserSelector,
+    UserSelector
   },
   props: {
     data: {
       type: Object,
-      default() {
-        return {
-          companyRegion: null,
-          newCompanyRegion: null,
-          allSolutionRule: [],
-          allSolutionRuleDic: {},
-          allSolution: [],
-          allSolutionDic: {},
-          allActionNode: [],
-          allActionNodeDic: {},
-        }
-      },
+      default: () => ({
+        entityType: 'vacation',
+        companyRegion: null,
+        newCompanyRegion: null,
+        allSolutionRule: [],
+        allSolutionRuleDic: {},
+        allSolution: [],
+        allSolutionDic: {},
+        allActionNode: [],
+        allActionNodeDic: {}
+      })
     },
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
       nodeDialogShow: false,
       newRule: this.buildNewSolutionRule(),
-      userSelect: {},
+      userSelect: {}
     }
   },
   methods: {
@@ -366,7 +365,7 @@ export default {
     },
     checkAuditMembersIndex(id) {
       const node = this.newRule
-      const auditMembers = node.auditMembers.map((i) => i.id)
+      const auditMembers = node.auditMembers.map(i => i.id)
       return auditMembers.indexOf(id)
     },
     handleUserSelectChange(val) {
@@ -380,7 +379,7 @@ export default {
     },
     handleCompaniesSelectClose(tag) {
       const node = this.newRule
-      const companies = node.companies.map((i) => i.code)
+      const companies = node.companies.map(i => i.code)
       const code = tag.code
       node.companies.splice(companies.indexOf(code), 1)
     },
@@ -391,7 +390,7 @@ export default {
     },
     handleDutiesSelectClose(tag) {
       const node = this.newRule
-      const i = node.duties.map((i) => i.code).indexOf(tag.code)
+      const i = node.duties.map(i => i.code).indexOf(tag.code)
       node.duties.splice(i, 1)
     },
     refresh() {
@@ -435,17 +434,18 @@ export default {
       var fn =
         node.mode === 'edit' ? editStreamSolutionRule : addStreamSolutionRule
       const region = this.data.newCompanyRegion || {}
-      fn(
-        node.id,
-        node.name,
-        region.code,
-        node.description,
-        node.solutionName,
-        node.priority,
-        node.enable,
-        buildFilter(node),
-        node.auth
-      )
+      fn({
+        id: node.id,
+        name: node.name,
+        companyRegion: region.code,
+        entityType: this.data.entityType,
+        description: node.description,
+        solutionName: node.solutionName,
+        priority: node.priority,
+        enable: node.enable,
+        filter: buildFilter(node),
+        auth: node.auth
+      })
         .then(() => {
           this.$message.success(`方案规则 ${node.name}已提交`)
           this.refresh()
@@ -460,7 +460,7 @@ export default {
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',
-          code: 0,
+          code: 0
         }
       }
       return {
@@ -481,10 +481,10 @@ export default {
         auditMembersCount: 1,
         auditMembers: [],
         auth: lastAuth,
-        loading: false,
+        loading: false
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -1,13 +1,16 @@
 import request from '@/utils/request'
 const api = '/applyAudit'
-
+export function toController(type) {
+  return `apply${type}handle`
+}
 /**
  * 操作申请
  * @param {String} action 操作类型 required
  * @param {String} id 申请的id required
+ * @param {String} type 申请类型/App名称
  */
-export function doAction(action, id) {
-  return request.put(`${api}/${action}?id=${id}`)
+export function doAction(action, id, type) {
+  return request.put(`${api}/${toController(type)}/${action}?id=${id}`)
 }
 
 /**
@@ -24,10 +27,11 @@ export function doAction(action, id) {
  *        ...
  *      }
  * @param {Auth} Auth
+ * @param {String} type 申请类型/App名称
  * @returns
  */
-export function audit(data, auth) {
-  return request.post(`${api}/audit`, {
+export function audit(data, auth, type) {
+  return request.post(`${api}/${toController(type)}/audit/`, {
     data,
     auth
   })
@@ -37,10 +41,11 @@ export function audit(data, auth) {
  *
  * @export
  * @param {*} id
+ * @param {String} type 申请类型/App名称
  * @returns
  */
-export function auditStream(id) {
-  return request.get(`${api}/auditStream`, {
+export function auditStream(id, type) {
+  return request.get(`${api}/auditStream/${type}`, {
     params: {
       id
     }

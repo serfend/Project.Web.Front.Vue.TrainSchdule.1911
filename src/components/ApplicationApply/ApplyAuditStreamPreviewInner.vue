@@ -51,6 +51,10 @@ export default {
     nowStep: {
       type: Number,
       default: -1
+    },
+    vacationEntityType: {
+      type: String,
+      default: 'vacation'
     }
   },
   data: () => ({
@@ -80,7 +84,7 @@ export default {
       handler(val) {
         if (val) {
           this.solutionName = null
-          auditStream(val).then(data => {
+          auditStream(val, this.vacationEntityType).then(data => {
             this.solutionName = data.solutionName
             this.streams = data.steps
           })

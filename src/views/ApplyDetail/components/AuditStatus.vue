@@ -182,7 +182,6 @@ export default {
       return row.status === 4 ? '通过' : row.status === 8 ? '驳回' : '未处理'
     },
     get_status_type(row) {
-      console.log(row)
       return row.status === 4 ? 'success' : row.status === 8 ? 'danger' : 'info'
     },
     get_audit_list(step) {

@@ -5,10 +5,11 @@ import request from '@/utils/request'
  * @param {json} params
  *      {string} params.id
  *      {Auth}   params.Auth
+ * @param {String} type 申请类型/App名称
  */
-export function deleteApply(params) {
+export function deleteApply(params, type) {
   return request({
-    url: '/apply/Submit',
+    url: `/apply/submit/${type}`,
     method: 'delete',
     data: params
   })

@@ -1,18 +1,26 @@
 <template>
   <el-card class="content-card">
-    <el-form>
+    <el-form label-width="5rem">
+      <el-form-item label="审批类型">
+        <el-select v-model="data.entityType">
+          <el-option label="休假" value="vacation" />
+          <el-option label="请假" value="inday" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="查询单位">
         <CompanySelector
           v-model="data.companyRegion"
           default-select-first
           placeholder="选择管理的主单位（单位作用域是界定当前规则有效范围的配置）"
+          style="width:30rem"
           @change="requireRefresh"
         />
       </el-form-item>
-      <el-form-item label="转移到..">
+      <el-form-item label="转移到">
         <CompanySelector
           v-model="data.newCompanyRegion"
           placeholder="选择变动到新的单位作用域"
+          style="width:30rem"
           @change="requireRefresh"
         />
       </el-form-item>
@@ -60,6 +68,7 @@ export default {
       activeName: 'ApplyStreamAbout',
       loading: false,
       data: {
+        entityType: 'vacation',
         companyRegion: null,
         newCompanyRegion: null,
         allSolutionRule: [],
@@ -83,6 +92,11 @@ export default {
       handler(val) {
         this.data.newCompanyRegion = val
       }
+    },
+    'data.entityType': {
+      handler(val) {
+        this.solutionRuleRefresh()
+      }
     }
   },
   mounted() {
@@ -96,7 +110,7 @@ export default {
     solutionRuleRefresh() {
       this.loading = true
       const region = this.data.companyRegion || {}
-      queryStreamSolutionRule(region.code)
+      queryStreamSolutionRule(region.code, this.data.entityType)
         .then(data => {
           this.data.allSolutionRule = data.list
         })

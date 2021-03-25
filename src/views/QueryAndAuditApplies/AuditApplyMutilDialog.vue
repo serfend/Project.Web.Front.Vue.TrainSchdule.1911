@@ -87,33 +87,37 @@ import { audit } from '@/api/audit/handle'
 export default {
   name: 'AuditApplyMutilDialog',
   components: {
-    AuthCode,
+    AuthCode
   },
   props: {
     show: {
       type: Boolean,
-      default: false,
+      default: false
     },
     responselist: {
       type: Array,
       default() {
         return []
       },
-      required: true,
+      required: true
     },
+    entityType: {
+      type: String,
+      default: 'vacation'
+    }
   },
   data() {
     return {
       loading: false,
       multiAuditForm: {
-        responseList: [],
+        responseList: []
       },
       multiAuditFormShow: false,
       auditForm: {
         action: 1,
-        remark: null,
+        remark: null
       },
-      activeApply: '',
+      activeApply: ''
     }
   },
   watch: {
@@ -128,45 +132,45 @@ export default {
               id: item.id,
               action: 1,
               remark: '',
-              modefiedByUser: false,
+              modefiedByUser: false
             })
           }
         }
         this.multiAuditUpdateAll()
       },
       immediate: true,
-      deep: true,
+      deep: true
     },
     show: {
       handler(val) {
         this.multiAuditFormShow = val
       },
-      immediate: true,
+      immediate: true
     },
     multiAuditFormShow: {
       handler(val) {
         this.$emit('update:show', val)
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     datedifference,
     SubmitMultiAuditForm() {
-      this.$refs['auditForm'].validate((valid) => {
+      this.$refs['auditForm'].validate(valid => {
         if (!valid) return
         this.loading = true
         const auth = this.auditForm.auth
-        var list = this.multiAuditForm.responseList.map((item) => {
+        var list = this.multiAuditForm.responseList.map(item => {
           return {
             id: item.id,
             action: item.action,
-            remark: item.remark,
+            remark: item.remark
           }
         })
-        audit({ list: list }, auth)
-          .then((resultlist) => {
-            const fn = (result) => {
+        audit({ list: list }, auth, this.entityType)
+          .then(resultlist => {
+            const fn = result => {
               if (result.status === 0) {
                 this.$notify.success(result.msg)
               } else {
@@ -176,7 +180,7 @@ export default {
             for (let i = 0; i < resultlist.length; i++) {
               const item = {
                 message: resultlist[i].message,
-                status: resultlist[i].status,
+                status: resultlist[i].status
               }
               const applyraw = this.multiAuditForm.responseList[i]
               const apply = applyraw.apply
@@ -198,14 +202,14 @@ export default {
       })
     },
     multiAuditUpdateAll() {
-      this.multiAuditForm.responseList.forEach((r) => {
+      this.multiAuditForm.responseList.forEach(r => {
         if (!r.modefiedByUser) {
           r.remark = this.auditForm.remark
           r.action = this.auditForm.action
         }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

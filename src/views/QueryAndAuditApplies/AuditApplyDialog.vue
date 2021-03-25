@@ -34,22 +34,26 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: true,
+      default: true
     },
     applyId: {
       type: String,
       default: '',
-      required: true,
+      required: true
     },
+    entityType: {
+      type: String,
+      default: 'vacation'
+    }
   },
   data() {
     return {
       auditForm: {
         action: 1,
         remark: '',
-        auth: {},
+        auth: {}
       },
-      auditShow: false,
+      auditShow: false
     }
   },
   watch: {
@@ -57,16 +61,16 @@ export default {
       handler(val) {
         this.auditShow = val
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     SubmitAuditForm() {
       const { action, remark, auth } = this.auditForm
       const list = [{ id: this.applyId, action, remark }]
-      audit({ list }, auth)
-        .then((resultlist) => {
-          resultlist.forEach((result) => {
+      audit({ list }, auth, this.entityType)
+        .then(resultlist => {
+          resultlist.forEach(result => {
             if (result.status === 0) {
               this.$message.success('审批成功')
             } else {
@@ -77,8 +81,8 @@ export default {
           this.auditShow = false
         })
         .finally(() => {})
-    },
-  },
+    }
+  }
 }
 </script>
 
