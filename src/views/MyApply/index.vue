@@ -41,7 +41,8 @@
     </div>
     <Login v-else />
     <el-dialog :visible.sync="show_apply_new">
-      <ApplyNew
+      <component
+        :is="`ApplyNew${entityType}`"
         v-if="show_apply_new"
         :default-id="inner_id"
         :single-column="true"
@@ -54,13 +55,13 @@
 <script>
 import UserFormItem from '@/components/User/UserFormItem'
 import UserSelector from '@/components/User/UserSelector'
-import ApplyNew from '@/views/NewApply'
 import ApplyOverview from './components/ApplyOverview'
 import Login from '@/views/login'
 export default {
   name: 'MyApply',
   components: {
-    ApplyNew,
+    ApplyNewvacation: () => import('@/views/NewApply/VacationNewApply'),
+    ApplyNewInday: () => import('@/views/NewApply/IndayNewApply'),
     UserFormItem,
     UserSelector,
     ApplyOverview,
@@ -71,6 +72,10 @@ export default {
     id: {
       type: String,
       default: null
+    },
+    entityType: {
+      type: String,
+      default: 'vacation'
     }
   },
   data: () => ({

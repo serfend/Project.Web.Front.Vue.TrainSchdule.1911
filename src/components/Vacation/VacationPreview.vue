@@ -1,8 +1,9 @@
 <template>
-  <el-card :header="`审批流程预览：${solutionName}`">
+  <el-card :header="`${extractEntityType(entityType)}审批流程预览：${solutionName}`">
     <ApplyAuditStreamPreview
       :solution-name.sync="solutionName"
       :userid="userid"
+      :entity-type="entityType"
       :show-detail="true"
     />
   </el-card>
@@ -14,11 +15,17 @@ export default {
   name: 'VacationPreview',
   components: { ApplyAuditStreamPreview },
   props: {
-    userid: { type: String, default: null }
+    userid: { type: String, default: null },
+    entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
     solutionName: null
-  })
+  }),
+  methods: {
+    extractEntityType(v) {
+      return { vacation: '休假', inday: '请假' }[v]
+    }
+  }
 }
 </script>
 

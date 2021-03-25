@@ -65,7 +65,7 @@ export default {
         return {}
       }
     },
-    vacationEntityType: {
+    entityType: {
       type: String,
       default: 'vacation'
     }
@@ -121,8 +121,8 @@ export default {
       this.loading = true
       const fn =
         fnName === 'Delete'
-          ? deleteApply(params, this.vacationEntityType)
-          : doAction(fnName, params, this.vacationEntityType)
+          ? deleteApply(params, this.entityType)
+          : doAction(fnName, params, this.entityType)
       fn.then(data => {
         this.$message.success(`${this.actionDic[method].alias}成功`)
       }).finally(() => {

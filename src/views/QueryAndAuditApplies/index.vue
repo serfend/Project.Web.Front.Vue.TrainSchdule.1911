@@ -101,7 +101,7 @@ export default {
       })
     },
     detailUrl(id) {
-      var t = `/#/vacation/applydetail?id=${id}`
+      var t = `/#/apply/vacation/applydetail?id=${id}`
       return t
     },
     requestUpdate() {

@@ -13,10 +13,10 @@
           <b>提交</b>任何人都可以操作，但24小时后仍未保存则会被删除
         </p>
         <p>
-          <b>保存</b>仅本人及上级操作，将会使休假申请进入草稿状态，随时可发布
+          <b>保存</b>仅本人及上级操作，将会使申请进入草稿状态，随时可发布
         </p>
         <p>
-          <b>发布</b>仅本人及上级操作，将会使休假申请进入审核中状态
+          <b>发布</b>仅本人及上级操作，将会使申请进入审核中状态
         </p>
         <div>
           <el-button :disabled="iDisabled" type="success" @click="submitApply(0)">提交</el-button>
@@ -102,26 +102,11 @@ export default {
     ApplyDetail: () => import('@/views/ApplyDetail')
   },
   props: {
-    baseInfoId: {
-      type: String,
-      default: null
-    },
-    requestId: {
-      type: String,
-      default: null
-    },
-    mainType: {
-      type: Number,
-      default: 0
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    vacationEntityType: {
-      type: String,
-      default: 'vacation'
-    }
+    baseInfoId: { type: String, default: null },
+    requestId: { type: String, default: null },
+    mainType: { type: Number, default: 0 },
+    disabled: { type: Boolean, default: false },
+    entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
     onLoading: false,
@@ -138,7 +123,9 @@ export default {
       return this.$store.state.settings.theme
     },
     applyDetailUrl() {
-      return `#/vacation/applydetail?id=${this.submitId}`
+      return `#/apply/${this.entityType}/applydetail?id=${
+        this.submitId
+      }`
     }
   },
   watch: {
@@ -170,7 +157,7 @@ export default {
         RequestId,
         BaseId,
         isPlan: main_type === 2,
-        entityType: 'vacation',
+        entityType: this.entityType,
         Verify: {
           Code: 201700816
         }
@@ -182,7 +169,7 @@ export default {
           this.$emit('submit')
           this.submitId = data.id
           if (actionStatus > 0) {
-            doAction(fn, applyId, this.vacationEntityType)
+            doAction(fn, applyId, this.entityType)
               .then(data => {
                 if (!data || !data.list) {
                   const msg = actionStatus === 1 ? '提交并保存' : '提交并发布'
@@ -196,9 +183,8 @@ export default {
                   can_show: true
                 }))
                 this.$emit('complete', false)
-                this.errorMsg = `存在${
-                  this.errorList.length
-                }条与本次提交的离队时间或归队时间冲突的休假申请`
+                const count = this.errorList.length
+                this.errorMsg = `存在${count}条与本次提交的离队时间或归队时间冲突的申请`
               })
               .catch(e => {
                 this.$emit('complete', false)

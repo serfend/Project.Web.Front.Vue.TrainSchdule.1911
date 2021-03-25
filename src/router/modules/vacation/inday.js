@@ -1,0 +1,54 @@
+/** When your routing table is too long, you can split it into small modules **/
+
+/* Router Modules */
+const applicationRouter = {
+  path: 'inday-apply',
+  component: () => import('@/views/blank'),
+  redirect: 'noRedirect',
+  name: 'inday-apply',
+  meta: {
+    ctitle: '请假管理',
+    icon: 'clipboard'
+  },
+  children: [
+    {
+      path: 'newApply',
+      component: () => import('@/views/NewApply/IndayNewApply'),
+      name: 'indayNewApplication',
+      meta: {
+        ctitle: '我要请假',
+        icon: 'newapply'
+      }
+    },
+    {
+      path: 'myApply',
+      component: () => import('@/views/MyApply'),
+      name: 'indayMyApply',
+      meta: {
+        ctitle: '我的外出',
+        icon: 'principal'
+      }
+    },
+    {
+      path: 'queryAndAuditApplies',
+      component: () => import('@/views/QueryAndAuditApplies'),
+      name: 'indayApplicationList',
+      meta: {
+        ctitle: '审批外出',
+        icon: 'auditapply'
+      }
+    },
+    {
+      path: 'applyDetail',
+      component: () => import('@/views/ApplyDetail'),
+      name: 'indayApplyDetail',
+      meta: {
+        ctitle: '外出详情',
+        icon: 'menu-outoforder'
+      },
+      hidden: true
+    }
+  ]
+}
+
+export default applicationRouter

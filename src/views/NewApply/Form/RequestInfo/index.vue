@@ -175,14 +175,9 @@ export default {
     LawVacation
   },
   props: {
-    userid: {
-      type: String,
-      default: null
-    },
-    selfSettle: {
-      type: Object,
-      default: null
-    }
+    userid: { type: String, default: null },
+    selfSettle: { type: Object, default: null },
+    entityType: { type: String, default: 'vacation' }
   },
   data() {
     return {
@@ -372,7 +367,7 @@ export default {
     createNewRequest() {
       const types = this.vacationTypes
       return {
-        StampLeave: parseTime(+new Date() + 86400000, '{y}-{m}-{d}'),
+        StampLeave: parseTime(+new Date() + 86400e3, '{y}-{m}-{d}'),
         StampReturn: '',
         vacationLength: 0,
         OnTripLength: 0,
@@ -425,7 +420,7 @@ export default {
       s.vacationPlace = s.vacationPlace.code
       this.loading = true
       s = Object.assign({ lawVacationSet: this.lawVacations }, s)
-      postRequestInfo(s)
+      postRequestInfo(s, this.entityType)
         .then(data => {
           this.$message.success('休假信息验证成功')
           this.submitId = data.id

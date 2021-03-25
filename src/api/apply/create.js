@@ -28,11 +28,12 @@ export function postBaseInfo(data) {
 /**
  * 提交请求信息
  * @param {*} data 请求参数
+ * @param {*} entityType 假期实体/应用名称
  */
-export function postRequestInfo(data) {
+export function postRequestInfo(data, entityType) {
   let s = Object.assign({}, data)
   s = Object.assign(s, { lawVacationSet: getLawVacationSetDict(data.lawVacationSet) })
-  return request.post('/apply/RequestInfo', s)
+  return request.post(`/apply/${entityType}RequestInfo`, s)
 }
 function getLawVacationSetDict(lawVacationSet) {
   const dict = {}

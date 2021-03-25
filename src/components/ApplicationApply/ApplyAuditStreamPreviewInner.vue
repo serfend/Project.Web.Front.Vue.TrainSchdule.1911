@@ -40,22 +40,10 @@ export default {
   name: 'ApplyAuditStreamPreviewInner',
   components: { UserFormItem },
   props: {
-    userid: {
-      type: String,
-      default: null
-    },
-    auditStatus: {
-      type: Array,
-      default: null
-    },
-    nowStep: {
-      type: Number,
-      default: -1
-    },
-    vacationEntityType: {
-      type: String,
-      default: 'vacation'
-    }
+    userid: { type: String, default: null },
+    auditStatus: { type: Array, default: null },
+    nowStep: { type: Number, default: -1 },
+    entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
     loading: false,
@@ -84,7 +72,7 @@ export default {
       handler(val) {
         if (val) {
           this.solutionName = null
-          auditStream(val, this.vacationEntityType).then(data => {
+          auditStream(val, this.entityType).then(data => {
             this.solutionName = data.solutionName
             this.streams = data.steps
           })

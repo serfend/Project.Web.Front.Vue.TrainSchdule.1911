@@ -15,6 +15,7 @@
         <VacationPreview
           v-show="nowStep>=1"
           ref="VacationPreview"
+          :entity-type="entityType"
           :userid="userid"
           style="margin:2rem 1.25rem"
         />
@@ -26,6 +27,7 @@
           :submit-id.sync="formFinal.RequestId"
           :main-type.sync="formFinal.mainType"
           :userid.sync="userid"
+          :entity-type="entityType"
           :self-settle.sync="selfSettle"
           style="margin:2rem 1.25rem"
           @submited="requestInfoSubmit"
@@ -37,6 +39,7 @@
         :request-id="formFinal.RequestId"
         :base-info-id="formFinal.BaseInfoId"
         :main-type="formFinal.mainType"
+        :entity-type="entityType"
         :disabled="nowStep<2||childOnLoading"
         @reset="createNewDirect"
         @submit="userSubmit"
@@ -68,20 +71,19 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      nowStep: 0,
-      onLoading: false,
-      childOnLoading: true,
-      userid: null,
-      selfSettle: null,
-      formFinal: {
-        BaseInfoId: '',
-        RequestId: '',
-        mainType: -1
-      }
+  data: () => ({
+    entityType: 'vacation',
+    nowStep: 0,
+    onLoading: false,
+    childOnLoading: true,
+    userid: null,
+    selfSettle: null,
+    formFinal: {
+      BaseInfoId: '',
+      RequestId: '',
+      mainType: -1
     }
-  },
+  }),
   mounted() {
     this.userid = this.defaultId
     setTimeout(() => {

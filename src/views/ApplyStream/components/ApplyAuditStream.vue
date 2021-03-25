@@ -137,7 +137,7 @@ import { formatTime } from '@/utils'
 import {
   addStreamSolution,
   editStreamSolution,
-  deleteStreamSolution,
+  deleteStreamSolution
 } from '@/api/audit/applyAuditStream'
 export default {
   name: 'ApplyAuditStream',
@@ -154,19 +154,19 @@ export default {
           allSolution: [],
           allSolutionDic: {},
           allActionNode: [],
-          allActionNodeDic: {},
+          allActionNodeDic: {}
         }
-      },
+      }
     },
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
       nodeDialogShow: false,
-      newSolution: this.buildNewSolution(),
+      newSolution: this.buildNewSolution()
     }
   },
   methods: {
@@ -182,14 +182,14 @@ export default {
       node.loading = true
       var fn = node.mode === 'edit' ? editStreamSolution : addStreamSolution
       const region = this.data.newCompanyRegion || {}
-      fn(
-        node.id,
-        node.name,
-        region.code,
-        node.description,
-        node.nodes.map((i) => i.label),
-        node.auth
-      )
+      fn({
+        id: node.id,
+        name: node.name,
+        companyRegion: region.code,
+        description: node.description,
+        nodes: node.nodes.map(i => i.label),
+        auth: node.auth
+      })
         .then(() => {
           this.$message.success(`方案${node.name}已提交`)
           this.refresh()
@@ -206,7 +206,7 @@ export default {
         node.id = target.id
         node.name = target.name
         node.description = target.description
-        node.nodes = target.nodes.map((i) => {
+        node.nodes = target.nodes.map(i => {
           if (!i) i = { name: '无效的节点' }
           return this.buildNodeSelect(i.name)
         })
@@ -235,7 +235,7 @@ export default {
       return {
         id: Math.random(),
         label: val,
-        description: s && s.description,
+        description: s && s.description
       }
     },
     selectNodeChanged(val) {
@@ -246,7 +246,7 @@ export default {
     handleSelectNodeClose(node) {
       const no = this.newSolution
       var id = node.data.id
-      var index = no.nodes.findIndex((n) => n.id === id)
+      var index = no.nodes.findIndex(n => n.id === id)
       no.nodes.splice(index, 1)
     },
     buildNewSolution() {
@@ -255,7 +255,7 @@ export default {
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',
-          code: 0,
+          code: 0
         }
       }
       return {
@@ -265,10 +265,10 @@ export default {
         nodeSelect: '',
         nodes: [],
         auth: lastAuth,
-        loading: false,
+        loading: false
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

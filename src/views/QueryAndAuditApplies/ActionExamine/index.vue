@@ -14,7 +14,12 @@
       @updated="requireUpdate"
     />
     <span v-if="row.status>30&&row.status<75">
-      <AuditApplyDialog :apply-id="row.id" :show.sync="showAudit" @updated="requireUpdate" />
+      <AuditApplyDialog
+        :apply-id="row.id"
+        :show.sync="showAudit"
+        :entity-type="entityType"
+        @updated="requireUpdate"
+      />
       <el-link v-show="!showAudit" type="success" @click="showAudit=true">审批</el-link>
     </span>
 
@@ -43,7 +48,7 @@ import {
   postRecallOrder,
   getRecallOrder,
   postExecuteStatus,
-  getExecuteStatus,
+  getExecuteStatus
 } from '@/api/apply/recall'
 const INFO_delay_return = '因XXXX，需延迟归队'
 const INFO_ontime_return = '按时归队'
@@ -58,22 +63,21 @@ export default {
       type: Object,
       default() {
         return {}
-      },
+      }
     },
+    entityType: { type: String, default: 'vacation' }
   },
-  data() {
-    return {
-      showAudit: false,
-      showExecuteStatus: false,
-      recallOrExecute: false,
-      defaultStampReturn: '',
-      defaultReason: '',
-      dataGetter: null,
-      dataSetter: null,
-      handleId: null,
-      onlyView: false,
-    }
-  },
+  data: () => ({
+    showAudit: false,
+    showExecuteStatus: false,
+    recallOrExecute: false,
+    defaultStampReturn: '',
+    defaultReason: '',
+    dataGetter: null,
+    dataSetter: null,
+    handleId: null,
+    onlyView: false
+  }),
   watch: {
     defaultStampReturn: {
       handler(val) {
@@ -85,8 +89,8 @@ export default {
         ) {
           this.defaultReason = INFO_need_recall_return
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     requireUpdate() {
@@ -111,8 +115,8 @@ export default {
       this.recallOrExecute = false
       this.onlyView = isOnlyShow
       this.showExecuteStatus = true
-    },
-  },
+    }
+  }
 }
 </script>
 

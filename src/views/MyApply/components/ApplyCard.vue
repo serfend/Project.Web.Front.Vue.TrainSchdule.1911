@@ -138,7 +138,7 @@ export default {
   methods: {
     datedifference,
     applyDetailUrl(id) {
-      return `/#/vacation/applydetail?id=${id}`
+      return `/#/apply/vacation/applydetail?id=${id}`
     },
     userUpdate() {
       this.$emit('updated')

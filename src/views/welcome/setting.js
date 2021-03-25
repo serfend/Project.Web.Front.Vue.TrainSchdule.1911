@@ -10,21 +10,21 @@ export const default_pages = [
     label: '我要休假',
     description: '个人提交休假申请窗口',
     svg: 'newapply',
-    href: '/vacation/newApply'
+    href: '/apply/vacation/newApply'
   },
   {
     label: '我的假期',
     description: '个人休假情况概览窗口',
     // icon: '/favicon.png',
     svg: 'people_fill',
-    href: '/vacation/myApply'
+    href: '/apply/vacation/myApply'
   },
   {
     label: '休假审批',
     description: '查询批假情况和审批单位休假窗口',
     // icon: '/favicon.png',
     svg: 'auditapply',
-    href: '/vacation/queryAndAuditApplies'
+    href: '/apply/vacation/queryAndAuditApplies'
   },
   {
     label: '考核纪实',
@@ -32,7 +32,27 @@ export const default_pages = [
     // icon: '/favicon.png',
     svg: 'phy-grade',
     href: '/memberRate/summary'
-  }
+  },
+  {
+    label: '我要请假',
+    description: '个人提交外出申请窗口',
+    svg: 'newapply',
+    href: '/apply/inday-apply/newApply'
+  },
+  {
+    label: '我的请假',
+    description: '个人外出情况概览窗口',
+    // icon: '/favicon.png',
+    svg: 'people_fill',
+    href: '/apply/inday-apply/myApply'
+  },
+  {
+    label: '请假审批',
+    description: '查询批假情况和审批单位外出情况窗口',
+    // icon: '/favicon.png',
+    svg: 'auditapply',
+    href: '/apply/inday-apply/queryAndAuditApplies'
+  },
   // {
   //   label: '统计信息',
   //   description: '各单位休假情况统计驾驶舱',

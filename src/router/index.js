@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import application from './modules/vacation'
+import vacation from './modules/vacation'
 import game from './modules/others/Game'
 import member_rate from './modules/member_rate'
 import application_setting from './modules/application_setting'
@@ -22,7 +22,7 @@ export const constantRoutes = [
       icon: 'chart',
       hide_footer: true
     }
-  }, user, application, member_rate, game, application_setting
+  }, user, vacation, member_rate, game, application_setting
 ].concat(others)
 
 /**

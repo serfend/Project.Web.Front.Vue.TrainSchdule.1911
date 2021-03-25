@@ -163,6 +163,7 @@
     <AuditApplyMutilDialog
       :show.sync="multiAuditFormShow"
       :responselist="multiAuditFormSelection"
+      :entity-type="entityType"
       @updated="$emit('updated')"
     />
     <el-button
@@ -199,36 +200,37 @@ export default {
     Pagination,
     ApplyAuditStreamPreview,
     VacationType,
-    ApplyDetail,
+    ApplyDetail
   },
   props: {
     list: {
       type: Array,
       default() {
         return []
-      },
+      }
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     pages: {
       type: Object,
       default() {
         return {}
-      },
+      }
     },
     pagesTotalCount: {
       type: Number,
-      default: 0,
+      default: 0
     },
+    entityType: { type: String, default: 'vacation' }
   },
   data() {
     return {
       multiAuditFormShow: false,
       multiAuditFormSelection: [],
       apply_detail_focus_id: null,
-      formatedList: [], // 经过格式化过的主列表
+      formatedList: [] // 经过格式化过的主列表
     }
   },
   computed: {
@@ -241,7 +243,7 @@ export default {
       },
       set(val) {
         this.$emit('update:pages', val)
-      },
+      }
     },
     myUserid() {
       return this.$store.state.user.userid
@@ -257,16 +259,16 @@ export default {
       },
       get() {
         return this.apply_detail_focus_id !== null
-      },
-    },
+      }
+    }
   },
   watch: {
     list: {
       handler(val) {
-        this.formatedList = val.map((li) => this.formatApplyItem(li))
+        this.formatedList = val.map(li => this.formatApplyItem(li))
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   methods: {
     formatTime,
@@ -337,8 +339,8 @@ export default {
       if (column.label === '操作') return
       this.apply_detail_focus_id = row.id
       // this.$router.push(`/vacation/applyDetail?id=${row.id}`)
-    },
-  },
+    }
+  }
 }
 </script>
 
