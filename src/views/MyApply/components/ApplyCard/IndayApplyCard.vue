@@ -11,6 +11,7 @@
               </el-col>
               <el-col :xl="19" :lg="17" :md="16" :sm="15" :xs="24">
                 <IndayApplyProgress
+                  :execute-id="innerData.executeStatusId"
                   :show="show"
                   :stamp-leave="innerData.request && innerData.request.stampLeave"
                   :stamp-return="innerData.request && innerData.request.stampReturn"

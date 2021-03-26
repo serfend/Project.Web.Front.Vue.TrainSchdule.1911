@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 10px">
+  <div>
     <el-card v-if="detail && detail.id">
       <el-dialog :visible.sync="show_share" title="分享请假申请详情" append-to-body>
         <ClipboardShare default-content="我把我的请假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。" />
@@ -12,7 +12,7 @@
         style="display: inline"
         @updated="updateDetail"
       />
-      <action-user
+      <ActionUser
         :entity-type="entityType"
         :row="detail"
         style="display: inline"
@@ -20,37 +20,24 @@
       />
     </el-card>
 
-    <div style="padding-top: 0.5rem">
-      <div type="flex">
-        <el-row
-          v-if="detail && detail.id && detail.status !== 20"
-          :gutter="20"
-          class="content-card"
-        >
-          <el-card v-loading="loading" shadow="hover">
-            <h3 slot="header">本次请假</h3>
+    <div>
+      <div class="content-card">
+        <el-card v-loading="loading" shadow="hover">
+          <h3 slot="header">本次请假</h3>
+          <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
             <el-col :xl="18" :lg="16" :md="14" :sm="12" :xs="24">
               <el-form v-if="detail.id" label-width="8rem">
                 <el-form-item label="基本">
-                  <div v-if="staticData.vacationStart">
-                    <el-tooltip effect="light">
-                      <template slot="content">
-                        <span>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</span>
-                      </template>
-                      <el-col v-if="staticData.vacationSpent >= 0" :lg="6" :md="12" :sm="24">
-                        <el-progress :width="100" :percentage="staticData.vacationProgress" />
-                      </el-col>
-
-                      <span v-else>距离离队时间:{{ -staticData.vacationSpent }}天</span>
-                    </el-tooltip>
-                  </div>
-                  <span v-else>
-                    <el-tag
-                      v-if="statusDic[detail.status]"
-                      :color="statusDic[detail.status].color"
-                      class="white--text"
-                    >{{ statusDic[detail.status].desc }}</el-tag>
-                  </span>
+                  <el-tag
+                    v-if="statusDic[detail.status]"
+                    :color="statusDic[detail.status].color"
+                    class="white--text"
+                  >{{ statusDic[detail.status].desc }}</el-tag>
+                  <IndayApplyProgress
+                    :execute-id="detail.executeStatusId"
+                    :stamp-leave="detail.request && detail.request.stampLeave"
+                    :stamp-return="detail.request && detail.request.stampReturn"
+                  />
                 </el-form-item>
                 <el-form-item label="原因">{{ detail.request.reason ? detail.request.reason : '未填写' }}</el-form-item>
                 <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
@@ -79,36 +66,38 @@
                 :can-load-avatar="true"
               />
             </el-col>
-          </el-card>
-        </el-row>
-        <div class="content-card">
-          <AuditStatus :loading="loading" :data="detail" />
-        </div>
-        <div v-if="showUser" class="content-card">
-          <el-card v-if="detail && detail.id">
-            <h3 slot="header">申请人信息</h3>
-            <MyApply
-              :id="detail.base.id"
-              :list.sync="selfHistory"
-              :start="null"
-              :auto-expand="false"
-            >
-              <template slot="inner">
-                <el-card>
-                  <el-form label-width="8rem">
-                    <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
-                    <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
-                    <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
-                    <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
-                  </el-form>
-                </el-card>
-              </template>
-            </MyApply>
-          </el-card>
-        </div>
-        <div v-if="showComment" class="content-card">
-          <ApplyComments :id="detail.id" />
-        </div>
+          </el-row>
+        </el-card>
+      </div>
+
+      <div class="content-card">
+        <AuditStatus :loading="loading" :data="detail" />
+      </div>
+      <div v-if="showUser" class="content-card">
+        <el-card v-if="detail && detail.id">
+          <h3 slot="header">申请人信息</h3>
+          <MyApply
+            :id="detail.base.id"
+            :entity-type="entityType"
+            :list.sync="selfHistory"
+            :start="null"
+            :auto-expand="false"
+          >
+            <template slot="inner">
+              <el-card>
+                <el-form label-width="8rem">
+                  <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
+                  <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
+                  <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
+                  <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
+                </el-form>
+              </el-card>
+            </template>
+          </MyApply>
+        </el-card>
+      </div>
+      <div v-if="showComment" class="content-card">
+        <ApplyComments :id="detail.id" />
       </div>
     </div>
   </div>
@@ -131,25 +120,16 @@ export default {
       import('@/views/common/ClipboardMonitor/ClipboardShare'),
     ApplyComments: () => import('@/components/BiliComment'),
     UserFormItem: () => import('@/components/User/UserFormItem'),
-    TransportationType: () => import('@/components/Vacation/TransportationType')
+    TransportationType: () =>
+      import('@/components/Vacation/TransportationType'),
+    IndayApplyProgress: () =>
+      import('@/views/MyApply/components/ApplyCard/IndayApplyProgress')
   },
   props: {
-    showUser: {
-      type: Boolean,
-      default: true
-    },
-    showComment: {
-      type: Boolean,
-      default: false
-    },
-    canShow: {
-      type: Boolean,
-      default: true
-    },
-    focusId: {
-      type: String,
-      default: null
-    }
+    showUser: { type: Boolean, default: true },
+    showComment: { type: Boolean, default: false },
+    canShow: { type: Boolean, default: true },
+    focusId: { type: String, default: null }
   },
   data: () => ({
     entityType: 'inday',
@@ -158,13 +138,7 @@ export default {
     detail: {},
     show_share: false,
     loading: false,
-    selfHistory: [],
-    staticData: {
-      vacationLength: 0,
-      vacationSpent: 0,
-      vacationProgress: 0,
-      vacationStart: false
-    }
+    selfHistory: []
   }),
   computed: {
     statusDic() {
@@ -213,28 +187,6 @@ export default {
         this.loadDetail(this.id)
       }
     },
-    initstaticDataData() {
-      const now = new Date()
-      const { request, status } = this.detail
-      const start = request.stampLeave
-      const end = request.stampReturn
-      const vacationLength = datedifference(end, start) + 1
-      const s = this.staticData
-      s.vacationLength = vacationLength
-      const vacationSpend = datedifference(now, start)
-      s.vacationSpent =
-        vacationSpend > vacationLength ? vacationLength : vacationSpend
-      s.vacationStart = status === 100
-      let progress = 0
-      if (s.vacationSpent >= s.vacationLength) {
-        progress = 100
-      } else {
-        progress = (s.vacationSpent / s.vacationLength) * 100
-        if (progress < 0) progress = 0
-        progress = Math.floor(progress)
-      }
-      s.vacationProgress = progress
-    },
     downloadUserApplies() {
       const dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
       const his = this.selfHistory
@@ -257,7 +209,6 @@ export default {
         }
         data.type = get_item_type(data)
         this.detail = data
-        this.initstaticDataData()
       })
       loadDetail.finally(() => {
         this.loading = false

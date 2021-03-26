@@ -1,22 +1,50 @@
 <template>
-  <el-progress :percentage="percent" :format="formatPercent" :stroke-width="24" text-inside />
+  <span>
+    <el-progress
+      v-if="!executeItem"
+      :percentage="percent"
+      :format="formatPercent"
+      :stroke-width="24"
+      text-inside
+    />
+    <span v-else>
+      <el-tooltip :content="executeItem.returnStamp">
+        <span>{{ formatTime(executeItem.returnStamp) }}</span>
+      </el-tooltip>
+      <span>已归队</span>
+      <span v-if="executeItem.reason">({{ executeItem.reason }})</span>
+    </span>
+  </span>
 </template>
 
 <script>
-import { datedifference } from '@/utils'
+import { datedifference, formatTime } from '@/utils'
+import { getExecuteStatus } from '@/api/apply/recall'
 export default {
   name: 'IndayApplyProgress',
   props: {
     stampLeave: { type: [Date, String], default: null },
     stampReturn: { type: [Date, String], default: null },
+    executeId: { type: String, default: null },
     show: { type: Boolean, default: true }
   },
   data: () => ({
+    entityType: 'inday',
+    executeItem: null,
     refresher: null,
     percent: 0,
     spent: 0,
     total: 0
   }),
+  watch: {
+    executeId: {
+      handler(val) {
+        if (!val) this.executeItem = null
+        else this.updateExecuteItem()
+      },
+      immediate: true
+    }
+  },
   mounted() {
     this.refresher = setInterval(() => {
       this.update()
@@ -26,6 +54,15 @@ export default {
     clearInterval(this.refresher)
   },
   methods: {
+    formatTime,
+    updateExecuteItem() {
+      getExecuteStatus({
+        id: this.executeId,
+        entityType: this.entityType
+      }).then(data => {
+        this.executeItem = data
+      })
+    },
     update() {
       if (!this.show) return
       this.percent = this.get_percent()

@@ -2,6 +2,7 @@
   <span>
     <HandleReturnStampDialog
       v-if="showExecuteStatus"
+      :entity-type="entityType"
       :display-name="recallOrExecute?'召回':'确认'"
       :default-stamp-return.sync="defaultStampReturn"
       :default-reason.sync="defaultReason"
@@ -24,22 +25,19 @@
     </span>
 
     <span v-if="row.status==100">
-      <span v-if="entityTypeHasRecall&&!row.executeStatus&1">
-        <el-tooltip content="填写召回单交终审人审批完成后，确认召回生效">
-          <el-link type="danger" @click="recallApply(false)">召回</el-link>
-        </el-tooltip>
-        <el-tooltip v-if="row.stampReturn <= new Date()" content="休假结束后，确认实际归队时间">
-          <el-link type="success" @click="confirmExecuteStatus(false)">确认</el-link>
-        </el-tooltip>
-      </span>
-      <el-link v-if="row.recallId!==null" type="primary" @click="recallApply(true)">召回信息</el-link>
-      <el-link
-        v-else-if="row.executeStatus&4"
-        type="danger"
-        @click="confirmExecuteStatus(true)"
-      >推迟归队</el-link>
-      <el-link v-else-if="row.executeStatus&1" type="info" @click="confirmExecuteStatus(true)">已确认</el-link>
+      <el-tooltip v-if="entityTypeHasRecall&&!row.executeStatus&1" content="填写召回单交终审人审批完成后，确认召回生效">
+        <el-link type="danger" @click="recallApply(false)">召回</el-link>
+      </el-tooltip>
+      <el-tooltip
+        v-if="entityTypeReturnBeforeEnd || row.stampReturn <= new Date()"
+        :content="`${entityTypeReturnBeforeEnd?'':'请假结束后，'}确认实际归队时间`"
+      >
+        <el-link v-if="!row.executeStatus&1" type="success" @click="confirmExecuteStatus(false)">确认</el-link>
+      </el-tooltip>
     </span>
+    <el-link v-if="row.recallId!==null" type="primary" @click="recallApply(true)">召回信息</el-link>
+    <el-link v-else-if="row.executeStatus&4" type="danger" @click="confirmExecuteStatus(true)">推迟归队</el-link>
+    <el-link v-else-if="row.executeStatus&1" type="info" @click="confirmExecuteStatus(true)">已确认</el-link>
   </span>
 </template>
 
@@ -50,6 +48,7 @@ import {
   postExecuteStatus,
   getExecuteStatus
 } from '@/api/apply/recall'
+import { parseTime } from '@/utils'
 const INFO_delay_return = '因XXXX，需延迟归队'
 const INFO_ontime_return = '按时归队'
 const INFO_need_recall_return = '因XXXXX工作需要，此同志需尽快归队'
@@ -79,21 +78,20 @@ export default {
     onlyView: false
   }),
   computed: {
+    entityTypeConfirmCurrent() {
+      return !this.entityTypeHasRecall
+    },
     entityTypeHasRecall() {
       return this.entityType === 'vacation'
+    },
+    entityTypeReturnBeforeEnd() {
+      return !this.entityTypeHasRecall
     }
   },
   watch: {
     defaultStampReturn: {
       handler(val) {
-        if (val > new Date() && this.defaultReason === INFO_ontime_return) {
-          this.defaultReason = INFO_delay_return
-        } else if (
-          val < new Date() - 86400000 &&
-          INFO_ontime_return === this.defaultStampReturn
-        ) {
-          this.defaultReason = INFO_need_recall_return
-        }
+        this.updateDefaultReason(val)
       }
     }
   },
@@ -101,11 +99,21 @@ export default {
     requireUpdate() {
       this.$emit('updated')
     },
+    updateDefaultReason(val) {
+      if (val > new Date() && this.defaultReason === INFO_ontime_return) {
+        this.defaultReason = INFO_delay_return
+      } else if (
+        val < new Date() - 86400000 &&
+        INFO_ontime_return === this.defaultStampReturn
+      ) {
+        this.defaultReason = INFO_need_recall_return
+      }
+    },
     recallApply(isOnlyShow) {
       this.handleId = this.row.recallId
       this.dataGetter = getRecallOrder
       this.dataSetter = postRecallOrder
-      this.defaultStampReturn = new Date()
+      this.defaultStampReturn = parseTime(new Date())
       this.defaultReason = INFO_need_recall_return
       this.recallOrExecute = true
       this.onlyView = isOnlyShow
@@ -115,7 +123,9 @@ export default {
       this.handleId = this.row.executeStatusId
       this.dataGetter = getExecuteStatus
       this.dataSetter = postExecuteStatus
-      this.defaultStampReturn = this.row.request.stampReturn
+      this.defaultStampReturn = this.entityTypeConfirmCurrent
+        ? parseTime(new Date())
+        : this.row.request.stampReturn
       this.defaultReason = INFO_ontime_return
       this.recallOrExecute = false
       this.onlyView = isOnlyShow

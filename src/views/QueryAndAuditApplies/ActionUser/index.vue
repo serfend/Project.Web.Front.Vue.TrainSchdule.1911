@@ -15,7 +15,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-tooltip content="点击下载休假单" placement="left">
+    <el-tooltip content="点击下载申请单" placement="left">
       <el-dropdown
         v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
         v-loading="loading"
@@ -65,10 +65,7 @@ export default {
         return {}
       }
     },
-    entityType: {
-      type: String,
-      default: 'vacation'
-    }
+    entityType: { type: String, default: 'vacation' }
   },
   data() {
     return {
@@ -131,6 +128,10 @@ export default {
       })
     },
     exportApply(row) {
+      if (this.entityType !== 'vacation') {
+        this.$message.warning('未配置申请单模板')
+        return
+      }
       const decider = {
         confirm: 0,
         cancel: 1,

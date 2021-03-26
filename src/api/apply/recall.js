@@ -7,8 +7,8 @@ import request from '@/utils/request'
  * @param {*} data
  * @returns
  */
-export function postRecallOrder(data) {
-  return request.post('/apply/recallorder', data)
+export function postRecallOrder({ entityType, data, auth }) {
+  return request.post('/apply/recallorder', { entityType, data, auth })
 }
 /**
  * 获取召回信息
@@ -17,7 +17,7 @@ export function postRecallOrder(data) {
  * @param {*} id
  * @returns
  */
-export function getRecallOrder(id) {
+export function getRecallOrder({ id, entityType }) {
   return request.get('/apply/recallorder', {
     params: {
       id
@@ -32,8 +32,8 @@ export function getRecallOrder(id) {
  * @param {*} data
  * @returns
  */
-export function postExecuteStatus(data) {
-  return request.post('/apply/executeStatus', data)
+export function postExecuteStatus({ entityType, data, auth }) {
+  return request.post(`/apply/executeStatus/${entityType}`, { entityType, data, auth })
 }
 /**
  * 获取确认休假信息
@@ -42,8 +42,8 @@ export function postExecuteStatus(data) {
  * @param {*} id
  * @returns
  */
-export function getExecuteStatus(id) {
-  return request.get('/apply/executeStatus', {
+export function getExecuteStatus({ id, entityType }) {
+  return request.get(`/apply/executeStatus/${entityType}`, {
     params: {
       id
     }
