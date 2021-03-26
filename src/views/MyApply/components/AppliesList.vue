@@ -167,7 +167,7 @@ export default {
       this.haveNext = true
     },
     applyUpdate(index, id) {
-      detail(id, true)
+      detail({ id, ignoreError: true, entityType: this.entityType })
         .then(data => {
           data.show = false
           this.innerList[index] = Object.assign(this.innerList[index], data)

@@ -24,7 +24,7 @@
     </span>
 
     <span v-if="row.status==100">
-      <span v-if="!row.executeStatus&1">
+      <span v-if="entityTypeHasRecall&&!row.executeStatus&1">
         <el-tooltip content="填写召回单交终审人审批完成后，确认召回生效">
           <el-link type="danger" @click="recallApply(false)">召回</el-link>
         </el-tooltip>
@@ -78,6 +78,11 @@ export default {
     handleId: null,
     onlyView: false
   }),
+  computed: {
+    entityTypeHasRecall() {
+      return this.entityType === 'vacation'
+    }
+  },
   watch: {
     defaultStampReturn: {
       handler(val) {

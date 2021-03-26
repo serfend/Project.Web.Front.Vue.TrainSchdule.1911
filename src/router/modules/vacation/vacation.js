@@ -41,7 +41,7 @@ const applicationRouter = {
     },
     {
       path: 'applyDetail',
-      component: () => import('@/views/ApplyDetail'),
+      component: () => import('@/views/ApplyDetail/VacationApplyDetail'),
       name: 'vacationApplyDetail',
       meta: {
         title: 'application.detail',

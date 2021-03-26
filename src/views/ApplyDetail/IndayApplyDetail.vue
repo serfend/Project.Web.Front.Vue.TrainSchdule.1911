@@ -1,13 +1,23 @@
 <template>
   <div style="padding: 10px">
     <el-card v-if="detail && detail.id">
-      <el-dialog :visible.sync="show_share" title="分享休假申请详情" append-to-body>
-        <ClipboardShare default-content="我把我的休假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。" />
+      <el-dialog :visible.sync="show_share" title="分享请假申请详情" append-to-body>
+        <ClipboardShare default-content="我把我的请假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。" />
       </el-dialog>
-      <el-button type="text" icon="el-icon-share" @click="show_share=true">分享此休假详情</el-button>
-      <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出休假登记卡</el-button>
-      <action-examine :row="detail" style="display: inline" @updated="updateDetail" />
-      <action-user :row="detail" style="display: inline" @updated="updateDetail" />
+      <el-button disabled type="text" icon="el-icon-share" @click="show_share=true">分享此请假详情</el-button>
+      <el-button disabled icon="el-icon-download" type="text" @click="downloadUserApplies">导出请假登记卡</el-button>
+      <ActionExamine
+        :entity-type="entityType"
+        :row="detail"
+        style="display: inline"
+        @updated="updateDetail"
+      />
+      <action-user
+        :entity-type="entityType"
+        :row="detail"
+        style="display: inline"
+        @updated="updateDetail"
+      />
     </el-card>
 
     <div style="padding-top: 0.5rem">
@@ -18,16 +28,10 @@
           class="content-card"
         >
           <el-card v-loading="loading" shadow="hover">
-            <h3 slot="header">本次休假</h3>
+            <h3 slot="header">本次请假</h3>
             <el-col :xl="18" :lg="16" :md="14" :sm="12" :xs="24">
               <el-form v-if="detail.id" label-width="8rem">
                 <el-form-item label="基本">
-                  <el-tag
-                    v-if="detail.request.vacationType"
-                    effect="dark"
-                    :type="detail.request.vacationType === '正休'? 'primary': 'danger'"
-                  >{{ detail.request.vacationType }}</el-tag>
-                  <el-tag v-if="detail.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
                   <div v-if="staticData.vacationStart">
                     <el-tooltip effect="light">
                       <template slot="content">
@@ -50,23 +54,13 @@
                 </el-form-item>
                 <el-form-item label="原因">{{ detail.request.reason ? detail.request.reason : '未填写' }}</el-form-item>
                 <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
-                <el-form-item label="假期天数">
-                  <span>{{ `净假期${detail.request.vacationLength}天 在途${detail.request.onTripLength}天` }}</span>
-                  <el-tooltip
-                    v-for="a in detail.request.additialVacations"
-                    :key="a.id"
-                    :content="`开始于${parseTime(a.start)}的${a.length}天${a.name},${a.description}`"
-                  >
-                    <el-tag style="margin-left: 10px">{{ `${a.length}天${a.name}` }}</el-tag>
-                  </el-tooltip>
-                </el-form-item>
-                <el-form-item label="休假日期">
+                <el-form-item label="外出时间">
                   <span>
                     {{ parseTime(detail.request.stampLeave) }} -
                     {{ parseTime(detail.request.stampReturn) }}
                   </span>
                 </el-form-item>
-                <el-form-item label="休假地点">
+                <el-form-item label="外出去向">
                   <span>{{ detail.request.vacationPlace && detail.request.vacationPlace.name }}</span>
                   <span
                     v-if="detail.request.vacationPlaceName"
@@ -136,7 +130,8 @@ export default {
     ClipboardShare: () =>
       import('@/views/common/ClipboardMonitor/ClipboardShare'),
     ApplyComments: () => import('@/components/BiliComment'),
-    UserFormItem: () => import('@/components/User/UserFormItem')
+    UserFormItem: () => import('@/components/User/UserFormItem'),
+    TransportationType: () => import('@/components/Vacation/TransportationType')
   },
   props: {
     showUser: {
@@ -156,22 +151,21 @@ export default {
       default: null
     }
   },
-  data() {
-    return {
-      id: null,
-      route_id: null,
-      detail: {},
-      show_share: false,
-      loading: false,
-      selfHistory: [],
-      staticData: {
-        vacationLength: 0,
-        vacationSpent: 0,
-        vacationProgress: 0,
-        vacationStart: false
-      }
+  data: () => ({
+    entityType: 'inday',
+    id: null,
+    route_id: null,
+    detail: {},
+    show_share: false,
+    loading: false,
+    selfHistory: [],
+    staticData: {
+      vacationLength: 0,
+      vacationSpent: 0,
+      vacationProgress: 0,
+      vacationStart: false
     }
-  },
+  }),
   computed: {
     statusDic() {
       return this.$store.state.vacation.statusDic
@@ -211,7 +205,7 @@ export default {
   },
   methods: {
     parseTime(date) {
-      return parseTime(new Date(date), '{y}年{m}月{d}日')
+      return parseTime(new Date(date))
     },
     datedifference,
     updateDetail() {
@@ -252,7 +246,8 @@ export default {
     loadDetail(id) {
       this.loading = true
       this.detail = null
-      const loadDetail = detail(id).then(data => {
+      const entityType = this.entityType
+      const loadDetail = detail({ id, entityType }).then(data => {
         data = data.model
         if (!data.requestInfo) data.requestInfo = {}
         data.request = data.requestInfo

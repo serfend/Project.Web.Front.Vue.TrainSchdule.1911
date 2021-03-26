@@ -176,7 +176,7 @@
     />
     <el-dialog :visible.sync="apply_detail_focus" width="80%">
       <h1 slot="title" style="text-align:center">详细信息</h1>
-      <ApplyDetail :focus-id="apply_detail_focus_id" />
+      <component :is="`${entityType}ApplyDetail`" :focus-id="apply_detail_focus_id" />
     </el-dialog>
   </div>
 </template>
@@ -189,7 +189,7 @@ import { get_item_type } from '@/utils/vacation'
 import Pagination from '@/components/Pagination'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 import VacationType from '@/components/Vacation/VacationType'
-import ApplyDetail from '@/views/ApplyDetail'
+
 export default {
   name: 'ApplicationList',
   components: {
@@ -197,7 +197,9 @@ export default {
     Pagination,
     ApplyAuditStreamPreview,
     VacationType,
-    ApplyDetail
+    vacationApplyDetail: () =>
+      import('@/views/ApplyDetail/VacationApplyDetail'),
+    indayApplyDetail: () => import('@/views/ApplyDetail/IndayApplyDetail')
   },
   props: {
     list: {

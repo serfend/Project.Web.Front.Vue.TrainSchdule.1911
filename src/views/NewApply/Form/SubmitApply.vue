@@ -65,7 +65,8 @@
           placement="top"
           @show="i.can_show=true"
         >
-          <ApplyDetail
+          <component
+            :is="`${entityType}ApplyDetail`"
             :can-show="i.can_show"
             :show-user="false"
             :show-comment="false"
@@ -99,7 +100,8 @@ export default {
   components: {
     // SvgIcon: () => import('@/components/SvgIcon'),
     LottieIcon: () => import('@/components/LottieIcon'),
-    ApplyDetail: () => import('@/views/ApplyDetail')
+    indayApplyDetail: () => import('@/views/ApplyDetail/IndayApplyDetail'),
+    vacationApplyDetail: () => import('@/views/ApplyDetail/VacationApplyDetail')
   },
   props: {
     baseInfoId: { type: String, default: null },
@@ -123,9 +125,7 @@ export default {
       return this.$store.state.settings.theme
     },
     applyDetailUrl() {
-      return `#/apply/${this.entityType}/applydetail?id=${
-        this.submitId
-      }`
+      return `#/apply/${this.entityType}/applydetail?id=${this.submitId}`
     }
   },
   watch: {

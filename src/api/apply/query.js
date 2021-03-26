@@ -155,8 +155,8 @@ export function querySelf({ pages, id, start, end, entityType }) {
  * @param {*} id
  * @returns
  */
-export function detail(id, ignoreError) {
-  return request('/apply/detail', {
+export function detail({ id, ignoreError, entityType }) {
+  return request(`/apply/detail/${entityType}`, {
     params: {
       id
     },
