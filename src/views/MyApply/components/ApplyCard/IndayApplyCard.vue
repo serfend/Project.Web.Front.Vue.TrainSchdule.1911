@@ -10,18 +10,17 @@
                 <ActionUser style="width:100%" :row="innerData" @updated="userUpdate" />
               </el-col>
               <el-col :xl="19" :lg="17" :md="16" :sm="15" :xs="24">
-                <el-progress
-                  :percentage="percent"
-                  :format="formatPercent"
-                  :stroke-width="24"
-                  text-inside
+                <IndayApplyProgress
+                  :show="show"
+                  :stamp-leave="innerData.request && innerData.request.stampLeave"
+                  :stamp-return="innerData.request && innerData.request.stampReturn"
                 />
               </el-col>
             </el-row>
             <el-row>
               <el-form>
                 <el-form-item v-if="innerData.status!==20" label="请假类别">
-                  <TranspotationType v-model="innerData.request.byTransportation" />
+                  <TransportationType v-model="innerData.request.byTransportation" />
                 </el-form-item>
                 <el-form-item label="审批流程">
                   <ApplyAuditStreamPreview
@@ -47,6 +46,9 @@
                   v-if="innerData.status!==20"
                   label="归队时间"
                 >{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
+                <el-form-item v-if="innerData.status>50" label="实际归队">
+                  <ExecuteStatus v-model="innerData.executeStatusId" />
+                </el-form-item>
               </el-form>
             </el-row>
           </div>
@@ -58,8 +60,7 @@
 </template>
 
 <script>
-import { parseTime, datedifference } from '@/utils'
-import { formatTime } from '@/utils'
+import { parseTime, formatTime } from '@/utils'
 import ActionUser from '@/views/QueryAndAuditApplies/ActionUser'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 
@@ -68,7 +69,10 @@ export default {
   components: {
     ActionUser,
     ApplyAuditStreamPreview,
-    TranspotationType: () => import('@/components/Vacation/TranspotationType')
+    TransportationType: () =>
+      import('@/components/Vacation/TransportationType'),
+    ExecuteStatus: () => import('./ExecuteStatus'),
+    IndayApplyProgress: () => import('./IndayApplyProgress')
   },
   props: {
     data: {
@@ -81,10 +85,7 @@ export default {
   },
   data: () => ({
     innerData: null,
-    firstShow: true,
-    percent: 0,
-    spent: 0,
-    total: 0
+    firstShow: true
   }),
   watch: {
     data: {
@@ -105,41 +106,7 @@ export default {
       immediate: true
     }
   },
-  mounted() {
-    this.refresher = setInterval(() => {
-      this.update()
-    }, 1000)
-  },
-  destroyed() {
-    clearInterval(this.refresher)
-  },
   methods: {
-    datedifference,
-    update() {
-      if (!this.show) return
-      this.percent = this.get_percent()
-    },
-    get_total() {
-      const request = this.innerData.request
-      if (!request) return 1
-      return (
-        1 + datedifference(request.stampReturn, request.stampLeave, 'second')
-      )
-    },
-    get_spent() {
-      const request = this.innerData.request
-      if (!request) return 0
-      return 1 + datedifference(new Date(), request.stampLeave, 'second')
-    },
-    get_percent() {
-      this.total = this.get_total()
-      const total = this.total
-      const spent = (this.spent = this.get_spent())
-      if (total === 0) return 10
-      if (spent < 0) return 0
-      if (spent > total) return 100
-      return (spent / total) * 100
-    },
     applyDetailUrl(id) {
       return `/#/apply/inday/applydetail?id=${id}`
     },
@@ -150,17 +117,6 @@ export default {
       const f = parseTime(val)
       const dis = formatTime(val)
       return f === dis ? f : `${f}(${dis})`
-    },
-    formatPercent(val) {
-      const left = (this.total - this.spent) / 1e3
-      const h = Math.floor(left / 3600)
-      const m = Math.floor((left % 3600) / 60)
-      const s = Math.floor(left % 60)
-      const left_desc = `${h}h${m}m${s}s`
-      if (this.spent <= 0) return `${left_desc} 未开始`
-      if (val >= 100) return '已结束'
-      const percent = `${Math.round((this.spent / this.total) * 10000) / 100}%`
-      return `${left_desc} ${percent}`
     }
   }
 }
