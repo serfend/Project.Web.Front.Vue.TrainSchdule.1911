@@ -73,7 +73,7 @@
                   >{{ `(${detail.request.vacationPlaceName})` }}</span>
                 </el-form-item>
                 <el-form-item label="交通工具">
-                  <span>{{ detail.request.byTransportation === 0 ? '火车' : detail.request.byTransportation === 1? '飞机': '其他' }}</span>
+                  <TransportationType v-model="detail.request.byTransportation" />
                 </el-form-item>
               </el-form>
             </el-col>
