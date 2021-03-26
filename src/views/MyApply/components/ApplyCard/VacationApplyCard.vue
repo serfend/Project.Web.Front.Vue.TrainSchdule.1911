@@ -95,12 +95,10 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      innerData: null,
-      firstShow: true
-    }
-  },
+  data: () => ({
+    innerData: null,
+    firstShow: true
+  }),
   computed: {
     percent() {
       const total = this.total

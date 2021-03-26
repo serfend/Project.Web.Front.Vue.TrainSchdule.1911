@@ -20,7 +20,7 @@
             </el-row>
             <el-row>
               <el-form>
-                <el-form-item v-if="innerData.status!==20" label="休假类别">
+                <el-form-item v-if="innerData.status!==20" label="请假类别">
                   <TranspotationType v-model="innerData.request.byTransportation" />
                 </el-form-item>
                 <el-form-item label="审批流程">
@@ -33,11 +33,11 @@
                 </el-form-item>
                 <el-form-item
                   v-if="innerData.status!==20"
-                  label="休假原因"
+                  label="请假原因"
                 >{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
                 <el-form-item
                   v-if="innerData.status!==20"
-                  label="休假地点"
+                  label="请假去向"
                 >{{ `${innerData.request.vacationPlace.name} ${innerData.request.vacationPlaceName==null?'无详细地址':innerData.request.vacationPlaceName}` }}</el-form-item>
                 <el-form-item
                   v-if="innerData.status!==20"
@@ -77,37 +77,15 @@ export default {
         return {}
       }
     },
-    show: {
-      type: Boolean,
-      default: false
-    }
+    show: { type: Boolean, default: false }
   },
-  data() {
-    return {
-      innerData: null,
-      firstShow: true
-    }
-  },
-  computed: {
-    percent() {
-      const total = this.total
-      const spent = this.spent
-      if (total === 0) return 10
-      if (spent < 0) return 0
-      if (spent > total) return 100
-      return (spent / total) * 100
-    },
-    total() {
-      const request = this.innerData.request
-      if (!request) return 1
-      return 1 + datedifference(request.stampReturn, request.stampLeave)
-    },
-    spent() {
-      const request = this.innerData.request
-      if (!request) return 0
-      return 1 + datedifference(new Date(), request.stampLeave)
-    }
-  },
+  data: () => ({
+    innerData: null,
+    firstShow: true,
+    percent: 0,
+    spent: 0,
+    total: 0
+  }),
   watch: {
     data: {
       handler(val) {
@@ -127,8 +105,41 @@ export default {
       immediate: true
     }
   },
+  mounted() {
+    this.refresher = setInterval(() => {
+      this.update()
+    }, 1000)
+  },
+  destroyed() {
+    clearInterval(this.refresher)
+  },
   methods: {
     datedifference,
+    update() {
+      if (!this.show) return
+      this.percent = this.get_percent()
+    },
+    get_total() {
+      const request = this.innerData.request
+      if (!request) return 1
+      return (
+        1 + datedifference(request.stampReturn, request.stampLeave, 'second')
+      )
+    },
+    get_spent() {
+      const request = this.innerData.request
+      if (!request) return 0
+      return 1 + datedifference(new Date(), request.stampLeave, 'second')
+    },
+    get_percent() {
+      this.total = this.get_total()
+      const total = this.total
+      const spent = (this.spent = this.get_spent())
+      if (total === 0) return 10
+      if (spent < 0) return 0
+      if (spent > total) return 100
+      return (spent / total) * 100
+    },
     applyDetailUrl(id) {
       return `/#/apply/inday/applydetail?id=${id}`
     },
@@ -136,15 +147,20 @@ export default {
       this.$emit('updated')
     },
     timeFormat(val) {
-      const opt = '{y}年{m}月{d}日'
-      const f = parseTime(val, opt)
-      const dis = formatTime(val, opt)
+      const f = parseTime(val)
+      const dis = formatTime(val)
       return f === dis ? f : `${f}(${dis})`
     },
     formatPercent(val) {
-      if (this.spent <= 0) return '未开始'
+      const left = (this.total - this.spent) / 1e3
+      const h = Math.floor(left / 3600)
+      const m = Math.floor((left % 3600) / 60)
+      const s = Math.floor(left % 60)
+      const left_desc = `${h}h${m}m${s}s`
+      if (this.spent <= 0) return `${left_desc} 未开始`
       if (val >= 100) return '已结束'
-      return `${this.spent}/${this.total}天`
+      const percent = `${Math.round((this.spent / this.total) * 10000) / 100}%`
+      return `${left_desc} ${percent}`
     }
   }
 }
