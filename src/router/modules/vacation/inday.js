@@ -22,7 +22,7 @@ const applicationRouter = {
     },
     {
       path: 'myApply',
-      component: () => import('@/views/MyApply'),
+      component: () => import('@/views/MyApply/IndayMyApply'),
       name: 'indayMyApply',
       meta: {
         ctitle: '我的外出',

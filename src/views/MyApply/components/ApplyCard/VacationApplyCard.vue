@@ -22,10 +22,7 @@
               <el-form>
                 <el-form-item v-if="innerData.status!==20" label="休假类别">
                   <VacationType v-model="innerData.request.vacationType" />
-                  <svg-icon v-if="data.request.byTransportation==0" icon-class="huoche" />
-                  <svg-icon v-else-if="innerData.request.byTransportation==1" icon-class="feiji" />
-                  <svg-icon v-else-if="innerData.request.byTransportation==2" icon-class="qiche" />
-                  <svg-icon v-else-if="innerData.request.byTransportation==-1" icon-class="guide" />
+                  <TranspotationType v-model="innerData.request.byTransportation" />
                 </el-form-item>
                 <el-form-item label="审批流程">
                   <ApplyAuditStreamPreview
@@ -80,7 +77,12 @@ import VacationType from '@/components/Vacation/VacationType'
 
 export default {
   name: 'ApplyCard',
-  components: { ActionUser, ApplyAuditStreamPreview, VacationType },
+  components: {
+    ActionUser,
+    ApplyAuditStreamPreview,
+    VacationType,
+    TranspotationType: () => import('@/components/Vacation/TranspotationType')
+  },
   props: {
     data: {
       type: Object,
@@ -103,7 +105,10 @@ export default {
     percent() {
       const total = this.total
       const spent = this.spent
-      return total === 0 ? 10 : spent < 0 ? 0 : (spent > total ? 100 : ((spent / total) * 100))
+      if (total === 0) return 10
+      if (spent < 0) return 0
+      if (spent > total) return 100
+      return (spent / total) * 100
     },
     total() {
       const request = this.innerData.request

@@ -71,10 +71,7 @@
               </div>
               <div>
                 <b>出行方式</b>
-                <span v-if="row.request.byTransportation===0">火车</span>
-                <span v-else-if="row.request.byTransportation===1">飞机</span>
-                <span v-else-if="row.request.byTransportation===2">汽车</span>
-                <span v-else>其他</span>
+                <TransportationType v-model="row.request.byTransportation" />
               </div>
               <div v-if="row.request.vacationDescription">
                 <b>假期描述</b>
@@ -185,7 +182,7 @@
 </template>
 
 <script>
-import { formatTime } from '@/utils'
+import { formatTime, relativeTime } from '@/utils'
 import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
 import { datedifference } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
@@ -272,17 +269,7 @@ export default {
   },
   methods: {
     formatTime,
-    parseTime(d) {
-      const now = new Date()
-      const nowY = now.getFullYear()
-      const dY = d.getFullYear()
-      const nowM = now.getMonth() + 1
-      const dM = d.getMonth() + 1
-      const sameYear = nowY === dY ? '' : `${dY}年`
-      const same = !sameYear && nowM === dM
-      const sameMonth = same ? '' : `${dM}月`
-      return `${sameYear}${sameMonth}${d.getDate()}日`
-    },
+    relativeTime,
     datedifference,
     rowCanShow(row) {
       return row.status !== 20 // 状态：撤回

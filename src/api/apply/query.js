@@ -130,13 +130,14 @@ export function queryMyAudit(pages, status, myAuditStatus, executeStatus) {
  * @param {String} id 查询用户的id，默认为当前登录用户
  * @param {String} start 起始日期，默认为今年1月1日
  * @param {String} end 终止日期，默认为今天
+ * @param {String} entityType 申请类型/应用名称
  */
-export function querySelf(pages, id, start, end) {
+export function querySelf({ pages, id, start, end, entityType }) {
   pages = (!pages) ? {
     pageIndex: 0,
     pageSize: 20
   } : pages
-  return request.get('/apply/listOfSelf', {
+  return request.get(`/apply/listOfSelf/${entityType}`, {
     params: {
       id,
       pageIndex: pages.pageIndex,

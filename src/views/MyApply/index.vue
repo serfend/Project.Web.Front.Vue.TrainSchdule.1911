@@ -37,7 +37,12 @@
           </el-col>
         </el-row>
       </div>
-      <AppliesList :id.sync="iId" ref="AppliesList" :show-apply-new.sync="show_apply_new" />
+      <AppliesList
+        :id.sync="iId"
+        ref="AppliesList"
+        :entity-type="entityType"
+        :show-apply-new.sync="show_apply_new"
+      />
     </div>
     <Login v-else />
     <el-dialog :visible.sync="show_apply_new">
@@ -61,7 +66,7 @@ export default {
   name: 'MyApply',
   components: {
     ApplyNewvacation: () => import('@/views/NewApply/VacationNewApply'),
-    ApplyNewInday: () => import('@/views/NewApply/IndayNewApply'),
+    ApplyNewinday: () => import('@/views/NewApply/IndayNewApply'),
     UserFormItem,
     UserSelector,
     ApplyOverview,
@@ -69,14 +74,8 @@ export default {
     AppliesList: () => import('./components/AppliesList')
   },
   props: {
-    id: {
-      type: String,
-      default: null
-    },
-    entityType: {
-      type: String,
-      default: 'vacation'
-    }
+    id: { type: String, default: null },
+    entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
     inner_id: null,

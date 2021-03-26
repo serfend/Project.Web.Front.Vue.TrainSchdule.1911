@@ -23,7 +23,7 @@ const applicationRouter = {
     },
     {
       path: 'myApply',
-      component: () => import('@/views/MyApply'),
+      component: () => import('@/views/MyApply/VacationMyApply'),
       name: 'vacationMyApply',
       meta: {
         title: 'application.my',

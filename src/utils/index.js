@@ -54,6 +54,22 @@ export function datedifference(end, start, interval = 'day') {
   return fn(start, end)
 }
 
+export function relativeTime(d) {
+  d = new Date(d)
+  const now = new Date()
+  const nowY = now.getFullYear()
+  const dY = d.getFullYear()
+  const nowM = now.getMonth() + 1
+  const dM = d.getMonth() + 1
+  const nowD = now.getDate()
+  const dD = d.getDate()
+  const sameYear = nowY === dY ? '' : `${dY}年`
+  const same = !sameYear && nowM === dM
+  const sameMonth = same ? '' : `${dM}月`
+  const sameDay = (!sameMonth && nowD === dD) ? '' : `${dD}日`
+  return `${sameYear}${sameMonth}${sameDay}`
+}
+
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time

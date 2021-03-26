@@ -41,14 +41,15 @@
                     class="white--text"
                   >{{ statusDic[i.status].desc }}</el-tag>
                   <div
-                    v-for="(desc,desc_index) in get_item_summary(i).replace(' 00:00:00','').split('\n')"
+                    v-for="(desc,desc_index) in get_item_summary(i,entityType).split('\n')"
                     :key="desc_index"
                     class="card-summary-description"
                     :style="{display:desc_index===0?'inline-block':''}"
                   >{{ desc }}</div>
                 </div>
               </div>
-              <ApplyCard
+              <component
+                :is="`${entityType}ApplyCard`"
                 v-if="i.create"
                 :data="i"
                 :show="i.show"
@@ -80,30 +81,20 @@ export default {
   components: {
     Sticky: () => import('@/components/Sticky'),
     SvgIcon: () => import('@/components/SvgIcon'),
-    ApplyCard: () => import('./ApplyCard')
+    indayApplyCard: () => import('./ApplyCard/IndayApplyCard'),
+    vacationApplyCard: () => import('./ApplyCard/VacationApplyCard')
   },
   props: {
-    id: {
-      type: String,
-      default: null
-    },
-    autoExpand: {
-      type: Boolean,
-      default: true
-    },
+    id: { type: String, default: null },
+    autoExpand: { type: Boolean, default: true },
     vacaStart: {
       type: String,
       default: '2000-01-01' // `${new Date().getFullYear() - 1}-01-01`,
     },
-    vacaEnd: {
-      type: String,
-      default: `${new Date().getFullYear() + 1}-12-31`
-    },
-    list: {
-      type: Array,
-      default: () => []
-    },
-    showApplyNew: { type: Boolean, default: false }
+    vacaEnd: { type: String, default: `${new Date().getFullYear() + 1}-12-31` },
+    list: { type: Array, default: () => [] },
+    showApplyNew: { type: Boolean, default: false },
+    entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
     inner_id: '',
@@ -214,7 +205,13 @@ export default {
       }
       if (this.haveNext) {
         this.loading = true
-        querySelf(pages, this.inner_id, this.vacaStart, this.vacaEnd)
+        querySelf({
+          pages,
+          id: this.inner_id,
+          start: this.vacaStart,
+          end: this.vacaEnd,
+          entityType: this.entityType
+        })
           .then(cb)
           .finally(() => {
             // avoid load next page trice
