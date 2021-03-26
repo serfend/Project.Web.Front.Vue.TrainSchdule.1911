@@ -22,7 +22,7 @@
               <el-form>
                 <el-form-item v-if="innerData.status!==20" label="休假类别">
                   <VacationType v-model="innerData.request.vacationType" />
-                  <TranspotationType v-model="innerData.request.byTransportation" />
+                  <TransportationType v-model="innerData.request.byTransportation" />
                 </el-form-item>
                 <el-form-item label="审批流程">
                   <ApplyAuditStreamPreview
@@ -81,7 +81,7 @@ export default {
     ActionUser,
     ApplyAuditStreamPreview,
     VacationType,
-    TranspotationType: () => import('@/components/Vacation/TranspotationType')
+    TransportationType: () => import('@/components/Vacation/TransportationType')
   },
   props: {
     data: {
