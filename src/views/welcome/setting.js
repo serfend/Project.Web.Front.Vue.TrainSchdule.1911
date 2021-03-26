@@ -37,21 +37,21 @@ export const default_pages = [
     label: '我要请假',
     description: '个人提交外出申请窗口',
     svg: 'newapply',
-    href: '/apply/inday-apply/newApply'
+    href: '/apply/inday/newApply'
   },
   {
     label: '我的请假',
     description: '个人外出情况概览窗口',
     // icon: '/favicon.png',
     svg: 'people_fill',
-    href: '/apply/inday-apply/myApply'
+    href: '/apply/inday/myApply'
   },
   {
     label: '请假审批',
     description: '查询批假情况和审批单位外出情况窗口',
     // icon: '/favicon.png',
     svg: 'auditapply',
-    href: '/apply/inday-apply/queryAndAuditApplies'
+    href: '/apply/inday/queryAndAuditApplies'
   },
   // {
   //   label: '统计信息',

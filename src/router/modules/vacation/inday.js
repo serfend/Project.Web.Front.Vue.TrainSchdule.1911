@@ -2,7 +2,7 @@
 
 /* Router Modules */
 const applicationRouter = {
-  path: 'inday-apply',
+  path: 'inday',
   component: () => import('@/views/blank'),
   redirect: 'noRedirect',
   name: 'inday-apply',
@@ -40,7 +40,7 @@ const applicationRouter = {
     },
     {
       path: 'applyDetail',
-      component: () => import('@/views/ApplyDetail'),
+      component: () => import('@/views/ApplyDetail/IndayApplyDetail'),
       name: 'indayApplyDetail',
       meta: {
         ctitle: '外出详情',
