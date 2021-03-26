@@ -3,7 +3,7 @@
     <div v-if="id||(currentUser&&currentUser.id)">
       <div v-if="!$slots.inner">
         <el-row class="row">
-          <UserSelector :code.sync="iId" :default-info="'查询其他人休假情况'" style="display:inline" />
+          <UserSelector :code.sync="iId" :default-info="'查询其他人申请情况（需要权限）'" style="display:inline" />
         </el-row>
         <el-row :gutter="20" class="row">
           <el-col>
