@@ -100,8 +100,8 @@ export default {
   components: {
     // SvgIcon: () => import('@/components/SvgIcon'),
     LottieIcon: () => import('@/components/LottieIcon'),
-    indayApplyDetail: () => import('@/views/ApplyDetail/IndayApplyDetail'),
-    vacationApplyDetail: () => import('@/views/ApplyDetail/VacationApplyDetail')
+    indayApplyDetail: () => import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
+    vacationApplyDetail: () => import('@/views/Apply/ApplyDetail/VacationApplyDetail')
   },
   props: {
     baseInfoId: { type: String, default: null },

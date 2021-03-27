@@ -65,8 +65,8 @@ import Login from '@/views/login'
 export default {
   name: 'MyApply',
   components: {
-    ApplyNewvacation: () => import('@/views/NewApply/VacationNewApply'),
-    ApplyNewinday: () => import('@/views/NewApply/IndayNewApply'),
+    ApplyNewvacation: () => import('@/views/Apply/NewApply/VacationNewApply'),
+    ApplyNewinday: () => import('@/views/Apply/NewApply/IndayNewApply'),
     UserFormItem,
     UserSelector,
     ApplyOverview,

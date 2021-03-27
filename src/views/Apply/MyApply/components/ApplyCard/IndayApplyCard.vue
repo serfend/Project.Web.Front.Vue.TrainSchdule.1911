@@ -62,7 +62,7 @@
 
 <script>
 import { parseTime, formatTime } from '@/utils'
-import ActionUser from '@/views/QueryAndAuditApplies/ActionUser'
+import ActionUser from '@/views/Apply/QueryAndAuditApplies/ActionUser'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 
 export default {

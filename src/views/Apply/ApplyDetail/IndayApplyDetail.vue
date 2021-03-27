@@ -115,7 +115,7 @@ export default {
     ActionExamine: () => import('../QueryAndAuditApplies/ActionExamine'),
     ActionUser: () => import('../QueryAndAuditApplies/ActionUser'),
     AuditStatus: () => import('./components/AuditStatus'),
-    MyApply: () => import('@/views/MyApply'),
+    MyApply: () => import('@/views/Apply/MyApply'),
     ClipboardShare: () =>
       import('@/views/common/ClipboardMonitor/ClipboardShare'),
     ApplyComments: () => import('@/components/BiliComment'),
@@ -123,7 +123,7 @@ export default {
     TransportationType: () =>
       import('@/components/Vacation/TransportationType'),
     IndayApplyProgress: () =>
-      import('@/views/MyApply/components/ApplyCard/IndayApplyProgress')
+      import('@/views/Apply/MyApply/components/ApplyCard/IndayApplyProgress')
   },
   props: {
     showUser: { type: Boolean, default: true },

@@ -71,7 +71,7 @@
 <script>
 import { parseTime, datedifference } from '@/utils'
 import { formatTime } from '@/utils'
-import ActionUser from '@/views/QueryAndAuditApplies/ActionUser'
+import ActionUser from '@/views/Apply/QueryAndAuditApplies/ActionUser'
 import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 import VacationType from '@/components/Vacation/VacationType'
 

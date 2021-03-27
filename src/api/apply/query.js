@@ -105,13 +105,13 @@ export function createQueryApplyModel(model, pages) {
  * @param {String} myAuditStatus 我的状态：accept,deny,unreceive,received,null
  * @param {int} executeStatus 落实状态
  */
-export function queryMyAudit(pages, status, myAuditStatus, executeStatus) {
+export function queryMyAudit({ pages, status, myAuditStatus, executeStatus, entityType }) {
   pages = pages || {
     pageIndex: 0,
     pageSize: 20
   }
 
-  return request.get('/apply/listOfMyAudit', {
+  return request.get(`/apply/listOfMyAudit/${entityType}`, {
     params: {
       pageIndex: pages.pageIndex,
       pageSize: pages.pageSize,

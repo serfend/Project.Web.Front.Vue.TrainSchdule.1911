@@ -7,13 +7,13 @@
       :stroke-width="24"
       text-inside
     />
-    <span v-else>
+    <el-tag v-else type="success">
       <el-tooltip :content="executeItem.returnStamp">
         <span>{{ formatTime(executeItem.returnStamp) }}</span>
       </el-tooltip>
       <span>已归队</span>
       <span v-if="executeItem.reason">({{ executeItem.reason }})</span>
-    </span>
+    </el-tag>
   </span>
 </template>
 

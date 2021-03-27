@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="!solutionName">
+  <div v-loading="!solutionName||loading">
     <div v-if="solutionName">
       <el-steps
         :active="nowStep>=0?nowStep:(streams?streams.length:0)"
@@ -17,7 +17,7 @@
               >{{ s.firstMemberCompanyName }}({{ getNeedAudit(s.requireMembersAcceptCount) }})</div>
             </el-tooltip>
           </template>
-          <template v-if="!loading" slot="description">
+          <template slot="description">
             <div v-for="u in s.membersFitToAudit" :key="u">
               <span v-if="user_should_show(u,s)">
                 <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
@@ -35,7 +35,6 @@ import { getUserCompany } from '@/api/user/userinfo'
 import { auditStream } from '@/api/audit/handle'
 import { companiesManagers } from '@/api/company'
 import UserFormItem from '@/components/User/UserFormItem'
-import { debounce } from '@/utils'
 export default {
   name: 'ApplyAuditStreamPreviewInner',
   components: { UserFormItem },
@@ -52,13 +51,7 @@ export default {
     managers: {},
     userStatus: []
   }),
-  computed: {
-    updatedStream() {
-      return debounce(() => {
-        this.streamModify()
-      }, 500)
-    }
-  },
+  computed: {},
   watch: {
     auditStatus: {
       handler(val) {
@@ -88,7 +81,7 @@ export default {
     },
     streams: {
       handler(val) {
-        if (val) this.updatedStream()
+        if (val) this.streamModify()
       },
       deep: true,
       immediate: true

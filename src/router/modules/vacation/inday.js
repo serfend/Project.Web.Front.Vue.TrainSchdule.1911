@@ -13,7 +13,7 @@ const applicationRouter = {
   children: [
     {
       path: 'newApply',
-      component: () => import('@/views/NewApply/IndayNewApply'),
+      component: () => import('@/views/Apply/NewApply/IndayNewApply'),
       name: 'indayNewApplication',
       meta: {
         ctitle: '我要请假',
@@ -22,7 +22,7 @@ const applicationRouter = {
     },
     {
       path: 'myApply',
-      component: () => import('@/views/MyApply/IndayMyApply'),
+      component: () => import('@/views/Apply/MyApply/IndayMyApply'),
       name: 'indayMyApply',
       meta: {
         ctitle: '我的外出',
@@ -31,7 +31,7 @@ const applicationRouter = {
     },
     {
       path: 'queryAndAuditApplies',
-      component: () => import('@/views/QueryAndAuditApplies'),
+      component: () => import('@/views/Apply/QueryAndAuditApplies/IndayQueryAndAuditApplies'),
       name: 'indayApplicationList',
       meta: {
         ctitle: '审批外出',
@@ -40,7 +40,7 @@ const applicationRouter = {
     },
     {
       path: 'applyDetail',
-      component: () => import('@/views/ApplyDetail/IndayApplyDetail'),
+      component: () => import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
       name: 'indayApplyDetail',
       meta: {
         ctitle: '外出详情',

@@ -52,7 +52,7 @@
           </el-row>
           <el-row>
             <el-tooltip effect="light" content="休假起始和结束的时间">
-              <span>{{ parseTime(row.stampLeave) }}-{{ parseTime(row.stampReturn) }}</span>
+              <span>{{ relativeTime(row.stampLeave) }}-{{ relativeTime(row.stampReturn) }}</span>
             </el-tooltip>
           </el-row>
         </template>
@@ -182,24 +182,20 @@
 </template>
 
 <script>
-import { formatTime, relativeTime } from '@/utils'
-import AuditApplyMutilDialog from '../AuditApplyMutilDialog'
-import { datedifference } from '@/utils'
+import { formatTime, relativeTime, datedifference } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
-import Pagination from '@/components/Pagination'
-import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
-import VacationType from '@/components/Vacation/VacationType'
-
 export default {
   name: 'ApplicationList',
   components: {
-    AuditApplyMutilDialog,
-    Pagination,
-    ApplyAuditStreamPreview,
-    VacationType,
+    AuditApplyMutilDialog: () => import('../AuditApplyMutilDialog'),
+    Pagination: () => import('@/components/Pagination'),
+    ApplyAuditStreamPreview: () =>
+      import('@/components/ApplicationApply/ApplyAuditStreamPreview'),
+    VacationType: () => import('@/components/Vacation/VacationType'),
     vacationApplyDetail: () =>
-      import('@/views/ApplyDetail/VacationApplyDetail'),
-    indayApplyDetail: () => import('@/views/ApplyDetail/IndayApplyDetail')
+      import('@/views/Apply/ApplyDetail/VacationApplyDetail'),
+    indayApplyDetail: () => import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
+    TransportationType: () => import('@/components/Vacation/TransportationType')
   },
   props: {
     list: {
@@ -208,30 +204,22 @@ export default {
         return []
       }
     },
-    loading: {
-      type: Boolean,
-      default: false
-    },
+    loading: { type: Boolean, default: false },
     pages: {
       type: Object,
       default() {
         return {}
       }
     },
-    pagesTotalCount: {
-      type: Number,
-      default: 0
-    },
+    pagesTotalCount: { type: Number, default: 0 },
     entityType: { type: String, default: 'vacation' }
   },
-  data() {
-    return {
-      multiAuditFormShow: false,
-      multiAuditFormSelection: [],
-      apply_detail_focus_id: null,
-      formatedList: [] // 经过格式化过的主列表
-    }
-  },
+  data: () => ({
+    multiAuditFormShow: false,
+    multiAuditFormSelection: [],
+    apply_detail_focus_id: null,
+    formatedList: [] // 经过格式化过的主列表
+  }),
   computed: {
     vacationTypesDic() {
       return this.$store.state.vacation.vacationTypes

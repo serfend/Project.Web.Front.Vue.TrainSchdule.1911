@@ -127,7 +127,7 @@ export default {
     ActionExamine: () => import('../QueryAndAuditApplies/ActionExamine'),
     ActionUser: () => import('../QueryAndAuditApplies/ActionUser'),
     AuditStatus: () => import('./components/AuditStatus'),
-    MyApply: () => import('@/views/MyApply'),
+    MyApply: () => import('@/views/Apply/MyApply'),
     ClipboardShare: () =>
       import('@/views/common/ClipboardMonitor/ClipboardShare'),
     ApplyComments: () => import('@/components/BiliComment'),

@@ -243,48 +243,47 @@ export default {
       default() {
         return this.innerPages
       }
-    }
+    },
+    entityType: { type: String, default: 'vacation' }
   },
-  data() {
-    return {
-      myAuditActionDic: [
-        { code: 'Received', desc: '等待我审核的' },
-        { code: '', desc: '所有申请' },
-        { code: 'UnReceive', desc: '未轮到我审核的' },
-        { code: 'Accept', desc: '同意的' },
-        { code: 'Deny', desc: '驳回的' }
-      ],
-      onLoading: false,
-      onFormModifying: false,
-      queryForm: {
-        createTime: null,
-        stampLeaveTime: null,
-        stampReturnTime: null,
-        status: [], // 状态
-        mainStatus: -1,
-        actionStatus: 'Received', // 我的状态
-        auditBy: null,
-        nowAuditBy: null,
-        createFor: null,
-        CreateCompanyItem: null,
-        createCompany: [], // 申请单位
-        dutiesType: null,
-        companyType: null,
-        auth: {
-          authByUserId: '',
-          code: ''
-        }
-      },
-      queryFormStartRecord: false,
-      innerPages: {
-        pageIndex: 0,
-        pageSize: 20
-      },
-      adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
-      active_pane: '0',
-      driver: null
-    }
-  },
+  data: () => ({
+    myAuditActionDic: [
+      { code: 'Received', desc: '等待我审核的' },
+      { code: '', desc: '所有申请' },
+      { code: 'UnReceive', desc: '未轮到我审核的' },
+      { code: 'Accept', desc: '同意的' },
+      { code: 'Deny', desc: '驳回的' }
+    ],
+    onLoading: false,
+    onFormModifying: false,
+    queryForm: {
+      createTime: null,
+      stampLeaveTime: null,
+      stampReturnTime: null,
+      status: [], // 状态
+      mainStatus: -1,
+      actionStatus: 'Received', // 我的状态
+      auditBy: null,
+      nowAuditBy: null,
+      createFor: null,
+      CreateCompanyItem: null,
+      createCompany: [], // 申请单位
+      dutiesType: null,
+      companyType: null,
+      auth: {
+        authByUserId: '',
+        code: ''
+      }
+    },
+    queryFormStartRecord: false,
+    innerPages: {
+      pageIndex: 0,
+      pageSize: 20
+    },
+    adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
+    active_pane: '0',
+    driver: null
+  }),
   computed: {
     onFilterAccept() {
       return this.queryForm.status.indexOf(100) > -1
@@ -405,7 +404,13 @@ export default {
       if (this.adminQuery) {
         action = only_id ? queryListId(f) : queryList(f)
       } else {
-        action = queryMyAudit(f.pages, status, actionStatus, execStatus)
+        action = queryMyAudit({
+          pages: f.pages,
+          status,
+          actionStatus,
+          execStatus,
+          entityType: this.entityType
+        })
       }
       action
         .then(data => {

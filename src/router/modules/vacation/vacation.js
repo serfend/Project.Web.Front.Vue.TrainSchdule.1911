@@ -14,7 +14,7 @@ const applicationRouter = {
   children: [
     {
       path: 'newApply',
-      component: () => import('@/views/NewApply/VacationNewApply'),
+      component: () => import('@/views/Apply/NewApply/VacationNewApply'),
       name: 'vacationNewApplication',
       meta: {
         title: 'application.new',
@@ -23,7 +23,7 @@ const applicationRouter = {
     },
     {
       path: 'myApply',
-      component: () => import('@/views/MyApply/VacationMyApply'),
+      component: () => import('@/views/Apply/MyApply/VacationMyApply'),
       name: 'vacationMyApply',
       meta: {
         title: 'application.my',
@@ -32,7 +32,7 @@ const applicationRouter = {
     },
     {
       path: 'queryAndAuditApplies',
-      component: () => import('@/views/QueryAndAuditApplies'),
+      component: () => import('@/views/Apply/QueryAndAuditApplies/VacationQueryAndAuditApplies'),
       name: 'vacationApplicationList',
       meta: {
         title: 'application.audit',
@@ -41,7 +41,7 @@ const applicationRouter = {
     },
     {
       path: 'applyDetail',
-      component: () => import('@/views/ApplyDetail/VacationApplyDetail'),
+      component: () => import('@/views/Apply/ApplyDetail/VacationApplyDetail'),
       name: 'vacationApplyDetail',
       meta: {
         title: 'application.detail',

@@ -22,8 +22,8 @@
           <el-tooltip content="点击此处或双击空白处查看">
             <el-link type="info" :href="detailUrl(row.id)" target="_blank">查看详情</el-link>
           </el-tooltip>
-          <action-examine :row="row" @updated="requestUpdate" />
-          <action-user :row="row" @updated="requestUpdate" />
+          <ActionExamine :row="row" :entity-type="entityType" @updated="requestUpdate" />
+          <ActionUser :row="row" :entity-type="entityType" @updated="requestUpdate" />
         </template>
       </ApplicationList>
     </el-card>
@@ -32,20 +32,15 @@
 </template>
 
 <script>
-import ApplySearchCommon from './ApplySearchCommon'
-import ApplicationList from './ApplicationList'
-import ActionExamine from './ActionExamine'
 import { exportMultiApplies } from '@/api/common/static'
-import ActionUser from './ActionUser'
-import Login from '@/views/login'
 export default {
   name: 'QueryAndAuditApplies',
   components: {
-    ApplySearchCommon,
-    ApplicationList,
-    ActionExamine,
-    ActionUser,
-    Login,
+    ApplySearchCommon: () => import('./ApplySearchCommon'),
+    ApplicationList: () => import('./ApplicationList/ApplicationListvacation'),
+    ActionExamine: () => import('./ActionExamine'),
+    ActionUser: () => import('./ActionUser'),
+    Login: () => import('@/views/login')
   },
   data() {
     return {
@@ -54,16 +49,16 @@ export default {
       appliesListIsLoading: false,
       pages: {
         pageSize: 20,
-        pageIndex: 0,
+        pageIndex: 0
       },
       pagesTotalCount: 0,
-      fullSearchUI: false,
+      fullSearchUI: false
     }
   },
   computed: {
     currentUser() {
       return this.$store.state.user.data
-    },
+    }
   },
   watch: {
     pages: {
@@ -73,8 +68,8 @@ export default {
           JSON.stringify({ pages: val })
         )
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   methods: {
     exportApplies() {
@@ -86,11 +81,11 @@ export default {
         if (nowScrrenCount < total) {
           this.$message.success('加载全部休假申请中')
           const fn = this.$refs.queryAppliesForm.searchData
-          const callback = (data) => {
-            expFn(data.list.map((i) => i.id))
+          const callback = data => {
+            expFn(data.list.map(i => i.id))
           }
           fn(true, callback, { pageIndex: 0, pageSize: total }, true)
-        } else expFn(this.appliesList.map((i) => i.id))
+        } else expFn(this.appliesList.map(i => i.id))
       })
     },
     exportAppliesDirect(ids) {
@@ -101,13 +96,13 @@ export default {
       })
     },
     detailUrl(id) {
-      var t = `/#/apply/vacation/applydetail?id=${id}`
+      var t = `/#/apply/${this.entityType}/applydetail?id=${id}`
       return t
     },
     requestUpdate() {
       this.$refs.queryAppliesForm.searchData(true)
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>
