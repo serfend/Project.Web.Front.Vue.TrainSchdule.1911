@@ -1,4 +1,4 @@
-import { datedifference, parseTime, relativeTime } from './index'
+import { datedifference, parseTime, relativeDate } from './index'
 const handle_detail = {}
 handle_detail.vacation = (request) => {
   let detail
@@ -21,8 +21,8 @@ handle_detail.vacation = (request) => {
 }
 handle_detail.inday = (request) => {
   const { stampLeave, stampReturn } = request
-  const sl = relativeTime(stampLeave) + parseTime(stampLeave, '{h}:{i}:{s}')
-  const sr = relativeTime(stampReturn) + parseTime(stampReturn, '{h}:{i}:{s}')
+  const sl = relativeDate(stampLeave) + parseTime(stampLeave, '{h}:{i}:{s}')
+  const sr = relativeDate(stampReturn) + parseTime(stampReturn, '{h}:{i}:{s}')
   const deltaMinute = datedifference(stampReturn, stampLeave, 'minute')
   const minDesc = deltaMinute % 60 ? `${deltaMinute % 60}分钟` : ''
   const r = `${sl} - ${sr} (${Math.floor(deltaMinute / 60)}小时${minDesc})`

@@ -52,7 +52,7 @@
           </el-row>
           <el-row>
             <el-tooltip effect="light" content="休假起始和结束的时间">
-              <span>{{ relativeTime(row.stampLeave) }}-{{ relativeTime(row.stampReturn) }}</span>
+              <span>{{ relativeDate(row.stampLeave) }}-{{ relativeDate(row.stampReturn) }}</span>
             </el-tooltip>
           </el-row>
         </template>
@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import { formatTime, relativeTime, datedifference } from '@/utils'
+import { formatTime, relativeDate, datedifference } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
 export default {
   name: 'ApplicationList',
@@ -259,7 +259,7 @@ export default {
   },
   methods: {
     formatTime,
-    relativeTime,
+    relativeDate,
     datedifference,
     rowCanShow(row) {
       return row.status !== 20 // 状态：撤回

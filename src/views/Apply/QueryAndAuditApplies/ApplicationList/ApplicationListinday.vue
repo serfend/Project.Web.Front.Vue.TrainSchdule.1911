@@ -41,18 +41,23 @@
           </component>
         </template>
       </el-table-column>
+      <el-table-column header-align="center" align="center" label="创建时间">
+        <template v-if="rowCanShow(row)" slot-scope="{ row }">
+          <el-tooltip effect="light" :content="`创建于:${row.create}`">
+            <span>{{ formatTime(row.create) }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column header-align="center" align="center" label="请假时间">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <el-row>
-            <el-tooltip effect="light" :content="`创建于:${row.create}`">
-              <span>{{ formatTime(row.create) }}</span>
+          <span>
+            <el-tooltip effect="light" :content="`创建于:${row.stampLeave}`">
+              <div>{{ formatTime(row.stampLeave,null,true) }}</div>
             </el-tooltip>
-          </el-row>
-          <el-row>
-            <el-tooltip effect="light" content="请假起始和结束的时间">
-              <span>{{ relativeTime(row.stampLeave) }}-{{ relativeTime(row.stampReturn) }}</span>
+            <el-tooltip effect="light" :content="`创建于:${row.stampReturn}`">
+              <div>{{ formatTime(row.stampReturn,null,true) }}</div>
             </el-tooltip>
-          </el-row>
+          </span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="外出去向">
@@ -128,7 +133,7 @@
 </template>
 
 <script>
-import { formatTime, relativeTime, datedifference } from '@/utils'
+import { formatTime, relativeDate, datedifference } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
 export default {
   name: 'ApplicationList',
@@ -202,7 +207,7 @@ export default {
   },
   methods: {
     formatTime,
-    relativeTime,
+    relativeDate,
     datedifference,
     rowCanShow(row) {
       return row.status !== 20 // 状态：撤回
