@@ -81,25 +81,35 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="状态">
+      <el-table-column align="center" label="状态" min-width="150rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <el-tooltip content="此申请可能为休假结束后创建">
-            <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
-          </el-tooltip>
-          <el-tag v-if="row.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
-          <ApplyAuditStreamPreview
-            v-if="row.statusDesc"
-            :audit-status="row.steps"
-            :title="row.auditStreamSolution"
-            :now-step="row.nowStep ? row.nowStep.index : row.steps.length"
-          >
-            <el-tag
-              slot="content"
-              :color="row.statusColor"
-              class="white--text"
-              style="cursor:pointer"
-            >{{ row.statusDesc }}</el-tag>
-          </ApplyAuditStreamPreview>
+          <div style="display:flex">
+            <div style="width:20rem">
+              <IndayApplyProgress
+                :stamp-leave="row.request && row.request.stampLeave"
+                :stamp-return="row.request && row.request.stampReturn"
+                :execute-id="row.executeStatusId"
+                :show="true"
+              />
+            </div>
+            <el-tooltip content="此申请可能为外出结束后创建">
+              <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
+            </el-tooltip>
+            <el-tag v-if="row.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
+            <ApplyAuditStreamPreview
+              v-if="row.statusDesc"
+              :audit-status="row.steps"
+              :title="row.auditStreamSolution"
+              :now-step="row.nowStep ? row.nowStep.index : row.steps.length"
+            >
+              <el-tag
+                slot="content"
+                :color="row.statusColor"
+                class="white--text"
+                style="cursor:pointer;margin-left:0.5rem"
+              >{{ row.statusDesc }}</el-tag>
+            </ApplyAuditStreamPreview>
+          </div>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -146,7 +156,10 @@ export default {
       import('@/views/Apply/ApplyDetail/VacationApplyDetail'),
     indayApplyDetail: () =>
       import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
-    TransportationType: () => import('@/components/Vacation/TransportationType')
+    TransportationType: () =>
+      import('@/components/Vacation/TransportationType'),
+    IndayApplyProgress: () =>
+      import('@/views/Apply/MyApply/components/ApplyCard/IndayApplyProgress')
   },
   props: {
     list: {
