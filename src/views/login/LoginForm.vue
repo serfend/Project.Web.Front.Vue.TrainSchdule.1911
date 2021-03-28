@@ -260,7 +260,7 @@ export default {
           break
         }
       }
-      var opt = {
+      const opt = {
         message: `<h3>${title}</h3><div style="margin-top:0.5em">${msg}</div>`,
         dangerouslyUseHTMLString: true,
         type: 'info',
