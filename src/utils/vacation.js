@@ -20,6 +20,7 @@ handle_detail.vacation = (request) => {
   return detail.replace(' 00:00:00', '')
 }
 handle_detail.inday = (request) => {
+  if (!request) return '无详情'
   const { stampLeave, stampReturn } = request
   const sl = relativeDate(stampLeave) + parseTime(stampLeave, '{h}:{i}:{s}')
   const sr = relativeDate(stampReturn) + parseTime(stampReturn, '{h}:{i}:{s}')
