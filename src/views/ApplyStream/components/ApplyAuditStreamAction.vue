@@ -270,7 +270,7 @@ import {
   addStreamNode,
   editStreamNode,
   deleteStreamNode,
-  buildFilter,
+  buildFilter
 } from '@/api/audit/applyAuditStream'
 import CompaniesSelector from '@/components/Company/CompaniesSelector'
 import DutiesSelector from '@/components/Duty/DutiesSelector'
@@ -289,7 +289,7 @@ export default {
     AuthCode,
     UserFormItem,
     DutiesSelector,
-    UserSelector,
+    UserSelector
   },
   props: {
     data: {
@@ -303,25 +303,25 @@ export default {
           allSolution: [],
           allSolutionDic: {},
           allActionNode: [],
-          allActionNodeDic: {},
+          allActionNodeDic: {}
         }
-      },
+      }
     },
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
       companyReferDic: [
         { value: '', label: '不使用相对' },
         { value: 'self', label: '本级审核' },
-        { value: 'parent', label: '上级审核' },
+        { value: 'parent', label: '上级审核' }
       ],
       nodeDialogShow: false,
       newNode: this.buildnewNode(),
-      userSelect: {},
+      userSelect: {}
     }
   },
   methods: {
@@ -330,7 +330,7 @@ export default {
     },
     checkAuditMembersIndex(id) {
       const node = this.newNode
-      const auditMembers = node.auditMembers.map((i) => i.id)
+      const auditMembers = node.auditMembers.map(i => i.id)
       return auditMembers.indexOf(id)
     },
     handleUserSelectChange(val) {
@@ -344,7 +344,7 @@ export default {
     },
     handleCompaniesSelectClose(tag) {
       const node = this.newNode
-      const companies = node.companies.map((i) => i.code)
+      const companies = node.companies.map(i => i.code)
       const code = tag.code
       node.companies.splice(companies.indexOf(code), 1)
     },
@@ -355,7 +355,7 @@ export default {
     },
     handleDutiesSelectClose(tag) {
       const node = this.newNode
-      const i = node.duties.map((i) => i.code).indexOf(tag.code)
+      const i = node.duties.map(i => i.code).indexOf(tag.code)
       node.duties.splice(i, 1)
     },
     refresh() {
@@ -376,14 +376,14 @@ export default {
       var fn = node.mode === 'edit' ? editStreamNode : addStreamNode
       const region = this.data.newCompanyRegion || {}
 
-      fn(
-        node.id,
-        node.name,
-        region.code,
-        node.description,
-        buildFilter(node),
-        node.auth
-      )
+      fn({
+        id: node.id,
+        name: node.name,
+        companyRegion: region.code,
+        description: node.description,
+        filter: buildFilter(node),
+        auth: node.auth
+      })
         .then(() => {
           this.$message.success(`节点${node.name}已提交`)
           this.refresh()
@@ -416,7 +416,7 @@ export default {
       if (lastAuth === null) {
         lastAuth = {
           authByUserId: '',
-          code: 0,
+          code: 0
         }
       }
       return {
@@ -433,10 +433,10 @@ export default {
         auditMembersCount: 1,
         auditMembers: [],
         auth: lastAuth,
-        loading: false,
+        loading: false
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

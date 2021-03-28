@@ -84,7 +84,7 @@ export function buildFilter(data) {
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamNode(id, name, companyRegion, description, filter, auth) {
+export function addStreamNode({ id, name, companyRegion, description, filter, auth }) {
   return request.post(`${api}//StreamNode`, {
     name,
     companyRegion,
@@ -106,7 +106,7 @@ export function addStreamNode(id, name, companyRegion, description, filter, auth
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamNode(id, name, companyRegion, description, filter, auth) {
+export function editStreamNode({ id, name, companyRegion, description, filter, auth }) {
   return request.put(`${api}/StreamNode`, {
     id,
     name,
@@ -128,7 +128,7 @@ export function editStreamNode(id, name, companyRegion, description, filter, aut
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamSolution(id, name, companyRegion, description, nodes, auth) {
+export function addStreamSolution({ id, name, companyRegion, description, nodes, auth }) {
   return request.post(`${api}/StreamSolution`, {
     name,
     companyRegion,
@@ -207,6 +207,7 @@ export function addStreamSolutionRule({ id, name, companyRegion, entityType, des
  * @returns
  */
 export function editStreamSolutionRule({ id, name, companyRegion, entityType, description, solutionName, priority, enable, filter, auth }) {
+  debugger
   return request.put(`${api}/StreamSolutionRule`, {
     id,
     name,
