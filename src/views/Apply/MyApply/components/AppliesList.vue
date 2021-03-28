@@ -169,8 +169,12 @@ export default {
     applyUpdate(index, id) {
       detail({ id, ignoreError: true, entityType: this.entityType })
         .then(data => {
-          data.show = false
-          this.innerList[index] = Object.assign(this.innerList[index], data)
+          if (!data || !data.model) return
+          data.model.show = false
+          this.innerList[index] = Object.assign(
+            this.innerList[index],
+            data.model
+          )
           setTimeout(() => {
             this.innerList[index].show = true
           }, 1000)
