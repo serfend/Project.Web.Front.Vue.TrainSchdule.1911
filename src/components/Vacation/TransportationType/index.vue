@@ -5,13 +5,7 @@
 </template>
 
 <script>
-const transportationType = {
-  0: ['huoche', '火车'],
-  1: ['feiji', '飞机'],
-  2: ['qiche', '汽车'],
-  3: ['beijing-metro', '地铁'],
-  default: ['guide', '未知']
-}
+import transportationType from './types.js'
 export default {
   name: 'TransportationType',
   components: { SvgIcon: () => import('@/components/SvgIcon') },
