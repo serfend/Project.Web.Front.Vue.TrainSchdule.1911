@@ -50,7 +50,7 @@ export default [
   }, {
     path: '',
     hidden: true,
-    component: () => import('@/views/welcome/XJXTWelcome')
+    component: () => import('@/views/welcome')
   }, {
     path: '/about/version',
     component: () => import('@/views/UpdateRecord/VersionDisplay'),

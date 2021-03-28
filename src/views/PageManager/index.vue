@@ -97,7 +97,7 @@ export default {
   computed: {
     formatedList() {
       return this.list.map(i =>
-        Object.assign(i, { href: `/system/iframePage?src=${i.href}` })
+        Object.assign(i, { href: `/settings/system/iframePage?src=${i.href}` })
       )
     }
   }
