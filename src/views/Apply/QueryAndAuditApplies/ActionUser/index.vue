@@ -121,7 +121,21 @@ export default {
           ? deleteApply(params, this.entityType)
           : doAction(fnName, params, this.entityType)
       fn.then(data => {
-        this.$message.success(`${this.actionDic[method].alias}成功`)
+        if (data.list && data.list[0]) {
+          const opt = {
+            message: `<h3>操作失败</h3><div style="margin-top:0.5em">存在${
+              data.list.length
+            }项冲突，<a style="color:#00f" href="/#/apply/${
+              this.entityType
+            }/applyDetail?id=${data.list[0]}">点击查看</a>首项</div>`,
+            dangerouslyUseHTMLString: true,
+            type: 'info',
+            duration: 10000
+          }
+          this.$message(opt)
+        } else {
+          this.$message.success(`${this.actionDic[method].alias}成功`)
+        }
       }).finally(() => {
         this.loading = false
         this.$emit('updated')
