@@ -30,7 +30,7 @@ export function excelReport(params) {
  * @returns
  */
 export function queryList(data, ignoreErr) {
-  return request.post('/apply/list', data, {
+  return request.post(`/apply/list/${data.entityType}`, data, {
     ignoreError: ignoreErr
   })
 }
@@ -42,7 +42,7 @@ export function queryList(data, ignoreErr) {
  * @param {*} ignoreErr
  */
 export function queryListId(data, ignoreErr) {
-  return request.post('/apply/listShadow', data, {
+  return request.post(`/apply/listShadow/${data.entityType}`, data, {
     ignoreError: ignoreErr
   })
 }
@@ -68,31 +68,32 @@ export function queryListId(data, ignoreErr) {
     companyType: Array:String
  * @param {Pages} pages
  */
-export function createQueryApplyModel(model, pages) {
+export function createQueryApplyModel({ data, pages, entityType }) {
   const f = {
-    pages: Object.assign({}, pages)
+    pages: Object.assign({}, pages),
+    entityType
   }
   const userStatus =
-    (model.isMarried ? 1 : 0) |
-    (model.isApart ? 2 : 0)
+    (data.isMarried ? 1 : 0) |
+    (data.isApart ? 2 : 0)
   if (userStatus) f.userStatus = form.toQueryArrays([userStatus])
   const companyStatus =
-    (model.isRemote ? 1 : 0)
+    (data.isRemote ? 1 : 0)
   if (companyStatus) f.companyStatus = form.toQueryArrays([companyStatus])
-  f.create = form.toQueryStartEndByArray(model.createTime)
-  f.stampLeave = form.toQueryStartEndByArray(model.stampLeaveTime)
-  f.stampReturn = form.toQueryStartEndByArray(model.stampReturnTime)
-  f.status = form.toQueryArrays(model.status)
-  f.mainStatus = (undefined === model.mainStatus || model.mainStatus < 0) ? null : { start: model.mainStatus }
-  f.executeStatus = form.toQueryValue(model.executeStatus)
-  f.auditBy = form.toQueryValue(model.auditBy)
-  f.nowAuditBy = form.toQueryValue(model.nowAuditBy)
-  f.createCompany = form.toQueryArrays(model.createCompany)
-  f.dutiesType = form.toQueryValue(model.dutiesType)
-  f.companyType = form.toQueryValue(model.companyType)
-  f.createFor = form.toQueryValue(model.createFor)
+  f.create = form.toQueryStartEndByArray(data.createTime)
+  f.stampLeave = form.toQueryStartEndByArray(data.stampLeaveTime)
+  f.stampReturn = form.toQueryStartEndByArray(data.stampReturnTime)
+  f.status = form.toQueryArrays(data.status)
+  f.mainStatus = (undefined === data.mainStatus || data.mainStatus < 0) ? null : { start: data.mainStatus }
+  f.executeStatus = form.toQueryValue(data.executeStatus)
+  f.auditBy = form.toQueryValue(data.auditBy)
+  f.nowAuditBy = form.toQueryValue(data.nowAuditBy)
+  f.createCompany = form.toQueryArrays(data.createCompany)
+  f.dutiesType = form.toQueryValue(data.dutiesType)
+  f.companyType = form.toQueryValue(data.companyType)
+  f.createFor = form.toQueryValue(data.createFor)
 
-  f.auth = model.auth
+  f.auth = data.auth
   return f
 }
 

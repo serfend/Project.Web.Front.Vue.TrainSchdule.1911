@@ -291,7 +291,7 @@ export default {
     requireSearchData() {
       return debounce(() => {
         this.searchData()
-      }, 500)
+      }, 200)
     },
     executeStatus() {
       return this.$store.state.vacation.executeStatus
@@ -386,20 +386,26 @@ export default {
       //   this.$message.error('操作太快啦,歇歇吧~')
       //   return
       // }
-      const form = this.queryForm
-      if (!this.onFilterAccept && form.executeStatus != null) {
-        form.executeStatus = null
+      const data = this.queryForm
+      if (!this.onFilterAccept && data.executeStatus != null) {
+        data.executeStatus = null
         return
       }
       callback = callback || this.handleSearchedData
       this.onFormModifying = true
       this.onLoading = true
       pages = pages || this.innerPages
-      const f = createQueryApplyModel(form, pages, form.auth)
+      const entityType = this.entityType
+      const f = createQueryApplyModel({
+        data,
+        entityType,
+        pages,
+        auth: data.auth
+      })
       // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
-      const status = form.status
-      const actionStatus = form.actionStatus
-      const execStatus = form.executeStatus
+      const status = data.status
+      const actionStatus = data.actionStatus
+      const execStatus = data.executeStatus
       let action
       if (this.adminQuery) {
         action = only_id ? queryListId(f) : queryList(f)
