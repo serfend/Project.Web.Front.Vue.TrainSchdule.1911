@@ -121,7 +121,7 @@ export default {
           ? deleteApply(params, this.entityType)
           : doAction(fnName, params, this.entityType)
       fn.then(data => {
-        if (data.list && data.list[0]) {
+        if (data && data.list && data.list[0]) {
           const opt = {
             message: `<h3>操作失败</h3><div style="margin-top:0.5em">存在${
               data.list.length
