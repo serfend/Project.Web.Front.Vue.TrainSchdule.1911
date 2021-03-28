@@ -7,7 +7,12 @@
             <el-link :href="applyDetailUrl(innerData.id)" target="_blank">查看详情</el-link>
             <el-row class="row">
               <el-col :xl="5" :lg="7" :md="8" :sm="9" :xs="24">
-                <ActionUser style="width:100%" :row="innerData" @updated="userUpdate" />
+                <ActionUser
+                  style="width:100%"
+                  :entity-type="entityType"
+                  :row="innerData"
+                  @updated="userUpdate"
+                />
               </el-col>
               <el-col :xl="19" :lg="17" :md="16" :sm="15" :xs="24">
                 <IndayApplyProgress
@@ -85,6 +90,7 @@ export default {
     show: { type: Boolean, default: false }
   },
   data: () => ({
+    entityType: 'inday',
     innerData: null,
     firstShow: true
   }),
