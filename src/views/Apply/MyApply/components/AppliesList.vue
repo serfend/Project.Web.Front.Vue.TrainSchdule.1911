@@ -94,7 +94,7 @@ export default {
     vacaEnd: { type: String, default: `${new Date().getFullYear() + 1}-12-31` },
     list: { type: Array, default: () => [] },
     showApplyNew: { type: Boolean, default: false },
-    entityType: { type: String, default: 'vacation' }
+    entityType: { type: String, required: true }
   },
   data: () => ({
     inner_id: '',

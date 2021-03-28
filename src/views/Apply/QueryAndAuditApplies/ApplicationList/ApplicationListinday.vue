@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-table
+      v-if="requestTypesDic"
       ref="singleTable"
       v-loading="loading"
       :data="formatedList"
@@ -15,6 +16,11 @@
         <template slot-scope="{ row }">
           <component :is="!rowCanShow(row) ? 'ElTooltip' : 'div'" effect="light">
             <div slot="content">
+              <VacationType
+                v-if="rowCanShow(row)"
+                v-model="row.request.requestType"
+                :entity-type="entityType"
+              />
               <el-link
                 :href="`#/user/profile?id=${row.userBase.id}`"
                 target="_blank"
@@ -156,6 +162,7 @@ export default {
       import('@/views/Apply/ApplyDetail/VacationApplyDetail'),
     indayApplyDetail: () =>
       import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
+    VacationType: () => import('@/components/Vacation/VacationType'),
     TransportationType: () =>
       import('@/components/Vacation/TransportationType'),
     IndayApplyProgress: () =>
@@ -185,6 +192,9 @@ export default {
     formatedList: [] // 经过格式化过的主列表
   }),
   computed: {
+    requestTypesDic() {
+      return this.$store.state.vacation.requestTypes
+    },
     pagesetting: {
       get() {
         return this.pages

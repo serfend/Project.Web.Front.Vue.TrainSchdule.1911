@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="label" :style="{color:showTag?'#fff':'#000'}">{{ label }}</div>
+    <div class="label" :style="{color:showTag?'#000':'#fff'}">{{ label }}</div>
     <slot />
   </div>
 </template>
@@ -11,13 +11,13 @@ export default {
   props: {
     label: {
       type: String,
-      default: null,
+      default: null
     },
     showTag: {
       type: Boolean,
-      default: false,
-    },
-  },
+      default: false
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

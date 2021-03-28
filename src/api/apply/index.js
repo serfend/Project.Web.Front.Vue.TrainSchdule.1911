@@ -7,3 +7,13 @@ import request from '@/utils/request'
 export function getAllStatus() {
   return request.get('/apply/allStatus')
 }
+
+/**
+ * 获取请假类型
+ *
+ * @export
+ * @return {*}
+ */
+export function getRequestTypes() {
+  return request.get('apply/applyRequestTypes')
+}

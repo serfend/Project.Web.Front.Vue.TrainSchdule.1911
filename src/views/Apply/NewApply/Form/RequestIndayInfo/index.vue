@@ -1,13 +1,22 @@
 <template>
   <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
     <el-card v-loading="loading" header="请假信息" style="position:relative">
-      <el-container>
+      <el-container v-if="formApply">
         <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
             <template slot="content">暂仅允许请当天的假，不允许跨天请假.</template>
           </CardTooltipAlert>
           <el-alert v-if="formApply.isArchitect" center type="error">补充申请 申请将会被标记为【补充记录】</el-alert>
           <el-form ref="formApply" :model="formApply" label-width="6rem">
+            <el-form-item label="请假类型">
+              <VacationTypeSelector
+                v-model="formApply.requestType"
+                :entity-type="entityType"
+                :types="requestTypes"
+                :left-length="0"
+                @change="updateMaxLen"
+              />
+            </el-form-item>
             <el-form-item label="请假原因">
               <el-input
                 v-model="formApply.reason"
@@ -44,12 +53,13 @@
               <el-input v-model="formApply.vacationPlaceName" style="width:30rem" />
             </el-form-item>
             <el-form-item label="交通工具">
-              <el-select v-model="formApply.ByTransportation" placeholder="火车">
-                <el-option label="火车" :value="0" />
-                <!-- <el-option label="飞机" value="1" /> -->
-                <el-option label="汽车" :value="2" />
-                <el-option label="其他" :value="-1" />
-                <el-option label="地铁" :value="3" />
+              <el-select v-model="formApply.ByTransportation">
+                <el-option
+                  v-for="i in Object.keys(transportationTypes).filter(t=>t!=='default')"
+                  :key="i"
+                  :label="transportationTypes[i][1]"
+                  :value="i"
+                />
               </el-select>
             </el-form-item>
           </el-form>
@@ -77,32 +87,48 @@
 <script>
 import { postRequestInfo } from '@/api/apply/create'
 import { parseTime } from '@/utils'
-import CardTooltipAlert from '../FormHelper/CardTooltipAlert'
-import CascaderSelector from '@/components/CascaderSelector'
 import { locationChildren } from '@/api/common/static'
-
+import transportationTypes from '@/components/Vacation/TransportationType/types'
 export default {
   name: 'RequestInfo',
   components: {
-    CardTooltipAlert,
-    CascaderSelector
+    CardTooltipAlert: () => import('../FormHelper/CardTooltipAlert'),
+    CascaderSelector: () => import('@/components/CascaderSelector'),
+    VacationTypeSelector: () =>
+      import('@/components/Vacation/VacationTypeSelector')
   },
   props: {
     userid: { type: String, default: null },
     selfSettle: { type: Object, default: null },
-    entityType: { type: String, default: 'vacation' }
+    entityType: { type: String, default: 'inday' }
   },
-  data() {
-    return {
-      loading: true,
-      formApply: this.createNewRequest(),
-      vacationPlaceDefault: null,
-      submitId: null,
-      isHover: false,
-      anyChanged: false
-    }
-  },
+  data: () => ({
+    transportationTypes,
+    loading: true,
+    formApply: null,
+    vacationPlaceDefault: null,
+    submitId: null,
+    isHover: false,
+    anyChanged: false
+  }),
   computed: {
+    nowVacationType() {
+      const form = this.formApply
+      if (!form) return null
+      const dict = this.requestTypesDic
+      if (!dict) return null
+      const s = dict[form.vacationType]
+      return s
+    },
+    requestTypes() {
+      const types = this.requestTypesDic
+      if (!types) return null
+      const keys = Object.keys(types)
+      return keys.map(i => types[i])
+    },
+    requestTypesDic() {
+      return this.$store.state.vacation.requestTypes
+    },
     StampLeaveAndReturn: {
       get() {
         const s = this.formApply
@@ -143,6 +169,9 @@ export default {
       deep: true
     }
   },
+  mounted() {
+    this.formApply = this.createNewRequest()
+  },
   methods: {
     resetSettle(val) {
       if (val && val.self && val.self.address) {
@@ -156,16 +185,21 @@ export default {
       }
     },
     createNewRequest() {
+      const types = this.requestTypes
       return {
         StampLeave: parseTime(+new Date() + 86400e3, '{y}-{m}-{d} 08:00:00'),
         StampReturn: parseTime(+new Date() + 86400e3, '{y}-{m}-{d} 18:00:00'),
         vacationPlace: null,
         vacationPlaceName: '',
         reason: '',
-        ByTransportation: 2
+        ByTransportation: '2',
+        requestType: types ? types[0].name : ''
       }
     },
     locationChildren,
+    updateMaxLen() {
+      // 更新请假限制
+    },
     updatedApply() {
       this.anyChanged = true
       this.submitId = null

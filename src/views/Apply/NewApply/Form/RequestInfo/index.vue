@@ -39,6 +39,7 @@
             <el-form-item label="休假类型">
               <VacationTypeSelector
                 v-model="formApply.vacationType"
+                :entity-type="entityType"
                 :types="vacationTypes"
                 :left-length="usersvacation.leftLength"
                 @change="updateMaxLen"
@@ -155,52 +156,46 @@
 <script>
 import { postRequestInfo, getStampReturn } from '@/api/apply/create'
 import { parseTime } from '@/utils'
-import CardTooltipAlert from '../FormHelper/CardTooltipAlert'
-import VacationDescription from '@/components/Vacation/VacationDescription'
-import VacationTypeSelector from '@/components/Vacation/VacationTypeSelector'
-import CascaderSelector from '@/components/CascaderSelector'
-import BenefitVacation from './BenefitVacation'
-import LawVacation from './LawVacation'
 import { locationChildren } from '@/api/common/static'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
 
 export default {
   name: 'RequestInfo',
   components: {
-    CardTooltipAlert,
-    VacationDescription,
-    VacationTypeSelector,
-    CascaderSelector,
-    BenefitVacation,
-    LawVacation
+    CardTooltipAlert: () => import('../FormHelper/CardTooltipAlert'),
+    VacationDescription: () =>
+      import('@/components/Vacation/VacationDescription'),
+    VacationTypeSelector: () =>
+      import('@/components/Vacation/VacationTypeSelector'),
+    CascaderSelector: () => import('@/components/CascaderSelector'),
+    BenefitVacation: () => import('./BenefitVacation'),
+    LawVacation: () => import('./LawVacation')
   },
   props: {
     userid: { type: String, default: null },
     selfSettle: { type: Object, default: null },
     entityType: { type: String, default: 'vacation' }
   },
-  data() {
-    return {
-      loading: true,
-      formApply: null,
-      vacationPlaceDefault: null,
-      usersvacation: {
-        yearlyLength: 0,
-        nowTimes: 0,
-        leftLength: 0,
-        onTripTimes: 0,
-        maxTripTimes: 0
-      },
-      benefitList: [],
-      lawVacations: [],
-      submitId: null,
-      isHover: false,
-      anyChanged: false,
-      nowMaxLength: 30,
-      main_type: -1, // 0:正式报 1:计划报
-      direct_select_apply: null
-    }
-  },
+  data: () => ({
+    loading: true,
+    formApply: null,
+    vacationPlaceDefault: null,
+    usersvacation: {
+      yearlyLength: 0,
+      nowTimes: 0,
+      leftLength: 0,
+      onTripTimes: 0,
+      maxTripTimes: 0
+    },
+    benefitList: [],
+    lawVacations: [],
+    submitId: null,
+    isHover: false,
+    anyChanged: false,
+    nowMaxLength: 30,
+    main_type: -1, // 0:正式报 1:计划报
+    direct_select_apply: null
+  }),
   computed: {
     nowVacationType() {
       const form = this.formApply

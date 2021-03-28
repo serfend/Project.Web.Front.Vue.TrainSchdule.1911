@@ -16,7 +16,8 @@
         <div class="item-content">
           <span class="item-title text-gradient">{{ v.alias }}</span>
           <div class="outer-description">
-            <VacationTypeDetail
+            <component
+              :is="`${entityType}TypeDetail`"
               v-model="list[i]"
               :show-tag="false"
               :left-length="leftLength"
@@ -32,29 +33,22 @@
 <script>
 const bgPath = 'dataview/vacationtype'
 const staticfile = '/file/staticfile/'
-import VacationTypeDetail from '../VacationType/VacationTypeDetail'
 import { requestFile } from '@/api/common/file'
-import { debounce } from '../../../utils'
 export default {
   name: 'VacationTypeSelector',
-  components: { VacationTypeDetail },
+  components: {
+    vacationTypeDetail: () => import('../VacationType/VacationTypeDetail'),
+    indayTypeDetail: () => import('../VacationType/IndayRequestTypeDetail')
+  },
   model: {
     prop: 'vacationType',
     event: 'change'
   },
   props: {
-    vacationType: {
-      type: String,
-      default: null
-    },
-    types: {
-      type: Array,
-      default: null
-    },
-    leftLength: {
-      type: Number,
-      default: 0
-    }
+    vacationType: { type: String, default: null },
+    types: { type: Array, required: true },
+    leftLength: { type: Number, default: 0 },
+    entityType: { type: String, required: true }
   },
   data: () => ({
     loading: false,
@@ -64,19 +58,17 @@ export default {
     hide: true
   }),
   computed: {
-    requireHide() {
-      return debounce(() => {
-        this.hideDirect()
-      }, 1000)
-    },
     list() {
-      return this.types
-        .filter(i => !i.disabled)
-        .map(i => {
-          i.backgroundUrl = this.getBackground(i)
-          i.invalid = this.checkDisabled(i)
-          return i
-        })
+      return (
+        this.types &&
+        this.types
+          .filter(i => !i.disabled)
+          .map(i => {
+            i.backgroundUrl = this.getBackground(i)
+            i.invalid = this.checkDisabled(i)
+            return i
+          })
+      )
     }
   },
   watch: {
@@ -97,7 +89,9 @@ export default {
   },
   mounted() {
     requestFile(bgPath, 'default.jpg').then(data => {
-      this.defaultUrl = `${process.env.VUE_APP_BASEURL}${staticfile}${data.file.id}`
+      const id = data.file.id
+      const url = process.env.VUE_APP_BASEURL
+      this.defaultUrl = `${url}${staticfile}${id}`
     })
   },
   methods: {
@@ -173,7 +167,7 @@ export default {
       this.$emit('change', this.iType)
       this.requireHide()
     },
-    hideDirect() {
+    requireHide() {
       this.hide = true
     }
   }
@@ -181,7 +175,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .card-list {
-  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: all 3s ease;
   text-align: center;
   font-size: 1.5rem;
   justify-content: space-between;

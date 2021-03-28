@@ -16,7 +16,11 @@
         <template slot-scope="{ row }">
           <component :is="!rowCanShow(row) ? 'ElTooltip' : 'div'" effect="light">
             <div slot="content">
-              <VacationType v-if="rowCanShow(row)" v-model="row.request.vacationType" />
+              <VacationType
+                v-if="rowCanShow(row)"
+                v-model="row.request.vacationType"
+                :entity-type="entityType"
+              />
               <el-link
                 :href="`#/user/profile?id=${row.userBase.id}`"
                 target="_blank"
@@ -194,7 +198,8 @@ export default {
     VacationType: () => import('@/components/Vacation/VacationType'),
     vacationApplyDetail: () =>
       import('@/views/Apply/ApplyDetail/VacationApplyDetail'),
-    indayApplyDetail: () => import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
+    indayApplyDetail: () =>
+      import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
     TransportationType: () => import('@/components/Vacation/TransportationType')
   },
   props: {

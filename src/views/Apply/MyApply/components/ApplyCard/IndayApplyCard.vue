@@ -26,6 +26,7 @@
             <el-row>
               <el-form>
                 <el-form-item v-if="innerData.status!==20" label="请假类别">
+                  <VacationType v-model="innerData.request.requestType" :entity-type="entityType" />
                   <TransportationType v-model="innerData.request.byTransportation" />
                 </el-form-item>
                 <el-form-item label="审批流程">
@@ -67,14 +68,14 @@
 
 <script>
 import { parseTime, formatTime } from '@/utils'
-import ActionUser from '@/views/Apply/QueryAndAuditApplies/ActionUser'
-import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
-
 export default {
   name: 'ApplyCard',
   components: {
-    ActionUser,
-    ApplyAuditStreamPreview,
+    ActionUser: () => import('@/views/Apply/QueryAndAuditApplies/ActionUser'),
+    ApplyAuditStreamPreview: () =>
+      import('@/components/ApplicationApply/ApplyAuditStreamPreview'),
+
+    VacationType: () => import('@/components/Vacation/VacationType'),
     TransportationType: () =>
       import('@/components/Vacation/TransportationType'),
     ExecuteStatus: () => import('./ExecuteStatus'),

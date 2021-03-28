@@ -32,28 +32,21 @@
 </template>
 
 <script>
-import SingleLineItem from './SingleLineItem'
 export default {
   name: 'VacationTypeDetail',
-  components: { SingleLineItem },
+  components: { SingleLineItem: () => import('./SingleLineItem') },
   model: {
     prop: 'type',
-    event: 'change',
+    event: 'change'
   },
   props: {
-    type: {
-      type: Object,
-      default: null,
-    },
-    showTag: {
-      type: Boolean,
-      default: true,
-    },
-    leftLength: {
-      type: Number,
-      default: 0,
-    },
+    type: { type: Object, default: null },
+    showTag: { type: Boolean, default: true },
+    leftLength: { type: Number, default: 0 }
   },
+  data: () => ({
+    entityType: 'inday'
+  })
 }
 </script>
 <style lang="scss" >

@@ -29,6 +29,11 @@
               <el-form v-if="detail.id" label-width="8rem">
                 <el-form-item label="基本">
                   <el-tag
+                    v-if="detail.request.requestType"
+                    effect="dark"
+                    type="danger"
+                  >{{ detail.request.requestType }}</el-tag>
+                  <el-tag
                     v-if="statusDic[detail.status]"
                     :color="statusDic[detail.status].color"
                     class="white--text"
