@@ -57,10 +57,10 @@
       <el-table-column header-align="center" align="center" label="请假时间">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <span>
-            <el-tooltip effect="light" :content="`创建于:${row.stampLeave}`">
+            <el-tooltip effect="light" :content="`离队时间:${parseTime(row.stampLeave)}`">
               <div>{{ formatTime(row.stampLeave,null,true) }}</div>
             </el-tooltip>
-            <el-tooltip effect="light" :content="`创建于:${row.stampReturn}`">
+            <el-tooltip effect="light" :content="`归队时间:${parseTime(row.stampReturn)}`">
               <div>{{ formatTime(row.stampReturn,null,true) }}</div>
             </el-tooltip>
           </span>
@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import { formatTime, relativeDate, datedifference } from '@/utils'
+import { formatTime, parseTime, relativeDate, datedifference } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
 export default {
   name: 'ApplicationList',
@@ -230,6 +230,7 @@ export default {
   },
   methods: {
     formatTime,
+    parseTime,
     relativeDate,
     datedifference,
     rowCanShow(row) {
