@@ -3,12 +3,13 @@
     <el-progress
       v-if="!executeItem"
       :percentage="percent"
+      :status="percent===100?'exception':'primary'"
       :format="formatPercent"
       :stroke-width="24"
       text-inside
     />
-    <el-tag v-else type="success">
-      <el-tooltip :content="executeItem.returnStamp">
+    <el-tag v-else :type="onTime?'success':'danger'">
+      <el-tooltip :content="`实际归队时间${executeItem.returnStamp} - ${onTime?'正常销假':'已超假'}`">
         <span>{{ formatTime(executeItem.returnStamp) }}</span>
       </el-tooltip>
       <span>已归队</span>
@@ -36,6 +37,15 @@ export default {
     spent: 0,
     total: 0
   }),
+  computed: {
+    onTime() {
+      const item = this.executeItem
+      if (!item) return false
+      const final_return = new Date(item.returnStamp)
+      const expect_return = new Date(this.stampReturn)
+      return expect_return >= final_return
+    }
+  },
   watch: {
     executeId: {
       handler(val) {
