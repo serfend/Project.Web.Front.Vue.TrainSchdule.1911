@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { datedifference, formatTime } from '@/utils'
+import { datedifference, parseTime, formatTime } from '@/utils'
 import { getExecuteStatus } from '@/api/apply/recall'
 export default {
   name: 'IndayApplyProgress',
@@ -101,7 +101,12 @@ export default {
       const s = Math.floor(left % 60)
       const left_desc = `${h}h${m}m${s}s`
       if (this.spent <= 0) return `${left_desc} 未开始`
-      if (val >= 100) return '已结束'
+      if (val >= 100) {
+        const expect_return = new Date(this.stampReturn)
+        return `${formatTime(expect_return)}已超假（${parseTime(
+          expect_return
+        )}）`
+      }
       const percent = `${Math.round((this.spent / this.total) * 10000) / 100}%`
       return `${left_desc} ${percent}`
     }
