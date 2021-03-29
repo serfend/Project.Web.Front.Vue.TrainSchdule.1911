@@ -16,7 +16,7 @@
               />
             </el-col>
             <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
-              <ApplyOverview :userid="iId||currentUser.id" />
+              <ApplyOverview v-if="showVacationOverview" :userid="iId||currentUser.id" />
             </el-col>
           </el-col>
         </el-row>
@@ -83,6 +83,9 @@ export default {
     show_apply_new: false
   }),
   computed: {
+    showVacationOverview() {
+      return this.entityType === 'vacation'
+    },
     currentUser() {
       return this.$store.state.user.data
     },
