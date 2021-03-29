@@ -31,7 +31,7 @@ export const default_pages = [
     description: '查询周考月评、季度考评、专项考评、年度考评窗口',
     // icon: '/favicon.png',
     svg: 'phy-grade',
-    href: '/memberRate/summary'
+    href: '/memberRate/welcome'
   },
   {
     label: '我要请假',

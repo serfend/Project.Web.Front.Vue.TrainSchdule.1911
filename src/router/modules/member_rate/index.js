@@ -4,6 +4,14 @@ const router = {
   path: '/memberRate',
   component: Layout,
   children: [{
+    path: 'welcome',
+    hidden: true,
+    meta: {
+      ctitle: '考核纪实',
+      icon: 'namecard'
+    },
+    component: () => import('@/views/MemberRate/Welcome')
+  }, {
     path: 'upload',
     hidden: true,
     meta: {
