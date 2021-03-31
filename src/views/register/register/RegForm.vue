@@ -413,7 +413,7 @@ export default {
     },
     switch_login() {
       this.$store.dispatch('user/logout')
-      this.$router.push({ path: '/vacation/myApply' })
+      this.$router.push({ path: '/apply/vacation/myApply/' })
     }
   }
 }

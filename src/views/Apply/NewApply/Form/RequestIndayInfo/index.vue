@@ -4,7 +4,7 @@
       <el-container v-if="formApply">
         <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
-            <template slot="content">暂仅允许请当天的假，不允许跨天请假.</template>
+            <template slot="content">注意根据个人需求选择合适的请假类型</template>
           </CardTooltipAlert>
           <el-alert v-if="formApply.isArchitect" center type="error">补充申请 申请将会被标记为【补充记录】</el-alert>
           <el-form ref="formApply" :model="formApply" label-width="6rem">

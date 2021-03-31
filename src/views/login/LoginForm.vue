@@ -108,19 +108,19 @@ export default {
         password: '',
         RememberUserPassword: false,
         RememberMe: false,
-        verify: 201700816,
+        verify: 201700816
       },
       loginRules: {
         username: [
-          { required: true, trigger: 'blur', validator: validateUsername },
+          { required: true, trigger: 'blur', validator: validateUsername }
         ],
         password: [
-          { required: true, trigger: 'blur', validator: validatePassword },
-        ],
+          { required: true, trigger: 'blur', validator: validatePassword }
+        ]
       },
       passwordType: 'password',
       capsTooltip: false,
-      loading: false,
+      loading: false
     }
   },
   computed: {
@@ -129,7 +129,7 @@ export default {
     },
     hasLogin() {
       return this.$store.state.user.userid
-    },
+    }
   },
   watch: {
     hasLogin: {
@@ -138,12 +138,12 @@ export default {
           Message({
             message: `欢迎您，${this.currentUser}！`,
             type: 'success',
-            duration: 8000,
+            duration: 8000
           })
         }
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -211,16 +211,16 @@ export default {
       this.loading = true
       this.$store
         .dispatch('user/login', this.loginForm)
-        .then((data) => {
+        .then(data => {
           Message({
             message: '登录成功',
             type: 'success',
-            duration: 5 * 1000,
+            duration: 5 * 1000
           })
           this.$emit('login', true)
           this.$store.dispatch('user/initUserInfo')
         })
-        .catch((e) => {
+        .catch(e => {
           this.showLoginFailTip(e)
           this.$emit('login', false)
         })
@@ -235,7 +235,7 @@ export default {
       switch (e.status) {
         case 12440: {
           title = '账号审批未通过且有紧急情况需报假?'
-          msg = '可联系本级领导或管理员完成账号的审批'
+          msg = '可联系上一级领导、管理员或业务科，授权完成账号的审批'
           break
         }
         case 12450: {
@@ -264,13 +264,13 @@ export default {
         message: `<h3>${title}</h3><div style="margin-top:0.5em">${msg}</div>`,
         dangerouslyUseHTMLString: true,
         type: 'info',
-        duration: 10000,
+        duration: 10000
       }
       if (msg) {
         this.$message(opt)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 
