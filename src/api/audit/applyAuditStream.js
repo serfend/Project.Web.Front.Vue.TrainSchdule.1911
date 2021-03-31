@@ -207,7 +207,6 @@ export function addStreamSolutionRule({ id, name, companyRegion, entityType, des
  * @returns
  */
 export function editStreamSolutionRule({ id, name, companyRegion, entityType, description, solutionName, priority, enable, filter, auth }) {
-  debugger
   return request.put(`${api}/StreamSolutionRule`, {
     id,
     name,

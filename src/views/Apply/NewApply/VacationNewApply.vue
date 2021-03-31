@@ -16,6 +16,7 @@
           v-show="nowStep>=1"
           ref="VacationPreview"
           :entity-type="entityType"
+          :entity-type-desc="entityTypeDesc"
           :userid="userid"
           style="margin:2rem 1.25rem"
         />
@@ -31,6 +32,7 @@
           :self-settle.sync="selfSettle"
           style="margin:2rem 1.25rem"
           @submited="requestInfoSubmit"
+          @vacationTypeUpdate="vacationTypeUpdate"
         />
       </el-col>
     </el-row>
@@ -73,6 +75,7 @@ export default {
   },
   data: () => ({
     entityType: 'vacation',
+    entityTypeDesc: null,
     nowStep: 0,
     onLoading: false,
     childOnLoading: true,
@@ -91,6 +94,9 @@ export default {
     }, 1000)
   },
   methods: {
+    vacationTypeUpdate(val) {
+      this.entityTypeDesc = `${val ? val + '|' : ''}${this.entityType}`
+    },
     baseInfoSubmit(success) {
       if (success) {
         this.nowStep = 1

@@ -7,6 +7,14 @@
           <el-option label="请假" value="inday" />
         </el-select>
       </el-form-item>
+      <el-form-item v-if="data.entityType" label="子分类">
+        <VacationTypeSelector
+          v-model="data.vacationType"
+          :entity-type="data.entityType"
+          :left-length="0"
+          :check-filter="false"
+        />
+      </el-form-item>
       <el-form-item label="查询单位">
         <CompanySelector
           v-model="data.companyRegion"
@@ -43,11 +51,6 @@
 </template>
 
 <script>
-import CompanySelector from '@/components/Company/CompanySelector'
-import ApplyStreamAbout from './components/ApplyStreamAbout'
-import ApplyStreamSolution from './components/ApplyStreamSolution'
-import ApplyAuditStream from './components/ApplyAuditStream'
-import ApplyAuditStreamAction from './components/ApplyAuditStreamAction'
 import {
   queryStreamNode,
   queryStreamSolution,
@@ -57,11 +60,13 @@ import { debounce } from '@/utils'
 export default {
   name: 'ApplyStream',
   components: {
-    CompanySelector,
-    ApplyStreamSolution,
-    ApplyAuditStream,
-    ApplyAuditStreamAction,
-    ApplyStreamAbout
+    CompanySelector: () => import('@/components/Company/CompanySelector'),
+    ApplyStreamSolution: () => import('./components/ApplyStreamSolution'),
+    ApplyAuditStream: () => import('./components/ApplyAuditStream'),
+    ApplyAuditStreamAction: () => import('./components/ApplyAuditStreamAction'),
+    ApplyStreamAbout: () => import('./components/ApplyStreamAbout'),
+    VacationTypeSelector: () =>
+      import('@/components/Vacation/VacationTypeSelector')
   },
   data() {
     return {
@@ -69,6 +74,7 @@ export default {
       loading: false,
       data: {
         entityType: 'vacation',
+        vacationType: null, // TODO 审批流应与业务无关
         companyRegion: null,
         newCompanyRegion: null,
         allSolutionRule: [],
@@ -95,6 +101,12 @@ export default {
     },
     'data.entityType': {
       handler(val) {
+        this.data.vacationType = null
+        this.solutionRuleRefresh()
+      }
+    },
+    'data.vacationType': {
+      handler(val) {
         this.solutionRuleRefresh()
       }
     }
@@ -110,7 +122,11 @@ export default {
     solutionRuleRefresh() {
       this.loading = true
       const region = this.data.companyRegion || {}
-      queryStreamSolutionRule(region.code, this.data.entityType)
+      const { entityType, vacationType } = this.data
+      this.data.entityTypeDesc = `${
+        vacationType ? vacationType + '|' : ''
+      }${entityType}`
+      queryStreamSolutionRule(region.code, this.data.entityTypeDesc)
         .then(data => {
           this.data.allSolutionRule = data.list
         })

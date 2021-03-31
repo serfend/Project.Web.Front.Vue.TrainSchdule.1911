@@ -2,8 +2,8 @@
   <span>
     <el-progress
       v-if="!executeItem"
-      :percentage="percent"
-      :status="percent===100?'exception':'primary'"
+      :percentage="percent===0?30:percent"
+      :status="percent>=100?'exception':null"
       :format="formatPercent"
       :stroke-width="24"
       text-inside
@@ -95,18 +95,25 @@ export default {
       return (spent / total) * 100
     },
     formatPercent(val) {
-      const left = (this.total - this.spent) / 1e3
-      const h = Math.floor(left / 3600)
-      const m = Math.floor((left % 3600) / 60)
-      const s = Math.floor(left % 60)
-      const left_desc = `${h}h${m}m${s}s`
-      if (this.spent <= 0) return `${left_desc} 未开始`
+      if (this.spent <= 0) {
+        const start = -this.spent / 1e3
+        const h = Math.floor(start / 3600)
+        const m = Math.floor((start % 3600) / 60)
+        const s = Math.floor(start % 60)
+        const left_desc = `${h}h${m}m${s}s`
+        return `${left_desc} 未开始`
+      }
       if (val >= 100) {
         const expect_return = new Date(this.stampReturn)
         return `${formatTime(expect_return)}已超假（${parseTime(
           expect_return
         )}）`
       }
+      const left = (this.total - this.spent) / 1e3
+      const h = Math.floor(left / 3600)
+      const m = Math.floor((left % 3600) / 60)
+      const s = Math.floor(left % 60)
+      const left_desc = `${h}h${m}m${s}s`
       const percent = `${Math.round((this.spent / this.total) * 10000) / 100}%`
       return `${left_desc} ${percent}`
     }

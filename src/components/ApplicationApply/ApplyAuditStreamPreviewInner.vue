@@ -42,7 +42,8 @@ export default {
     userid: { type: String, default: null },
     auditStatus: { type: Array, default: null },
     nowStep: { type: Number, default: -1 },
-    entityType: { type: String, default: 'vacation' }
+    entityType: { type: String, default: 'vacation' },
+    entityTypeDesc: { type: String, default: null }
   },
   data: () => ({
     loading: false,
@@ -64,14 +65,15 @@ export default {
     userid: {
       handler(val) {
         if (val) {
-          this.solutionName = null
-          auditStream(val, this.entityType).then(data => {
-            this.solutionName = data.solutionName
-            this.streams = data.steps
-          })
+          this.refresh()
         }
       },
       immediate: true
+    },
+    entityTypeDesc: {
+      handler(val) {
+        this.refresh()
+      }
     },
     solutionName: {
       handler(val) {
@@ -89,6 +91,16 @@ export default {
   },
   methods: {
     auditStream,
+    refresh() {
+      console.log('load audit stream', this.entityTypeDesc)
+      this.solutionName = null
+      auditStream(this.id, this.entityTypeDesc || this.entityType).then(
+        data => {
+          this.solutionName = data.solutionName
+          this.streams = data.steps
+        }
+      )
+    },
     user_should_show(u, s) {
       const managers = this.managers
       const userStatus = this.userStatus

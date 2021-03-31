@@ -12,7 +12,7 @@
               <VacationTypeSelector
                 v-model="formApply.requestType"
                 :entity-type="entityType"
-                :types="requestTypes"
+                :types.sync="requestTypes"
                 :left-length="0"
                 @change="updateMaxLen"
               />
@@ -106,29 +106,13 @@ export default {
     transportationTypes,
     loading: true,
     formApply: null,
+    requestTypes: null,
     vacationPlaceDefault: null,
     submitId: null,
     isHover: false,
     anyChanged: false
   }),
   computed: {
-    nowVacationType() {
-      const form = this.formApply
-      if (!form) return null
-      const dict = this.requestTypesDic
-      if (!dict) return null
-      const s = dict[form.vacationType]
-      return s
-    },
-    requestTypes() {
-      const types = this.requestTypesDic
-      if (!types) return null
-      const keys = Object.keys(types)
-      return keys.map(i => types[i])
-    },
-    requestTypesDic() {
-      return this.$store.state.vacation.requestTypes
-    },
     StampLeaveAndReturn: {
       get() {
         const s = this.formApply
@@ -167,6 +151,11 @@ export default {
         this.resetSettle(val)
       },
       deep: true
+    },
+    'formApply.requestType': {
+      handler(val) {
+        this.$emit('requestTypeUpdate', val)
+      }
     }
   },
   mounted() {

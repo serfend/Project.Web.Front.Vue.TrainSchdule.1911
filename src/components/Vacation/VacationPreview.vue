@@ -4,6 +4,7 @@
       :solution-name.sync="solutionName"
       :userid="userid"
       :entity-type="entityType"
+      :entity-type-desc="entityTypeDesc"
       :show-detail="true"
     />
   </el-card>
@@ -16,7 +17,8 @@ export default {
   components: { ApplyAuditStreamPreview },
   props: {
     userid: { type: String, default: null },
-    entityType: { type: String, default: 'vacation' }
+    entityType: { type: String, default: 'vacation' },
+    entityTypeDesc: { type: String, default: null }
   },
   data: () => ({
     solutionName: null

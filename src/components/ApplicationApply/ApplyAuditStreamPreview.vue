@@ -6,6 +6,7 @@
       :audit-status="auditStatus"
       :now-step="nowStep"
       :entity-type="entityType"
+      :entity-type-desc="entityTypeDesc"
       :solution-name.sync="solutionName"
     />
     <el-popover v-else trigger="hover" @show="userHasHover=true">
@@ -15,6 +16,7 @@
         :audit-status="auditStatus"
         :now-step="nowStep"
         :entity-type="entityType"
+        :entity-type-desc="entityTypeDesc"
         :solution-name.sync="solutionName"
       />
       <span v-if="!$slots.content" slot="reference" class="preview-btn">{{ title }}</span>
@@ -34,7 +36,8 @@ export default {
     showDetail: { type: Boolean, default: false },
     nowStep: { type: Number, default: -1 },
     title: { type: String, default: null },
-    entityType: { type: String, default: 'vacation' }
+    entityType: { type: String, default: 'vacation' },
+    entityTypeDesc: { type: String, default: null }
   },
   data: () => ({
     solutionName: null,

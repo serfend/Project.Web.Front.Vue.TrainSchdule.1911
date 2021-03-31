@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <el-link v-show="hide&&urlDict" type="primary" @click="hide = false">{{ iType }}</el-link>
+    <el-link v-show="hide&&urlDict" type="primary" @click="hide = false">{{ iType||'未选择' }}</el-link>
     <ul
       v-if="!loading"
       class="card-list"
@@ -27,6 +27,7 @@
         </div>
       </li>
     </ul>
+    <el-link v-show="hide&&iType" @click="cancelSelect">取消选择</el-link>
   </div>
 </template>
 
@@ -41,14 +42,15 @@ export default {
     indayTypeDetail: () => import('../VacationType/IndayRequestTypeDetail')
   },
   model: {
-    prop: 'vacationType',
+    prop: 'nowSelect',
     event: 'change'
   },
   props: {
-    vacationType: { type: String, default: null },
-    types: { type: Array, required: true },
+    nowSelect: { type: String, default: null },
+    types: { type: Array, default: null },
     leftLength: { type: Number, default: 0 },
-    entityType: { type: String, required: true }
+    entityType: { type: String, required: true },
+    checkFilter: { type: Boolean, default: true }
   },
   data: () => ({
     loading: false,
@@ -58,10 +60,30 @@ export default {
     hide: true
   }),
   computed: {
+    nowVacationType() {
+      const dict = this.requestTypesDic
+      const s = dict[this.iType]
+      return s
+    },
+    requestTypes() {
+      const types = this.requestTypesDic
+      if (!types) return null
+      const keys = Object.keys(types)
+      const r = keys.map(i => types[i])
+      this.$emit('update:types', r)
+      return r
+    },
+    requestTypesDic() {
+      const r =
+        this.entityType === 'vacation'
+          ? this.$store.state.vacation.vacationTypes
+          : this.$store.state.vacation.requestTypes
+      return r
+    },
     list() {
       return (
-        this.types &&
-        this.types
+        this.requestTypes &&
+        this.requestTypes
           .filter(i => !i.disabled)
           .map(i => {
             i.backgroundUrl = this.getBackground(i)
@@ -85,6 +107,12 @@ export default {
         })
       },
       immediate: true
+    },
+    nowSelect: {
+      handler(val) {
+        this.iType = val
+      },
+      immediate: true
     }
   },
   mounted() {
@@ -97,14 +125,15 @@ export default {
   methods: {
     getStyle(v) {
       const iType = this.iType
+      const invalid = v.invalid
       return {
         background: v.backgroundUrl,
         transition: 'all 0.5s ease',
         'box-shadow':
           v.name === iType ? '0 0 0.5rem 0.5rem rgba(0, 139, 255, 0.5)' : '',
-        cursor: v.invalid ? 'no-drop' : 'pointer',
-        filter: v.invalid ? 'grayscale(1)' : null,
-        opacity: v.invalid ? 0.2 : 1
+        cursor: invalid ? 'no-drop' : 'pointer',
+        filter: invalid ? 'grayscale(1)' : null,
+        opacity: invalid ? 0.2 : 1
       }
     },
     getBackground(v) {
@@ -116,7 +145,7 @@ export default {
     },
     loadBgUrl() {
       this.loading = true
-      const types = this.types
+      const types = this.requestTypes
       const cb = (data, type) => {
         const id = data.file.id
         const url = `${process.env.VUE_APP_BASEURL}${staticfile}${id}`
@@ -148,12 +177,17 @@ export default {
       })
     },
     checkDisabled(v) {
+      if (!this.checkFilter) return false
       const leftLength = this.leftLength
       if (v.primary && leftLength === 0) return '已无假可休'
       if (!v.allowBeforePrimary && !v.primary && leftLength > 0) {
         return '正休假未休完'
       }
       return false
+    },
+    cancelSelect() {
+      this.$emit('change', null)
+      this.iType = null
     },
     selectType(v) {
       if (v.invalid) {

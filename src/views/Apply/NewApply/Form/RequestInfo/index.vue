@@ -1,10 +1,5 @@
 <template>
-  <div
-    v-if="nowVacationType"
-    :style="{transition:'all 0.5s'}"
-    @mouseenter="isHover=true"
-    @mouseleave="leaveCard"
-  >
+  <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
     <el-card v-loading="loading" header="休假信息" style="position:relative">
       <el-form label-width="5rem">
         <el-form-item label="填报类型">
@@ -28,10 +23,15 @@
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
             <template slot="content">鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
           </CardTooltipAlert>
-          <el-alert v-if="formApply.isArchitect" center type="error">补充申请 申请将会被标记为【补充记录】</el-alert>
-          <el-form ref="formApply" :model="formApply" label-width="6rem">
+          <el-alert
+            v-if="formApply && formApply.isArchitect"
+            center
+            type="error"
+          >补充申请 申请将会被标记为【补充记录】</el-alert>
+          <el-form v-if="formApply" ref="formApply" :model="formApply" label-width="6rem">
             <el-form-item label="年休假率">
               <VacationDescription
+                v-if="nowVacationType"
                 :users-vacation="usersvacation"
                 :this-time-vacation-length="nowVacationType.primary?formApply.vacationLength:0"
               />
@@ -40,7 +40,7 @@
               <VacationTypeSelector
                 v-model="formApply.vacationType"
                 :entity-type="entityType"
-                :types="vacationTypes"
+                :types.sync="vacationTypes"
                 :left-length="usersvacation.leftLength"
                 @change="updateMaxLen"
               />
@@ -63,7 +63,7 @@
                 @input="updateChange"
               />
             </el-form-item>
-            <el-form-item v-if="nowVacationType.canUseOnTrip" label="路途天数">
+            <el-form-item v-if="nowVacationType && nowVacationType.canUseOnTrip" label="路途天数">
               <el-slider
                 v-model="formApply.OnTripLength"
                 show-input
@@ -72,7 +72,7 @@
                 @input="updateChange"
               />
             </el-form-item>
-            <el-form-item v-if="nowVacationType.caculateBenefit" label="其他假">
+            <el-form-item v-if="nowVacationType &&nowVacationType.caculateBenefit" label="其他假">
               <BenefitVacation v-model="benefitList" @change="updateChange" />
             </el-form-item>
             <el-form-item
@@ -98,7 +98,7 @@
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
-            <el-form-item v-if="nowVacationType.caculateBenefit">
+            <el-form-item v-if="nowVacationType &&nowVacationType.caculateBenefit">
               <el-collapse-transition v-for="(item,i) in lawVacations" :key="item.id">
                 <LawVacation
                   v-model="lawVacations[i].useLength"
@@ -180,6 +180,7 @@ export default {
     loading: true,
     formApply: null,
     vacationPlaceDefault: null,
+    vacationTypes: null,
     usersvacation: {
       yearlyLength: 0,
       nowTimes: 0,
@@ -198,21 +199,8 @@ export default {
   }),
   computed: {
     nowVacationType() {
-      const form = this.formApply
-      if (!form) return null
-      const dict = this.vacationTypesDic
-      if (!dict) return null
-      const s = dict[form.vacationType]
-      return s
-    },
-    vacationTypes() {
-      const types = this.vacationTypesDic
-      if (!types) return null
-      const keys = Object.keys(types)
-      return keys.map(i => types[i])
-    },
-    vacationTypesDic() {
-      return this.$store.state.vacation.vacationTypes
+      const type = this.formApply && this.formApply.vacationType
+      return this.vacationTypes && this.vacationTypes.find(v => v.name === type)
     },
     // above 3 computed should remove in the future
     maxVacationLength() {
@@ -275,6 +263,11 @@ export default {
         }
       },
       deep: true
+    },
+    'formApply.vacationType': {
+      handler(val) {
+        this.$emit('vacationTypeUpdate', val)
+      }
     },
     selfSettle: {
       handler(val) {
@@ -462,6 +455,7 @@ export default {
       }, 0)
       // 正休假计算路途，如果存在福利假则不计算法定节假日
       const type = this.nowVacationType
+      if (!type) return {}
       const trip = type.canUseOnTrip
       const benefit = type.caculateBenefit
 

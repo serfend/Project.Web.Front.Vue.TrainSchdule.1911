@@ -438,7 +438,7 @@ export default {
         id: node.id,
         name: node.name,
         companyRegion: region.code,
-        entityType: this.data.entityType,
+        entityType: this.data.entityTypeDesc.split('|')[0],
         description: node.description,
         solutionName: node.solutionName,
         priority: node.priority,
