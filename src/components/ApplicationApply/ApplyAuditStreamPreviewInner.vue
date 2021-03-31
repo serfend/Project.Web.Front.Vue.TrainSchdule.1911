@@ -94,7 +94,7 @@ export default {
     refresh() {
       console.log('load audit stream', this.entityTypeDesc)
       this.solutionName = null
-      auditStream(this.id, this.entityTypeDesc || this.entityType).then(
+      auditStream(this.userid, this.entityTypeDesc || this.entityType).then(
         data => {
           this.solutionName = data.solutionName
           this.streams = data.steps

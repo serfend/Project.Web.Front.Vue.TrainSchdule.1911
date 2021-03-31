@@ -270,7 +270,6 @@ export default {
       if (!list[0]) return this.$message.error('上传文件异常')
       const isDataInvalid = list[0].key
       if (isDataInvalid) {
-        debugger
         const sIndex = list.findIndex(
           i => i.key && i.key.toLowerCase() === 'labelpath'
         )
