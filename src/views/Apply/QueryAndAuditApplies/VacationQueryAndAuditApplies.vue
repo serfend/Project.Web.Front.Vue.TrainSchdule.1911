@@ -42,19 +42,18 @@ export default {
     ActionUser: () => import('./ActionUser'),
     Login: () => import('@/views/login')
   },
-  data() {
-    return {
-      loading: false,
-      appliesList: [],
-      appliesListIsLoading: false,
-      pages: {
-        pageSize: 20,
-        pageIndex: 0
-      },
-      pagesTotalCount: 0,
-      fullSearchUI: false
-    }
-  },
+  data: () => ({
+    entityType: 'vacation',
+    loading: false,
+    appliesList: [],
+    appliesListIsLoading: false,
+    pages: {
+      pageSize: 20,
+      pageIndex: 0
+    },
+    pagesTotalCount: 0,
+    fullSearchUI: false
+  }),
   computed: {
     currentUser() {
       return this.$store.state.user.data
