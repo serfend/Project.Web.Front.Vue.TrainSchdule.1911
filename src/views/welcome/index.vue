@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <div style="width:100%;height:100%">
-      <el-main style="height:100%;user-select:none">
+      <el-main :style="`height:100%;user-select:none;${mainStyle}`">
         <el-row v-if="showTitle" type="flex">
           <div>
             <span style="color:#ffffff;font-size:2em">{{ $store.state.settings.title }}</span>
@@ -57,10 +57,8 @@ export default {
   name: 'Welcome',
   components: { AppIcon, Footer },
   props: {
-    showTitle: {
-      type: Boolean,
-      default: true
-    },
+    mainStyle: { type: String, default: null },
+    showTitle: { type: Boolean, default: true },
     list: {
       type: Array,
       default: () => default_pages
