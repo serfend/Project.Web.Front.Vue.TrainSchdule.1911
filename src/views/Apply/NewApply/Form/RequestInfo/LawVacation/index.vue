@@ -1,9 +1,11 @@
 <template>
-  <el-card>
-    <span style="font-weight:600">{{ name }}:{{ description }}</span>
+  <el-card class="mini-card">
+    <span style="font-weight:600">{{ name }}:{{ parseTime(start) }}</span>
     <span>
-      <span>共 {{ maxLength }} 天</span>
-      <span v-if="length!==maxLength">当前为 {{ length }} 天</span>
+      <span>
+        <span v-if="length!==maxLength">当前为 {{ length }} 天 /</span>
+        {{ maxLength }}天
+      </span>
     </span>
     <el-slider
       v-model="length"
@@ -24,26 +26,11 @@ export default {
     event: 'change'
   },
   props: {
-    useLength: {
-      type: Number,
-      default: 0
-    },
-    maxLength: {
-      type: Number,
-      default: 0
-    },
-    name: {
-      type: String,
-      default: '无名称'
-    },
-    description: {
-      type: String,
-      default: null
-    },
-    start: {
-      type: String,
-      default: null
-    }
+    useLength: { type: Number, default: 0 },
+    maxLength: { type: Number, default: 0 },
+    name: { type: String, default: '无名称' },
+    description: { type: String, default: null },
+    start: { type: String, default: null }
   },
   data: () => ({
     lengthRange: null
@@ -72,5 +59,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" >
+.mini-card {
+  .el-card__body {
+    padding: 0.5rem !important;
+  }
+}
 </style>

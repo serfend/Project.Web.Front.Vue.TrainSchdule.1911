@@ -104,7 +104,6 @@
                   v-model="lawVacations[i].useLength"
                   :max-length="item.length"
                   :name="item.name"
-                  :description="item.description"
                   :start="item.start"
                   style="margin:0.2rem"
                 />
