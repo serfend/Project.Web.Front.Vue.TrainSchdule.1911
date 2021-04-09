@@ -103,10 +103,10 @@ export function createQueryApplyModel({ data, pages, entityType }) {
  * @export
  * @param {Object} pages 分页
  * @param {Array} status 状态
- * @param {String} myAuditStatus 我的状态：accept,deny,unreceive,received,null
+ * @param {String} actionStatus 我的状态：accept,deny,unreceive,received,null
  * @param {int} executeStatus 落实状态
  */
-export function queryMyAudit({ pages, status, myAuditStatus, executeStatus, entityType }) {
+export function queryMyAudit({ pages, status, actionStatus, executeStatus, entityType }) {
   pages = pages || {
     pageIndex: 0,
     pageSize: 20
@@ -117,7 +117,7 @@ export function queryMyAudit({ pages, status, myAuditStatus, executeStatus, enti
       pageIndex: pages.pageIndex,
       pageSize: pages.pageSize,
       status: status.join('##'),
-      actionStatus: myAuditStatus,
+      actionStatus,
       executeStatus
     }
   })
