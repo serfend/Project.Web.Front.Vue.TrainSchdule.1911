@@ -1,7 +1,7 @@
 <template>
   <el-form style="justify-content:center">
-    <el-row>
-      <el-col class="row">
+    <el-row :gutter="20">
+      <el-col :span="8">
         <el-card header="文件上传">
           <el-form-item label="文件名称">
             <el-input v-model="file.fileName" />
@@ -27,9 +27,7 @@
             </el-upload>
           </el-form-item>
         </el-card>
-      </el-col>
-      <el-col class="row">
-        <el-card :header="nowLoadingFile">
+        <el-card :header="nowLoadingFile" style="margin-top:1rem">
           <el-form-item label="id">{{ fileInfo.id }}</el-form-item>
           <el-form-item label="路径">{{ fileInfo.path }}</el-form-item>
           <el-form-item label="名称">{{ fileInfo.name }}</el-form-item>
@@ -66,13 +64,39 @@
               class="file-handle-btn"
               icon="el-icon-delete"
               @click="deleteFile(fileInfo.path,fileInfo.name,fileInfo.clientKey)"
-            >删除文件{{ !fileInfo.clientKey||fileInfo.clientKey.length==36?'':'(需要授权码)' }}</el-button>
+            >删除文件{{ fileInfo.clientKey||fileInfo.clientKey.length==36?'':'(需要授权码)' }}</el-button>
           </div>
         </el-card>
       </el-col>
-      <el-col>
-        <el-card :header="`文件:${file.filePath}`">
-          <Explorer :path.sync="file.filePath" @select="fileSelect" />
+      <el-col :span="16">
+        <el-card>
+          <template #header style="display:flex">
+            <span
+              v-for="(path,index) in ['root'].concat(file.filePath.split('/'))"
+              :key="index"
+              style="color:#33c;cursor:pointer"
+              @click="jumpToPath(index)"
+            >{{ path }}/</span>
+            <el-button v-if="!newFolder" icon="el-icon-plus" type="text" @click="initNewFolder" />
+            <el-input
+              v-else
+              ref="newFolder"
+              v-model="newFolder"
+              size="mini"
+              style="width:10rem"
+              @keypress.native.enter="add_path"
+            >
+              <template #append>
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  type="text"
+                  style="width:100%"
+                  @click="add_path"
+                >添加</el-button>
+              </template>
+            </el-input>
+          </template>
+          <Explorer ref="explorer" :path.sync="file.filePath" @select="fileSelect" />
         </el-card>
       </el-col>
     </el-row>
@@ -80,68 +104,70 @@
 </template>
 
 <script>
-// download,
 import clipboard from '@/utils/clipboard'
 import AuthCode from '@/components/AuthCode'
 import Explorer from './Explorer'
-import {
-  requestFile,
-  getClientKey,
-  deleteFile,
-} from '@/api/common/file'
+import { requestFile, getClientKey, deleteFile } from '@/api/common/file'
 export default {
   name: 'FileEngine',
   components: { AuthCode, Explorer },
-  data() {
-    return {
-      statusLoading: false,
-      file: {
-        fileName: '',
-        filePath: '',
-        auth: {
-          authByUserId: '',
-          code: '',
-        },
-      },
-      fileDownloading: false,
-      fileInfo: {
-        name: '',
-        path: '',
-        length: '',
-        create: '',
-        id: '',
-        clientKey: '',
-      },
-      uploadurl: '',
-      statusList: [],
-      lastQueryDate: new Date(),
-    }
-  },
+  data: () => ({
+    statusLoading: false,
+    newFolder: null,
+    file: {
+      fileName: '',
+      filePath: '',
+      auth: {
+        authByUserId: '',
+        code: ''
+      }
+    },
+    fileDownloading: false,
+    fileInfo: {
+      name: '',
+      path: '',
+      length: '',
+      create: '',
+      id: '',
+      clientKey: ''
+    },
+    uploadurl: '',
+    statusList: []
+  }),
   computed: {
     nowLoadingFile() {
       return `文件下载 ${this.file.filePath}/${this.file.fileName}`
-    },
+    }
   },
   watch: {
     file: {
       handler(val) {
-        var lastQueryDate = new Date()
-        this.lastQueryDate = lastQueryDate
-        setTimeout(() => {
-          if (this.lastQueryDate === lastQueryDate) {
-            this.updateFile()
-          }
-        }, 1000)
+        this.updateFile()
       },
       deep: true,
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   mounted() {
     this.uploadurl = process.env.VUE_APP_BASE_API + '/file/upload'
-    this.refreshStatus()
   },
   methods: {
+    initNewFolder() {
+      this.newFolder = '新的文件夹'
+      this.$nextTick(() => {
+        const s = this.$refs.newFolder
+        s.select()
+      })
+    },
+    add_path() {
+      this.file.filePath = `${this.file.filePath}/${this.newFolder}`
+      this.newFolder = ''
+    },
+    jumpToPath(index) {
+      const list = this.file.filePath.split('/')
+      this.file.fileName = ''
+      this.file.filePath = list.splice(0, index).join('/')
+    },
     fileSelect(file) {
       this.file.fileName = file
     },
@@ -165,17 +191,17 @@ export default {
     },
     updateFile() {
       if (!this.file || !this.file.filePath || !this.file.fileName) return
-      requestFile(this.file.filePath, this.file.fileName).then((data) => {
+      requestFile(this.file.filePath, this.file.fileName).then(data => {
         var id = data.file.id
         data.file.clientKey = '加载中...'
         this.$nextTick(() => {
           getClientKey(id, this.file.auth)
-            .then((ck) => {
+            .then(ck => {
               this.fileInfo.clientKey = ck
               this.file.clientKey = ck
               this.$forceUpdate()
             })
-            .catch((e) => {
+            .catch(e => {
               this.fileInfo.clientKey = `无法加载(${e.message})`
             })
           this.fileInfo = data.file
@@ -194,18 +220,15 @@ export default {
     beforeAvatarUpload(file) {
       if (!this.file.filePath) this.file.filePath = 'client-sfvue'
       this.file.fileName = file.name
-
       return true
     },
-    refreshStatus() {},
-  },
+    refreshStatus() {
+      this.$refs.explorer.refresh()
+    }
+  }
 }
 </script>
 <style scoped>
-.row {
-  width: 400px;
-  margin: 10px;
-}
 .file-handle-btn {
   width: 100%;
   margin-bottom: 1em;

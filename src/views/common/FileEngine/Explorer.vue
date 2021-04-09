@@ -1,17 +1,20 @@
 <template>
-  <div v-loading="loading">
-    <div v-for="folder in folders.array" :key="folder">
-      <SvgIcon icon-class="file" />
-      <span style="cursor:pointer" @click="enterPath(folder)">{{ folder }}</span>
-    </div>
-    <div>
+  <el-row v-loading="loading">
+    <el-card v-infinite-scroll="loadNextPage">
+      <div v-for="(folder,index) in folders.array" :key="index">
+        <SvgIcon icon-class="file" />
+        <span style="cursor:pointer" @click="enterPath(folder)">{{ folder }}</span>
+      </div>
       <el-row v-for="file in folderFiles.array" :key="file.id" class="e-file-container">
         <el-col :span="1">
           <SvgIcon icon-class="doc" />
         </el-col>
         <el-col :span="9">
-          <el-tooltip :content="file.path">
-            <span>{{ file.name }}</span>
+          <el-tooltip :content="file.name">
+            <span
+              style="overflow:hidden;white-space:nowrap"
+              @click="$emit('select',file.name)"
+            >{{ file.name }}</span>
           </el-tooltip>
         </el-col>
         <el-col :span="6">
@@ -29,14 +32,17 @@
         <el-col :span="4">
           <span>{{ file.fromClient }}</span>
         </el-col>
-        <el-col :span="2">
-          <el-link @click="$emit('select',file.name)">详情</el-link>
-        </el-col>
       </el-row>
-    </div>
-    <el-button v-if="foldersHasNextPage||filesHasNextPage" @click="loadNextPage">加载更多</el-button>
-    <span v-else>没有更多了</span>
-  </div>
+      <el-button
+        v-if="foldersHasNextPage||filesHasNextPage"
+        :loading="loading"
+        style="width:100%"
+        type="text"
+        @click="loadNextPage"
+      >加载更多</el-button>
+      <div v-else style="height:1px;background-color:#dcdfe6;margin:0.5rem 0.2rem" />
+    </el-card>
+  </el-row>
 </template>
 
 <script>
@@ -48,13 +54,11 @@ export default {
   name: 'Explorer',
   components: { SvgIcon },
   props: {
-    path: {
-      type: String,
-      default: null
-    }
+    path: { type: String, default: null }
   },
   data: () => ({
     loading: false,
+    newFolder: null,
     folders: {
       array: [],
       pages: {
@@ -71,16 +75,15 @@ export default {
         totalCount: 0
       }
     },
-    nowPath: null,
-    lastUpdate: new Date()
+    nowPath: null
   }),
   computed: {
     foldersHasNextPage() {
-      var pages = this.folders.pages
+      const pages = this.folders.pages
       return pages.totalCount >= (pages.pageIndex + 1) * pages.pageSize
     },
     filesHasNextPage() {
-      var pages = this.folderFiles.pages
+      const pages = this.folderFiles.pages
       return pages.totalCount >= (pages.pageIndex + 1) * pages.pageSize
     }
   },
@@ -96,23 +99,16 @@ export default {
       immediate: true
     }
   },
-  mounted() {
-    this.enterPath('')
-  },
   methods: {
     formatTime,
     numberFormatter,
     refresh() {
-      var lastUpdate = new Date()
-      this.lastUpdate = lastUpdate
-      setTimeout(() => {
-        if (this.lastUpdate !== lastUpdate) return
-        this.folders.array = []
-        this.folders.pages.pageIndex = -1
-        this.folderFiles.array = []
-        this.folderFiles.pages.pageIndex = -1
-        this.loadNextPage()
-      }, 500)
+      console.log('refresh')
+      this.folders.array = []
+      this.folders.pages.pageIndex = -1
+      this.folderFiles.array = []
+      this.folderFiles.pages.pageIndex = -1
+      this.loadNextPage()
     },
     enterPath(path) {
       this.nowPath = `${this.nowPath ? `${this.nowPath}/` : ''}${path}`
@@ -120,16 +116,22 @@ export default {
       this.refresh()
     },
     loadNextPage() {
+      if (this.loading) return
       this.loading = true
       var pages = {}
       if (this.foldersHasNextPage) {
         pages = this.folders.pages
+        console.log(JSON.stringify(pages))
         pages.pageIndex++
         requestFolder(this.nowPath, pages)
           .then(data => {
             this.folders.array = this.folders.array.concat(data.folders)
             pages.totalCount = data.totalCount
-            if (!this.foldersHasNextPage) this.loadNextPage()
+            if (!this.foldersHasNextPage) {
+              this.$nextTick(() => {
+                this.loadNextPage()
+              })
+            }
           })
           .finally(() => {
             this.loading = false
@@ -146,7 +148,6 @@ export default {
             this.loading = false
           })
       } else {
-        this.$message.error('无更多的项目')
         this.loading = false
       }
     }
