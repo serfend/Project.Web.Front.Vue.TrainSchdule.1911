@@ -1,9 +1,8 @@
 <template>
-  <el-card v-loading="loading" style="margin-top:1rem">
-    <span slot="header">操作权限</span>
+  <div v-loading="loading">
     <el-tree :data="list" :expand-on-click-node="false">
       <span slot-scope="{ node,data }" class="custom-tree-node">
-        <span>{{ data.title }}</span>
+        <span>{{ data.description }}</span>
         <span v-if="node.isLeaf">
           <span v-if="data.permissions&&data.permissions.length>0">
             <i class="el-icon-check" style="color:#3c3" />
@@ -27,39 +26,15 @@
         @require-update="requireUpdate(true)"
       />
     </el-dialog>
-  </el-card>
+  </div>
 </template>
 
 <script>
-const createPermission = () => [
-  {
-    title: '执行新增操作',
-    name: 'create',
-    permissions: []
-  },
-  {
-    title: '执行编辑操作',
-    name: 'update',
-    permissions: []
-  },
-  {
-    title: '执行移除操作',
-    name: 'remove',
-    permissions: []
-  },
-  {
-    title: '执行查询操作',
-    name: 'query',
-    permissions: []
-  }
-]
-import PermissionModify from './PermissionModify'
-
 import { allPermissions, getPermission, postPermission } from '@/api/permission'
 export default {
   name: 'PermissionManager',
   components: {
-    PermissionModify
+    PermissionModify: () => import('./PermissionModify')
   },
   props: {
     userId: {
@@ -76,11 +51,8 @@ export default {
     loading: false,
     lastUpdate: '',
     list: [],
-    raw_data: null,
     itemDict: null, // key=>permission item
-    permissionDict: null, // key=>permission entity
     currentPermission: {
-      data: null,
       name: null,
       title: null
     },
@@ -102,24 +74,7 @@ export default {
   },
   methods: {
     check_update() {
-      const sumchild = (prev, cur) => {
-        return prev + (cur.permissions && cur.permissions.length) || 0
-      }
-      const new_permissions = Object.keys(this.permissionDict).filter(
-        k => this.permissionDict[k].children.reduce(sumchild, 0) > 0
-      )
-      const result = {}
-      for (let i = 0; i < new_permissions.length; i++) {
-        const item = this.permissionDict[new_permissions[i]]
-        const cur_item = {}
-        result[new_permissions[i]] = cur_item
-        for (let c = 0; c < item.children.length; c++) {
-          const child = item.children[c]
-          cur_item[child.name] = child.permissions
-        }
-      }
-      const newPermissionSubmit = JSON.stringify(result)
-      return newPermissionSubmit
+      return false
     },
     requireUpdate(directUpdate = false) {
       const id = this.userId
@@ -164,37 +119,12 @@ export default {
         setTimeout(() => this.load(), 200)
         return
       }
-      this.load_config()
       const id = this.userId
       if (!id) return
       this.loading = true
       getPermission({ id })
         .then(data => {
-          const list = Object.keys(data)
-          for (let i = 0; i < list.length; i++) {
-            const item = data[list[i]]
-            const raw_permit = this.permissionDict[list[i]]
-            if (raw_permit) {
-              const c = raw_permit.children
-              c[0].permissions = item.create
-              c[1].permissions = item.update
-              c[2].permissions = item.remove
-              c[3].permissions = item.query
-              const total_permitcount = c.reduce(
-                (prev, cur) =>
-                  prev + (cur.permissions && cur.permissions.length) || 0,
-                0
-              )
-              let node = raw_permit
-              do {
-                node.total += total_permitcount
-                node = node.parent
-              } while (node.parent)
-            }
-          }
-          this.$nextTick(() => {
-            this.lastUpdate = this.check_update()
-          })
+          // TODO
         })
         .finally(() => {
           this.loading = false
@@ -205,47 +135,41 @@ export default {
       this.loading = true
       allPermissions()
         .then(data => {
-          this.raw_data = data
-          this.load_config()
+          this.load_config(data.model)
         })
         .finally(() => {
           this.loading = false
         })
     },
-    load_config() {
-      const list = this.raw_data.model
-      const newList = []
-      const newListDict = {}
-      const itemDict = {}
-      const permissionDict = {}
-      for (let i = 0; i < list.length; i++) {
-        const infos = list[i].item1.split(':')
-        const key = infos[1]
-        // 判断层级是否存在，不存在则新建
-        if (!newListDict[key]) {
-          newListDict[key] = {
-            name: key,
-            title: infos[1],
-            children: []
-          }
-          itemDict[infos[1]] = newListDict[key]
-          newList.push(newListDict[key])
-        }
-        const permit_name = list[i].item2.name
-        // 添加新的节点
-        const tmp = {
-          name: permit_name,
-          title: list[i].item2.description,
-          children: createPermission(),
-          parent: newListDict[key],
-          total: 0
-        }
-        permissionDict[permit_name] = tmp
-        newListDict[key].children.push(tmp)
-      }
-      this.list = newList
-      this.itemDict = itemDict
-      this.permissionDict = permissionDict
+    load_config(list) {
+      console.log('update permissions config', list)
+      this.itemDict = {}
+      list.forEach(n => {
+        this.extract_node(n)
+      })
+      this.load_config_list(this.itemDict.permission, this.list)
+    },
+    load_config_list(node, list) {
+      const items = Object.keys(node)
+      items.forEach(n => {
+        if (n === 'item') return
+        const current_node = node[n].item || {}
+        list.push(current_node)
+        current_node.children = []
+        this.load_config_list(node[n], current_node.children)
+      })
+    },
+    extract_node(node) {
+      const { key, description } = node
+      const keys = key.split('.')
+      const descriptions = description.split('.')
+      let dict = this.itemDict
+      keys.forEach(n => {
+        if (!dict[n]) dict[n] = {}
+        dict = dict[n]
+      })
+      dict.item = node
+      return { keys, descriptions }
     }
   }
 }

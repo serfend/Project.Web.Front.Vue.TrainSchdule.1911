@@ -5,30 +5,41 @@
     </el-form>
     <el-card style="margin-top:1rem">
       <span slot="header">单位管理</span>
+      <CompanyManager :user-id="userId" :auth="auth" />
     </el-card>
-    <PermissionManager :user-id="userId" :auth="auth" />
+    <el-card style="margin-top:1rem">
+      <span slot="header">角色管理</span>
+      <RoleManager :user-id="userId" :auth="auth" />
+    </el-card>
+    <el-card style="margin-top:1rem">
+      <span slot="header">权限管理</span>
+      <PermissionManager :user-id="userId" :auth="auth" />
+    </el-card>
   </div>
 </template>
 
 <script>
-import AuthCode from '@/components/AuthCode'
-import PermissionManager from './PermissionManager'
 export default {
   name: 'UserPermission',
-  components: { AuthCode, PermissionManager },
+  components: {
+    AuthCode: () => import('@/components/AuthCode'),
+    PermissionManager: () => import('./PermissionManager'),
+    RoleManager: () => import('./RoleManager'),
+    CompanyManager: () => import('./CompanyManager')
+  },
   props: {
     userId: {
       type: String,
-      default: null,
-    },
+      default: null
+    }
   },
   data: () => ({
     loading: false,
     auth: {
       authByUserId: '',
-      code: '',
-    },
-  }),
+      code: ''
+    }
+  })
 }
 </script>
 

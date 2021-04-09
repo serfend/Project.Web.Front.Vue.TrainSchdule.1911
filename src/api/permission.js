@@ -11,7 +11,7 @@ import request from '@/utils/request'
   * }} params
   */
 export function getPermission(params) {
-  return request.get('account/Permission', {
+  return request.get('permission/Permission', {
     params
   })
 }
@@ -23,7 +23,7 @@ export function getPermission(params) {
  * @returns
  */
 export function allPermissions() {
-  return request.get('account/permissionDictionary')
+  return request.get('permission/PermissionDictionary')
 }
 
 /**
