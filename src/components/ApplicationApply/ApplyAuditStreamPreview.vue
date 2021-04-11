@@ -1,7 +1,16 @@
 <template>
-  <div>
+  <ApplyAuditStreamPreviewInner
+    v-if="showDetail"
+    :userid="userid"
+    :audit-status="auditStatus"
+    :now-step="nowStep"
+    :entity-type="entityType"
+    :entity-type-desc="entityTypeDesc"
+    :solution-name.sync="solutionName"
+  />
+  <el-popover v-else trigger="hover" @show="userHasHover=true">
     <ApplyAuditStreamPreviewInner
-      v-if="showDetail"
+      v-if="userHasHover"
       :userid="userid"
       :audit-status="auditStatus"
       :now-step="nowStep"
@@ -9,20 +18,9 @@
       :entity-type-desc="entityTypeDesc"
       :solution-name.sync="solutionName"
     />
-    <el-popover v-else trigger="hover" @show="userHasHover=true">
-      <ApplyAuditStreamPreviewInner
-        v-if="userHasHover"
-        :userid="userid"
-        :audit-status="auditStatus"
-        :now-step="nowStep"
-        :entity-type="entityType"
-        :entity-type-desc="entityTypeDesc"
-        :solution-name.sync="solutionName"
-      />
-      <span v-if="!$slots.content" slot="reference" class="preview-btn">{{ title }}</span>
-      <slot v-else slot="reference" name="content" />
-    </el-popover>
-  </div>
+    <span v-if="!$slots.content" slot="reference" class="preview-btn">{{ title }}</span>
+    <slot v-else slot="reference" style="display:flex" name="content" />
+  </el-popover>
 </template>
 
 <script>

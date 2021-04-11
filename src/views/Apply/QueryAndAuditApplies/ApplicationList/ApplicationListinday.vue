@@ -9,10 +9,11 @@
       stripe
       header-align="center"
       :span-method="arraySpanMethod"
+      :cell-style="{padding:0}"
       @row-dblclick="showDetail"
     >
       <el-table-column type="selection" />
-      <el-table-column label="基本">
+      <el-table-column label="基本" width="150rem">
         <template slot-scope="{ row }">
           <component :is="!rowCanShow(row) ? 'ElTooltip' : 'div'" effect="light">
             <div slot="content">
@@ -28,12 +29,6 @@
               <el-tooltip v-if="row.userBase.realName != row.base.realName" content="用户原姓名">
                 <span>({{ row.base.realName }})</span>
               </el-tooltip>
-              <div>
-                <el-link
-                  :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
-                  target="_blank"
-                >{{ getCDdes(row.userBase, row.base) }}</el-link>
-              </div>
             </div>
             <div
               v-if="!rowCanShow(row)"
@@ -47,6 +42,14 @@
           </component>
         </template>
       </el-table-column>
+      <el-table-column header-align="center" label="部职别">
+        <template slot-scope="{ row }">
+          <el-link
+            :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
+            target="_blank"
+          >{{ getCDdes(row.userBase, row.base) }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column header-align="center" align="center" label="创建时间">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-tooltip effect="light" :content="`创建于:${row.create}`">
@@ -54,14 +57,15 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column header-align="center" align="center" label="请假时间">
+      <el-table-column header-align="center" align="center" label="请假时间" width="270rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <span>
             <el-tooltip effect="light" :content="`离队时间:${parseTime(row.stampLeave)}`">
-              <div>{{ formatTime(row.stampLeave,null,true) }}</div>
+              <span style="font-size:0.6rem">{{ formatTime(row.stampLeave,null,true) }}</span>
             </el-tooltip>
+            <span>-</span>
             <el-tooltip effect="light" :content="`归队时间:${parseTime(row.stampReturn)}`">
-              <div>{{ formatTime(row.stampReturn,null,true) }}</div>
+              <span style="font-size:0.6rem">{{ formatTime(row.stampReturn,null,true) }}</span>
             </el-tooltip>
           </span>
         </template>
@@ -98,10 +102,6 @@
                 :show="true"
               />
             </div>
-            <el-tooltip content="此申请可能为外出结束后创建">
-              <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
-            </el-tooltip>
-            <el-tag v-if="row.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
             <ApplyAuditStreamPreview
               v-if="row.statusDesc"
               :audit-status="row.steps"
@@ -112,15 +112,27 @@
                 slot="content"
                 :color="row.statusColor"
                 class="white--text"
+                size="mini"
                 style="cursor:pointer;margin-left:0.5rem"
               >{{ row.statusDesc }}</el-tag>
             </ApplyAuditStreamPreview>
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作">
+      <el-table-column align="center" label="操作" width="260rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <slot :row="row" name="action" />
+          <span>
+            <slot :row="row" name="action" />
+            <el-tooltip content="此申请可能为外出结束后创建">
+              <el-tag
+                v-if="row.checkIfIsReplentApply"
+                size="mini"
+                color="#ff0000"
+                class="white--text"
+              >补充申请</el-tag>
+            </el-tooltip>
+            <el-tag v-if="row.type.isPlan" color="#cccccc" size="mini" class="white--text">计划</el-tag>
+          </span>
         </template>
       </el-table-column>
     </el-table>

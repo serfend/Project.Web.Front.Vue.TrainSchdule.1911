@@ -1,13 +1,12 @@
 <template>
   <span>
-    <el-progress
-      v-if="!executeItem"
-      :percentage="percent===0?30:percent"
-      :status="percent>=100?'exception':null"
-      :format="formatPercent"
-      :stroke-width="24"
-      text-inside
-    />
+    <el-tooltip v-if="!executeItem" :content="description">
+      <el-progress
+        :percentage="percent===0?30:percent"
+        :status="percent>=100?'exception':'success'"
+        :text-inside="textInside"
+      />
+    </el-tooltip>
     <el-tag v-else :type="onTime?'success':'danger'">
       <el-tooltip :content="`实际归队时间${executeItem.returnStamp} - ${onTime?'正常销假':'已超假'}`">
         <span>{{ formatTime(executeItem.returnStamp) }}</span>
@@ -27,7 +26,8 @@ export default {
     stampLeave: { type: [Date, String], default: null },
     stampReturn: { type: [Date, String], default: null },
     executeId: { type: String, default: null },
-    show: { type: Boolean, default: true }
+    show: { type: Boolean, default: true },
+    textInside: { type: Boolean, default: false }
   },
   data: () => ({
     entityType: 'inday',
@@ -44,6 +44,9 @@ export default {
       const final_return = new Date(item.returnStamp)
       const expect_return = new Date(this.stampReturn)
       return expect_return >= final_return
+    },
+    description() {
+      return this.formatPercent(this.percent)
     }
   },
   watch: {
@@ -92,7 +95,7 @@ export default {
       if (total === 0) return 10
       if (spent < 0) return 0
       if (spent > total) return 100
-      return (spent / total) * 100
+      return Math.round((spent / total) * 1e4) / 1e2
     },
     formatPercent(val) {
       if (this.spent <= 0) {

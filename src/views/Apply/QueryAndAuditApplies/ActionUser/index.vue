@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <span>
     <el-dialog :visible.sync="authFormShow" title="敏感操作授权">
       <el-form ref="authForm" :model="authForm">
         <AuthCode :form.sync="authForm.auth" />
@@ -15,36 +15,36 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-tooltip content="点击下载申请单" placement="left">
-      <el-dropdown
-        v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
-        v-loading="loading"
-        split-button
-        trigger="click"
-        @click="exportApply(row)"
-        @command="c=>handle_action(c,row)"
-      >
-        <i class="el-icon-download" />
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item
-              v-for="item in statusDic[row.status].acessable"
-              :key="item.desc"
-              :command="item"
-            >
-              <el-link
-                v-if="actionDic[item]"
-                :type="actionDic[item].type"
-                style="width:100%"
-              >{{ actionDic[item].alias }}</el-link>
-              <div v-else>未知操作选项:{{ item }}</div>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <el-button v-else v-loading="loading" icon="el-icon-download" @click="exportApply(row)">下载</el-button>
-    </el-tooltip>
-  </div>
+    <el-dropdown
+      v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
+      v-loading="loading"
+      trigger="click"
+      size="mini"
+      @click="exportApply(row)"
+      @command="c=>handle_action(c,row)"
+    >
+      <el-button type="text">操作</el-button>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item
+            v-for="item in statusDic[row.status].acessable"
+            :key="item.desc"
+            :command="item"
+          >
+            <el-link
+              v-if="actionDic[item]"
+              :type="actionDic[item].type"
+              style="width:100%"
+            >{{ actionDic[item].alias }}</el-link>
+            <span v-else>未知操作选项:{{ item }}</span>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <el-button v-loading="loading" type="text" @click="exportApply(row)">下载</el-button>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+  </span>
 </template>
 
 <script>

@@ -9,6 +9,7 @@
       stripe
       header-align="center"
       :span-method="arraySpanMethod"
+      :cell-style="{padding:0}"
       @row-dblclick="showDetail"
     >
       <el-table-column type="selection" />
@@ -28,12 +29,6 @@
               <el-tooltip v-if="row.userBase.realName != row.base.realName" content="用户原姓名">
                 <span>({{ row.base.realName }})</span>
               </el-tooltip>
-              <div>
-                <el-link
-                  :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
-                  target="_blank"
-                >{{ getCDdes(row.userBase, row.base) }}</el-link>
-              </div>
             </div>
             <div
               v-if="!rowCanShow(row)"
@@ -47,18 +42,32 @@
           </component>
         </template>
       </el-table-column>
-      <el-table-column header-align="center" align="center" label="休假时间">
+      <el-table-column header-align="center" label="部职别">
+        <template slot-scope="{ row }">
+          <el-link
+            :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
+            target="_blank"
+          >{{ getCDdes(row.userBase, row.base) }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column header-align="center" align="center" label="创建时间" width="150rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <el-row>
-            <el-tooltip effect="light" :content="`创建于:${row.create}`">
-              <span>{{ formatTime(row.create) }}</span>
+          <el-tooltip effect="light" :content="`创建于:${row.create}`">
+            <span style="font-size:0.6rem">{{ formatTime(row.create) }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column header-align="center" align="center" label="休假时间" width="220rem">
+        <template v-if="rowCanShow(row)" slot-scope="{ row }">
+          <span>
+            <el-tooltip effect="light" :content="`离队时间:${parseTime(row.stampLeave)}`">
+              <span style="font-size:0.6rem">{{ relativeDate(row.stampLeave,null,true) }}</span>
             </el-tooltip>
-          </el-row>
-          <el-row>
-            <el-tooltip effect="light" content="休假起始和结束的时间">
-              <span>{{ relativeDate(row.stampLeave) }}-{{ relativeDate(row.stampReturn) }}</span>
+            <span>-</span>
+            <el-tooltip effect="light" :content="`归队时间:${parseTime(row.stampReturn)}`">
+              <span style="font-size:0.6rem">{{ relativeDate(row.stampReturn,null,true) }}</span>
             </el-tooltip>
-          </el-row>
+          </span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假地点">
@@ -136,10 +145,6 @@
 
       <el-table-column align="center" label="状态">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <el-tooltip content="此申请可能为休假结束后创建">
-            <el-tag v-if="row.checkIfIsReplentApply" color="#ff0000" class="white--text">补充申请</el-tag>
-          </el-tooltip>
-          <el-tag v-if="row.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
           <ApplyAuditStreamPreview
             v-if="row.statusDesc"
             :audit-status="row.steps"
@@ -150,14 +155,26 @@
               slot="content"
               :color="row.statusColor"
               class="white--text"
-              style="cursor:pointer"
+              size="mini"
+              style="cursor:pointer;margin-left:0.5rem"
             >{{ row.statusDesc }}</el-tag>
           </ApplyAuditStreamPreview>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <slot :row="row" name="action" />
+          <span>
+            <el-tooltip content="此申请可能为休假结束后创建">
+              <el-tag
+                v-if="row.checkIfIsReplentApply"
+                size="mini"
+                color="#ff0000"
+                class="white--text"
+              >补充申请</el-tag>
+            </el-tooltip>
+            <el-tag v-if="row.type.isPlan" size="mini" color="#cccccc" class="white--text">计划</el-tag>
+            <slot :row="row" name="action" />
+          </span>
         </template>
       </el-table-column>
     </el-table>
@@ -186,7 +203,7 @@
 </template>
 
 <script>
-import { formatTime, relativeDate, datedifference } from '@/utils'
+import { formatTime, relativeDate, parseTime, datedifference } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
 export default {
   name: 'ApplicationList',
@@ -264,6 +281,7 @@ export default {
   },
   methods: {
     formatTime,
+    parseTime,
     relativeDate,
     datedifference,
     rowCanShow(row) {
@@ -272,7 +290,7 @@ export default {
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (!this.rowCanShow(row)) {
         if (columnIndex === 1) {
-          return [1, 8]
+          return [1, 9]
         } else {
           return [0, 0]
         }
