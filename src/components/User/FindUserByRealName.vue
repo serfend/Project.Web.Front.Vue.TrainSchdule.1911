@@ -6,7 +6,7 @@
       placeholder="按姓名查找"
       @input="handleUserSelectByRealnameChange"
     />
-    <div v-loading="loading">
+    <div v-infinite-scroll="loadNextPage" v-loading="loading">
       <el-collapse v-model="nowCollapseSelectUserId" accordion @change="selectUserChange">
         <el-collapse-item v-for="(u,index) in usersByRealName" :key="u.id" :name="u.id">
           <template slot="title">
@@ -21,7 +21,13 @@
           />
         </el-collapse-item>
       </el-collapse>
-      <el-button v-show="hasNextPage" style="width:100%" @click="onNextPage">加载更多...</el-button>
+      <el-button
+        v-show="hasNextPage"
+        v-loading="loading"
+        type="text"
+        style="width:100%"
+        @click="loadNextPage"
+      >加载更多...</el-button>
     </div>
   </div>
 </template>
@@ -29,7 +35,6 @@
 <script>
 import User from '@/components/User'
 import { getUserIdByRealName } from '@/api/user/userinfo'
-import { debounce } from '@/utils'
 export default {
   name: 'FindUserByRealName',
   components: { User },
@@ -52,22 +57,14 @@ export default {
     nowCollapseSelectUserId: '',
     hasNextPage: false
   }),
-  computed: {
-    onNextPage() {
-      return debounce(() => {
-        this.loadNextPage()
-      }, 100)
-    }
-  },
   watch: {
     usersByRealName: {
       handler(val) {
-        if (val) {
-          this.userDict = {}
-          const vLen = val.length
-          for (let i = 0; i < vLen; i++) {
-            this.userDict[val[i].id] = val[i]
-          }
+        if (!val) return
+        this.userDict = {}
+        const vLen = val.length
+        for (let i = 0; i < vLen; i++) {
+          this.userDict[val[i].id] = val[i]
         }
       }
     }
@@ -79,12 +76,11 @@ export default {
       })
     },
     selectUserChange(id) {
-      if (id) {
-        this.loadCollapseUserAvatarRealName(id)
-      }
+      if (!id) return
+      this.loadCollapseUserAvatarRealName(id)
     },
     loadCollapseUserAvatarRealName(id) {
-      var u = this.userDict[id]
+      const u = this.userDict[id]
       this.$emit('change', u)
       if (u.avatar) this.$emit('update:avatar', u.avatar)
       else u.canLoadAvatar = true
@@ -93,12 +89,21 @@ export default {
     handleUserSelectByRealnameChange() {
       this.usersByRealName = []
       if (!this.nowSelectRealName) return
+      this.hasNextPage = true
       this.nowIndex = 0
-      this.onNextPage()
+      this.loadNextPage()
     },
     loadNextPage() {
+      const realName = this.nowSelectRealName
+      if (this.loading || !realName || !this.hasNextPage) return
       this.loading = true
-      getUserIdByRealName(this.nowSelectRealName, this.nowIndex++, 10)
+      const item = {
+        realName,
+        pageIndex: this.nowIndex++,
+        pageSize: 10,
+        fuzz: true
+      }
+      getUserIdByRealName(item)
         .then(data => {
           this.usersByRealName = this.usersByRealName.concat(
             data.list.map(li => {

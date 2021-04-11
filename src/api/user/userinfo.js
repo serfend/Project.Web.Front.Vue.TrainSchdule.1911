@@ -156,14 +156,16 @@ export function getUserIdByCid(cid, ignoreErr) {
  * @param {int} pageIndex
  * @param {int} pageSize
  * @param {Boolean} ignoreErr
+ * @param {Boolean} fuzz
  * @returns
  */
-export function getUserIdByRealName(realName, pageIndex, pageSize, ignoreErr) {
+export function getUserIdByRealName({ realName, pageIndex, pageSize, ignoreErr, fuzz }) {
   return request.get('/account/GetUserIdByRealName', {
     params: {
       realName,
       pageIndex,
-      pageSize
+      pageSize,
+      fuzz
     },
     ignoreError: ignoreErr
   })
