@@ -80,7 +80,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="填报类型">
+          <el-form-item v-if="hasRequestType" label="填报类型">
             <el-radio-group v-model="queryForm.mainStatus">
               <el-radio :label="-1">不限</el-radio>
               <el-radio :label="0">正式填报</el-radio>
@@ -304,6 +304,9 @@ export default {
     },
     currentUserCmp() {
       return this.$store.state.user.companyid
+    },
+    hasRequestType() {
+      return this.entityType === 'vacation'
     }
   },
   watch: {
@@ -387,6 +390,7 @@ export default {
       //   return
       // }
       const data = this.queryForm
+      if (!data.isMarried) data.isApart = false
       if (!this.onFilterAccept && data.executeStatus != null) {
         data.executeStatus = null
         return
