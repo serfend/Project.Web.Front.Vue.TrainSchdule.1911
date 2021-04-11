@@ -20,7 +20,7 @@
             @change="multiAuditUpdateAll"
           />
         </el-form-item>
-        <AuthCode :form.sync="auditForm.auth" />
+        <AuthCode :form.sync="auditForm.auth" select-name="请假多点审批" />
       </el-form>
       <span slot="footer">
         <el-button-group style="width:100%">

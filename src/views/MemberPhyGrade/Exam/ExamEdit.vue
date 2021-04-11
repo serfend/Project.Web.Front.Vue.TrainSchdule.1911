@@ -21,7 +21,7 @@
           clearable
         />
       </el-form-item>
-      <AuthCode v-model="auth" />
+      <AuthCode v-model="auth" select-name="考核编辑" />
     </el-form>
     <el-alert v-else type="error">数据没有准备好</el-alert>
     <div slot="footer">
@@ -41,24 +41,24 @@ export default {
   components: { UserSelector, CompanySelector, AuthCode },
   model: {
     prop: 'data',
-    event: 'change',
+    event: 'change'
   },
   props: {
     data: {
       type: Object,
-      default: null,
-    },
+      default: null
+    }
   },
   data: () => ({
     show: false,
     loading: false,
-    auth: null,
+    auth: null
   }),
   computed: {
     valid() {
       const f = this.data
       return f && f.name && f.holdBy && f.handleBy && f.executeTime
-    },
+    }
   },
   methods: {
     remove() {
@@ -81,8 +81,8 @@ export default {
             this.loading = false
           })
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

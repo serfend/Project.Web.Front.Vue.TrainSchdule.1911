@@ -110,7 +110,7 @@
             </div>
           </el-tree>
         </el-card>
-        <AuthCode :form.sync="newSolution.auth" />
+        <AuthCode :form.sync="newSolution.auth" select-name="审批流编辑" />
         <el-button-group style="width:100%">
           <el-button
             v-loading="newSolution.loading"

@@ -79,7 +79,7 @@
         :placeholder="`填写删除${registerForm.Base.realName}的原因`"
       />
       <el-form style="margin-top:1rem">
-        <AuthCode v-model="remove_account.auth" />
+        <AuthCode v-model="remove_account.auth" select-name="注册账户" />
       </el-form>
       <template slot="footer">
         <el-button type="text" style="color:#d77" @click="remove_account_confirm">确认</el-button>

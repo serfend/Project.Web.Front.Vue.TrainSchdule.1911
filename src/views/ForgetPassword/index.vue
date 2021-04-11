@@ -59,7 +59,7 @@
                     <el-form-item label="恢复原因">
                       <el-input v-model="account.reason" type="textarea" rows="5" />
                     </el-form-item>
-                    <AuthCode v-model="account.auth" />
+                    <AuthCode v-model="account.auth" select-name="忘记密码" />
                     <el-button
                       v-loading="loading"
                       :disabled="!is_removed"

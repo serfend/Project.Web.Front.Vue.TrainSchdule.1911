@@ -12,7 +12,7 @@
     <el-form-item label="确认密码" prop="confirmNewPassword">
       <el-input v-model="editPwd.confirmNewPassword" type="password" style="width:215px" />
     </el-form-item>
-    <AuthCode :form.sync="editPwd.auth" />
+    <AuthCode :form.sync="editPwd.auth" select-name="重置密码" />
     <el-button
       type="success"
       style="width:100%"
@@ -31,8 +31,8 @@ export default {
   props: {
     oldPswInput: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   data() {
     var validatenewPassword = (rule, value, callback) => {
@@ -67,27 +67,27 @@ export default {
         confirmNewPassword: '',
         auth: {
           authByUserID: '',
-          code: '',
-        },
+          code: ''
+        }
       },
       rulePwd: {
         username: [{ required: true, message: '请输入账号' }],
         newPassword: [
-          { required: true, validator: validatenewPassword, trigger: 'blur' },
+          { required: true, validator: validatenewPassword, trigger: 'blur' }
         ],
         confirmNewPassword: [
           {
             required: true,
             validator: validateconfirmNewPassword,
-            trigger: 'blur',
-          },
-        ],
-      },
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
   methods: {
     savePwd() {
-      this.$refs['editPwd'].validate((valid) => {
+      this.$refs['editPwd'].validate(valid => {
         if (valid) {
           const submitId = (this.editPwd.username === ''
             ? this.$store.state.user.userid
@@ -98,7 +98,7 @@ export default {
             auth: this.editPwd.auth,
             oldPassword: this.editPwd.oldPassword,
             newPassword: this.editPwd.newPassword,
-            confirmNewPassword: this.editPwd.confirmNewPassword,
+            confirmNewPassword: this.editPwd.confirmNewPassword
           }
           accountPassword(submitPwd).then(() => {
             this.$message.success('修改密码成功')
@@ -106,8 +106,8 @@ export default {
           })
         }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

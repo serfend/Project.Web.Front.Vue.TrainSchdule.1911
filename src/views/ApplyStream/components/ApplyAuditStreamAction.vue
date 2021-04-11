@@ -245,7 +245,7 @@
         <el-form-item label="审批人数量">
           <el-input-number v-model="newNode.auditMembersCount" placeholder="需要多少人审批" />
         </el-form-item>
-        <AuthCode :form.sync="newNode.auth" />
+        <AuthCode :form.sync="newNode.auth" select-name="审批流节点编辑" />
         <el-button-group style="width:100%">
           <el-button
             v-loading="newNode.loading"

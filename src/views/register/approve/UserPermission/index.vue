@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading">
     <el-form style="margin-bottom:1rem">
-      <AuthCode v-model="auth" />
+      <AuthCode v-model="auth" select-name="用户权限编辑" />
     </el-form>
     <el-card style="margin-top:1rem">
       <span slot="header">单位管理</span>

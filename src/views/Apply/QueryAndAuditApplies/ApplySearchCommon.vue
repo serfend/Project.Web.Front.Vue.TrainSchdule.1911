@@ -178,7 +178,7 @@
           </el-form-item>
         </el-tab-pane>
         <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="授权码">
-          <AuthCode v-show="adminQuery" :form.sync="queryForm.auth" />
+          <AuthCode v-show="adminQuery" :form.sync="queryForm.auth" select-name="申请搜索" />
         </el-tab-pane>
       </el-tabs>
       <el-row>

@@ -286,7 +286,7 @@
             @close="handleAuditMembersSelectClosed(tag)"
           >{{ tag.realName }}</el-tag>
         </el-form-item>
-        <AuthCode :form.sync="newRule.auth" />
+        <AuthCode :form.sync="newRule.auth" select-name="审批流方案编辑" />
         <el-button-group style="width:100%">
           <el-button
             v-loading="newRule.loading"

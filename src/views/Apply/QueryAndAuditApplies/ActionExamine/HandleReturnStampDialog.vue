@@ -38,7 +38,7 @@
         <el-form-item label="备注">
           <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
         </el-form-item>
-        <AuthCode :form.sync="auditForm.auth" />
+        <AuthCode :form.sync="auditForm.auth" :select-name="`${displayName} - 归队时间`" />
       </el-form>
     </el-card>
     <span slot="footer">
@@ -52,12 +52,14 @@
 </template>
 
 <script>
-import AuthCode from '@/components/AuthCode'
-import UserFormItem from '@/components/User/UserFormItem'
-import UserSelector from '@/components/User/UserSelector'
+import { parseTime } from '@/utils'
 export default {
   name: 'HandleReturnStampDialog',
-  components: { AuthCode, UserFormItem, UserSelector },
+  components: {
+    AuthCode: () => import('@/components/AuthCode'),
+    UserFormItem: () => import('@/components/User/UserFormItem'),
+    UserSelector: () => import('@/components/User/UserSelector')
+  },
   props: {
     show: { type: Boolean, default: false },
     onlyView: { type: Boolean, default: false },
@@ -116,6 +118,11 @@ export default {
       },
       immediate: true
     },
+    'auditForm.stampReturn': {
+      handler(val) {
+        this.$emit('requireUpdateReason', val)
+      }
+    },
     show: {
       handler(val) {
         if (val) {
@@ -134,7 +141,7 @@ export default {
       const model = {
         apply: this.auditForm.applyId,
         reason: this.auditForm.remark,
-        returnStamp: this.auditForm.stampReturn,
+        returnStamp: parseTime(this.auditForm.stampReturn),
         handleBy: this.auditForm.handleBy
       }
       const fn = this.dataSetter

@@ -6,7 +6,7 @@
           <UserSelector :code.sync="userid" :default-info="currentUser.realName" />
         </el-form-item>
         <el-form-item label="授权">
-          <AuthCode :form.sync="auth" />
+          <AuthCode :form.sync="auth" select-name="家庭情况编辑" />
         </el-form-item>
       </el-form>
     </el-card>

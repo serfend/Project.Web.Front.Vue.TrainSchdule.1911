@@ -15,7 +15,7 @@
         <el-form-item label="备注内容">
           <el-input v-model="auditForm.remark" placeholder="可选项" type="textarea" />
         </el-form-item>
-        <AuthCode :form.sync="auditForm.auth" />
+        <AuthCode :form.sync="auditForm.auth" select-name="请假单点审批" />
       </el-form>
       <span slot="footer">
         <el-button @click="auditShow = false">取 消</el-button>

@@ -3,9 +3,9 @@
     <el-collapse-item title="授权人">
       <template slot="title">
         <AuthCodeAbout />
-        <div v-if="$store.state.user.name">
+        <div v-if="$store.state.user.name" style="margin-left:1rem">
           <el-tooltip>
-            <template slot="content">默认为当前登录</template>
+            <template slot="content">当前默认授权人</template>
             <el-tag type="success">{{ $store.state.user.name }}</el-tag>
           </el-tooltip>
         </div>
@@ -13,7 +13,11 @@
       </template>
       <el-form>
         <el-form-item label="授权人">
-          <UserSelector :code.sync="innerForm.authByUserId" :default-info="defaultUser" />
+          <UserSelector
+            :code.sync="innerForm.authByUserId"
+            :default-info="defaultUser"
+            :select-name="selectName"
+          />
         </el-form-item>
         <el-form-item label="授权码">
           <CodeInput
@@ -28,42 +32,31 @@
 </template>
 
 <script>
-import AuthCodeAbout from './AuthCodeAbout'
-import CodeInput from './CodeInput'
-import UserSelector from '@/components/User/UserSelector'
 import { checkAuthCode } from '@/api/account'
 export default {
   name: 'AuthCode',
   components: {
-    CodeInput,
-    AuthCodeAbout,
-    UserSelector
+    CodeInput: () => import('./CodeInput'),
+    AuthCodeAbout: () => import('./AuthCodeAbout'),
+    UserSelector: () => import('@/components/User/UserSelector')
   },
   model: {
     prop: 'data',
     event: 'change'
   },
   props: {
-    // auth model
-    data: {
-      type: Object,
-      default: null
+    data: { type: Object, default: null },
+    authCheckMethod: { type: Function, default: checkAuthCode },
+    selectName: { type: String, default: null }
+  },
+  data: () => ({
+    collaspseIsOpen: false,
+    innerForm: {
+      authByUserId: null,
+      code: null
     },
-    authCheckMethod: {
-      type: Function,
-      default: checkAuthCode
-    }
-  },
-  data() {
-    return {
-      collaspseIsOpen: false,
-      innerForm: {
-        authByUserId: null,
-        code: null
-      },
-      defaultUser: null
-    }
-  },
+    defaultUser: null
+  }),
   computed: {
     currentUser() {
       return this.$store.state.user.userid

@@ -2,7 +2,7 @@
   <span>
     <el-dialog :visible.sync="authFormShow" title="敏感操作授权">
       <el-form ref="authForm" :model="authForm">
-        <AuthCode :form.sync="authForm.auth" />
+        <AuthCode :form.sync="authForm.auth" select-name="用户操作" />
         <el-form-item>
           <el-button-group style="width:100%">
             <el-button type="info" style="width:50%" @click=" authFormShow = false ">取消</el-button>
@@ -48,7 +48,6 @@
 </template>
 
 <script>
-import AuthCode from '@/components/AuthCode'
 import { MessageBox } from 'element-ui'
 import { exportApplyDetail } from '@/api/common/static'
 import { doAction } from '@/api/audit/handle'
@@ -56,7 +55,7 @@ import { deleteApply } from '@/api/apply/handle'
 export default {
   name: 'ActionUser',
   components: {
-    AuthCode
+    AuthCode: () => import('@/components/AuthCode')
   },
   props: {
     row: {

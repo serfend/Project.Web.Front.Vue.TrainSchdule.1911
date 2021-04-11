@@ -23,7 +23,12 @@
         </el-tooltip>
       </div>
       <el-divider />
-      <FindUserByRealName v-model="nowUserCode" :avatar.sync="avatar" @change="selectUserChanged" />
+      <FindUserByRealName
+        v-model="nowUserCode"
+        :avatar.sync="avatar"
+        :select-name="selectName"
+        @change="selectUserChanged"
+      />
     </el-dialog>
   </div>
 </template>
@@ -39,22 +44,10 @@ export default {
     event: 'change'
   },
   props: {
-    code: {
-      type: String,
-      default: null
-    },
-    defaultInfo: {
-      type: String,
-      default: '搜索成员'
-    },
-    placeholder: {
-      type: String,
-      default: null
-    },
-    selectName: {
-      type: String,
-      default: null
-    }
+    code: { type: String, default: null },
+    defaultInfo: { type: String, default: '搜索成员' },
+    placeholder: { type: String, default: null },
+    selectName: { type: String, default: null }
   },
   data: () => ({
     loading: false,

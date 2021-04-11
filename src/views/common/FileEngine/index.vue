@@ -9,7 +9,7 @@
           <el-form-item label="路径">
             <el-input v-model="file.filePath" />
           </el-form-item>
-          <AuthCode :form.sync="file.auth" />
+          <AuthCode :form.sync="file.auth" select-name="文件操作" />
           <el-form-item label="文件">
             <el-upload
               drag
