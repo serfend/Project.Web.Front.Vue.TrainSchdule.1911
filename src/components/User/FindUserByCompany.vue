@@ -14,13 +14,14 @@
         <User :data="u" :can-load-avatar="u.canLoadAvatar" />
       </el-collapse-item>
       <el-button
-        v-show="company && company.code && hasNextPage"
+        v-if="company && company.code && hasNextPage"
         v-infinite-scroll="nextPage"
         v-loading="loading"
         type="text"
         style="width:100%"
         @click="nextPage"
-      >加载更多...</el-button>
+      >{{ loading?'加载中...':'点击加载更多记录' }}</el-button>
+      <div v-else style="height:1px;background-color:#dcdfe6;margin:0.5rem 0.2rem" />
     </el-collapse>
   </div>
 </template>

@@ -1,6 +1,12 @@
 <template>
   <el-card style="margin-bottom:3rem">
-    <AuthCode :form.sync="auth" />
+    <AuthCode :form.sync="auth" select-name="更新记录" />
+
+    <Pagination :pagesetting.sync="pages" :total-count="pagesTotalCount" />
+    <el-button-group>
+      <el-button icon="el-icon-plus" type="success" @click="addNew">添加记录</el-button>
+      <el-button v-show="!dialogShow" @click="dialogShow=true">批量修改</el-button>
+    </el-button-group>
     <el-table :data="list">
       <el-table-column label="版本" width="125rem">
         <template slot-scope="scope">
@@ -37,11 +43,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <Pagination :pagesetting.sync="pages" :total-count="pagesTotalCount" />
-    <el-button-group>
-      <el-button icon="el-icon-plus" type="success" @click="addNew">添加记录</el-button>
-      <el-button v-show="!dialogShow" @click="dialogShow=true">批量修改</el-button>
-    </el-button-group>
     <el-dialog :visible.sync="dialogShow" title="批量修改">
       <el-input v-model="mutiInput" type="textarea" autosize />
       <el-button icon="el-icon-refresh" type="success" @click="syncCurrent">刷新</el-button>
@@ -69,6 +70,11 @@ export default {
     dialogShow: false,
     mutiInput: ''
   }),
+  computed: {
+    appName() {
+      return this.$store.state.settings.title
+    }
+  },
   watch: {
     pages: {
       handler(val) {
@@ -94,15 +100,16 @@ export default {
     },
     submitMuti() {
       this.$confirm('确定修改吗？').then(() => {
-        var m = JSON.parse(this.mutiInput)
-        console.log(m)
+        const m = JSON.parse(this.mutiInput)
         modifyUpdateRecord(m, this.auth).then(() => {
           this.$message.success('批量修改完成')
         })
       })
     },
     refresh() {
-      getUpdateRecord(this.pages.pageIndex, this.pages.pageSize).then(data => {
+      getUpdateRecord(
+        Object.assign({ appName: this.appName }, this.pages)
+      ).then(data => {
         this.list = data.list.map(i => {
           this.prev[i.version] = i
           this.prev[i.version].saved = true
@@ -112,7 +119,7 @@ export default {
       })
     },
     update(model) {
-      var m = Object.assign({}, model)
+      const m = Object.assign({}, model)
       delete m.saved
       modifyUpdateRecord(m, this.auth).then(data => {
         this.$message.success(model.isRemoved ? '已删除' : '已更新')
@@ -123,7 +130,7 @@ export default {
       })
     },
     addNew() {
-      this.list.push({
+      this.list.unshift({
         version: '版本号',
         description: '描述信息',
         create: new Date(),
@@ -149,6 +156,7 @@ export default {
           break
         }
         case 'save': {
+          item.appName = this.appName
           break
         }
         case 'cancel': {

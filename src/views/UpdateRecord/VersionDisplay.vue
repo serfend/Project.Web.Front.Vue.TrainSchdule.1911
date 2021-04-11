@@ -1,5 +1,8 @@
 <template>
-  <el-card v-loading="loading">
+  <el-card style="margin:2%">
+    <template #header>
+      <h2>发布记录</h2>
+    </template>
     <el-collapse accordion>
       <el-collapse-item v-for="item in list" :key="item.id">
         <template slot="title">
@@ -7,10 +10,18 @@
           <el-link type="primary">{{ item.version }}</el-link>
         </template>
         <div>{{ formatTime(item.create) }}</div>
-        <p v-for="l in item.description.split('\n')" :key="l">{{ l }}</p>
+        <p v-for="(l,index) in item.description.split('\n')" :key="index">{{ l }}</p>
       </el-collapse-item>
     </el-collapse>
-    <el-button icon="el-icon-plus" @click="refresh">加载更多</el-button>
+    <el-button
+      v-if="hasNextPage"
+      v-loading="loading"
+      v-infinite-scroll="refresh"
+      type="text"
+      icon="el-icon-plus"
+      @click="refresh"
+    >{{ loading?'加载中...':'点击加载更多记录' }}</el-button>
+    <div v-else style="height:1px;background-color:#dcdfe6;margin:0.5rem 0.2rem" />
   </el-card>
 </template>
 
@@ -25,6 +36,15 @@ export default {
     pages: { pageIndex: -1, pageSize: 5 },
     totalCount: 0
   }),
+  computed: {
+    appName() {
+      return this.$store.state.settings.title
+    },
+    hasNextPage() {
+      const { pageSize, pageIndex } = this.pages
+      return pageSize * pageIndex <= this.totalCount
+    }
+  },
   mounted() {
     this.refresh()
   },
@@ -33,15 +53,15 @@ export default {
       return formatTime(new Date(t), '{y}-{m}-{d}')
     },
     refresh() {
-      if (this.loading) return
+      if (this.loading || !this.hasNextPage) return
       this.loading = true
       this.pages.pageIndex++
-      getUpdateRecord(this.pages.pageIndex, this.pages.pageSize)
+      getUpdateRecord(Object.assign({ appName: this.appName }, this.pages))
         .then(data => {
           this.list = this.list.concat(
             data.list.map(i => {
-              var title = ''
-              var checkTitle = i.description.substring(0, 2) === '# '
+              let title = ''
+              const checkTitle = i.description.substring(0, 2) === '# '
               if (checkTitle) {
                 var tPos = i.description.indexOf(' #')
                 title = i.description.substring(2, tPos)

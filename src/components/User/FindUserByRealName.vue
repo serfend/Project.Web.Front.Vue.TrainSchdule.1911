@@ -22,12 +22,13 @@
         </el-collapse-item>
       </el-collapse>
       <el-button
-        v-show="hasNextPage"
+        v-if="hasNextPage"
         v-loading="loading"
         type="text"
         style="width:100%"
         @click="loadNextPage"
-      >加载更多...</el-button>
+      >{{ loading?'加载中...':'点击加载更多记录' }}</el-button>
+      <div v-else style="height:1px;background-color:#dcdfe6;margin:0.5rem 0.2rem" />
     </div>
   </div>
 </template>
@@ -43,10 +44,7 @@ export default {
     event: 'change'
   }, // TODO support auto load user from father-component
   props: {
-    code: {
-      type: String,
-      default: null
-    }
+    code: { type: String, default: null }
   },
   data: () => ({
     loading: false,

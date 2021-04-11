@@ -8,11 +8,12 @@ import request from '@/utils/request'
  * @param {*} pageSize
  * @returns
  */
-export function getUpdateRecord(pageIndex, pageSize) {
+export function getUpdateRecord({ pageIndex, pageSize, appName }) {
   return request.get('common/updateVersion', {
     params: {
       pageIndex,
-      pageSize
+      pageSize,
+      appName
     }
   })
 }

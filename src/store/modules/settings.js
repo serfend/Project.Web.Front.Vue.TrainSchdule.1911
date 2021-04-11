@@ -89,7 +89,7 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      getUpdateRecord(0, 1).then(data => {
+      getUpdateRecord({ pageIndex: 0, pageSize: 1, appName: state.title }).then(data => {
         if (data.list && data.list.length > 0) {
           const version = data.list[0]
           state.version = version.version
