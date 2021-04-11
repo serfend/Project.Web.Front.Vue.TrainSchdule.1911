@@ -13,7 +13,14 @@
         </template>
         <User :data="u" :can-load-avatar="u.canLoadAvatar" />
       </el-collapse-item>
-      <el-button v-show="hasNextPage" v-loading="loading" style="width:100%" @click="nextPage">下一页</el-button>
+      <el-button
+        v-show="company && company.code && hasNextPage"
+        v-infinite-scroll="nextPage"
+        v-loading="loading"
+        type="text"
+        style="width:100%"
+        @click="nextPage"
+      >加载更多...</el-button>
     </el-collapse>
   </div>
 </template>
@@ -26,39 +33,39 @@ import { getMembers } from '@/api/company'
 export default {
   name: 'FindUserByCompany',
   components: { CompanySelector, User },
-  data() {
-    return {
-      loading: false,
-      company: null,
-      usersByCompany: [],
-      hasNextPage: false,
-      pages: {
-        pageIndex: 0,
-        pageSize: 20
-      },
-      nowCollapseSelectUserId: ''
-    }
-  },
+  data: () => ({
+    loading: false,
+    company: null,
+    usersByCompany: [],
+    hasNextPage: true,
+    pages: {
+      pageIndex: 0,
+      pageSize: 20
+    },
+    nowCollapseSelectUserId: ''
+  }),
   watch: {
     company: {
       handler(val) {
-        if (val) {
-          this.pages.pageIndex = -1
-          this.usersByCompany = []
-          this.$nextTick(() => {
-            this.nextPage()
-          })
-        }
+        if (!val) return
+        this.pages.pageIndex = -1
+        this.usersByCompany = []
+        this.hasNextPage = true
+        this.$nextTick(() => {
+          this.nextPage()
+        })
       },
       immediate: true
     }
   },
   methods: {
     nextPage() {
-      this.loading = true
+      const code = this.company && this.company.code
+      if (this.loading || !code || !this.hasNextPage) return
+      const item = { code }
       this.pages.pageIndex++
-      const item = { code: this.company.code }
       const query = Object.assign(this.pages, item)
+      this.loading = true
       getMembers(query)
         .then(data => {
           const list = data.list.map(li => {
@@ -74,7 +81,7 @@ export default {
     },
     mapUser(li) {
       return {
-        description: li.companyName + li.dutiesName,
+        description: `${li.companyName}${li.dutiesName}`,
         id: li.id,
         value: li.id,
         realName: li.realName,
