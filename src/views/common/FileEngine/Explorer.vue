@@ -39,7 +39,7 @@
         style="width:100%"
         type="text"
         @click="loadNextPage"
-      >加载更多</el-button>
+      >{{ loading?'加载中...':'点击加载更多记录' }}</el-button>
       <div v-else style="height:1px;background-color:#dcdfe6;margin:0.5rem 0.2rem" />
     </el-card>
   </el-row>

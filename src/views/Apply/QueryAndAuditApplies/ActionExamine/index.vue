@@ -13,6 +13,7 @@
       :data-setter="dataSetter"
       :handle-id="handleId"
       @updated="requireUpdate"
+      @requireUpdateReason="updateDefaultReason"
     />
     <span v-if="row.status>30&&row.status<75">
       <AuditApplyDialog
