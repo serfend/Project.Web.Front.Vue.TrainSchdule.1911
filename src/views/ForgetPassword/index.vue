@@ -8,7 +8,7 @@
         <el-collapse v-model="activePannel" accordion>
           <el-collapse-item name="0" title="说明">
             <div class="warning">
-              <p>此页面用于找回用户名或密码</p>
+              <p>此页面用于恢复账号或找回用户名密码</p>
               <p>1. 密码丢失可以通过本人或上级的授权码找回</p>
               <p>2. 遗忘了用户名可以通过两种方式找回:1.依据姓名找回 2.依据单位找回</p>
               <p>3. 账号被删除后可通过管理员在此处操作恢复</p>
