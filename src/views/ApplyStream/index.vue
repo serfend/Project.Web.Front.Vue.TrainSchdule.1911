@@ -10,6 +10,7 @@
       <el-form-item v-if="data.entityType" label="子分类">
         <VacationTypeSelector
           v-model="data.vacationType"
+          :types.sync="data.types"
           :entity-type="data.entityType"
           :left-length="0"
           :check-filter="false"
@@ -74,6 +75,7 @@ export default {
       loading: false,
       data: {
         entityType: 'vacation',
+        types: [],
         vacationType: null, // TODO 审批流应与业务无关
         companyRegion: null,
         newCompanyRegion: null,
@@ -123,9 +125,8 @@ export default {
       this.loading = true
       const region = this.data.companyRegion || {}
       const { entityType, vacationType } = this.data
-      this.data.entityTypeDesc = `${
-        vacationType ? vacationType + '|' : ''
-      }${entityType}`
+      const s = vacationType ? `${vacationType}|` : ''
+      this.data.entityTypeDesc = `${s}${entityType}`
       queryStreamSolutionRule(region.code, this.data.entityTypeDesc)
         .then(data => {
           this.data.allSolutionRule = data.list

@@ -144,8 +144,12 @@ export default {
       return 'gray'
     },
     loadBgUrl() {
-      this.loading = true
       const types = this.requestTypes
+      if (!types) {
+        return setTimeout(() => {
+          this.loadBgUrl()
+        }, 200)
+      }
       const cb = (data, type) => {
         const id = data.file.id
         const url = `${process.env.VUE_APP_BASEURL}${staticfile}${id}`
@@ -164,11 +168,16 @@ export default {
             new Promise(res => {
               requestFile(bgPath, type.background)
                 .then(d => res(d))
-                .catch(e => res(null_data))
+                .catch(e => {
+                  console.warn('加载失败', type.background, e)
+                  res(null_data)
+                })
             })
           )
         }
       }
+      if (this.loading) return
+      if (loader.length > 0) this.loading = true
       Promise.all(loader).then(result => {
         for (let i = 0; i < result.length; i++) {
           cb(result[i], types[i])
