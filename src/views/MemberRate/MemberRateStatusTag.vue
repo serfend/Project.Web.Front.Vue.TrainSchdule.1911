@@ -12,10 +12,7 @@ export default {
     event: 'change'
   },
   props: {
-    score: {
-      type: Number,
-      default: -1
-    }
+    score: { type: Number, default: -1 }
   },
   data: () => ({}),
   computed: {

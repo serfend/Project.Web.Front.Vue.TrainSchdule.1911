@@ -94,14 +94,15 @@
       <el-table-column align="center" label="状态" min-width="200rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <div style="display:flex">
-            <div style="width:20rem">
+            <span style="width:20rem">
               <IndayApplyProgress
+                v-if="!{'120':1,'75':1}[row.status]"
                 :stamp-leave="row.request && row.request.stampLeave"
                 :stamp-return="row.request && row.request.stampReturn"
                 :execute-id="row.executeStatusId"
                 :show="true"
               />
-            </div>
+            </span>
             <ApplyAuditStreamPreview
               v-if="row.statusDesc"
               :audit-status="row.steps"
