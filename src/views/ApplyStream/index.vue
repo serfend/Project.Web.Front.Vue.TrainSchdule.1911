@@ -34,7 +34,7 @@
         />
       </el-form-item>
     </el-form>
-    <el-tabs v-model="activeName" class="tab-container">
+    <el-tabs v-if="data.companyRegion" v-model="activeName" class="tab-container">
       <el-tab-pane label="说明" name="ApplyStreamAbout">
         <ApplyStreamAbout v-show="activeName=='ApplyStreamAbout'" />
       </el-tab-pane>
