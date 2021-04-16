@@ -227,11 +227,11 @@ export default {
     // 刷新待认证人员列表
     async loadWaitToAuthRegisterUsers() {
       this.loading = true
-      getMembers({
-        code: this.nowSelectCompany.code,
-        page: this.MembersQuery.pageIndex,
-        pageSize: this.MembersQuery.pageSize
-      })
+      const q = Object.assign(
+        { code: this.nowSelectCompany.code },
+        this.MembersQuery
+      )
+      getMembers(q)
         .then(async data => {
           this.MembersQueryTotalCount = data.totalCount
           this.waitToAuthRegisterUsers = this.loadUserList(data.list)
