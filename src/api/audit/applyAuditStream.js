@@ -7,10 +7,11 @@ const api = '/applyAuditStream'
  * @param {*} name
  * @returns
  */
-export function getStreamNode(name) {
+export function getStreamNode({ name, entityType }) {
   return request.get(`${api}/StreamNode`, {
     params: {
-      name
+      name,
+      entityType
     }
   })
 }
@@ -22,10 +23,11 @@ export function getStreamNode(name) {
  * @param {*} name
  * @returns
  */
-export function getStreamSolution(name) {
+export function getStreamSolution({ name, entityType }) {
   return request.get(`${api}/StreamSolution`, {
     params: {
-      name
+      name,
+      entityType
     }
   })
 }
@@ -37,10 +39,11 @@ export function getStreamSolution(name) {
  * @param {*} name
  * @returns
  */
-export function getStreamSolutionRule(name) {
+export function getStreamSolutionRule({ name, entityType }) {
   return request.get(`${api}/StreamSolutionRule`, {
     params: {
-      name
+      name,
+      entityType
     }
   })
 }
@@ -58,6 +61,7 @@ export function getStreamSolutionRule(name) {
  * @param {Array:int} companyCodeLength 单位筛选设置，可以设置为单位的Code字段长度
  * @param {Array:String} auditMembers 精确表示审核人，设置后前面项失效
  * @param {int} auditMembersCount 需要审核人数量 0表示全部
+ * @param {String} entityType 作用应用
  * @returns
  */
 export function buildFilter(data) {
@@ -70,7 +74,8 @@ export function buildFilter(data) {
     companyTags: data.companyTags,
     companyCodeLength: data.companyCodeLength,
     auditMembers: data.auditMembers.map(i => i.id),
-    auditMembersCount: data.auditMembersCount
+    auditMembersCount: data.auditMembersCount,
+    entityType: data.entityType,
   }
 }
 
@@ -85,7 +90,7 @@ export function buildFilter(data) {
  * @returns
  */
 export function addStreamNode({ id, name, companyRegion, description, filter, auth }) {
-  return request.post(`${api}//StreamNode`, {
+  return request.post(`${api}/StreamNode`, {
     name,
     companyRegion,
     description,
@@ -101,16 +106,18 @@ export function addStreamNode({ id, name, companyRegion, description, filter, au
  * @param {String} id id
  * @param {String} name 名称
  * @param {String} companyRegion 单位作用域
+ * @param {String} entityType 单位作用域
  * @param {String} description 描述
  * @param {Filter} filter 请调用`buildFilter进行构造`
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamNode({ id, name, companyRegion, description, filter, auth }) {
+export function editStreamNode({ id, name, companyRegion, entityType, description, filter, auth }) {
   return request.put(`${api}/StreamNode`, {
     id,
     name,
     companyRegion,
+    entityType,
     description,
     filter,
     auth
@@ -123,15 +130,17 @@ export function editStreamNode({ id, name, companyRegion, description, filter, a
  * @export
  * @param {String} name 名称
  * @param {String} companyRegion 单位作用域
+ * @param {String} entityType 应用类型
  * @param {String} description 描述
  * @param {Array} nodes 节点名称
  * @param {Auth} auth 授权码
  * @returns
  */
-export function addStreamSolution({ id, name, companyRegion, description, nodes, auth }) {
+export function addStreamSolution({ id, name, companyRegion, entityType, description, nodes, auth }) {
   return request.post(`${api}/StreamSolution`, {
     name,
     companyRegion,
+    entityType,
     description,
     nodes,
     auth
@@ -145,15 +154,17 @@ export function addStreamSolution({ id, name, companyRegion, description, nodes,
  * @param {String} id
  * @param {String} name 名称
  * @param {String} companyRegion 单位作用域
+ * @param {String} entityType 应用类型
  * @param {String} description 描述
  * @param {Array} nodes 节点名称
  * @param {Auth} auth 授权码
  * @returns
  */
-export function editStreamSolution({ id, name, companyRegion, description, nodes, auth }) {
+export function editStreamSolution({ id, name, companyRegion, entityType, description, nodes, auth }) {
   return request.put(`${api}/StreamSolution`, {
     id,
     name,
+    entityType,
     companyRegion,
     description,
     nodes,
@@ -221,23 +232,25 @@ export function editStreamSolutionRule({ id, name, companyRegion, entityType, de
   })
 }
 
-export function queryStreamNode(companyRegion) {
+export function queryStreamNode({ companyRegion, entityType }) {
   return request.get(`${api}/StreamNodeQuery`, {
     params: {
-      companyRegion
+      companyRegion,
+      entityType
     }
   })
 }
 
-export function queryStreamSolution(companyRegion) {
+export function queryStreamSolution({ companyRegion, entityType }) {
   return request.get(`${api}/StreamSolutionQuery`, {
     params: {
-      companyRegion
+      companyRegion,
+      entityType
     }
   })
 }
 
-export function queryStreamSolutionRule(companyRegion, entityType) {
+export function queryStreamSolutionRule({ companyRegion, entityType }) {
   return request.get(`${api}/StreamSolutionRuleQuery`, {
     params: {
       companyRegion,
@@ -246,30 +259,33 @@ export function queryStreamSolutionRule(companyRegion, entityType) {
   })
 }
 
-export function deleteStreamNode(name, authByUserid, code) {
+export function deleteStreamNode({ name, entityType, authByUserid, code }) {
   return request.delete(`${api}/StreamNode`, {
     params: {
       name,
+      entityType,
       authByUserid,
       code
     }
   })
 }
 
-export function deleteStreamSolution(name, authByUserid, code) {
+export function deleteStreamSolution({ name, entityType, authByUserid, code }) {
   return request.delete(`${api}/StreamSolution`, {
     params: {
       name,
+      entityType,
       authByUserid,
       code
     }
   })
 }
 
-export function deleteStreamSolutionRule(name, authByUserid, code) {
+export function deleteStreamSolutionRule({ name, entityType, authByUserid, code }) {
   return request.delete(`${api}/StreamSolutionRule`, {
     params: {
       name,
+      entityType,
       authByUserid,
       code
     }

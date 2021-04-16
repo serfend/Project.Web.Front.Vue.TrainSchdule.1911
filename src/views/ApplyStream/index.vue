@@ -1,22 +1,7 @@
 <template>
   <el-card class="content-card">
     <el-form label-width="5rem">
-      <el-form-item label="审批类型">
-        <el-select v-model="data.entityType">
-          <el-option label="休假" value="vacation" />
-          <el-option label="请假" value="inday" />
-        </el-select>
-      </el-form-item>
-      <el-form-item v-if="data.entityType" label="子分类">
-        <VacationTypeSelector
-          v-model="data.vacationType"
-          :types.sync="data.types"
-          :entity-type="data.entityType"
-          :left-length="0"
-          :check-filter="false"
-        />
-      </el-form-item>
-      <el-form-item label="查询单位">
+      <el-form-item label="查询单位" required>
         <CompanySelector
           v-model="data.companyRegion"
           default-select-first
@@ -25,13 +10,37 @@
           @change="requireRefresh"
         />
       </el-form-item>
-      <el-form-item label="转移到">
+      <el-form-item v-if="data.companyRegion" label="审批类型">
+        <el-select v-model="data.entityType">
+          <el-option label="休假" value="vacation" />
+          <el-option label="请假" value="inday" />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="data.companyRegion&&data.entityType" label="子分类">
+        <span style="display:flex">
+          <el-tooltip content="若为子分类单独分配了审批流，则此子分类将不再使用通用的审批流。">
+            <i class="el-icon-question blue--text" />
+          </el-tooltip>
+          <VacationTypeSelector
+            v-model="data.vacationType"
+            :types.sync="data.types"
+            :entity-type="data.entityType"
+            :left-length="0"
+            :check-filter="false"
+          />
+        </span>
+      </el-form-item>
+
+      <el-form-item v-if="data.companyRegion" label="转移到">
         <CompanySelector
           v-model="data.newCompanyRegion"
           placeholder="选择变动到新的单位作用域"
           style="width:30rem"
           @change="requireRefresh"
         />
+        <el-tooltip content="默认不转移审批流作用域，如需修改可选中其他单位">
+          <i class="el-icon-question blue--text" />
+        </el-tooltip>
       </el-form-item>
     </el-form>
     <el-tabs v-if="data.companyRegion" v-model="activeName" class="tab-container">
@@ -104,12 +113,12 @@ export default {
     'data.entityType': {
       handler(val) {
         this.data.vacationType = null
-        this.solutionRuleRefresh()
+        this.refresh()
       }
     },
     'data.vacationType': {
       handler(val) {
-        this.solutionRuleRefresh()
+        this.refresh()
       }
     }
   },
@@ -127,7 +136,10 @@ export default {
       const { entityType, vacationType } = this.data
       const s = vacationType ? `${vacationType}|` : ''
       this.data.entityTypeDesc = `${s}${entityType}`
-      queryStreamSolutionRule(region.code, this.data.entityTypeDesc)
+      queryStreamSolutionRule({
+        companyRegion: region.code,
+        entityType: this.data.entityTypeDesc.split('|')[0]
+      })
         .then(data => {
           this.data.allSolutionRule = data.list
         })
@@ -141,7 +153,10 @@ export default {
       // 加载解决方案
       const solution = () => {
         const region = this.data.companyRegion || {}
-        return queryStreamSolution(region.code).then(data => {
+        return queryStreamSolution({
+          companyRegion: region.code,
+          entityType: this.data.entityTypeDesc.split('|')[0]
+        }).then(data => {
           var tableData = data.list
           var length = tableData.nodes ? tableData.nodes.length : 0
           for (var i = length; i < length; i++) {
@@ -160,7 +175,10 @@ export default {
     async actionNodeRefresh() {
       this.loading = true
       const region = this.data.companyRegion || {}
-      return await queryStreamNode(region.code)
+      return await queryStreamNode({
+        companyRegion: region.code,
+        entityType: this.data.entityTypeDesc.split('|')[0]
+      })
         .then(data => {
           this.data.allActionNode = data.list
           for (var n in this.data.allActionNode) {

@@ -243,7 +243,9 @@
           >{{ tag.realName }}</el-tag>
         </el-form-item>
         <el-form-item label="审批人数量">
-          <el-input-number v-model="newNode.auditMembersCount" placeholder="需要多少人审批" />
+          <el-tooltip content="需要多少人审批">
+            <el-input-number v-model="newNode.auditMembersCount" />
+          </el-tooltip>
         </el-form-item>
         <AuthCode :form.sync="newNode.auth" select-name="审批流节点编辑" />
         <el-button-group style="width:100%">
@@ -375,13 +377,17 @@ export default {
       node.loading = true
       var fn = node.mode === 'edit' ? editStreamNode : addStreamNode
       const region = this.data.newCompanyRegion || {}
-
       fn({
         id: node.id,
         name: node.name,
         companyRegion: region.code,
         description: node.description,
-        filter: buildFilter(node),
+        filter: buildFilter(
+          Object.assign(
+            { entityType: this.data.entityTypeDesc.split('|')[0] },
+            node
+          )
+        ),
         auth: node.auth
       })
         .then(() => {
@@ -400,7 +406,12 @@ export default {
       if (!auth) {
         auth = {}
       }
-      deleteStreamNode(node.name, auth.authByUserId, auth.code)
+      deleteStreamNode({
+        name: node.name,
+        entityType: this.data.entityTypeDesc.split('|')[0],
+        authByUserId: auth.authByUserId,
+        code: auth.code
+      })
         .then(() => {
           this.$message.success(`${node.name}已删除`)
           this.nodeDialogShow = false

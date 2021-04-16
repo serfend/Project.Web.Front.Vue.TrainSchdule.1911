@@ -163,12 +163,21 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      nodeDialogShow: false,
-      newSolution: this.buildNewSolution()
+  data: () => ({
+    nodeDialogShow: false,
+    newSolution: {
+      mode: 'new',
+      name: '',
+      description: '',
+      nodeSelect: '',
+      nodes: [],
+      auth: {
+        authByUserId: '',
+        code: 0
+      },
+      loading: false
     }
-  },
+  }),
   methods: {
     format(d) {
       return formatTime(d)
@@ -186,6 +195,7 @@ export default {
         id: node.id,
         name: node.name,
         companyRegion: region.code,
+        entityType: this.data.entityTypeDesc.split('|')[0],
         description: node.description,
         nodes: node.nodes.map(i => i.label),
         auth: node.auth
@@ -220,7 +230,12 @@ export default {
       if (!auth) {
         auth = {}
       }
-      deleteStreamSolution(node.name, auth.authByUserId, auth.code)
+      deleteStreamSolution({
+        name: node.name,
+        authByUserId: auth.authByUserId,
+        entityType: this.data.entityTypeDesc.split('|')[0],
+        code: auth.code
+      })
         .then(() => {
           this.$message.success(`${node.name}已删除`)
           this.nodeDialogShow = false
@@ -248,25 +263,6 @@ export default {
       var id = node.data.id
       var index = no.nodes.findIndex(n => n.id === id)
       no.nodes.splice(index, 1)
-    },
-    buildNewSolution() {
-      const node = this.newSolution
-      var lastAuth = node ? node.auth : null
-      if (lastAuth === null) {
-        lastAuth = {
-          authByUserId: '',
-          code: 0
-        }
-      }
-      return {
-        mode: 'new',
-        name: '',
-        description: '',
-        nodeSelect: '',
-        nodes: [],
-        auth: lastAuth,
-        loading: false
-      }
     }
   }
 }

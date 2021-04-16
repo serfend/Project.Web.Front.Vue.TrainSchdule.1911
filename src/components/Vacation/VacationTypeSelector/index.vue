@@ -218,7 +218,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .card-list {
-  transition: all 3s ease;
+  transition: all 1s ease;
   text-align: center;
   font-size: 1.5rem;
   justify-content: space-between;
