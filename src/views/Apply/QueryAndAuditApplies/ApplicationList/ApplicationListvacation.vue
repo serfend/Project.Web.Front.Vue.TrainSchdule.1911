@@ -13,7 +13,7 @@
       @row-dblclick="showDetail"
     >
       <el-table-column type="selection" />
-      <el-table-column label="基本" width="120rem">
+      <el-table-column label="基本" width="140rem">
         <template slot-scope="{ row }">
           <component :is="!rowCanShow(row) ? 'ElTooltip' : 'div'" effect="light">
             <div slot="content">
@@ -95,7 +95,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="休假总天数">
+      <el-table-column align="center" label="休假总天数" width="120rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-dropdown>
             <span class="el-dropdown-link">
@@ -143,7 +143,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="状态">
+      <el-table-column align="center" label="状态" width="80rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <ApplyAuditStreamPreview
             v-if="row.statusDesc"

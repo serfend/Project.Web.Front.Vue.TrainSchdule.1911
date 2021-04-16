@@ -13,7 +13,7 @@
       @row-dblclick="showDetail"
     >
       <el-table-column type="selection" />
-      <el-table-column label="基本" width="120rem">
+      <el-table-column label="基本" width="140rem">
         <template slot-scope="{ row }">
           <component :is="!rowCanShow(row) ? 'ElTooltip' : 'div'" effect="light">
             <div slot="content">
@@ -91,7 +91,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="状态" min-width="200rem">
+      <el-table-column align="center" label="状态" min-width="150rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <div style="display:flex">
             <span style="width:20rem">
