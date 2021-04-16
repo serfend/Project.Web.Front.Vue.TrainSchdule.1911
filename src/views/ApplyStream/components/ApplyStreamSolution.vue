@@ -419,7 +419,7 @@ export default {
       deleteStreamSolutionRule({
         name: node.name,
         authByUserId: auth.authByUserId,
-        entityType: this.data.entityType,
+        entityType: this.data.entityTypeDesc.split('|')[0],
         code: auth.code
       })
         .then(() => {

@@ -23,6 +23,12 @@
                 <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
               </span>
             </div>
+            <div
+              v-for="u in s.membersAcceptToAudit.filter(i=>!s.membersFitToAudit.find(j=>j==i))"
+              :key="u"
+            >
+              <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
+            </div>
           </template>
         </el-step>
       </el-steps>
