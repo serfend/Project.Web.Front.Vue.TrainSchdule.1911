@@ -4,9 +4,9 @@ import i18n from '@/lang'
 const title = defaultSettings.title || 'XJXT'
 export default function getPageTitle(meta) {
   if (!meta) return ''
-  const i18n_title = meta.ititle
-  const direct_title = meta.title
-  if (direct_title) return `${title} - ${direct_title}`
+  const i18n_title = meta.ititle || meta.title
+  const direct_title = meta.ctitle
+  if (direct_title) return `${direct_title} - ${title}`
   const hasKey = i18n.te(`route.${i18n_title}`)
   if (hasKey) {
     const pageName = i18n.t(`route.${i18n_title}`)
