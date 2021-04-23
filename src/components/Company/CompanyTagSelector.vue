@@ -3,7 +3,6 @@
     v-model="iTag"
     v-loading="loading"
     :remote-method="tagFilter"
-    multiple
     filterable
     clearable
     default-first-option
@@ -25,7 +24,7 @@ export default {
     event: 'change'
   },
   props: {
-    tag: { type: [String, Array], default: null }
+    tag: { type: String, default: null }
   },
   data: () => ({
     iTag: null,
