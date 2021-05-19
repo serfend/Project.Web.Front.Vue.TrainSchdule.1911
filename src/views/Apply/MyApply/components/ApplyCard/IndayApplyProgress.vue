@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { datedifference, parseTime, formatTime } from '@/utils'
+import { datedifference, parseTime, formatTime, getTimeDesc } from '@/utils'
 import { getExecuteStatus } from '@/api/apply/recall'
 export default {
   name: 'IndayApplyProgress',
@@ -100,10 +100,7 @@ export default {
     formatPercent(val) {
       if (this.spent <= 0) {
         const start = -this.spent / 1e3
-        const h = Math.floor(start / 3600)
-        const m = Math.floor((start % 3600) / 60)
-        const s = Math.floor(start % 60)
-        const left_desc = `${h}h${m}m${s}s`
+        const left_desc = getTimeDesc(start)
         return `${left_desc} 未开始`
       }
       if (val >= 100) {
@@ -113,10 +110,7 @@ export default {
         )}）`
       }
       const left = (this.total - this.spent) / 1e3
-      const h = Math.floor(left / 3600)
-      const m = Math.floor((left % 3600) / 60)
-      const s = Math.floor(left % 60)
-      const left_desc = `${h}h${m}m${s}s`
+      const left_desc = getTimeDesc(left)
       const percent = `${Math.round((this.spent / this.total) * 10000) / 100}%`
       return `${left_desc} ${percent}`
     }

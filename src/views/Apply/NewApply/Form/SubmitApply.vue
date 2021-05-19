@@ -5,30 +5,40 @@
     :style="{'backgroundColor': theme}"
     class="footer-nav"
   >
-    <el-popover placement="top-start" trigger="hover">
-      <div>
-        <h2>提交、保存、发布是什么</h2>
-        <el-divider />
-        <p>
-          <b>提交</b>任何人都可以操作，但24小时后仍未保存则会被删除
-        </p>
-        <p>
-          <b>保存</b>仅本人及上级操作，将会使申请进入草稿状态，随时可发布
-        </p>
-        <p>
-          <b>发布</b>仅本人及上级操作，将会使申请进入审核中状态
-        </p>
+    <span v-if="next_permit_submit<=new Date()">
+      <el-popover placement="top-start" trigger="hover">
         <div>
-          <el-button :disabled="iDisabled" type="success" @click="submitApply(0)">提交</el-button>
-          <el-button :disabled="iDisabled" type="success" @click="submitApply(1)">保存</el-button>
+          <h2>提交、保存、发布是什么</h2>
+          <el-divider />
+          <p>
+            <b>提交</b>任何人都可以操作，但24小时后仍未保存则会被删除
+          </p>
+          <p>
+            <b>保存</b>仅本人及上级操作，将会使申请进入草稿状态，随时可发布
+          </p>
+          <p>
+            <b>发布</b>仅本人及上级操作，将会使申请进入审核中状态
+          </p>
+          <div>
+            <el-button :disabled="iDisabled" type="success" @click="submitApply(0)">提交</el-button>
+            <el-button :disabled="iDisabled" type="success" @click="submitApply(1)">保存</el-button>
+          </div>
         </div>
-      </div>
-      <i slot="reference" class="el-icon-more-outline" style="color:#fff" />
-    </el-popover>
+        <i slot="reference" class="el-icon-more-outline" style="color:#fff" />
+      </el-popover>
 
-    <el-button :disabled="iDisabled" type="success" style="width:40%" @click="submitApply(2)">发布</el-button>
-    <el-button type="info" @click="createNew">新建申请</el-button>
-    <el-button v-show="submitId" type="success" @click="skimDetail">查 看 详 情</el-button>
+      <el-button :disabled="iDisabled" type="success" style="width:40%" @click="submitApply(2)">发布</el-button>
+      <el-button type="info" @click="createNew">新建申请</el-button>
+      <el-button v-show="submitId" type="success" @click="skimDetail">查 看 详 情</el-button>
+    </span>
+    <el-progress
+      v-else
+      :percentage="percent"
+      :status="percent>=100?'exception':'success'"
+      :text-inside="true"
+      :stroke-width="25"
+      :format="formatPercent"
+    />
     <el-dialog :visible.sync="showSuccessDialog" append-to-body>
       <div v-if="!errorMsg">
         <div style="display:flex;justify-content:center">
@@ -93,6 +103,7 @@
 </template>
 
 <script>
+import { getTimeDesc } from '@/utils'
 import { doAction } from '@/api/audit/handle'
 import { submitApply } from '@/api/apply/create'
 export default {
@@ -100,8 +111,10 @@ export default {
   components: {
     // SvgIcon: () => import('@/components/SvgIcon'),
     LottieIcon: () => import('@/components/LottieIcon'),
-    indayApplyDetail: () => import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
-    vacationApplyDetail: () => import('@/views/Apply/ApplyDetail/VacationApplyDetail')
+    indayApplyDetail: () =>
+      import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
+    vacationApplyDetail: () =>
+      import('@/views/Apply/ApplyDetail/VacationApplyDetail')
   },
   props: {
     baseInfoId: { type: String, default: null },
@@ -115,7 +128,12 @@ export default {
     submitId: '',
     showSuccessDialog: false,
     errorMsg: null,
-    errorList: []
+    errorList: [],
+    next_permit_submit: 0,
+    next_permit_begin: 0,
+    percent: 0,
+    time_desc: 0,
+    time_updator: null
   }),
   computed: {
     iDisabled() {
@@ -135,7 +153,26 @@ export default {
       }
     }
   },
+  mounted() {
+    clearInterval(this.time_updator)
+    this.time_updator = setInterval(() => {
+      if (!this.next_permit_submit) return
+      const t = this.next_permit_submit - new Date()
+      this.time_desc = `${getTimeDesc(t / 1e3)}后可再次提交`
+
+      const total = this.next_permit_submit - this.next_permit_begin
+      const spent = new Date() - this.next_permit_begin
+      this.percent = Math.floor((spent / total) * 1e4) / 1e2
+    }, 5e2)
+  },
+  destroyed() {
+    clearInterval(this.time_updator)
+  },
   methods: {
+    getTimeDesc,
+    formatPercent(v) {
+      return this.time_desc
+    },
     skimDetail() {
       const url = this.applyDetailUrl
       window.open(url)
@@ -153,6 +190,37 @@ export default {
       const RequestId = this.requestId
       const main_type = this.mainType
       this.onLoading = true
+      const doActionCb = data => {
+        if (!data || !data.list) {
+          const msg = actionStatus === 1 ? '提交并保存' : '提交并发布'
+          this.$message.success(`${msg}成功`)
+          this.errorList = []
+          this.$emit('complete', true)
+          return
+        }
+        this.errorList = data.list.map(i => ({
+          id: i,
+          can_show: true
+        }))
+        this.$emit('complete', false)
+        const count = this.errorList.length
+        this.errorMsg = `存在${count}条与本次提交的离队时间或归队时间冲突的申请`
+      }
+      const cb = data => {
+        var applyId = data.id
+        var fn = actionStatus === 1 ? 'save' : 'publish'
+        this.$message.success('提交成功')
+        this.$emit('submit')
+        this.submitId = data.id
+        if (actionStatus > 0) {
+          doAction(fn, applyId, this.entityType)
+            .then(doActionCb)
+            .catch(e => {
+              this.$emit('complete', false)
+              this.errorMsg = e.message
+            })
+        }
+      }
       submitApply({
         RequestId,
         BaseId,
@@ -163,33 +231,17 @@ export default {
         }
       })
         .then(data => {
-          var applyId = data.id
-          var fn = actionStatus === 1 ? 'save' : 'publish'
-          this.$message.success('提交成功')
-          this.$emit('submit')
-          this.submitId = data.id
-          if (actionStatus > 0) {
-            doAction(fn, applyId, this.entityType)
-              .then(data => {
-                if (!data || !data.list) {
-                  const msg = actionStatus === 1 ? '提交并保存' : '提交并发布'
-                  this.$message.success(`${msg}成功`)
-                  this.errorList = []
-                  this.$emit('complete', true)
-                  return
-                }
-                this.errorList = data.list.map(i => ({
-                  id: i,
-                  can_show: true
-                }))
-                this.$emit('complete', false)
-                const count = this.errorList.length
-                this.errorMsg = `存在${count}条与本次提交的离队时间或归队时间冲突的申请`
-              })
-              .catch(e => {
-                this.$emit('complete', false)
-                this.errorMsg = e.message
-              })
+          this.next_permit_submit = 0
+          cb(data)
+        })
+        .catch(e => {
+          switch (e.status) {
+            case 43310: {
+              this.next_permit_submit =
+                new Date() - 0 + Number(e.message.replace(/[^0-9]/gi, '')) * 1e3
+              this.next_permit_begin = new Date()
+              break
+            }
           }
         })
         .finally(() => {

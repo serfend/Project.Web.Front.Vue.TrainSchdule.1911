@@ -49,27 +49,17 @@
 </template>
 
 <script>
-import BaseInfo from './Form/BaseInfo'
-import RequestInfo from './Form/RequestIndayInfo'
-import VacationPreview from '@/components/Vacation/VacationPreview'
-import SubmitApply from './Form/SubmitApply'
 export default {
   name: 'NewApply',
   components: {
-    BaseInfo,
-    RequestInfo,
-    VacationPreview,
-    SubmitApply
+    BaseInfo: () => import('./Form/BaseInfo'),
+    RequestInfo: () => import('./Form/RequestInfo'),
+    VacationPreview: () => import('@/components/Vacation/VacationPreview'),
+    SubmitApply: () => import('./Form/SubmitApply')
   },
   props: {
-    defaultId: {
-      type: String,
-      default: null
-    },
-    singleColumn: {
-      type: Boolean,
-      default: false
-    }
+    defaultId: { type: String, default: null },
+    singleColumn: { type: Boolean, default: false }
   },
   data: () => ({
     entityType: 'inday',

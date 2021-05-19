@@ -1,6 +1,10 @@
-/**
- * Created by jiachenpan on 16/11/18.
- */
+export function getTimeDesc(seconds) {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = Math.floor(seconds % 60)
+  const left_desc = `${h}h${m}m${s}s`
+  return left_desc
+}
 
 export const getDateDelta = (s, e) => {
   const yearDelta = e.getFullYear() - s.getFullYear()
