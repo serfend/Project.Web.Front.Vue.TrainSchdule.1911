@@ -17,49 +17,23 @@ export default {
   name: 'CascaderSelector',
   model: {
     prop: 'data',
-    event: 'change',
+    event: 'change'
   },
   props: {
-    defaultSelectFirst: {
-      type: Boolean,
-      default: false
-    },
-    data: {
-      type: [Array, Object],
-      default: null,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    placeholder: {
-      type: String,
-      default: null,
-    },
-    valueName: {
-      type: String,
-      default: 'value',
-    },
-    labelName: {
-      type: String,
-      default: 'label',
-    },
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
-    childGetterMethod: {
-      type: Function,
-      default() {
-        return () => { }
-      },
-    },
+    defaultSelectFirst: { type: Boolean, default: false },
+    data: { type: [Array, Object], default: null },
+    disabled: { type: Boolean, default: false },
+    placeholder: { type: String, default: null },
+    valueName: { type: String, default: 'value' },
+    labelName: { type: String, default: 'label' },
+    multiple: { type: Boolean, default: false },
+    childGetterMethod: { type: Function, default: () => () => {} }
   },
   data() {
     return {
       staticValue: [],
       props: {
-        getChild: (id) => {
+        getChild: id => {
           return this.childGetterMethod(id)
         },
         lazy: true,
@@ -68,26 +42,32 @@ export default {
         // expandTrigger: 'hover', 如果自动展开可能会导致偏移和无法选中的情况
         lazyLoad(node, callback) {
           if (node.root) node.value = 'root'
-          this.getChild(node.value).then((data) => {
+          this.getChild(node.value).then(data => {
             var list = data.list
-            const nodes = Array.from(list).map((item) => ({
+            const nodes = Array.from(list).map(item => ({
               value: item.code + '',
               label: item.name,
-              leaf: false,
+              leaf: false
             }))
             callback(nodes)
           })
-        },
-      },
+        }
+      }
     }
   },
   mounted() {
+    const form = this.$refs.elcascader
+    const form_items = form.$children[1].$el
+    console.log(form_items)
   },
   methods: {
+    dblClick(v) {
+      console.log(v)
+    },
     handleItemChange(val) {
       this.$nextTick(() => {
         const nodes = this.$refs.elcascader.getCheckedNodes()
-        const items = nodes.map((i) => {
+        const items = nodes.map(i => {
           const item = {}
           item[this.valueName] = i.value
           item[this.labelName] = i.label
@@ -96,10 +76,7 @@ export default {
         const data = this.multiple ? items : items[0]
         this.$emit('change', data)
       })
-    },
-  },
+    }
+  }
 }
 </script>
-
-<style>
-</style>
