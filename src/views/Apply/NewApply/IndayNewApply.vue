@@ -53,7 +53,7 @@ export default {
   name: 'NewApply',
   components: {
     BaseInfo: () => import('./Form/BaseInfo'),
-    RequestInfo: () => import('./Form/RequestInfo'),
+    RequestInfo: () => import('./Form/RequestIndayInfo'),
     VacationPreview: () => import('@/components/Vacation/VacationPreview'),
     SubmitApply: () => import('./Form/SubmitApply')
   },
