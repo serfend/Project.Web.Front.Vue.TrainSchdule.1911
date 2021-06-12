@@ -55,11 +55,6 @@ export default {
       }
     }
   },
-  mounted() {
-    const form = this.$refs.elcascader
-    const form_items = form.$children[1].$el
-    console.log(form_items)
-  },
   methods: {
     dblClick(v) {
       console.log(v)
