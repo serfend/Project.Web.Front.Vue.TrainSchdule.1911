@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="type">
-      <div label-width="3rem">
+      <div label-width="3rem" style="width:100%">
         <h2 v-if="showTag" style="margin-left:0.2rem">{{ type.alias }}</h2>
         <div style="height:1px;background-color:#dcdfe6;margin:0.5rem 0.2rem" />
         <SingleLineItem label="政策" :show-tag="showTag">
@@ -15,7 +15,9 @@
           </div>
         </SingleLineItem>
         <SingleLineItem label="备注" :show-tag="showTag">
-          <div v-for="(l,i) in type.description.split('\n')" :key="i">{{ l }}</div>
+          <div>
+            <p v-for="(l,i) in type.description.split('\n')" :key="i">{{ l }}</p>
+          </div>
         </SingleLineItem>
       </div>
     </div>

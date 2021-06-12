@@ -8,7 +8,7 @@
       @hide="onHide"
       @show="hasShow = true"
     >
-      <component :is="`${entityType}TypeDetail`" v-if="hasShow" v-model="v" />
+      <component :is="`${entityType}TypeDetail`" v-if="hasShow" v-model="v" style="width:15rem" />
       <span slot="reference">
         <el-tag v-if="showTag" size="mini" :type="v.primary?'success':'danger'">{{ v.alias }}</el-tag>
         <span v-else>
