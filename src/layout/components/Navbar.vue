@@ -57,6 +57,10 @@
                 <span>注册新账号</span>
               </el-menu-item>
             </el-submenu>
+            <el-menu-item @click="switch_account">
+              <SvgIcon icon-class="switch" />
+              <span>切换账号</span>
+            </el-menu-item>
             <el-menu-item @click="logout">
               <SvgIcon icon-class="dengchu" />
               <span>退出</span>
@@ -236,6 +240,10 @@ export default {
       this.$router.push({
         path: `/register/${isToRegister ? 'user' : 'approve'}`
       })
+    },
+    async switch_account() {
+      await this.logout()
+      this.userCardShowing(true)
     },
     async logout() {
       this.loading = true
