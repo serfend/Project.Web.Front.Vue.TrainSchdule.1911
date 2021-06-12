@@ -36,7 +36,7 @@ export default {
   },
   data: () => ({
     totalCount: '...',
-    active_tab: 'as_popularity',
+    active_tab: 'as_date',
     comment_pan: comment_pan,
   }),
   methods: {
