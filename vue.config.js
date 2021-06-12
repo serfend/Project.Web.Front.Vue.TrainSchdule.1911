@@ -26,6 +26,7 @@ module.exports = {
   devServer: {
     port: port,
     open: true,
+    disableHostCheck: true,
     proxy: {
       '/api': {
         target: process.env.VUE_APP_BASE_API,
