@@ -359,7 +359,7 @@ export default {
         vacationLength: 0,
         OnTripLength: 0,
         vacationType: types ? types[0].name : '',
-        vacationPlace: null,
+        vacationPlace: {},
         vacationPlaceName: '',
         lawVacaion: [],
         reason: '',
@@ -378,7 +378,9 @@ export default {
       const result = []
       if (id) result.push('基础信息未成功提交')
       if (place) {
-        result.push(`休假地点须精确到区县，当前:${params.vacationPlace.code}`)
+        result.push(
+          `休假地点须精确到区县，当前:${params.vacationPlace.code || '未填写'}`
+        )
       }
       if (stamp) result.push('离队时间有误')
       return result

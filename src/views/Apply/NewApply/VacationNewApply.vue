@@ -106,8 +106,8 @@ export default {
       }
     },
     createNewDirect() {
-      this.$refs.BaseInfo.reset()
-      this.$refs.RequestInfo.reset()
+      this.$refs.BaseInfo && this.$refs.BaseInfo.reset()
+      this.$refs.RequestInfo && this.$refs.RequestInfo.reset()
       this.formFinal = {
         BaseInfoId: '',
         RequestId: '',

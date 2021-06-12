@@ -178,7 +178,7 @@ export default {
       return {
         StampLeave: parseTime(+new Date() + 86400e3, '{y}-{m}-{d} 08:00:00'),
         StampReturn: parseTime(+new Date() + 86400e3, '{y}-{m}-{d} 18:00:00'),
-        vacationPlace: null,
+        vacationPlace: {},
         vacationPlaceName: '',
         reason: '',
         ByTransportation: '2',
@@ -221,8 +221,9 @@ export default {
       if (id) result.push('基础信息未成功提交')
       if (place) {
         result.push(
-          `地点须精确到区县，当前:${params.vacationPlace &&
-            params.vacationPlace.code}`
+          `地点须精确到区县，当前:${(params.vacationPlace &&
+            params.vacationPlace.code) ||
+            '未填写'}`
         )
       }
       if (stamp) result.push('离队时间有误')

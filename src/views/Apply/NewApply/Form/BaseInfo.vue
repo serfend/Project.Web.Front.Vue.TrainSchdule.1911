@@ -169,7 +169,8 @@ export default {
       if (!tryTime) tryTime = 8
       tryTime--
       console.log(this.userid)
-      const to_user_id = this.userid || (this.currentUser && this.currentUser.id)
+      const to_user_id =
+        this.userid || (this.currentUser && this.currentUser.id)
       if (!to_user_id) {
         if (tryTime > 0) {
           setTimeout(() => {
