@@ -1,45 +1,52 @@
 <template>
   <div>
     <div v-if="id||(currentUser&&currentUser.id)">
-      <div v-if="!$slots.inner">
-        <el-row class="row">
-          <UserSelector :code.sync="iId" :default-info="'查询其他人申请情况（需要权限）'" style="display:inline" />
-        </el-row>
-        <el-row :gutter="20" class="row">
-          <el-col>
-            <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-              <UserFormItem
-                :data="iId?null:currentUser"
-                :userid="iId"
-                :direct-show-card="true"
-                :can-load-avatar="true"
-              />
+      <div v-if="!hideUserCard">
+        <div v-if="!$slots.inner">
+          <el-row class="row">
+            <UserSelector
+              :code.sync="iId"
+              :default-info="'查询其他人申请情况（需要权限）'"
+              style="display:inline"
+            />
+          </el-row>
+          <el-row :gutter="20" class="row">
+            <el-col>
+              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+                <UserFormItem
+                  :data="iId?null:currentUser"
+                  :userid="iId"
+                  :direct-show-card="true"
+                  :can-load-avatar="true"
+                />
+              </el-col>
+              <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
+                <ApplyOverview v-if="showVacationOverview" :userid="iId||currentUser.id" />
+              </el-col>
             </el-col>
-            <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
-              <ApplyOverview v-if="showVacationOverview" :userid="iId||currentUser.id" />
+          </el-row>
+        </div>
+        <div v-else>
+          <ApplyOverview :userid="iId||currentUser.id" class="row" />
+          <el-row class="row">
+            <el-col>
+              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+                <UserFormItem
+                  :data="iId?null:currentUser"
+                  :userid="iId"
+                  :direct-show-card="true"
+                  :can-load-avatar="true"
+                />
+              </el-col>
+              <slot name="inner" />
             </el-col>
-          </el-col>
-        </el-row>
-      </div>
-      <div v-else>
-        <ApplyOverview :userid="iId||currentUser.id" class="row" />
-        <el-row class="row">
-          <el-col>
-            <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-              <UserFormItem
-                :data="iId?null:currentUser"
-                :userid="iId"
-                :direct-show-card="true"
-                :can-load-avatar="true"
-              />
-            </el-col>
-            <slot name="inner" />
-          </el-col>
-        </el-row>
+          </el-row>
+        </div>
       </div>
       <AppliesList
         :id.sync="iId"
         ref="AppliesList"
+        :hide-add-btn="hideAddBtn"
         :entity-type="entityType"
         :show-apply-new.sync="show_apply_new"
       />
@@ -58,24 +65,22 @@
 </template>
 
 <script>
-import UserFormItem from '@/components/User/UserFormItem'
-import UserSelector from '@/components/User/UserSelector'
-import ApplyOverview from './components/ApplyOverview'
-import Login from '@/views/login'
 export default {
   name: 'MyApply',
   components: {
     ApplyNewvacation: () => import('@/views/Apply/NewApply/VacationNewApply'),
     ApplyNewinday: () => import('@/views/Apply/NewApply/IndayNewApply'),
-    UserFormItem,
-    UserSelector,
-    ApplyOverview,
-    Login,
+    UserFormItem: () => import('@/components/User/UserFormItem'),
+    UserSelector: () => import('@/components/User/UserSelector'),
+    ApplyOverview: () => import('./components/ApplyOverview'),
+    Login: () => import('@/views/login'),
     AppliesList: () => import('./components/AppliesList')
   },
   props: {
     id: { type: String, default: null },
-    entityType: { type: String, default: 'vacation' }
+    entityType: { type: String, default: 'vacation' },
+    hideUserCard: { type: Boolean, default: false },
+    hideAddBtn: { type: Boolean, default: false }
   },
   data: () => ({
     inner_id: null,

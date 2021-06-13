@@ -1,52 +1,67 @@
 <template>
   <div>
-    <el-row>
+    <el-row :gutter="20">
       <el-col :xl="singleColumn?24:12" :lg="24">
         <BaseInfo
           ref="BaseInfo"
           :submit-id.sync="formFinal.BaseInfoId"
           :userid.sync="userid"
           :self-settle.sync="selfSettle"
-          style="margin:2rem 1.25rem"
+          class="card-column"
           @submited="baseInfoSubmit"
         />
-      </el-col>
-      <el-col :xl="singleColumn?24:12" :lg="24">
-        <VacationPreview
-          v-show="nowStep>=1"
-          ref="VacationPreview"
-          :entity-type="entityType"
-          :entity-type-desc="entityTypeDesc"
-          :userid="userid"
-          style="margin:2rem 1.25rem"
-        />
-      </el-col>
-      <el-col :xl="singleColumn?24:12" :lg="24">
+
         <RequestInfo
-          v-show="nowStep>=1"
           ref="RequestInfo"
           :submit-id.sync="formFinal.RequestId"
           :main-type.sync="formFinal.mainType"
           :userid.sync="userid"
           :entity-type="entityType"
           :self-settle.sync="selfSettle"
-          style="margin:2rem 1.25rem"
+          class="card-column"
           @submited="requestInfoSubmit"
           @vacationTypeUpdate="vacationTypeUpdate"
         />
+        <SubmitApply
+          :request-id="formFinal.RequestId"
+          :base-info-id="formFinal.BaseInfoId"
+          :main-type="formFinal.mainType"
+          :entity-type="entityType"
+          :disabled="nowStep<2||childOnLoading"
+          @reset="createNewDirect"
+          @submit="userSubmit"
+        />
+      </el-col>
+      <el-col v-show="nowStep>=1" :xl="singleColumn?24:12" :lg="24">
+        <VacationPreview
+          ref="VacationPreview"
+          :entity-type="entityType"
+          :entity-type-desc="entityTypeDesc"
+          :userid="userid"
+          class="card-column"
+        />
+
+        <div class="card-column">
+          <h2>历史记录</h2>
+          <MyApply
+            v-if="userid"
+            :id="userid"
+            :entity-type="entityType"
+            :hide-user-card="true"
+            :hide-add-btn="true"
+          >
+            <template #inner>
+              <span />
+            </template>
+          </MyApply>
+        </div>
       </el-col>
     </el-row>
-    <el-row>
-      <SubmitApply
-        :request-id="formFinal.RequestId"
-        :base-info-id="formFinal.BaseInfoId"
-        :main-type="formFinal.mainType"
-        :entity-type="entityType"
-        :disabled="nowStep<2||childOnLoading"
-        @reset="createNewDirect"
-        @submit="userSubmit"
-      />
-    </el-row>
+    <el-backtop
+      target="#app"
+      :bottom="100"
+      style="width:3rem;height:3rem;box-shadow: 1px 1px 6px #3333aa"
+    />
   </div>
 </template>
 
@@ -57,7 +72,8 @@ export default {
     BaseInfo: () => import('./Form/BaseInfo'),
     RequestInfo: () => import('./Form/RequestInfo'),
     VacationPreview: () => import('@/components/Vacation/VacationPreview'),
-    SubmitApply: () => import('./Form/SubmitApply')
+    SubmitApply: () => import('./Form/SubmitApply'),
+    MyApply: () => import('@/views/Apply/MyApply')
   },
   props: {
     defaultId: { type: String, default: null },
@@ -72,16 +88,13 @@ export default {
     userid: null,
     selfSettle: null,
     formFinal: {
-      BaseInfoId: '',
-      RequestId: '',
+      BaseInfoId: null,
+      RequestId: null,
       mainType: -1
     }
   }),
   mounted() {
     this.userid = this.defaultId
-    setTimeout(() => {
-      this.createNewDirect()
-    }, 1000)
   },
   methods: {
     vacationTypeUpdate(val) {
@@ -109,8 +122,8 @@ export default {
       this.$refs.BaseInfo && this.$refs.BaseInfo.reset()
       this.$refs.RequestInfo && this.$refs.RequestInfo.reset()
       this.formFinal = {
-        BaseInfoId: '',
-        RequestId: '',
+        BaseInfoId: null,
+        RequestId: null,
         mainType: -1
       }
       this.onLoading = false
@@ -123,7 +136,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+.card-column {
+  margin: 0rem 0rem 2rem 0;
+}
 .mask {
   position: absolute;
   top: 0;

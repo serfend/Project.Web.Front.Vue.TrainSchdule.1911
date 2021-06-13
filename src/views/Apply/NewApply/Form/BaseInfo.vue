@@ -9,11 +9,18 @@
           <el-form ref="form" :model="form" label-width="8rem">
             <el-form-item label="申请人">
               <UserSelector
+                ref="user-selector"
                 :code.sync="form.id"
                 :default-info="form&&form.realName?form.realName:'未登录,请选择'"
+                select-name="发布申请.基本信息"
                 style="display:inline"
               />
-              <el-link v-if="currentUser&&form.id!=currentUser.id" @click="setCurrentUser">使用当前登录</el-link>
+              <span v-if="currentUser&&form.id!=currentUser.id">
+                <el-link @click="setCurrentUser">使用当前登录</el-link>
+                <el-tooltip content="当替小伙伴提交申请时可能只能保存，不能发布哦~">
+                  <i class="el-icon-question blue--text" />
+                </el-tooltip>
+              </span>
             </el-form-item>
             <el-row>
               <el-col>
@@ -73,14 +80,8 @@ export default {
     SettleFormItem
   },
   props: {
-    defailtId: {
-      type: String,
-      default: null
-    },
-    userid: {
-      type: String,
-      default: null
-    }
+    defailtId: { type: String, default: null },
+    userid: { type: String, default: null }
   },
   data() {
     return {
@@ -88,7 +89,7 @@ export default {
       onSvgSelected: false,
       form: this.createNewBase(),
       detailMask: false,
-      submitId: '',
+      submitId: null,
       isHover: false,
       anyChanged: false
     }
@@ -99,19 +100,23 @@ export default {
     },
     currentUser() {
       return this.$store.state.user.data
+    },
+    userSelectId() {
+      return this.userid || (this.currentUser && this.currentUser.id)
     }
   },
   watch: {
-    userid: {
+    userSelectId: {
       handler(val) {
-        console.log('userid', val)
-      }
+        this.form.id = val
+      },
+      immediate: true
     },
     form: {
       handler(val) {
         if (val && !this.onLoading) {
           this.anyChanged = true
-          this.submitId = ''
+          this.submitId = null
         }
       },
       deep: true,
@@ -122,8 +127,12 @@ export default {
         if (val) {
           this.fetchUserInfoesDerect()
         }
-      }
+      },
+      immediate: true
     }
+  },
+  mounted() {
+    this.reset()
   },
   methods: {
     phoneRoleCheck(filed, invalidVal, cb) {
@@ -134,7 +143,7 @@ export default {
     },
     reset() {
       console.log('baseinfo init')
-      this.form = this.createNewBase(true)
+      this.form = this.createNewBase()
       this.onLoading = false
       this.anyChanged = false
     },
@@ -145,13 +154,13 @@ export default {
         this.submitBaseInfo()
       }
     },
-    createNewBase(fetch) {
+    createNewBase() {
       const f = {
-        id: '',
-        realName: '',
-        company: '',
-        companyName: '',
-        duties: '',
+        id: null,
+        realName: null,
+        company: null,
+        companyName: null,
+        duties: null,
         Phone: '0',
         Settle: {
           self: this.buildSettle(),
@@ -160,30 +169,10 @@ export default {
           loversParent: this.buildSettle()
         }
       }
-      if (fetch) {
-        this.setCurrentUser()
-      }
       return f
     },
-    setCurrentUser(tryTime) {
-      if (!tryTime) tryTime = 8
-      tryTime--
-      console.log(this.userid)
-      const to_user_id =
-        this.userid || (this.currentUser && this.currentUser.id)
-      if (!to_user_id) {
-        if (tryTime > 0) {
-          setTimeout(() => {
-            this.setCurrentUser(tryTime)
-          }, 500)
-        } else {
-          this.$message.warning('获取当前用户失败')
-        }
-        return
-      }
-      this.$nextTick(() => {
-        this.form.id = to_user_id
-      })
+    setCurrentUser() {
+      this.form.id = this.currentUser && this.currentUser.id
     },
     fetchUserInfoesDerect() {
       this.onLoading = true
@@ -247,15 +236,15 @@ export default {
     },
     buildSettle() {
       return {
-        date: '',
-        valid: '',
+        date: null,
+        valid: null,
         address: {
-          parentId: '',
-          rank: '',
-          name: '',
-          shortname: ''
+          parentId: null,
+          rank: null,
+          name: null,
+          shortname: null
         },
-        addressDetail: ''
+        addressDetail: null
       }
     }
   }

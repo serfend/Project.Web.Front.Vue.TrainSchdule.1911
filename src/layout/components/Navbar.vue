@@ -50,7 +50,7 @@
               </el-menu-item>
               <el-menu-item index="3" @click="handleReg(false)">
                 <SvgIcon icon-class="newapplication_" />
-                <span>授权注册</span>
+                <span>用户列表</span>
               </el-menu-item>
               <el-menu-item index="4" @click="handleReg(true)">
                 <SvgIcon icon-class="newapplication_" />

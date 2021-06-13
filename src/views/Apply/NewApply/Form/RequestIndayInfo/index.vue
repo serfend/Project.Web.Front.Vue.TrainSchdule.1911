@@ -14,6 +14,7 @@
                 :entity-type="entityType"
                 :types.sync="requestTypes"
                 :left-length="0"
+                :hide="false"
                 @change="updateMaxLen"
               />
             </el-form-item>
@@ -26,17 +27,26 @@
                 style="width:30rem"
               />
             </el-form-item>
-            <el-form-item label="请假时间" prop="StampLeave" :rules="[{required:true,trigger:'blur'}]">
-              <el-date-picker
-                v-model="StampLeaveAndReturn"
-                type="datetimerange"
-                range-separator="到"
-                start-placeholder="离队时间"
-                end-placeholder="归队时间"
-                placeholder="选择请假时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['08:00:00', '18:00:00']"
-                @change="updateChange"
+            <el-form-item label="离队时间" prop="StampLeave" :rules="[{required:true,trigger:'blur'}]">
+              <DatetimePicker
+                v-model="formApply.StampLeave"
+                type="datetime"
+                :color="theme"
+                format="YYYY-MM-DD HH:mm:ss"
+                editable
+                locale="zh-cn"
+                :locale-config="localeConfig"
+              />
+            </el-form-item>
+            <el-form-item label="归队时间" prop="StampReturn" :rules="[{required:true,trigger:'blur'}]">
+              <DatetimePicker
+                v-model="formApply.StampReturn"
+                type="datetime"
+                :color="theme"
+                format="YYYY-MM-DD HH:mm:ss"
+                editable
+                locale="zh-cn"
+                :locale-config="localeConfig"
               />
             </el-form-item>
             <el-form-item label="目的地" :rules="[{required:true,trigger:'blur'}]">
@@ -87,15 +97,17 @@
 <script>
 import { postRequestInfo } from '@/api/apply/create'
 import { parseTime } from '@/utils'
+import localeConfig from '@/lang/locale-config'
 import { locationChildren } from '@/api/common/static'
 import transportationTypes from '@/components/Vacation/TransportationType/types'
 export default {
-  name: 'RequestInfo',
+  name: 'IndayRequestInfo',
   components: {
     CardTooltipAlert: () => import('../FormHelper/CardTooltipAlert'),
     CascaderSelector: () => import('@/components/CascaderSelector'),
     VacationTypeSelector: () =>
-      import('@/components/Vacation/VacationTypeSelector')
+      import('@/components/Vacation/VacationTypeSelector'),
+    DatetimePicker: () => import('vue-persian-datetime-picker')
   },
   props: {
     userid: { type: String, default: null },
@@ -104,7 +116,43 @@ export default {
   },
   data: () => ({
     transportationTypes,
-    loading: true,
+    localeConfig,
+    datePickerOption: {
+      disabledDate(time) {
+        return false
+      },
+      shortcuts: [
+        {
+          text: '大前天',
+          onClick: p => p.$emit('pick', new Date(new Date() - 3 * 86400e3))
+        },
+        {
+          text: '前天',
+          onClick: p => p.$emit('pick', new Date(new Date() - 2 * 86400e3))
+        },
+        {
+          text: '昨天',
+          onClick: p => p.$emit('pick', new Date(new Date() - 86400e3))
+        },
+        {
+          text: '今天',
+          onClick: p => p.$emit('pick', new Date())
+        },
+        {
+          text: '明天',
+          onClick: p => p.$emit('pick', new Date(+new Date() + 86400e3))
+        },
+        {
+          text: '后天',
+          onClick: p => p.$emit('pick', new Date(+new Date() + 2 * 86400e3))
+        },
+        {
+          text: '大后天',
+          onClick: p => p.$emit('pick', new Date(+new Date() + 3 * 86400e3))
+        }
+      ]
+    },
+    loading: false,
     formApply: null,
     requestTypes: null,
     vacationPlaceDefault: null,
@@ -113,16 +161,8 @@ export default {
     anyChanged: false
   }),
   computed: {
-    StampLeaveAndReturn: {
-      get() {
-        const s = this.formApply
-        return [s.StampLeave, s.StampReturn]
-      },
-      set(val) {
-        const s = this.formApply
-        s.StampLeave = val[0]
-        s.StampReturn = val[1]
-      }
+    theme() {
+      return this.$store.state.settings.theme
     },
     hideDetail() {
       return this.submitId && !this.isHover
@@ -159,7 +199,7 @@ export default {
     }
   },
   mounted() {
-    this.formApply = this.createNewRequest()
+    this.reset()
   },
   methods: {
     resetSettle(val) {
@@ -238,7 +278,8 @@ export default {
       this.$emit('update:submitId', null)
 
       let s = Object.assign({ id: this.userid }, this.formApply)
-
+      s.StampLeave = parseTime(s.StampLeave)
+      s.StampReturn = parseTime(s.StampReturn)
       const items = this.checkParamValid(s)
       if (items.length > 0) {
         this.anyChanged = false

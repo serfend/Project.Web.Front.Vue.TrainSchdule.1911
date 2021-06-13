@@ -1,7 +1,7 @@
 <template>
   <el-row class="row">
     <el-card v-infinite-scroll="onScrollToBottom" style="position: relative;">
-      <el-row class="card-row">
+      <el-row v-if="!hideAddBtn" class="card-row">
         <div class="card-title" style="color:#333;font-size:1.5rem">新增</div>
         <div class="card-description to-add" @click="user_add_new_item">
           <div style="background:#ccc;width:4rem;text-align:center">
@@ -94,7 +94,8 @@ export default {
     vacaEnd: { type: String, default: `${new Date().getFullYear() + 1}-12-31` },
     list: { type: Array, default: () => [] },
     showApplyNew: { type: Boolean, default: false },
-    entityType: { type: String, required: true }
+    entityType: { type: String, required: true },
+    hideAddBtn: { type: Boolean, default: false }
   },
   data: () => ({
     inner_id: '',

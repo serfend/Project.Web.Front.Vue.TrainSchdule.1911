@@ -42,6 +42,7 @@
                 :entity-type="entityType"
                 :types.sync="vacationTypes"
                 :left-length="usersvacation.leftLength"
+                :hide="false"
                 @change="updateMaxLen"
               />
             </el-form-item>
@@ -60,6 +61,7 @@
                 show-input
                 :max="maxVacationLength"
                 :min="0"
+                :format-tooltip="v=>`${v}/${maxVacationLength}天`"
                 @input="updateChange"
               />
             </el-form-item>
@@ -69,6 +71,7 @@
                 show-input
                 :max="14"
                 :min="0"
+                :format-tooltip="v=>`${v}/14天`"
                 @input="updateChange"
               />
             </el-form-item>
@@ -80,23 +83,28 @@
               prop="StampLeave"
               :rules="[{required:true,validator:stampLeaveRuleCheck,trigger:'blur'}]"
             >
-              <el-date-picker
-                v-model="formApply.StampLeave"
-                placeholder="选择日期"
-                type="date"
-                format="yyyy年MM月dd日"
-                value-format="yyyy-MM-dd"
-                @change="updateChange"
-              />
-              <span>预计归队</span>
-              <el-date-picker
-                v-model="formApply.StampReturn"
-                disabled
-                placeholder="自动计算"
-                type="date"
-                format="yyyy年MM月dd日"
-                value-format="yyyy-MM-dd"
-              />
+              <div style="display:flex">
+                <DatetimePicker
+                  v-model="formApply.StampLeave"
+                  type="date"
+                  view="year"
+                  :color="theme"
+                  format="YYYY-MM-DD"
+                  editable
+                  locale="zh-cn"
+                  :locale-config="localeConfig"
+                  @change="updateChange"
+                />
+                <span style="margin-left:1rem">预计归队</span>
+                <el-date-picker
+                  v-model="formApply.StampReturn"
+                  disabled
+                  placeholder="自动计算"
+                  type="date"
+                  format="yyyy年MM月dd日"
+                  value-format="yyyy-MM-dd"
+                />
+              </div>
             </el-form-item>
             <el-form-item v-if="nowVacationType &&nowVacationType.caculateBenefit">
               <el-collapse-transition v-for="(item,i) in lawVacations" :key="item.id">
@@ -157,6 +165,7 @@ import { postRequestInfo, getStampReturn } from '@/api/apply/create'
 import { parseTime } from '@/utils'
 import { locationChildren } from '@/api/common/static'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
+import localeConfig from '@/lang/locale-config'
 
 export default {
   name: 'RequestInfo',
@@ -168,7 +177,8 @@ export default {
       import('@/components/Vacation/VacationTypeSelector'),
     CascaderSelector: () => import('@/components/CascaderSelector'),
     BenefitVacation: () => import('./BenefitVacation'),
-    LawVacation: () => import('./LawVacation')
+    LawVacation: () => import('./LawVacation'),
+    DatetimePicker: () => import('vue-persian-datetime-picker')
   },
   props: {
     userid: { type: String, default: null },
@@ -176,8 +186,9 @@ export default {
     entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
-    loading: true,
-    formApply: null,
+    localeConfig,
+    loading: false,
+    formApply: {},
     vacationPlaceDefault: null,
     vacationTypes: null,
     usersvacation: {
@@ -197,6 +208,9 @@ export default {
     direct_select_apply: null
   }),
   computed: {
+    theme() {
+      return this.$store.state.settings.theme
+    },
     nowVacationType() {
       const type = this.formApply && this.formApply.vacationType
       return this.vacationTypes && this.vacationTypes.find(v => v.name === type)
@@ -275,6 +289,9 @@ export default {
       deep: true
     }
   },
+  mounted() {
+    this.reset()
+  },
   methods: {
     locationChildren,
     updatedApply() {
@@ -307,25 +324,17 @@ export default {
     },
     // call by base info ,DO NOT REMOVE
     refreshVacation() {
-      const user_select_leave_year =
+      const { userid, checkIsPlan } = this
+      const vacationYear =
         (this.formApply && new Date(this.formApply.StampLeave).getFullYear()) ||
         new Date().getFullYear()
-      getUsersVacationLimit(
-        this.userid,
-        user_select_leave_year,
-        this.checkIsPlan
-      )
+      getUsersVacationLimit({ userid, vacationYear, checkIsPlan })
         .then(data => {
           this.usersvacation = data
         })
-        .catch(() => {
-          this.resetLoading()
-        })
         .finally(() => {
-          if (user_select_leave_year !== this.user_select_leave_year) {
-            this.user_select_leave_year = user_select_leave_year
-            this.resetLoading()
-          }
+          this.vacationYear = vacationYear
+          this.resetLoading()
         })
     },
     resetSettle(val) {
@@ -343,6 +352,7 @@ export default {
       }
     },
     reset() {
+      console.log('reset request')
       this.formApply = this.createNewRequest()
       this.resetLoading()
     },
@@ -379,7 +389,9 @@ export default {
       if (id) result.push('基础信息未成功提交')
       if (place) {
         result.push(
-          `休假地点须精确到区县，当前:${params.vacationPlace.code || '未填写'}`
+          `休假地点须精确到区县，当前:${(params.vacationPlace &&
+            params.vacationPlace.code) ||
+            '未填写'}`
         )
       }
       if (stamp) result.push('离队时间有误')
@@ -450,7 +462,7 @@ export default {
       })
     },
     caculaingDate() {
-      if (!this.formApply.StampLeave) return
+      if (!this.formApply.StampLeave) return {}
       const benefits = this.filtedBenefitList.reduce((prev, cur) => {
         return prev + cur.length
       }, 0)

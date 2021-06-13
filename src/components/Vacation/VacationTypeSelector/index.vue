@@ -1,10 +1,14 @@
 <template>
   <div v-loading="loading">
-    <el-link v-show="hide&&urlDict" type="primary" @click="hide = false">{{ iType||'未选择' }}</el-link>
+    <el-link
+      v-show="innerHide&&urlDict"
+      type="primary"
+      @click="innerHide = false"
+    >{{ iType||'未选择' }}</el-link>
     <ul
       v-if="!loading"
       class="card-list"
-      :style="{top:hide?'-17rem':0,transform: hide?'scale(0)':null,opacity:hide?0:1,position:hide?'absolute':null}"
+      :style="{top:innerHide?'-17rem':0,transform: innerHide?'scale(0)':null,opacity:innerHide?0:1,position:innerHide?'absolute':null}"
     >
       <li
         v-for="(v,i) in list"
@@ -27,7 +31,7 @@
         </div>
       </li>
     </ul>
-    <el-link v-show="hide&&iType" @click="cancelSelect">取消选择</el-link>
+    <el-link v-show="innerHide&&iType" @click="cancelSelect">取消选择</el-link>
   </div>
 </template>
 
@@ -50,14 +54,15 @@ export default {
     types: { type: Array, default: null },
     leftLength: { type: Number, default: 0 },
     entityType: { type: String, required: true },
-    checkFilter: { type: Boolean, default: true }
+    checkFilter: { type: Boolean, default: true },
+    hide: { type: Boolean, default: false }
   },
   data: () => ({
     loading: false,
     iType: null,
     defaultUrl: null,
     urlDict: {},
-    hide: true
+    innerHide: true
   }),
   computed: {
     nowVacationType() {
@@ -94,6 +99,16 @@ export default {
     }
   },
   watch: {
+    hide: {
+      handler(val) {
+        console.log('hide', val)
+        if (val !== this.innerHide) this.innerHide = val
+      },
+      immediate: true
+    },
+    innerHide(val) {
+      this.$emit('update:hide', val)
+    },
     vacationType: {
       handler(val) {
         this.iType = val
@@ -211,7 +226,7 @@ export default {
       this.requireHide()
     },
     requireHide() {
-      this.hide = true
+      this.innerHide = true
     }
   }
 }
@@ -227,16 +242,16 @@ export default {
   }
 }
 .card-item {
-  height: 18rem;
+  height: 17rem;
   width: 12rem;
   float: left;
-  margin: 0.5rem 0.5rem;
+  margin: 0.5rem 0.7rem;
   overflow: hidden;
   .item-content {
     transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
     height: 100%;
     background-color: rgba(0, 139, 204, 0.5);
-    margin-top: 15.5rem;
+    margin-top: 14rem;
     &:hover {
       margin-top: 0;
       background-color: rgba(0, 139, 255, 0.9);

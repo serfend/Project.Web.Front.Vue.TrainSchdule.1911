@@ -9,11 +9,10 @@
 const red = [245, 108, 108]
 const green = [103, 194, 58]
 import { rgbToHex } from '@/utils'
-import VacationDescriptionContent from './VacationDescriptionContent'
 export default {
   name: 'VacationDescription',
   components: {
-    VacationDescriptionContent
+    VacationDescriptionContent: () => import('./VacationDescriptionContent')
   },
   props: {
     usersVacation: {

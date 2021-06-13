@@ -1,105 +1,114 @@
 <template>
-  <div
-    v-loading="onLoading"
-    :disabled="iDisabled"
-    :style="{'backgroundColor': theme}"
-    class="footer-nav"
-  >
-    <span v-if="next_permit_submit<=new Date()">
-      <el-popover placement="top-start" trigger="hover">
-        <div>
-          <h2>提交、保存、发布是什么</h2>
-          <el-divider />
-          <p>
-            <b>提交</b>任何人都可以操作，但24小时后仍未保存则会被删除
-          </p>
-          <p>
-            <b>保存</b>仅本人及上级操作，将会使申请进入草稿状态，随时可发布
-          </p>
-          <p>
-            <b>发布</b>仅本人及上级操作，将会使申请进入审核中状态
-          </p>
-          <div>
-            <el-button :disabled="iDisabled" type="success" @click="submitApply(0)">提交</el-button>
-            <el-button :disabled="iDisabled" type="success" @click="submitApply(1)">保存</el-button>
-          </div>
+  <el-transition>
+    <div
+      v-show="!iDisabled"
+      v-loading="onLoading"
+      :style="{'backgroundColor': theme}"
+      class="footer-nav"
+    >
+      <span v-if="next_permit_submit<=new Date()">
+        <el-button
+          :disabled="iDisabled"
+          type="success"
+          style="width:100%"
+          @click="submitApply(2)"
+        >发 布</el-button>
+        <div style="margin:0.5rem 0">
+          <el-popover placement="top-start" trigger="hover">
+            <div>
+              <h2>提交、保存、发布是什么</h2>
+              <el-divider />
+              <p>
+                <b>提交</b>任何人都可以操作，但24小时后仍未保存则会被删除
+              </p>
+              <p>
+                <b>保存</b>仅本人及上级操作，将会使申请进入草稿状态，随时可发布
+              </p>
+              <p>
+                <b>发布</b>仅本人及上级操作，将会使申请进入审核中状态
+              </p>
+              <div>
+                <el-button :disabled="iDisabled" type="success" @click="submitApply(0)">提交</el-button>
+                <el-button :disabled="iDisabled" type="success" @click="submitApply(1)">保存</el-button>
+              </div>
+            </div>
+            <i slot="reference" class="el-icon-more-outline" style="color:#fff" />
+          </el-popover>
+          <el-button type="info" size="mini" @click="createNew">新建申请</el-button>
+          <el-button v-show="submitId" size="mini" type="success" @click="skimDetail">查 看 详 情</el-button>
         </div>
-        <i slot="reference" class="el-icon-more-outline" style="color:#fff" />
-      </el-popover>
+      </span>
+      <el-progress
+        v-else
+        :percentage="percent"
+        :status="percent>=100?'exception':'success'"
+        :text-inside="true"
+        :stroke-width="25"
+        :format="formatPercent"
+      />
 
-      <el-button :disabled="iDisabled" type="success" style="width:40%" @click="submitApply(2)">发布</el-button>
-      <el-button type="info" @click="createNew">新建申请</el-button>
-      <el-button v-show="submitId" type="success" @click="skimDetail">查 看 详 情</el-button>
-    </span>
-    <el-progress
-      v-else
-      :percentage="percent"
-      :status="percent>=100?'exception':'success'"
-      :text-inside="true"
-      :stroke-width="25"
-      :format="formatPercent"
-    />
-    <el-dialog :visible.sync="showSuccessDialog" append-to-body>
-      <div v-if="!errorMsg">
-        <div style="display:flex;justify-content:center">
-          <LottieIcon
-            path="/assets/lottie/lottie.success.json"
-            :animate-speed="0.5"
-            style="width:15rem"
-          />
+      <el-dialog :visible.sync="showSuccessDialog" append-to-body>
+        <div v-if="!errorMsg">
+          <div style="display:flex;justify-content:center">
+            <LottieIcon
+              path="/assets/lottie/lottie.success.json"
+              :animate-speed="0.5"
+              style="width:15rem"
+            />
+          </div>
+          <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">申 请 提 交 成 功</div>
         </div>
-        <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">申 请 提 交 成 功</div>
-      </div>
-      <div v-else>
-        <div style="display:flex;justify-content:center">
-          <LottieIcon
-            path="/assets/lottie/lottie.fail.json"
-            :animate-speed="0.5"
-            style="width:15rem"
-          />
+        <div v-else>
+          <div style="display:flex;justify-content:center">
+            <LottieIcon
+              path="/assets/lottie/lottie.fail.json"
+              :animate-speed="0.5"
+              style="width:15rem"
+            />
+          </div>
+          <el-alert
+            v-if="errorMsg"
+            type="error"
+            center
+            effect="dark"
+            show-icon
+            closable
+          >{{ errorMsg }}</el-alert>
         </div>
-        <el-alert
-          v-if="errorMsg"
-          type="error"
-          center
-          effect="dark"
-          show-icon
-          closable
-        >{{ errorMsg }}</el-alert>
-      </div>
-      <div class="item-put-center">
-        <el-popover
-          v-for="(i,index) in errorList"
-          :key="i.id"
-          trigger="hover"
-          placement="top"
-          @show="i.can_show=true"
-        >
-          <component
-            :is="`${entityType}ApplyDetail`"
-            :can-show="i.can_show"
-            :show-user="false"
-            :show-comment="false"
-            :focus-id="i.id"
-            style="width:80rem"
-          />
-          <template #reference>
-            <el-button
-              style="cursor:pointer;margin-left:0.3rem"
-              type="text"
-              @click="show_detail(i)"
-            >第{{ index+1 }}项</el-button>
-          </template>
-        </el-popover>
-      </div>
-      <div class="item-put-center">
-        <el-button type="success" style="width:60%" @click="skimDetail">查看本次提交的详情</el-button>
-      </div>
-      <div class="item-put-center">
-        <el-button type="info" style="width:60%" @click="showSuccessDialog=false">关 闭</el-button>
-      </div>
-    </el-dialog>
-  </div>
+        <div class="item-put-center">
+          <el-popover
+            v-for="(i,index) in errorList"
+            :key="i.id"
+            trigger="hover"
+            placement="top"
+            @show="i.can_show=true"
+          >
+            <component
+              :is="`${entityType}ApplyDetail`"
+              :can-show="i.can_show"
+              :show-user="false"
+              :show-comment="false"
+              :focus-id="i.id"
+              style="width:80rem"
+            />
+            <template #reference>
+              <el-button
+                style="cursor:pointer;margin-left:0.3rem"
+                type="text"
+                @click="show_detail(i)"
+              >第{{ index+1 }}项</el-button>
+            </template>
+          </el-popover>
+        </div>
+        <div class="item-put-center">
+          <el-button type="success" style="width:60%" @click="skimDetail">查看本次提交的详情</el-button>
+        </div>
+        <div class="item-put-center">
+          <el-button type="info" style="width:60%" @click="showSuccessDialog=false">关 闭</el-button>
+        </div>
+      </el-dialog>
+    </div>
+  </el-transition>
 </template>
 
 <script>
@@ -266,15 +275,23 @@ export default {
 
 <style lang="scss" scoped>
 .footer-nav {
-  width: 100%;
-  height: 5em;
+  z-index: 1;
+  width: calc(100% - 100px);
+  height: 8em;
+  position: fixed;
+  bottom: 0;
+  opacity: 0.12;
   background: white;
   box-shadow: 0 -2px 10px -4px;
   padding: 8px;
+  transition: all 0.5s ease;
+  &:hover {
+    opacity: 1;
+  }
 }
 .item-put-center {
   margin-top: 1rem;
-  display: flex;
   justify-content: center;
+  text-align: center;
 }
 </style>
