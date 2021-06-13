@@ -1,5 +1,5 @@
 <template>
-  <Welcome :list="routes" :show-title="false" style="height:55rem" main-style="margin-top:14rem" />
+  <Welcome menu-name="xjxt.member-rate" :show-title="false" style="height:55rem" main-style="margin-top:14rem" />
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
   <el-card>
-    <Welcome :list="formatedList" :show-title="false" style="height:1080px" />
+    <Welcome menu-name="xjxt.manage" :show-title="false" style="height:1080px" />
   </el-card>
 </template>
 
