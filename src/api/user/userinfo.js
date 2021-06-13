@@ -173,14 +173,16 @@ export function getUserIdByRealName({ realName, pageIndex, pageSize, ignoreErr, 
 const url_getUsersVacationLimit = `${api}/vacation`
 /**
  * 获取用户休假限制时长和次数
- * @param {*} id
+ * @param {*} userid 用户名
  * @param {*} vacationYear 休假年度
  */
-export function getUsersVacationLimit(id, vacationYear, isPlan, ignoreErr) {
-  return cached_data(`${url_getUsersVacationLimit}/${id}/${vacationYear}/${isPlan}`, () =>
+export function getUsersVacationLimit({ userid, vacationYear, isPlan, ignoreErr }) {
+  return cached_data(`${url_getUsersVacationLimit}/${userid}/${vacationYear}/${isPlan}`, () =>
     request.get(url_getUsersVacationLimit, {
       params: {
-        id, vacationYear, isPlan
+        userid,
+        vacationYear,
+        isPlan
       },
       ignoreError: ignoreErr
     })

@@ -197,7 +197,8 @@ export default {
         })
     },
     refreshVacation() {
-      getUsersVacationLimit(this.userid, null, false).then(data => {
+      const { userid } = this
+      getUsersVacationLimit({ userid }).then(data => {
         this.vacation = data
       })
     }

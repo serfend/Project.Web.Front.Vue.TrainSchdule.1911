@@ -165,7 +165,7 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      getUsersVacationLimit(null, null, false, true).then(data => {
+      getUsersVacationLimit({ ignoreErr: true }).then(data => {
         commit('SET_VACA', {
           yearlyLength: 0,
           nowTimes: 0,
