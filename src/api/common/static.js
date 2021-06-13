@@ -1,6 +1,29 @@
 import request from '@/utils/request'
 
 /**
+ * 获取菜单
+ *
+ * @export
+ * @param {*} menuName
+ * @return {*}
+ */
+export function getMenu(menuName) {
+  return request.get('navigation/list', {
+    params: { menuName }
+  })
+}
+
+/**
+ * 更新菜单
+ *
+ * @export
+ * @param {*} { name, alias, description, icon, parent, svg, url }
+ * @return {*}
+ */
+export function postMenu({ name, alias, description, icon, parent, svg, url }) {
+  return request.post('navigation/info', { name, alias, description, icon, parent, svg, url })
+}
+/**
  * 刷新验证码
  *
  * @export

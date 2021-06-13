@@ -1,7 +1,7 @@
 <template>
-  <el-container>
+  <el-container v-loading="loading">
     <div style="width:100%;height:100%">
-      <el-main :style="`height:100%;user-select:none;${mainStyle}`">
+      <el-main style="height:100%;user-select:none">
         <el-row v-if="showTitle" type="flex">
           <div>
             <span style="color:#ffffff;font-size:2em">{{ $store.state.settings.title }}</span>
@@ -31,15 +31,7 @@
             :lg="6"
             style="display:flex;justify-content:center"
           >
-            <AppIcon
-              style="margin:3em 2em;"
-              :icon="i.icon"
-              :svg="i.svg"
-              :size="12"
-              :label="i.label"
-              :description="i.description"
-              @click="lintTo(i)"
-            />
+            <AppIcon style="margin:3em 2em;" :size="12" v-bind="i" @click="lintTo(i)" />
           </el-col>
         </el-row>
         <Footer />
@@ -51,25 +43,32 @@
 <script>
 import AppIcon from '@/components/AppIcon'
 import { formatTime } from '@/utils'
+import { getMenu } from '@/api/common/static'
 import Footer from '@/views/welcome/Footer'
 import { default_pages } from './setting'
 export default {
   name: 'Welcome',
   components: { AppIcon, Footer },
   props: {
-    mainStyle: { type: String, default: null },
-    showTitle: { type: Boolean, default: true },
+    showTitle: {
+      type: Boolean,
+      default: true
+    },
+    menuName: {
+      type: String,
+      default: null
+    },
     list: {
       type: Array,
       default: () => default_pages
     }
   },
-  data() {
-    return {
-      qrCodeUrl: '',
-      innerList: []
-    }
-  },
+  data: () => ({
+    loading: false,
+    qrCodeUrl: '',
+    default_pages,
+    innerList: []
+  }),
   watch: {
     list: {
       handler(val) {
@@ -82,16 +81,38 @@ export default {
         this.innerList = result
       },
       immediate: true
+    },
+    menuName: {
+      handler(v) {
+        if (v) {
+          this.refresh()
+        }
+      },
+      immediate: true
     }
   },
   methods: {
     formatTime,
+    refresh() {
+      this.loading = true
+      getMenu(this.menuName)
+        .then(data => {
+          this.innerList = data.list.map(i => {
+            i.href = i.url
+            i.label = i.alias
+            return i
+          })
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     lintTo(item) {
       if (item.callback) {
         item.callback()
       }
       if (item.href) {
-        this.$router.push(`${item.href}/`)
+        location.href = item.href
       }
     }
   }
