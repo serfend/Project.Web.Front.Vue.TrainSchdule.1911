@@ -1,7 +1,10 @@
 <template>
-  <el-card style="margin-bottom:3rem">
+  <el-card v-loading="loading" style="margin-bottom:3rem">
     <AuthCode :form.sync="auth" select-name="更新记录" />
-
+    <div style="margin:1rem">
+      <span>应用名称</span>
+      <el-input v-model="appName" style="width:200rem" />
+    </div>
     <Pagination :pagesetting.sync="pages" :total-count="pagesTotalCount" />
     <el-button-group>
       <el-button icon="el-icon-plus" type="success" @click="addNew">添加记录</el-button>
@@ -24,7 +27,12 @@
       </el-table-column>
       <el-table-column label="描述">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.description" type="textarea" autosize />
+          <el-input
+            v-model="scope.row.description"
+            type="textarea"
+            :rows="1"
+            :autosize="!scope.row.saved"
+          />
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -43,6 +51,7 @@
         </template>
       </el-table-column>
     </el-table>
+    <Pagination :pagesetting.sync="pages" :total-count="pagesTotalCount" />
     <el-dialog :visible.sync="dialogShow" title="批量修改">
       <el-input v-model="mutiInput" type="textarea" autosize />
       <el-button icon="el-icon-refresh" type="success" @click="syncCurrent">刷新</el-button>
@@ -59,6 +68,7 @@ export default {
   name: 'UpdateRecord',
   components: { AuthCode, Pagination },
   data: () => ({
+    loading: false,
     list: [],
     prev: {}, // 记录上次保存的记录
     auth: {
@@ -68,11 +78,17 @@ export default {
     pagesTotalCount: 0,
     pages: { pageIndex: 0, pageSize: 10 },
     dialogShow: false,
-    mutiInput: ''
+    mutiInput: '',
+    userAppName: null
   }),
   computed: {
-    appName() {
-      return this.$store.state.settings.title
+    appName: {
+      get() {
+        return this.userAppName || this.$store.state.settings.title
+      },
+      set(val) {
+        this.userAppName = val
+      }
     }
   },
   watch: {
@@ -82,6 +98,9 @@ export default {
           this.refresh()
         })
       }
+    },
+    appName() {
+      this.refresh()
     }
   },
   mounted() {
@@ -100,23 +119,30 @@ export default {
     },
     submitMuti() {
       this.$confirm('确定修改吗？').then(() => {
-        const m = JSON.parse(this.mutiInput)
+        const m = JSON.parse(this.mutiInput).map(i => {
+          i.appName = this.appName
+          return i
+        })
         modifyUpdateRecord(m, this.auth).then(() => {
           this.$message.success('批量修改完成')
         })
       })
     },
     refresh() {
-      getUpdateRecord(
-        Object.assign({ appName: this.appName }, this.pages)
-      ).then(data => {
-        this.list = data.list.map(i => {
-          this.prev[i.version] = i
-          this.prev[i.version].saved = true
-          return Object.assign({ saved: true }, i)
+      this.loading = true
+      const appName = this.appName
+      getUpdateRecord(Object.assign({ appName }, this.pages))
+        .then(data => {
+          this.list = data.list.map(i => {
+            this.prev[i.version] = i
+            this.prev[i.version].saved = true
+            return Object.assign({ saved: true }, i)
+          })
+          this.pagesTotalCount = data.totalCount
         })
-        this.pagesTotalCount = data.totalCount
-      })
+        .finally(() => {
+          this.loading = false
+        })
     },
     update(model) {
       const m = Object.assign({}, model)
