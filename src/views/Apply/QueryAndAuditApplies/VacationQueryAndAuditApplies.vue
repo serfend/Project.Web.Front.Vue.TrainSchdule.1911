@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card v-if="currentUser&&currentUser.id" v-loading="loading">
+    <div v-if="currentUser&&currentUser.id" v-loading="loading">
       <ApplySearchCommon
         ref="queryAppliesForm"
         :loading.sync="appliesListIsLoading"
@@ -26,7 +26,7 @@
           <ActionUser :row="row" :entity-type="entityType" @updated="requestUpdate" />
         </template>
       </ApplicationList>
-    </el-card>
+    </div>
     <Login v-else />
   </div>
 </template>

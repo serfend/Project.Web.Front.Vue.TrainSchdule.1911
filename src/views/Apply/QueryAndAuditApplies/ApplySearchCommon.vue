@@ -1,149 +1,149 @@
 <template>
-  <div>
-    <el-card style="margin:0 0 2rem 0">
-      <el-tooltip effect="light" content="仅单位的管理和数据分析人员需进行条件查询，其他人员默认将查询到本人可审批的申请">
-        <el-switch
-          v-model="adminQuery"
-          style="margin:0px 20px"
-          active-text="管理查询"
-          inactive-text="一般查询"
-          @change="requireSearchData"
-        />
-      </el-tooltip>
-      <el-button
-        type="success"
-        :icon="onLoading?'el-icon-loading':'el-icon-refresh-right'"
-        circle
-        style="float:right"
-        @click="requireSearchData"
-      />
-    </el-card>
-    <el-form>
-      <el-tabs v-model="active_pane" type="border-card">
-        <el-tab-pane label="状态">
-          <el-form-item v-show="!adminQuery" label="我的审核">
-            <el-select
-              v-model="queryForm.actionStatus"
-              class="full-width"
-              placeholder="选择审核状态"
-              clearable
-            >
-              <el-option
-                v-for="item in myAuditActionDic"
-                :key="item.code"
-                :label="item.desc"
-                :value="item.code"
-              >
-                <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
-                <span style="float: right; color: #e0e0e0; font-size: 10px">{{ item.code }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="onFilterAccept" label="落实状态">
-            <el-select
-              v-if="executeStatus"
-              v-model="queryForm.executeStatus"
-              class="full-width"
-              placeholder="选择确认时间情况"
-              clearable
-            >
-              <el-option
-                v-for="(item,i) in Object.keys(executeStatus).map(s=>executeStatus[s])"
-                :key="i"
-                :value="item.value"
-                :label="item.alias"
-              >
-                <div v-if="item">
-                  <span :style="{'float': 'left','color':item.color}">{{ item.alias }}</span>
-                  <span style="float: right; color: #e0e0e0; font-size: 10px">{{ item.value }}</span>
-                </div>
-                <div v-else>未知项{{ Object.keys(executeStatus)[i] }}</div>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="审核状态">
-            <el-select
-              v-model="queryForm.status"
-              class="full-width"
-              placeholder="选择审核状态"
-              multiple
-              clearable
-            >
-              <el-option
-                v-for="item in statusOptions"
-                :key="item.code"
-                :label="item.desc"
-                :value="item.code"
-              >
-                <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
-                <span style="float: right; color: #f0f0f0; font-size: 10px">{{ item.code }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="hasRequestType" label="填报类型">
-            <el-radio-group v-model="queryForm.mainStatus">
-              <el-radio :label="-1">不限</el-radio>
-              <el-radio :label="0">正式填报</el-radio>
-              <el-radio :label="2">填报计划休假</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-tab-pane>
-        <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="人员">
-          <el-form-item label="审核人">
-            <UserSelector
-              :code.sync="queryForm.auditBy"
-              default-info="搜索成员"
-              style="display:inline"
+  <el-form class="float-panel flashing">
+    <el-tabs v-model="active_pane" type="border-card">
+      <el-tab-pane label="状态">
+        <el-form-item label>
+          <el-tooltip effect="light" content="仅单位的管理和数据分析人员需进行条件查询，其他人员默认将查询到本人可审批的申请">
+            <el-switch
+              v-model="adminQuery"
+              style="margin:0px 20px"
+              active-text="管理查询"
+              inactive-text="一般查询"
+              @change="requireSearchData"
             />
-          </el-form-item>
-          <el-form-item label="当前审核人">
-            <UserSelector
-              :code.sync="queryForm.nowAuditBy"
-              default-info="搜索成员"
-              style="display:inline"
-            />
-          </el-form-item>
-          <el-form-item label="创建人">
-            <UserSelector
-              :code.sync="queryForm.createFor"
-              default-info="搜索成员"
-              style="display:inline"
-            />
-          </el-form-item>
-          <el-form-item label="已婚">
-            <el-tooltip content="测试功能,暂不稳定">
-              <i class="el-icon-info blue--text" />
-            </el-tooltip>
-            <el-switch v-model="queryForm.isMarried" />
-          </el-form-item>
-          <el-form-item v-if="queryForm.isMarried" label="分居">
-            <el-tooltip content="测试功能,暂不稳定">
-              <i class="el-icon-info blue--text" />
-            </el-tooltip>
-            <el-switch v-model="queryForm.isApart" />
-          </el-form-item>
-        </el-tab-pane>
-        <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="单位">
-          <el-form-item v-show="adminQuery" id="companiesSelector" label="来自单位">
-            <CompaniesSelector ref="companiesSelector" v-model="queryForm.CreateCompanyItem" />
-          </el-form-item>
-          <el-form-item label="单位类别">
-            <CompanyTagSelector v-model="queryForm.companyType" />
-          </el-form-item>
-          <el-form-item label="职务类别">
-            <DutiesSelector :tag.sync="queryForm.dutiesType" :only-tag="true" />
-          </el-form-item>
-          <el-form-item label="偏远单位">
-            <el-tooltip content="测试功能,暂不稳定">
-              <i class="el-icon-info blue--text" />
-            </el-tooltip>
-            <el-switch v-model="queryForm.isRemote" />
-          </el-form-item>
-        </el-tab-pane>
-        <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="时间">
-          <el-form-item v-show="adminQuery" label="创建时间">
+          </el-tooltip>
+        </el-form-item>
+        <el-form-item v-show="!adminQuery" label="我的审核">
+          <el-select
+            v-model="queryForm.actionStatus"
+            class="full-width"
+            placeholder="选择审核状态"
+            clearable
+          >
+            <el-option
+              v-for="item in myAuditActionDic"
+              :key="item.code"
+              :label="item.desc"
+              :value="item.code"
+            >
+              <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
+              <span style="float: right; color: #e0e0e0; font-size: 10px">{{ item.code }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="onFilterAccept" label="落实状态">
+          <el-select
+            v-if="executeStatus"
+            v-model="queryForm.executeStatus"
+            class="full-width"
+            placeholder="选择确认时间情况"
+            clearable
+          >
+            <el-option
+              v-for="(item,i) in Object.keys(executeStatus).map(s=>executeStatus[s])"
+              :key="i"
+              :value="item.value"
+              :label="item.alias"
+            >
+              <div v-if="item">
+                <span :style="{'float': 'left','color':item.color}">{{ item.alias }}</span>
+                <span style="float: right; color: #e0e0e0; font-size: 10px">{{ item.value }}</span>
+              </div>
+              <div v-else>未知项{{ Object.keys(executeStatus)[i] }}</div>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="审核状态">
+          <el-select
+            v-model="queryForm.status"
+            class="full-width"
+            placeholder="选择审核状态"
+            multiple
+            clearable
+          >
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.code"
+              :label="item.desc"
+              :value="item.code"
+            >
+              <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
+              <span style="float: right; color: #f0f0f0; font-size: 10px">{{ item.code }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="hasRequestType" label="填报类型">
+          <el-radio-group v-model="queryForm.mainStatus">
+            <el-radio :label="-1">不限</el-radio>
+            <el-radio :label="0">正式填报</el-radio>
+            <el-radio :label="2">填报计划休假</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-tab-pane>
+      <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="人员">
+        <el-form-item label="审核人">
+          <UserSelector :code.sync="queryForm.auditBy" default-info="搜索成员" style="display:inline" />
+        </el-form-item>
+        <el-form-item label="当前审核人">
+          <UserSelector
+            :code.sync="queryForm.nowAuditBy"
+            default-info="搜索成员"
+            style="display:inline"
+          />
+        </el-form-item>
+        <el-form-item label="创建人">
+          <UserSelector
+            :code.sync="queryForm.createFor"
+            default-info="搜索成员"
+            style="display:inline"
+          />
+        </el-form-item>
+        <el-form-item label="已婚">
+          <el-tooltip content="测试功能,暂不稳定">
+            <i class="el-icon-info blue--text" />
+          </el-tooltip>
+          <el-switch v-model="queryForm.isMarried" />
+        </el-form-item>
+        <el-form-item v-if="queryForm.isMarried" label="分居">
+          <el-tooltip content="测试功能,暂不稳定">
+            <i class="el-icon-info blue--text" />
+          </el-tooltip>
+          <el-switch v-model="queryForm.isApart" />
+        </el-form-item>
+      </el-tab-pane>
+      <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="单位">
+        <el-form-item v-show="adminQuery" id="companiesSelector" label="来自单位">
+          <CompaniesSelector ref="companiesSelector" v-model="queryForm.CreateCompanyItem" />
+        </el-form-item>
+        <el-form-item label="单位类别">
+          <CompanyTagSelector v-model="queryForm.companyType" />
+        </el-form-item>
+        <el-form-item label="职务类别">
+          <DutiesSelector :tag.sync="queryForm.dutiesType" :only-tag="true" />
+        </el-form-item>
+        <el-form-item label="偏远单位">
+          <el-tooltip content="测试功能,暂不稳定">
+            <i class="el-icon-info blue--text" />
+          </el-tooltip>
+          <el-switch v-model="queryForm.isRemote" />
+        </el-form-item>
+      </el-tab-pane>
+      <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="时间">
+        <el-form-item v-show="adminQuery" label="创建时间">
+          <el-date-picker
+            v-model="queryForm.createTime"
+            type="daterange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            format="yyyy年MM月dd日"
+            value-format="yyyy-MM-dd"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item v-show="adminQuery" label="离队时间" label-width="120">
+          <el-tooltip effect="light" content="注意需要选中一个时间范围，例如5月2日到5月12日">
             <el-date-picker
-              v-model="queryForm.createTime"
+              v-model="queryForm.stampLeaveTime"
               type="daterange"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -151,60 +151,55 @@
               value-format="yyyy-MM-dd"
               clearable
             />
-          </el-form-item>
-          <el-form-item v-show="adminQuery" label="离队时间" label-width="120">
-            <el-tooltip effect="light" content="注意需要选中一个时间范围，例如5月2日到5月12日">
-              <el-date-picker
-                v-model="queryForm.stampLeaveTime"
-                type="daterange"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                format="yyyy年MM月dd日"
-                value-format="yyyy-MM-dd"
-                clearable
-              />
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item v-show="adminQuery" label="归队时间" label-width="120">
-            <el-date-picker
-              v-model="queryForm.stampReturnTime"
-              type="daterange"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              format="yyyy年MM月dd日"
-              value-format="yyyy-MM-dd"
-              clearable
-            />
-          </el-form-item>
-        </el-tab-pane>
-        <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="授权码">
-          <AuthCode v-show="adminQuery" :form.sync="queryForm.auth" select-name="申请搜索" />
-        </el-tab-pane>
-      </el-tabs>
-      <el-row>
-        <el-col v-show="adminQuery" :lg="24">
-          <el-button-group style="width:100%">
-            <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
-            <el-button
-              type="primary"
-              icon="el-icon-search"
-              style="width:40%"
-              :loading="onLoading"
-              autofocus
-              @click="requireSearchData"
-            >筛选</el-button>
-            <el-button
-              type="primary"
-              icon="el-icon-download"
-              style="width:40%"
-              :loading="onLoading"
-              @click="exportAppliesNowFilter"
-            >导出当前查询</el-button>
-          </el-button-group>
-        </el-col>
-      </el-row>
-    </el-form>
-  </div>
+          </el-tooltip>
+        </el-form-item>
+        <el-form-item v-show="adminQuery" label="归队时间" label-width="120">
+          <el-date-picker
+            v-model="queryForm.stampReturnTime"
+            type="daterange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            format="yyyy年MM月dd日"
+            value-format="yyyy-MM-dd"
+            clearable
+          />
+        </el-form-item>
+      </el-tab-pane>
+      <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="授权码">
+        <AuthCode v-show="adminQuery" :form.sync="queryForm.auth" select-name="申请搜索" />
+      </el-tab-pane>
+    </el-tabs>
+    <el-row style="margin:0.5rem">
+      <el-col v-show="adminQuery" :lg="24">
+        <el-button-group style="width:100%">
+          <el-button type="info" style="width:19%" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
+          <el-button
+            type="success"
+            icon="el-icon-search"
+            style="width:40%"
+            :loading="onLoading"
+            autofocus
+            @click="requireSearchData"
+          >筛选/刷新</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-download"
+            style="width:40%"
+            :loading="onLoading"
+            @click="exportAppliesNowFilter"
+          >导出当前查询</el-button>
+        </el-button-group>
+      </el-col>
+      <el-col v-show="!adminQuery" :lg="24">
+        <el-button type="info" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
+        <el-button
+          type="success"
+          :icon="onLoading?'el-icon-loading':'el-icon-refresh-right'"
+          @click="requireSearchData"
+        >刷新</el-button>
+      </el-col>
+    </el-row>
+  </el-form>
 </template>
 
 <script>
@@ -454,3 +449,63 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.float-panel {
+  float: right;
+  position: fixed;
+  z-index: 99999999;
+  width: 35rem;
+  box-shadow: 0 2px 4px 0 #0000008a, 0 0 6px 0 #0000003c;
+  right: -30rem;
+  transition: all ease 0.5s;
+  opacity: 0.12;
+  &:hover {
+    right: 0;
+    opacity: 1;
+  }
+}
+
+.flashing {
+  animation: flashing-item 5s 1 ease;
+  animation-delay: 3s;
+}
+@keyframes flashing-item {
+  0% {
+    opacity: 0.12;
+  }
+  4% {
+    opacity: 1;
+    right: 0;
+  }
+  8% {
+    opacity: 0.12;
+    right: 0;
+  }
+  12% {
+    opacity: 1;
+    right: 0;
+  }
+  16% {
+    opacity: 0.12;
+    right: 0;
+  }
+  20% {
+    opacity: 1;
+    right: 0;
+  }
+  24% {
+    opacity: 0.12;
+    right: 0;
+  }
+  28% {
+    opacity: 1;
+    right: 0;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.12;
+  }
+}
+</style>
