@@ -12,6 +12,7 @@
         />
 
         <RequestInfo
+          v-show="nowStep>=1"
           ref="RequestInfo"
           :submit-id.sync="formFinal.RequestId"
           :main-type.sync="formFinal.mainType"

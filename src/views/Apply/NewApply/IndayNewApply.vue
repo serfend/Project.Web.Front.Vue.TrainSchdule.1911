@@ -11,6 +11,7 @@
           @submited="baseInfoSubmit"
         />
         <RequestInfo
+          v-show="nowStep>=1"
           ref="RequestInfo"
           :submit-id.sync="formFinal.RequestId"
           :userid.sync="userid"
