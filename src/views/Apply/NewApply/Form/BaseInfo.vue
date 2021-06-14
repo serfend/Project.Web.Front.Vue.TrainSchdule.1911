@@ -1,6 +1,6 @@
 <template>
   <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
-    <el-card v-loading="onLoading" header="基本信息" style="position:relative">
+    <el-card v-loading="loading" header="基本信息" style="position:relative">
       <el-container>
         <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
@@ -85,7 +85,7 @@ export default {
   },
   data() {
     return {
-      onLoading: true,
+      loading: true,
       onSvgSelected: false,
       form: this.createNewBase(),
       detailMask: false,
@@ -114,13 +114,12 @@ export default {
     },
     form: {
       handler(val) {
-        if (val && !this.onLoading) {
+        if (val && !this.loading) {
           this.anyChanged = true
           this.submitId = null
         }
       },
-      deep: true,
-      immediate: true
+      deep: true
     },
     'form.id': {
       handler(val) {
@@ -130,9 +129,6 @@ export default {
       },
       immediate: true
     }
-  },
-  mounted() {
-    this.reset()
   },
   methods: {
     phoneRoleCheck(filed, invalidVal, cb) {
@@ -144,7 +140,7 @@ export default {
     reset() {
       console.log('baseinfo init')
       this.form = this.createNewBase()
-      this.onLoading = false
+      this.loading = false
       this.anyChanged = false
     },
     leaveCard() {
@@ -155,6 +151,7 @@ export default {
       }
     },
     createNewBase() {
+      console.log('request create new base')
       const f = {
         id: null,
         realName: null,
@@ -175,40 +172,42 @@ export default {
       this.form.id = this.currentUser && this.currentUser.id
     },
     fetchUserInfoesDerect() {
-      this.onLoading = true
-      return getUserAllInfo(this.form.id)
+      this.loading = true
+      const id = this.form.id
+      return getUserAllInfo(id)
         .then(data => {
           const { base, company, duties, social } = data
-          this.form.id = base.id
-          this.form.realName = base.base.realName
-          this.form.company = company.company.code
-          this.form.companyName = company.company.name
-          this.form.duties = duties.name
-          this.form.Phone = social.phone
+          const form = this.form
+          form.id = id
+          form.realName = base.base.realName
+          form.company = company.company.code
+          form.companyName = company.company.name
+          form.duties = duties.name
+          form.Phone = social.phone
           const { self, lover, parent, loversParent } = social.settle
-          if (!this.form.Settle) this.form.Settle = {}
-          this.form.Settle.self = self
+          if (!form.Settle) form.Settle = {}
+          form.Settle.self = self
           this.$emit('update:selfSettle', social.settle)
-          this.form.Settle.lover = lover
-          this.form.Settle.parent = parent
-          this.form.Settle.loversParent = loversParent
-
-          setTimeout(() => {
-            this.submitBaseInfo()
-          }, 100)
+          form.Settle.lover = lover
+          form.Settle.parent = parent
+          form.Settle.loversParent = loversParent
+          this.loading = false
+          this.submitBaseInfo()
         })
         .finally(() => {
-          this.onLoading = false
+          this.loading = false
         })
     },
     // 提交基础信息
     submitBaseInfo() {
-      console.log('baseinfo submit?' + !this.onLoading)
-      if (this.onLoading) return
+      console.log('baseinfo submit?' + !this.loading)
+      if (this.loading) return console.warn('baseinfo is loading')
       const { id, Phone } = this.form
-      if (!id || !Phone) return
+      if (!id || !Phone) {
+        return console.warn('id or Phone is not ready', id, Phone)
+      }
       if (validPhone(Phone)) return
-      this.onLoading = true
+      this.loading = true
       const payload = {
         id,
         Phone
@@ -218,6 +217,7 @@ export default {
           if (data.id) {
             this.submitId = data.id
             this.$emit('update:submitId', data.id)
+            console.log('emit update', this.form.id)
             this.$emit('update:userid', this.form.id)
             setTimeout(() => {
               this.$emit('submited', true)
@@ -231,7 +231,7 @@ export default {
           }, 200)
         })
         .finally(() => {
-          this.onLoading = false
+          this.loading = false
         })
     },
     buildSettle() {

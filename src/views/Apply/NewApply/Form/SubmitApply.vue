@@ -37,7 +37,7 @@
         <el-progress
           v-else
           :percentage="percent"
-          :status="percent>=100?'exception':'success'"
+          status="exception"
           :text-inside="true"
           :stroke-width="25"
           :format="formatPercent"
@@ -140,15 +140,13 @@ export default {
     percent: 0,
     time_desc: 0,
     time_updator: null,
-    isFlashing: true
+    isFlashing: true,
+    caculateParent: ''
   }),
   computed: {
     navClass() {
       const i = this.isFlashing ? ' flashing' : ''
       return `footer-nav${i}`
-    },
-    caculateParent() {
-      return `${this.$parent.$el.clientWidth}px`
     },
     iDisabled() {
       return this.disabled || !this.baseInfoId || !this.requestId
@@ -161,6 +159,12 @@ export default {
     }
   },
   watch: {
+    disabled: {
+      handler(val) {
+        this.refresh()
+      },
+      immediate: true
+    },
     submitId: {
       handler(val) {
         if (val) this.showSuccessDialog = true
@@ -176,7 +180,7 @@ export default {
 
       const total = this.next_permit_submit - this.next_permit_begin
       const spent = new Date() - this.next_permit_begin
-      this.percent = Math.floor((spent / total) * 1e4) / 1e2
+      this.percent = 100 - Math.floor((spent / total) * 1e4) / 1e2
     }, 5e2)
   },
   destroyed() {
@@ -184,6 +188,10 @@ export default {
   },
   methods: {
     getTimeDesc,
+    refresh() {
+      if (!this.$parent.$el) this.caculateParent = '100%'
+      else this.caculateParent = `${this.$parent.$el.clientWidth}px`
+    },
     formatPercent(v) {
       return this.time_desc
     },
