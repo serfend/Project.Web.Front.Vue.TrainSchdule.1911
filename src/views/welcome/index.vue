@@ -72,7 +72,7 @@ export default {
   watch: {
     list: {
       handler(val) {
-        if (!val) return
+        if (!val || this.menuName) return
         var result = []
         var vLen = val.length
         for (var j = 0; j < vLen; j++) {
