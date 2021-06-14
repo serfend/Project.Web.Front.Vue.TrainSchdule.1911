@@ -407,9 +407,7 @@ export default {
         auth: data.auth
       })
       // 仅管理员进行自定义查询，其余时候仅加载当前用户可审批人
-      const status = data.status
-      const actionStatus = data.actionStatus
-      const execStatus = data.executeStatus
+      const { status, actionStatus, executeStatus } = data
       let action
       if (this.adminQuery) {
         action = only_id ? queryListId(f) : queryList(f)
@@ -418,7 +416,7 @@ export default {
           pages: f.pages,
           status,
           actionStatus,
-          execStatus,
+          executeStatus,
           entityType: this.entityType
         })
       }
