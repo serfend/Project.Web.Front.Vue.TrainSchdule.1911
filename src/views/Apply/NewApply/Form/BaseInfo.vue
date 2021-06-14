@@ -85,7 +85,7 @@ export default {
   },
   data() {
     return {
-      loading: true,
+      loading: false,
       onSvgSelected: false,
       form: this.createNewBase(),
       detailMask: false,
