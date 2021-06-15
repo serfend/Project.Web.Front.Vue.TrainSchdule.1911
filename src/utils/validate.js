@@ -81,7 +81,7 @@ export function cidValid(code, birthDay, location, gender) {
  * @returns {Boolean}
  */
 export function validUsername(str) {
-  return str.length >= 7
+  return str && str.length >= 7
 }
 
 /**
