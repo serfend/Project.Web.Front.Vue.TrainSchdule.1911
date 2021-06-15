@@ -1,5 +1,6 @@
 <template>
   <el-form
+    v-if="queryForm"
     :class="classItem"
     :style="{right:panel_right}"
     @mouseenter.native="panelMouseEnter"
@@ -296,25 +297,7 @@ export default {
     ],
     onLoading: false,
     onFormModifying: false,
-    queryForm: {
-      createTime: null,
-      stampLeaveTime: null,
-      stampReturnTime: null,
-      status: [], // 状态
-      mainStatus: -1,
-      actionStatus: 'Received', // 我的状态
-      auditBy: null,
-      nowAuditBy: null,
-      createFor: null,
-      CreateCompanyItem: null,
-      createCompany: [], // 申请单位
-      dutiesType: null,
-      companyType: null,
-      auth: {
-        authByUserId: '',
-        code: ''
-      }
-    },
+    queryForm: null,
     queryFormStartRecord: false,
     innerPages: {
       pageIndex: 0,
@@ -383,7 +366,6 @@ export default {
         this.setFormRecord()
         this.requireSearchData()
       },
-      immediate: true,
       deep: true
     },
     pages: {
@@ -404,6 +386,7 @@ export default {
       tmp.actionStatus = 'Received' // 默认查询待我审核的
       this.queryForm = tmp
     }
+    if (!this.queryForm) this.clearForm()
     this.queryFormStartRecord = true
     this.driver = new Driver({
       closeBtnText: '我知道了'
@@ -452,13 +435,34 @@ export default {
       this.$emit('exportApplies')
     },
     clearForm() {
-      this.$refs.queryForm.resetFields()
+      this.queryForm = this.createQueryForm()
     },
     handleSearchedData(data) {
       const list = data.list || []
       this.$emit('update:list', list)
       // this.$emit('update:pages', f.pages)
       this.$emit('update:pagesTotalCount', data.totalCount)
+    },
+    createQueryForm() {
+      return {
+        createTime: null,
+        stampLeaveTime: null,
+        stampReturnTime: null,
+        status: [], // 状态
+        mainStatus: -1,
+        actionStatus: 'Received', // 我的状态
+        auditBy: null,
+        nowAuditBy: null,
+        createFor: null,
+        CreateCompanyItem: null,
+        createCompany: [], // 申请单位
+        dutiesType: null,
+        companyType: null,
+        auth: {
+          authByUserId: '',
+          code: ''
+        }
+      }
     },
     searchData(userAct, callback, pages, only_id) {
       // if (!userAct && this.onFormModifying) {
