@@ -9,6 +9,11 @@
     <Flip v-model="isFlip" width="100%" height="100%">
       <template #front>
         <div style="width:35rem">
+          <el-button
+            type="danger"
+            :style="{transform: btnExitTransform}"
+            @click="panel_out(false)"
+          >关闭</el-button>
           <el-tabs v-model="active_pane" type="border-card">
             <el-tab-pane label="状态">
               <el-form-item label>
@@ -310,7 +315,8 @@ export default {
     checker: null,
     active_pane: '0',
     driver: null,
-    classItem: 'float-panel flashing'
+    classItem: 'float-panel flashing',
+    btnExitTransform: null
   }),
   computed: {
     onFilterAccept() {
@@ -394,7 +400,13 @@ export default {
   },
   methods: {
     checkPanelStatus() {
-      this.panel_right = this.panel_should_out ? '0' : '-30rem'
+      if (this.panel_should_out) {
+        this.panel_right = '0'
+        this.btnExitTransform = ''
+        return
+      }
+      this.panel_right = '-30rem'
+      this.btnExitTransform = 'translateY(2rem) scale(0.5)'
     },
     panel_out(out, delay) {
       console.log('panel out', out, delay)
@@ -414,7 +426,7 @@ export default {
       }, 5e3)
     },
     panelMouseLeave() {
-      this.panel_out(false, 5e3)
+      this.panel_out(false, 2e3)
     },
     panelMouseEnter() {
       this.panel_out(true)
@@ -549,7 +561,7 @@ export default {
 }
 .flashing {
   animation: flashing-item 5s 1 ease;
-  animation-delay: 3s;
+  animation-delay: 1s;
 }
 @keyframes flashing-item {
   0% {
