@@ -33,7 +33,6 @@
                 type="datetime"
                 :color="theme"
                 format="YYYY-MM-DD HH:mm:ss"
-                editable
                 locale="zh-cn"
                 :locale-config="localeConfig"
               />
@@ -44,7 +43,6 @@
                 type="datetime"
                 :color="theme"
                 format="YYYY-MM-DD HH:mm:ss"
-                editable
                 locale="zh-cn"
                 :locale-config="localeConfig"
               />
