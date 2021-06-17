@@ -102,7 +102,9 @@ export default {
     baseInfoSubmit(success) {
       if (success) {
         this.nowStep = 1
-        this.$refs.RequestInfo.refreshVacation()
+        if (this.$refs.RequestInfo && this.$refs.RequestInfo.refreshVacation) {
+          this.$refs.RequestInfo.refreshVacation()
+        }
       } else {
         this.childOnLoading = true
         this.nowStep = 0
