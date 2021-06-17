@@ -548,6 +548,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .float-panel {
+  bottom: 30rem;
   float: right;
   position: fixed;
   z-index: 999;
