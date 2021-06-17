@@ -1,44 +1,44 @@
 <template>
-  <ul v-if="usersVacation" class="tooltip-vacation">
+  <ul v-if="innerData" class="tooltip-vacation">
     <li>
       <b>全年假期天数：</b>
-      <span>{{ usersVacation.yearlyLength }}</span>天
+      <span>{{ innerData.yearlyLength }}</span>天
     </li>
     <li>
       <b>当前已休次数：</b>
-      <span>{{ usersVacation.nowTimes }}</span>次
+      <span>{{ innerData.nowTimes }}</span>次
     </li>
     <li>
       <b>剩余假期天数：</b>
-      <span>{{ usersVacation.leftLength }}</span>天
+      <span>{{ innerData.leftLength }}</span>天
     </li>
     <li>
       <b>全年可休路途：</b>
-      <span>{{ usersVacation.maxTripTimes }}</span>次
+      <span>{{ innerData.maxTripTimes }}</span>次
     </li>
     <li>
       <b>当前已休路途：</b>
-      <span>{{ usersVacation.onTripTimes }}</span>次
+      <span>{{ innerData.onTripTimes }}</span>次
     </li>
     <li>
       <b>备注：</b>
-      <span>{{ usersVacation.description || '暂无' }}</span>
+      <span>{{ innerData.description || '暂无' }}</span>
     </li>
     <li>
       <b>其他假期：</b>
       <el-tooltip
-        v-if="usersVacation.additionals&&usersVacation.additionals.length>0"
+        v-if="innerData.additionals&&innerData.additionals.length>0"
         effect="light"
         placement="right"
       >
         <div slot="content">
           <div
-            v-for="(v,i) in usersVacation.additionals"
+            v-for="(v,i) in innerData.additionals"
             :key="i"
             :style="{color:v.description=='法定节假日'?'#13ce66':'#ff4949'}"
           >{{ parseTime(v.start) }}:{{ v.name }} {{ v.length }}天</div>
         </div>
-        <span>{{ usersVacation.additionals.reduce((prev,cur)=>prev+cur.length,0) }}天</span>
+        <span>{{ innerData.additionals.reduce((prev,cur)=>prev+cur.length,0) }}天</span>
       </el-tooltip>
       <span v-else>无</span>
     </li>
@@ -47,6 +47,7 @@
 
 <script>
 import { parseTime } from '@/utils'
+import { getUsersVacationLimit } from '@/api/user/userinfo'
 export default {
   props: {
     usersVacation: {
@@ -54,9 +55,57 @@ export default {
       default() {
         return {}
       }
+    },
+    userid: { type: String, default: null },
+    loadingResult: { type: String, default: null }
+  },
+  data: () => ({
+    innerData: {},
+    loading_result: null
+  }),
+  watch: {
+    usersVacation: {
+      handler(val) {
+        this.innerData = val
+      },
+      immediate: true
+    },
+    userid: {
+      handler(val) {
+        this.refresh()
+      },
+      immediate: true
     }
   },
   methods: {
+    refresh() {
+      const { userid } = this
+      if (!userid) {
+        this.innerData = {}
+        this.loading_result = '未指定用户名'
+        this.$emit('update:loadingResult', this.loadingResult)
+        return
+      }
+      getUsersVacationLimit({ userid })
+        .then(data => {
+          this.innerData = {
+            yearlyLength: 0,
+            nowTimes: 0,
+            leftLength: 0,
+            onTripTimes: 0,
+            maxTripTimes: 0,
+            ...data
+          }
+          this.loading_result = null
+        })
+        .catch(e => {
+          this.loading_result = JSON.stringify(e)
+        })
+        .finally(() => {
+          this.loading = false
+          this.$emit('update:loadingResult', this.loadingResult)
+        })
+    },
     parseTime(val) {
       return parseTime(val, '{y}年{m}月{d}日')
     }
@@ -69,7 +118,6 @@ export default {
   ul,
   li {
     list-style: none;
-    padding: 8px;
     letter-spacing: 1px;
     span {
       color: #00f;

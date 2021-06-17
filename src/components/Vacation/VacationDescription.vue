@@ -1,8 +1,22 @@
 <template>
-  <el-tooltip effect="light">
-    <VacationDescriptionContent slot="content" :users-vacation="usersVacation" />
-    <el-progress :percentage="percent" :color="getColor(percent)" />
-  </el-tooltip>
+  <div>
+    <el-tooltip v-if="directShow" effect="light">
+      <VacationDescriptionContent
+        slot="content"
+        :users-vacation="usersVacation"
+        :userid="userid"
+        loading-result.sync="loading_result"
+      />
+      <el-progress :percentage="percent" :color="getColor(percent)" />
+    </el-tooltip>
+    <VacationDescriptionContent
+      v-else
+      slot="content"
+      :users-vacation="usersVacation"
+      :userid="userid"
+      loading-result.sync="loading_result"
+    />
+  </div>
 </template>
 
 <script>
@@ -21,12 +35,20 @@ export default {
         return {}
       }
     },
-    thisTimeVacationLength: {
-      type: Number,
-      default: 0
-    }
+    thisTimeVacationLength: { type: Number, default: 0 },
+    directShow: { type: Boolean, default: true },
+    loadingResult: { type: String, default: null },
+    userid: { type: String, default: null }
   },
   computed: {
+    loading_result: {
+      get() {
+        return this.loadingResult
+      },
+      set(val) {
+        this.$emit('update:loadingResult', val)
+      }
+    },
     percent() {
       if (!this.usersVacation.yearlyLength) return 100
       var uv = this.usersVacation
