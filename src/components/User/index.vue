@@ -1,86 +1,87 @@
 <template>
-  <el-card :style="{width:innerData&&innerData.id?width:'100%'}">
-    <el-container v-if="innerData&&innerData.id">
-      <el-aside
-        width="100px"
-        style="padding:0;margin:0;display:grid;justify-content:center;background:#0000"
-      >
+  <el-card class="card-item" :style="{width:innerData&&innerData.id?width:'100%'}">
+    <el-row v-if="innerData&&innerData.id" :gutter="5">
+      <el-col :span="8" style="text-align:center">
         <el-image :src="avatar" :preview-src-list="[avatar]" class="avatar" />
         <el-tag
           :style="{ 'background-color':innerData.gender==2?'#ee6666':'#60c3e9',color:'#ffffff',display:'grid','justify-items':'center','margin-top':'1em'}"
         >
           <div>{{ innerData.dutiesName }}</div>
         </el-tag>
-      </el-aside>
+      </el-col>
 
-      <el-popover v-loading="loading" :placement="direction" trigger="hover" @show="loadContactMe">
-        <ContactMe
-          v-if="contactMeHasShow"
-          :content="contactUrl"
-          :description="`微信或手机通讯录扫码，获取${innerData.realName}的联系方式`"
-        />
-        <el-main slot="reference" class="miniForm">
-          <el-form label-width="3em">
-            <h2>{{ innerData.realName }}</h2>
-            <el-form-item label="id">
-              <div style="color:#cccccc">{{ innerData.id }}</div>
-            </el-form-item>
-            <el-form-item v-if="innerData.about" label="关于">
-              <div style="color:#8f8f8f">{{ innerData.about }}</div>
-            </el-form-item>
-            <el-form-item label="单位">
-              <div>{{ innerData.companyName }}</div>
-            </el-form-item>
-          </el-form>
-        </el-main>
-      </el-popover>
-    </el-container>
-
+      <el-col :span="16">
+        <el-popover
+          v-loading="loading"
+          :placement="direction"
+          trigger="click"
+          @show="loadContactMe"
+        >
+          <ContactMe
+            v-if="contactMeHasShow"
+            :content="contactUrl"
+            :description="`微信或手机通讯录扫码，获取${innerData.realName}的联系方式`"
+          />
+          <el-main slot="reference" class="miniForm">
+            <el-form label-width="3em">
+              <h2>{{ innerData.realName }}</h2>
+              <el-form-item label="id">
+                <div style="color:#cccccc">{{ innerData.id }}</div>
+              </el-form-item>
+              <el-form-item v-if="innerData.about" label="关于">
+                <div style="color:#8f8f8f">{{ innerData.about }}</div>
+              </el-form-item>
+              <el-form-item label="单位">
+                <div>{{ innerData.companyName }}</div>
+              </el-form-item>
+            </el-form>
+          </el-main>
+        </el-popover>
+      </el-col>
+    </el-row>
     <div v-else style="color:#888888;font-size:1em">加载中...</div>
+    <div v-if="!isHover" style="text-align:center;height:1rem">
+      <el-button type="text" @click="mouseEnter">展开更多</el-button>
+    </div>
+    <div v-else>
+      <el-divider />
+      <VacationDescriptionContent :userid="userid" style="font-size:12px;line-height:18px" />
+      <div style="text-align:center">
+        <el-button type="text" @click="mouseLeave">关闭</el-button>
+      </div>
+    </div>
   </el-card>
 </template>
 
 <script>
-import ContactMe from '@/components/ContactMe'
 import { getUserAvatar, getUserSocial } from '@/api/user/userinfo'
 export default {
   name: 'UserItem',
-  components: { ContactMe },
+  components: {
+    ContactMe: () => import('@/components/ContactMe'),
+    VacationDescriptionContent: () =>
+      import('@/components/Vacation/VacationDescriptionContent')
+  },
   props: {
-    data: {
-      type: Object,
-      default() {
-        return {
-          realName: 'null'
-        }
-      }
-    },
-    canLoadAvatar: {
-      type: Boolean,
-      default: false
-    },
-    direction: {
-      type: String,
-      default: 'top'
-    },
-    width: {
-      type: String,
-      default: '350px'
-    }
+    data: { type: Object, default: () => {} },
+    canLoadAvatar: { type: Boolean, default: false },
+    direction: { type: String, default: 'top' },
+    width: { type: String, default: '350px' }
   },
-  data() {
-    return {
-      loading: false,
-      avatar: '',
-      userid: '',
-      phone: '',
-      innerData: {},
-      contactMeHasShow: false
-    }
-  },
+  data: () => ({
+    loading: false,
+    avatar: '',
+    userid: '',
+    phone: '',
+    innerData: {},
+    contactMeHasShow: false,
+    isHover: false
+  }),
   computed: {
     contactUrl() {
-      return `MECARD:TEL:${this.phone};N:${this.innerData.realName};EMAIL:${this.innerData.id}@xjxt.mtn;NOTE:${this.innerData.about};`
+      return `MECARD:TEL:${this.phone};N:${this.innerData.realName};EMAIL:${
+        this.innerData.id
+      }@xjxt.mtn;NOTE:${this.innerData.about};`
     }
   },
   watch: {
@@ -109,6 +110,12 @@ export default {
     this.refreshAvatar()
   },
   methods: {
+    mouseEnter() {
+      this.isHover = true
+    },
+    mouseLeave() {
+      this.isHover = false
+    },
     loadContactMe() {
       if (this.contactMeHasShow) return
       this.contactMeHasShow = true
@@ -137,6 +144,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.card-item {
+  transition: 'all ease 0.5s';
+}
 .miniForm {
   padding: 0;
   margin: 0;
