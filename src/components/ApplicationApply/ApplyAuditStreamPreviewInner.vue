@@ -10,6 +10,7 @@
           <template #title>
             <div style="white-space:nowrap">{{ s.name }}</div>
             <el-tooltip
+              placement="right"
               :content="`需要${s.firstMemberCompanyName}${getNeedAudit(s.requireMembersAcceptCount)}进行审批`"
             >
               <div
