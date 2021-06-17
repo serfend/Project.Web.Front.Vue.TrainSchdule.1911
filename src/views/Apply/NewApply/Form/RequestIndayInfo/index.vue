@@ -10,6 +10,7 @@
           <el-form ref="formApply" :model="formApply" label-width="6rem">
             <el-form-item label="请假类型">
               <VacationTypeSelector
+                ref="typeSelector"
                 v-model="formApply.requestType"
                 :entity-type="entityType"
                 :types.sync="requestTypes"
@@ -156,7 +157,8 @@ export default {
     vacationPlaceDefault: null,
     submitId: null,
     isHover: false,
-    anyChanged: false
+    anyChanged: false,
+    defaultDateRangeCallBack: null
   }),
   computed: {
     theme() {
@@ -193,6 +195,15 @@ export default {
     'formApply.requestType': {
       handler(val) {
         this.$emit('requestTypeUpdate', val)
+        this.resetDefaultDate()
+        if (this.defaultDateRangeCallBack) {
+          const t = this.defaultDateRangeCallBack(new Date(), parseTime)
+          const f = this.formApply
+          if (f) {
+            f.StampLeave = t.start
+            f.StampReturn = t.end
+          }
+        }
       }
     }
   },
@@ -200,6 +211,26 @@ export default {
     this.reset()
   },
   methods: {
+    resetDefaultDate() {
+      const type = this.$refs.typeSelector
+      const t = type && type.nowVacationType
+      if (!t) return
+      let callback = t.defaultDateRange
+      if (callback) {
+        let sci_callback
+        do {
+          sci_callback = callback
+          callback = callback.replace(/new/g, '')
+        } while (sci_callback !== callback)
+        this.defaultDateRangeCallBack = new Function('v', 'parseTime', callback)
+      } else {
+        this.defaultDateRangeCallBack = v => {
+          const start = parseTime(+v + 86400e3, '{y}-{m}-{d} 08:00:00')
+          const end = parseTime(+v + 86400e3, '{y}-{m}-{d} 18:00:00')
+          return { start, end }
+        }
+      }
+    },
     resetSettle(val) {
       if (val && val.self && val.self.address) {
         const self = val.self.address
@@ -214,8 +245,8 @@ export default {
     createNewRequest() {
       const types = this.requestTypes
       return {
-        StampLeave: parseTime(+new Date() + 86400e3, '{y}-{m}-{d} 08:00:00'),
-        StampReturn: parseTime(+new Date() + 86400e3, '{y}-{m}-{d} 18:00:00'),
+        StampLeave: null,
+        StampReturn: null,
         vacationPlace: {},
         vacationPlaceName: '',
         reason: '',
