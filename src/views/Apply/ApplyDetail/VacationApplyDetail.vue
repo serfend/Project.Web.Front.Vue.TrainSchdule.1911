@@ -7,8 +7,18 @@
       <el-button type="text" icon="el-icon-share" @click="show_share=true">分享此休假详情</el-button>
       <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出休假登记卡</el-button>
       <el-button icon="el-icon-date" type="text" @click="showMyApplies = true">查看历史记录</el-button>
-      <action-examine :row="detail" style="display: inline" @updated="updateDetail" />
-      <action-user :row="detail" style="display: inline" @updated="updateDetail" />
+      <ActionExamine
+        :entity-type="entityType"
+        :row="detail"
+        style="display: inline"
+        @updated="updateDetail"
+      />
+      <ActionUser
+        :entity-type="entityType"
+        :row="detail"
+        style="display: inline"
+        @updated="updateDetail"
+      />
     </div>
     <el-drawer :visible.sync="showMyApplies" append-to-body size="80rem" direction="rtl">
       <MyApply
