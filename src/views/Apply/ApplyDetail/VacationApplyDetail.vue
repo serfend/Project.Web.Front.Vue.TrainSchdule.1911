@@ -1,20 +1,30 @@
 <template>
   <div style="padding: 10px">
-    <el-card v-if="detail && detail.id">
+    <div v-if="detail && detail.id">
       <el-dialog :visible.sync="show_share" title="分享休假申请详情" append-to-body>
         <ClipboardShare default-content="我把我的休假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。" />
       </el-dialog>
       <el-button type="text" icon="el-icon-share" @click="show_share=true">分享此休假详情</el-button>
       <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出休假登记卡</el-button>
+      <el-button icon="el-icon-date" type="text" @click="showMyApplies = true">查看历史记录</el-button>
       <action-examine :row="detail" style="display: inline" @updated="updateDetail" />
       <action-user :row="detail" style="display: inline" @updated="updateDetail" />
-    </el-card>
-
+    </div>
+    <el-drawer :visible.sync="showMyApplies" append-to-body size="80rem" direction="rtl">
+      <MyApply
+        v-if="showMyApplies"
+        :id="detail.base.id"
+        :list.sync="selfHistory"
+        :entity-type="entityType"
+        :start="null"
+        :auto-expand="false"
+      />
+    </el-drawer>
     <div style="padding-top: 0.5rem">
       <el-card v-loading="loading" shadow="hover" class="content-card">
         <h3 slot="header">本次休假</h3>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
-          <el-col :xl="18" :lg="16" :md="14" :sm="12" :xs="24">
+          <el-col :xl="8" :lg="10" :md="12" :sm="12" :xs="24">
             <el-form v-if="detail.id" label-width="8rem">
               <el-form-item label="基本">
                 <el-tag
@@ -72,8 +82,15 @@
               </el-form-item>
             </el-form>
           </el-col>
-
-          <el-col :xl="6" :lg="8" :md="10" :sm="12" :xs="24">
+          <el-col :xl="8" :lg="8" hidden-md-only hidden-sm-only :xs="24">
+            <el-form label-width="8rem">
+              <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
+              <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
+              <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
+              <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
+            </el-form>
+          </el-col>
+          <el-col :xl="8" :lg="6" :md="4" :sm="12" :xs="24">
             <UserFormItem
               :userid="detail.base.id"
               :direct-show-card="true"
@@ -85,31 +102,8 @@
       <div class="content-card">
         <AuditStatus :loading="loading" :data="detail" />
       </div>
-      <div v-if="showUser" class="content-card">
-        <el-card v-if="detail && detail.id">
-          <h3 slot="header">申请人信息</h3>
-          <MyApply
-            :id="detail.base.id"
-            :list.sync="selfHistory"
-            :entity-type="entityType"
-            :start="null"
-            :auto-expand="false"
-          >
-            <template slot="inner">
-              <el-card>
-                <el-form label-width="8rem">
-                  <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
-                  <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
-                  <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
-                  <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
-                </el-form>
-              </el-card>
-            </template>
-          </MyApply>
-        </el-card>
-      </div>
       <div v-if="showComment" class="content-card">
-        <ApplyComments :id="detail.id" />
+        <ApplyComments :id="detail && detail.id" />
       </div>
     </div>
   </div>
@@ -135,22 +129,10 @@ export default {
     TransportationType: () => import('@/components/Vacation/TransportationType')
   },
   props: {
-    showUser: {
-      type: Boolean,
-      default: true
-    },
-    showComment: {
-      type: Boolean,
-      default: false
-    },
-    canShow: {
-      type: Boolean,
-      default: true
-    },
-    focusId: {
-      type: String,
-      default: null
-    }
+    showUser: { type: Boolean, default: true },
+    showComment: { type: Boolean, default: true },
+    canShow: { type: Boolean, default: true },
+    focusId: { type: String, default: null }
   },
   data: () => ({
     id: null,
@@ -159,6 +141,7 @@ export default {
     detail: {},
     show_share: false,
     loading: false,
+    showMyApplies: false,
     selfHistory: [],
     staticData: {
       vacationLength: 0,
