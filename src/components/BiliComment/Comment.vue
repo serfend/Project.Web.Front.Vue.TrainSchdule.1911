@@ -4,10 +4,11 @@
     <CommentSender v-show="!$slots.sender" :id="id" ref="default_sender" @newContent="newContent" />
     <el-divider />
     <SingleComment
-      v-for="(i,index) in list"
+      v-for="(i) in list"
       :key="i.id"
       :data="i"
-      @requireDelete="requireDelete(index)"
+      @requireDelete="newContent"
+      @newContent="newContent"
     />
     <div class="footer">
       <el-button
@@ -34,36 +35,36 @@ export default {
   props: {
     id: {
       type: String,
-      default: null,
+      default: null
     },
     totalCount: {
       type: [Number, String],
-      default: null,
+      default: null
     },
     order: {
       type: String,
-      default: null,
-    },
+      default: null
+    }
   },
   data: () => ({
     loading_whole: false,
     loading_next: false,
     list: [],
     current_page: 0,
-    current_page_size: 5,
+    current_page_size: 5
   }),
   computed: {
     hasNextPage() {
       return this.totalCount > this.current_page * this.current_page_size
-    },
+    }
   },
   watch: {
     id: {
       handler(val) {
         this.reload_page()
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   mounted() {
     console.log(this.$slots)
@@ -71,13 +72,10 @@ export default {
   methods: {
     send_content(content, cb) {
       console.log(this.$refs.default_sender)
-      this.$refs.default_sender.send_to(content, cb)
+      this.$refs.default_sender.send_to({ content, cb })
     },
     newContent(item) {
-      item.model.create = new Date()
-      this.list.unshift(item.model)
-      this.$emit('requireAdd', item)
-      this.current_page = 0
+      this.reload_page()
     },
     async reload_page() {
       this.loading_whole = true
@@ -92,9 +90,9 @@ export default {
         id: this.id,
         pageIndex: this.current_page,
         pageSize: this.current_page_size,
-        order: this.order,
+        order: this.order
       })
-        .then((data) => {
+        .then(data => {
           if (need_clear) this.list = []
           this.list = this.list.concat(data.list)
           this.$emit('update:totalCount', data.totalCount)
@@ -103,12 +101,8 @@ export default {
           this.loading_next = false
           this.current_page++
         })
-    },
-    requireDelete(index) {
-      this.list.splice(index, 1)
-      this.$emit('requireDelete', index)
-    },
-  },
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

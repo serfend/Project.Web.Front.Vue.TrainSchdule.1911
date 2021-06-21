@@ -132,7 +132,7 @@ export default {
   },
   props: {
     showUser: { type: Boolean, default: true },
-    showComment: { type: Boolean, default: false },
+    showComment: { type: Boolean, default: true },
     canShow: { type: Boolean, default: true },
     focusId: { type: String, default: null }
   },

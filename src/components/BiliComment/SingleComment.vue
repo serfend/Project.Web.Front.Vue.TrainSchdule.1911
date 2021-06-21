@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data" v-loading="loading">
+  <div v-if="data" v-loading="loading" style="margin-top:0.5rem">
     <el-row :gutter="20">
       <el-col :span="2.5" style="justify-content:center;display:flex">
         <el-image
@@ -7,6 +7,7 @@
           :src="avatar"
           :preview-src-list="[avatar]"
           class="avatar"
+          :style="isMini?{height:'40px',width:'40px'}:null"
         />
       </el-col>
       <el-col :span="21">
@@ -16,9 +17,10 @@
             <span class="user-name">{{ data.from?data.from.realName:'未知用户' }}</span>
           </span>
         </el-popover>
-        <el-card style="margin:1rem 0">
+        <div v-if="!isMini" style="margin:1rem 0">
           <MarkdownViewer :content="data.content" />
-        </el-card>
+        </div>
+        <span v-else>{{ data.content }}</span>
         <div class="footer">
           <el-tooltip effect="light" :content="parseTime(data.create)">
             <span class="time">{{ formatTime(new Date(data.create)) }}</span>
@@ -27,14 +29,36 @@
             <SvgIcon :icon-class="liked?'like_filled':'like'" style-normal="color:#c33" />
             <span>{{ like_count }}</span>
           </span>
-          <span class="like" @click="handle_delete">
+          <span v-if="currentUser === data.from.id" class="like" @click="handle_delete">
             <SvgIcon icon-class="delete" style-normal="color:#c33" />
             <span>删除</span>
           </span>
+          <span class="like" @click="replyComment()">回复</span>
+        </div>
+        <div v-if="data.replies">
+          <SingleComment
+            v-for="i in data.replies"
+            :key="i.id"
+            :data="i"
+            :is-mini="true"
+            @requireDelete="$emit('requireDelete')"
+            @newContent="$emit('newContent')"
+            @requireReply="v=>replyComment(v)"
+          />
+        </div>
+        <div v-if="!isMini" style="margin-top:1rem">
+          <CommentSender
+            v-if="replying"
+            :id="data.apply"
+            ref="sender"
+            :reply="data.id"
+            :default-content="content"
+            @newContent="v=>$emit('newContent',v)"
+          />
         </div>
       </el-col>
     </el-row>
-    <el-divider />
+    <el-divider v-if="!isMini" />
   </div>
 </template>
 
@@ -47,12 +71,15 @@ import User from '@/components/User'
 import MarkdownViewer from '@/components/MarkdownEditor/Viewer'
 export default {
   name: 'SingleComment',
-  components: { SvgIcon, User, MarkdownViewer },
+  components: {
+    SvgIcon,
+    User,
+    MarkdownViewer,
+    CommentSender: () => import('./CommentSender')
+  },
   props: {
-    data: {
-      type: Object,
-      default: null,
-    },
+    data: { type: Object, default: null },
+    isMini: { type: Boolean, default: false }
   },
   data: () => ({
     avatar: '',
@@ -61,7 +88,15 @@ export default {
     loading_avatar: false,
     loading: false,
     userIsActive: false,
+    replying: false,
+    content: ''
   }),
+  computed: {
+    currentUser() {
+      const u = this.$store.state.user
+      return u && u.userid
+    }
+  },
   watch: {
     data: {
       handler(val) {
@@ -71,17 +106,29 @@ export default {
         if (d.from) this.load_avatar()
       },
       immediate: true,
-      deep: true,
-    },
+      deep: true
+    }
   },
   methods: {
     formatTime,
     parseTime,
+    replyComment(id) {
+      if (this.isMini) {
+        return this.$emit('requireReply', this.data.from && this.data.from.id)
+      }
+      if (id) this.content = `@${id} `
+      else this.content = ''
+      this.replying = true
+      setTimeout(() => {
+        const s = this.$refs.sender
+        s.focus()
+      }, 5e2)
+    },
     load_avatar() {
       const user = this.data.from
       this.loading_avatar = true
       getUserAvatar(user.id, user.avatar, true)
-        .then((d) => {
+        .then(d => {
           this.avatar = d.url
         })
         .finally(() => {
@@ -106,19 +153,20 @@ export default {
     },
     async handle_delete() {
       const check = await this.$confirm('确定要删除评论吗', {
-        type: 'warning',
-      }).catch((e) => { })
+        type: 'warning'
+      }).catch(e => {})
       if (!check) return
       this.loading = true
       postComments({ id: this.data.id, isRemove: true })
         .then(() => {
+          this.$message.success('已删除')
           this.$emit('requireDelete')
         })
         .finally(() => {
           this.loading = false
         })
-    },
-  },
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -135,11 +183,11 @@ export default {
   user-select: none;
   overflow: hidden;
   white-space: nowrap;
-  width: 8rem;
+  width: 100%;
   opacity: 0.5;
   transition: all ease 0.5s;
+  margin-top: 0.5rem;
   &:hover {
-    width: 100%;
     opacity: 1;
   }
   .time {

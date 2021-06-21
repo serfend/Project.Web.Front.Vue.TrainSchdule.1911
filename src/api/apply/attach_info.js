@@ -24,15 +24,22 @@ export function getComments(params) {
  * @export
  * @param {String} id 评论的id，仅删除和修改时需要
  * @param {String} apply 休假申请的id
+ * @param {String} content 评论内容
+ * @param {String} reply 回复的对象
  * @param {Boolean} isRemove 是否删除
  * @param {String} content 内容
  * @returns
  */
-export function postComments(data) {
+export function postComments({ id, apply, content, reply, isRemove, auth }) {
   return request({
     url: '/apply/comment',
     method: 'post',
-    data
+    data: {
+      data: {
+        id, apply, content, reply, isRemove
+      },
+      auth
+    }
   })
 }
 
