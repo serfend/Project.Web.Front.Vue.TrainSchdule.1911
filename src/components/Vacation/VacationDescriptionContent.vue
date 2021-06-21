@@ -89,6 +89,7 @@ export default {
         this.innerData = {}
         this.loading_result = '未指定用户名'
         this.$emit('update:loadingResult', this.loadingResult)
+        this.$emit('update:userVacation', this.innerData)
         return
       }
       this.loading = true
@@ -103,6 +104,7 @@ export default {
             ...data
           }
           this.loading_result = null
+          this.$emit('update:userVacation', this.innerData)
         })
         .catch(e => {
           this.loading_result = JSON.stringify(e)

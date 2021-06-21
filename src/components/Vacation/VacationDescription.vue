@@ -3,8 +3,8 @@
     <el-tooltip v-if="directShow" effect="light">
       <VacationDescriptionContent
         slot="content"
-        :users-vacation="usersVacation"
         :userid="userid"
+        :user-vacation.sync="innerUserVacation"
         loading-result.sync="loading_result"
       />
       <el-progress :percentage="percent" :color="getColor(percent)" />
@@ -40,6 +40,9 @@ export default {
     loadingResult: { type: String, default: null },
     userid: { type: String, default: null }
   },
+  data: () => ({
+    innerUserVacation: {}
+  }),
   computed: {
     loading_result: {
       get() {
@@ -50,8 +53,8 @@ export default {
       }
     },
     percent() {
-      if (!this.usersVacation.yearlyLength) return 100
-      var uv = this.usersVacation
+      var uv = this.innerUserVacation
+      if (!uv.yearlyLength) return 100
       const vl = this.thisTimeVacationLength
       var fn = parseInt
       const spendLength = fn(uv.yearlyLength) - fn(uv.leftLength) + fn(vl)
@@ -59,6 +62,15 @@ export default {
       if (result < 0) result = 0
       if (result > 100) result = 100
       return result
+    }
+  },
+  watch: {
+    usersVacation: {
+      handler(val) {
+        this.innerUserVacation = val
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {

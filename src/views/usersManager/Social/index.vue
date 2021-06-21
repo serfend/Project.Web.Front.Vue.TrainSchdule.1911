@@ -18,7 +18,7 @@
       </template>
       <el-form>
         <UserSocial :form="social" />
-        <VacationDescriptionContent :users-vacation="vacation" />
+        <VacationDescriptionContent :users-vacation="vacation" style="margin-top:1rem" />
       </el-form>
     </el-card>
 
