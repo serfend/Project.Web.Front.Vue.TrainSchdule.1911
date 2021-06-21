@@ -9,65 +9,75 @@
           </div>
         </div>
       </el-row>
-      <div v-for="(i,index) in iList" :key="i.id">
-        <Sticky
-          v-if="index===0||(index>0&&iList[index-1].tag.year!=i.tag.year)"
-          :sticky-top="48"
-          :class-name="'card-divider-year'"
-          :style="{opacity:(now_active_year.length&&now_active_year[now_active_year.length-1]>index)?0:1,transition:'all ease 0.5s'}"
-          @reset="year_banner_reset(index)"
-          @sticky="year_banner_sticky(index)"
-        >{{ i.tag.year }}年</Sticky>
-        <div class="card-row">
-          <el-tooltip
-            :content="i.show?'点击隐藏详情':'点击查看详情'"
-            :hide-after="5000"
-            :open-delay="1000"
-            placement="top-start"
-            transition="el-zoom-in-center"
-          >
-            <div class="single-item">
-              <div class="header" style="cursor:pointer" @click="i.show = !i.show">
-                <div class="card-title">
-                  <div style="color:#333;font-size:1rem">{{ i.tag.title }}</div>
-                  <div style="color:#333;font-size:2.2rem">{{ i.tag.desc }}</div>
+      <div v-if="!errorMsg">
+        <div v-for="(i,index) in iList" :key="i.id">
+          <Sticky
+            v-if="index===0||(index>0&&iList[index-1].tag.year!=i.tag.year)"
+            :sticky-top="48"
+            :class-name="'card-divider-year'"
+            :style="{opacity:(now_active_year.length&&now_active_year[now_active_year.length-1]>index)?0:1,transition:'all ease 0.5s'}"
+            @reset="year_banner_reset(index)"
+            @sticky="year_banner_sticky(index)"
+          >{{ i.tag.year }}年</Sticky>
+          <div class="card-row">
+            <el-tooltip
+              :content="i.show?'点击隐藏详情':'点击查看详情'"
+              :hide-after="5000"
+              :open-delay="1000"
+              placement="top-start"
+              transition="el-zoom-in-center"
+            >
+              <div class="single-item">
+                <div class="header" style="cursor:pointer" @click="i.show = !i.show">
+                  <div class="card-title">
+                    <div style="color:#333;font-size:1rem">{{ i.tag.title }}</div>
+                    <div style="color:#333;font-size:2.2rem">{{ i.tag.desc }}</div>
+                  </div>
+                  <div class="card-description">
+                    <span>{{ format(i.create) }}</span>
+                    <el-tag
+                      v-if="statusDic[i.status]"
+                      size="mini"
+                      :color="statusDic[i.status].color"
+                      class="white--text"
+                    >{{ statusDic[i.status].desc }}</el-tag>
+                    <div
+                      v-for="(desc,desc_index) in get_item_summary(i,entityType).split('\n')"
+                      :key="desc_index"
+                      class="card-summary-description"
+                      :style="{display:desc_index===0?'inline-block':''}"
+                    >{{ desc }}</div>
+                  </div>
                 </div>
-                <div class="card-description">
-                  <span>{{ format(i.create) }}</span>
-                  <el-tag
-                    v-if="statusDic[i.status]"
-                    size="mini"
-                    :color="statusDic[i.status].color"
-                    class="white--text"
-                  >{{ statusDic[i.status].desc }}</el-tag>
-                  <div
-                    v-for="(desc,desc_index) in get_item_summary(i,entityType).split('\n')"
-                    :key="desc_index"
-                    class="card-summary-description"
-                    :style="{display:desc_index===0?'inline-block':''}"
-                  >{{ desc }}</div>
-                </div>
+                <component
+                  :is="`${entityType}ApplyCard`"
+                  v-if="i.create"
+                  :data="i"
+                  :show="i.show"
+                  style="width:100%"
+                  @updated="applyUpdate(index,i.id)"
+                />
               </div>
-              <component
-                :is="`${entityType}ApplyCard`"
-                v-if="i.create"
-                :data="i"
-                :show="i.show"
-                style="width:100%"
-                @updated="applyUpdate(index,i.id)"
-              />
-            </div>
-          </el-tooltip>
+            </el-tooltip>
+          </div>
         </div>
+        <el-button
+          v-if="haveNext"
+          :loading="loading"
+          type="text"
+          style="width:100%"
+          @click="load"
+        >{{ loading?'加载中...':'点击加载更多记录' }}</el-button>
+        <div v-else style="height:1px;background-color:#dcdfe6;margin:0.5rem 0.2rem" />
       </div>
-      <el-button
-        v-if="haveNext"
-        :loading="loading"
-        type="text"
-        style="width:100%"
-        @click="load"
-      >{{ loading?'加载中...':'点击加载更多记录' }}</el-button>
-      <div v-else style="height:1px;background-color:#dcdfe6;margin:0.5rem 0.2rem" />
+      <div v-else style="text-align:center">
+        <LottieIcon
+          path="/assets/lottie/lottie.submit.fail.json"
+          :animate-speed="0.5"
+          style="width:15rem;margin: auto;"
+        />
+        <span>加载失败:{{ errorMsg }}</span>
+      </div>
     </el-card>
   </el-row>
 </template>
@@ -79,6 +89,7 @@ import { get_item_summary, tag_single_item } from '@/utils/vacation'
 export default {
   name: 'AppliesList',
   components: {
+    LottieIcon: () => import('@/components/LottieIcon'),
     Sticky: () => import('@/components/Sticky'),
     SvgIcon: () => import('@/components/SvgIcon'),
     indayApplyCard: () => import('./ApplyCard/IndayApplyCard'),
@@ -103,7 +114,8 @@ export default {
     now_active_year: [],
     lastPage: 0,
     haveNext: true,
-    innerList: []
+    innerList: [],
+    errorMsg: null
   }),
   computed: {
     iId: {
@@ -186,7 +198,7 @@ export default {
         })
     },
     load(cb, pages) {
-      if (this.loading) return
+      if (this.loading || this.errorMsg) return
       pages = pages || { pageIndex: this.lastPage, pageSize: 10 }
       if (!cb) {
         cb = data => {
@@ -218,6 +230,9 @@ export default {
           entityType: this.entityType
         })
           .then(cb)
+          .catch(e => {
+            this.errorMsg = e.message
+          })
           .finally(() => {
             // avoid load next page trice
             setTimeout(() => {
