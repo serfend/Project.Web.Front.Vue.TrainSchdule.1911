@@ -1,54 +1,58 @@
 <template>
-  <ul v-if="innerData" class="tooltip-vacation">
-    <li>
-      <b>全年假期天数：</b>
-      <span>{{ innerData.yearlyLength }}</span>天
-    </li>
-    <li>
-      <b>当前已休次数：</b>
-      <span>{{ innerData.nowTimes }}</span>次
-    </li>
-    <li>
-      <b>剩余假期天数：</b>
-      <span>{{ innerData.leftLength }}</span>天
-    </li>
-    <li>
-      <b>全年可休路途：</b>
-      <span>{{ innerData.maxTripTimes }}</span>次
-    </li>
-    <li>
-      <b>当前已休路途：</b>
-      <span>{{ innerData.onTripTimes }}</span>次
-    </li>
-    <li>
-      <b>备注：</b>
-      <span>{{ innerData.description || '暂无' }}</span>
-    </li>
-    <li>
-      <b>其他假期：</b>
-      <el-tooltip
-        v-if="innerData.additionals&&innerData.additionals.length>0"
-        effect="light"
-        placement="right"
-      >
-        <div slot="content">
-          <div
-            v-for="(v,i) in innerData.additionals"
-            :key="i"
-            :style="{color:v.description=='法定节假日'?'#13ce66':'#ff4949'}"
-          >{{ parseTime(v.start) }}:{{ v.name }} {{ v.length }}天</div>
-        </div>
-        <span>{{ innerData.additionals.reduce((prev,cur)=>prev+cur.length,0) }}天</span>
-      </el-tooltip>
-      <span v-else>无</span>
-    </li>
-  </ul>
+  <div v-if="innerData" v-loading="loading">
+    <ul class="tooltip-vacation">
+      <li>
+        <b>全年假期天数：</b>
+        <span>{{ innerData.yearlyLength }}</span>天
+      </li>
+      <li>
+        <b>当前已休次数：</b>
+        <span>{{ innerData.nowTimes }}</span>次
+      </li>
+      <li>
+        <b>剩余假期天数：</b>
+        <span>{{ innerData.leftLength }}</span>天
+      </li>
+      <li>
+        <b>全年可休路途：</b>
+        <span>{{ innerData.maxTripTimes }}</span>次
+      </li>
+      <li>
+        <b>当前已休路途：</b>
+        <span>{{ innerData.onTripTimes }}</span>次
+      </li>
+      <li>
+        <b>备注：</b>
+        <span>{{ innerData.description || '暂无' }}</span>
+      </li>
+      <li>
+        <b>其他假期：</b>
+        <el-tooltip
+          v-if="innerData.additionals&&innerData.additionals.length>0"
+          effect="light"
+          placement="right"
+        >
+          <div slot="content">
+            <div
+              v-for="(v,i) in innerData.additionals"
+              :key="i"
+              :style="{color:v.description=='法定节假日'?'#13ce66':'#ff4949'}"
+            >{{ parseTime(v.start) }}:{{ v.name }} {{ v.length }}天</div>
+          </div>
+          <span>{{ innerData.additionals.reduce((prev,cur)=>prev+cur.length,0) }}天</span>
+        </el-tooltip>
+        <span v-else>无</span>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
 import { parseTime } from '@/utils'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
 export default {
+  name: 'VacationDescriptionContent',
+  components: {},
   props: {
     usersVacation: {
       type: Object,
@@ -60,6 +64,7 @@ export default {
     loadingResult: { type: String, default: null }
   },
   data: () => ({
+    loading: false,
     innerData: {},
     loading_result: null
   }),
@@ -86,6 +91,7 @@ export default {
         this.$emit('update:loadingResult', this.loadingResult)
         return
       }
+      this.loading = true
       getUsersVacationLimit({ userid })
         .then(data => {
           this.innerData = {
