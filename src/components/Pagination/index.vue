@@ -4,6 +4,7 @@
       :background="background"
       :current-page="innerPages.pageIndex"
       :page-size="innerPages.pageSize"
+      :small="small"
       :layout="layout"
       :page-sizes="pageSizes"
       :total="totalCount"
@@ -33,26 +34,15 @@ export default {
         return [5, 10, 20, 30, 50, 100]
       }
     },
-    totalCount: {
-      type: Number,
-      default: 0
-    },
+    totalCount: { type: Number, default: 0 },
     layout: {
       type: String,
       default: 'total, sizes, prev, pager, next, jumper'
     },
-    background: {
-      type: Boolean,
-      default: false
-    },
-    autoScroll: {
-      type: Boolean,
-      default: true
-    },
-    hidden: {
-      type: Boolean,
-      default: false
-    }
+    background: { type: Boolean, default: false },
+    autoScroll: { type: Boolean, default: true },
+    hidden: { type: Boolean, default: false },
+    small: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -92,11 +82,4 @@ export default {
 </script>
 
 <style scoped>
-.pagination-container {
-  background: #fff;
-  padding: 32px 16px;
-}
-.pagination-container.hidden {
-  display: none;
-}
 </style>
