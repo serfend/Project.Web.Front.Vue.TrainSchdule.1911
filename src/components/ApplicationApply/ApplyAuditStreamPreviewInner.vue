@@ -9,10 +9,14 @@
         <el-step v-for="s in streams" :key="s.index">
           <template #title>
             <div style="white-space:nowrap">{{ s.name }}</div>
-            <el-tooltip
-              placement="right"
-              :content="`需要${s.firstMemberCompanyName}${getNeedAudit(s.requireMembersAcceptCount)}进行审批`"
-            >
+            <el-tooltip placement="right" effect="light">
+              <template #content>
+                <h3>{{ title }}</h3>
+                <div style="font-size:18px;color:#ccc">{{ s.name }}</div>
+                <div
+                  style="font-size:14px"
+                >{{ `需要[${s.firstMemberCompanyName}]${getNeedAudit(s.requireMembersAcceptCount)}进行审批` }}</div>
+              </template>
               <div
                 style="white-space:nowrap"
               >{{ s.firstMemberCompanyName }}({{ getNeedAudit(s.requireMembersAcceptCount) }})</div>
@@ -50,7 +54,8 @@ export default {
     auditStatus: { type: Array, default: null },
     nowStep: { type: Number, default: -1 },
     entityType: { type: String, default: 'vacation' },
-    entityTypeDesc: { type: String, default: null }
+    entityTypeDesc: { type: String, default: null },
+    title: { type: String, default: null }
   },
   data: () => ({
     loading: false,

@@ -17,6 +17,7 @@
       :entity-type="entityType"
       :entity-type-desc="entityTypeDesc"
       :solution-name.sync="solutionName"
+      :title="title"
     />
     <span v-if="!$slots.content" slot="reference" class="preview-btn">{{ title }}</span>
     <slot v-else slot="reference" style="display:flex" name="content" />
