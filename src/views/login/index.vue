@@ -1,8 +1,8 @@
 <template>
   <el-card style="text-align:center">
     <el-row :gutter="20">
-      <el-col :span="14">
-        <el-image :src="bg" fit="contain" class="full-img" />
+      <el-col v-loading="!bg" :span="14">
+        <el-image v-if="bg" :src="bg" fit="contain" class="full-img" />
       </el-col>
       <el-col :span="10">
         <LoginForm style="boa" />
@@ -18,8 +18,8 @@ export default {
   name: 'Login',
   components: { LoginForm },
   data: () => ({
-    bg: bg,
-  }),
+    bg: bg
+  })
 }
 </script>
 
