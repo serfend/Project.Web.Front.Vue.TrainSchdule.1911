@@ -112,8 +112,8 @@
       <div class="content-card">
         <AuditStatus :loading="loading" :data="detail" />
       </div>
-      <div v-if="showComment" class="content-card">
-        <ApplyComments :id="detail && detail.id" />
+      <div v-if="showComment && detail && detail.id" class="content-card">
+        <ApplyComments :id="detail.id" />
       </div>
     </div>
   </div>

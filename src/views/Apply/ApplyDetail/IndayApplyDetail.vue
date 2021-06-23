@@ -35,7 +35,7 @@
         <h3 slot="header">本次请假</h3>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
           <el-col :xl="18" :lg="16" :md="14" :sm="12" :xs="24">
-            <el-form v-if="detail.id" label-width="8rem">
+            <el-form label-width="8rem">
               <el-form-item label="基本">
                 <el-tag
                   v-if="detail.request.requestType"
@@ -86,7 +86,7 @@
       <div class="content-card">
         <AuditStatus :loading="loading" :data="detail" />
       </div>
-      <div v-if="showComment" class="content-card">
+      <div v-if="showComment && detail && detail.id" class="content-card">
         <ApplyComments :id="detail.id" />
       </div>
     </div>
