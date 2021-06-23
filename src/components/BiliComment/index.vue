@@ -23,7 +23,7 @@
 import Comment from './Comment'
 const comment_pan = [
   { name: 'as_popularity', alias: '按热度排序' },
-  { name: 'as_date', alias: '按时间排序' },
+  { name: 'as_date', alias: '按时间排序' }
 ]
 export default {
   name: 'Comments',
@@ -31,13 +31,13 @@ export default {
   props: {
     id: {
       type: String,
-      default: null,
-    },
+      default: null
+    }
   },
   data: () => ({
     totalCount: '...',
     active_tab: 'as_date',
-    comment_pan: comment_pan,
+    comment_pan: comment_pan
   }),
   methods: {
     comp() {
@@ -51,7 +51,7 @@ export default {
       //   return
       // }
       // c.reload_page()
-    },
-  },
+    }
+  }
 }
 </script>

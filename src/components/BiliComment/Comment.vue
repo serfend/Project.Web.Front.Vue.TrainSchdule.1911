@@ -4,9 +4,9 @@
     <CommentSender v-show="!$slots.sender" :id="id" ref="default_sender" @newContent="newContent" />
     <el-divider />
     <SingleComment
-      v-for="(i) in list"
+      v-for="(i,index) in list"
       :key="i.id"
-      :data="i"
+      :data.sync="list[index]"
       @requireDelete="newContent"
       @newContent="newContent"
     />
@@ -50,12 +50,16 @@ export default {
     loading_whole: false,
     loading_next: false,
     list: [],
-    current_page: 0,
+    beenLoadInit: false,
+    current_page: -1,
     current_page_size: 5
   }),
   computed: {
     hasNextPage() {
-      return this.totalCount > this.current_page * this.current_page_size
+      return (
+        !this.beenLoadInit ||
+        this.totalCount > (this.current_page + 1) * this.current_page_size
+      )
     }
   },
   watch: {
@@ -65,9 +69,6 @@ export default {
       },
       immediate: true
     }
-  },
-  mounted() {
-    console.log(this.$slots)
   },
   methods: {
     send_content(content, cb) {
@@ -79,13 +80,17 @@ export default {
     },
     async reload_page() {
       this.loading_whole = true
-      this.current_page = 0
+      this.beenLoadInit = false
+      this.current_page = -1
+      this.list = []
       await this.load_page(true)
       this.loading_whole = false
     },
     async load_page(need_clear) {
-      if (!this.id) return
+      if (!this.id || !this.hasNextPage) return
+      this.beenLoadInit = true
       this.loading_next = true
+      this.current_page++
       getComments({
         id: this.id,
         pageIndex: this.current_page,
@@ -99,7 +104,6 @@ export default {
         })
         .finally(() => {
           this.loading_next = false
-          this.current_page++
         })
     }
   }

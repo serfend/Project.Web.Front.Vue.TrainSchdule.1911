@@ -19,6 +19,20 @@ export function getComments(params) {
 }
 
 /**
+ * 获取评论的回复
+ *
+ * @export
+ * @param {*} { id 评论id, pageIndex, pageSize }
+ * @return {*}
+ */
+export function getReplies({ id, pageIndex, pageSize }) {
+  return request({
+    url: 'apply/replies',
+    method: 'get',
+    params: { id, pageIndex, pageSize }
+  })
+}
+/**
  * 修改/删除/新建评论
  *
  * @export

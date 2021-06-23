@@ -1,9 +1,9 @@
 <template>
   <div v-if="data" v-loading="loading" style="margin-top:0.5rem">
     <el-row :gutter="20">
-      <el-col :span="2.5" style="justify-content:center;display:flex">
+      <el-col v-loading="loading_avatar" :span="2.5" style="justify-content:center;display:flex">
         <el-image
-          v-loading="loading_avatar"
+          v-if="avatar"
           :src="avatar"
           :preview-src-list="[avatar]"
           class="avatar"
@@ -20,7 +20,11 @@
         <div v-if="!isMini" style="margin:1rem 0">
           <MarkdownViewer :content="data.content" />
         </div>
-        <span v-else>{{ data.content }}</span>
+        <span v-else style="color:#333;font-size:10px;">
+          <div v-for="(line,index) in data.content.split('\n')" :key="index">
+            <span>{{ line }}</span>
+          </div>
+        </span>
         <div class="footer">
           <el-tooltip effect="light" :content="parseTime(data.create)">
             <span class="time">{{ formatTime(new Date(data.create)) }}</span>
@@ -35,26 +39,39 @@
           </span>
           <span class="like" @click="replyComment()">回复</span>
         </div>
-        <div v-if="data.replies">
+        <div v-if="data.replies && data.replies.item1">
           <SingleComment
-            v-for="i in data.replies"
+            v-for="(i,index) in data.replies.item1"
             :key="i.id"
-            :data="i"
+            :data.sync="data.replies.item1[index]"
             :is-mini="true"
             @requireDelete="$emit('requireDelete')"
             @newContent="$emit('newContent')"
             @requireReply="v=>replyComment(v)"
           />
+          <div v-if="data.replies.item2>data.replies.item1.length&&!showAllApplies.enable">
+            <span style="color:#888">共{{ data.replies.item2 }}回复</span>
+            <el-button type="text" @click="loadAllReplies">点击查看</el-button>
+          </div>
+          <Pagination
+            v-else-if="showAllApplies.enable"
+            :pagesetting.sync="showAllApplies.page"
+            :total-count="data.replies.item2"
+            :small="true"
+            :layout="'total, prev, pager, next'"
+          />
         </div>
         <div v-if="!isMini" style="margin-top:1rem">
-          <CommentSender
-            v-if="replying"
-            :id="data.apply"
-            ref="sender"
-            :reply="data.id"
-            :default-content="content"
-            @newContent="v=>$emit('newContent',v)"
-          />
+          <transition name="el-fade-in-linear">
+            <CommentSender
+              v-if="replying"
+              :id="data.apply"
+              ref="sender"
+              :reply="data.id"
+              :default-content="content"
+              @newContent="v=>$emit('newContent',v)"
+            />
+          </transition>
         </div>
       </el-col>
     </el-row>
@@ -65,7 +82,7 @@
 <script>
 import { formatTime, parseTime } from '@/utils'
 import { getUserAvatar } from '@/api/user/userinfo'
-import { likeComments, postComments } from '@/api/apply/attach_info'
+import { likeComments, postComments, getReplies } from '@/api/apply/attach_info'
 import SvgIcon from '@/components/SvgIcon'
 import User from '@/components/User'
 import MarkdownViewer from '@/components/MarkdownEditor/Viewer'
@@ -75,6 +92,7 @@ export default {
     SvgIcon,
     User,
     MarkdownViewer,
+    Pagination: () => import('@/components/Pagination'),
     CommentSender: () => import('./CommentSender')
   },
   props: {
@@ -89,7 +107,11 @@ export default {
     loading: false,
     userIsActive: false,
     replying: false,
-    content: ''
+    content: '',
+    showAllApplies: {
+      enable: false,
+      page: { pageIndex: 0, pageSize: 10 }
+    }
   }),
   computed: {
     currentUser() {
@@ -107,11 +129,33 @@ export default {
       },
       immediate: true,
       deep: true
+    },
+    'showAllApplies.page': {
+      handler(val) {
+        this.loadReplies(val)
+      },
+      deep: true
     }
   },
   methods: {
     formatTime,
     parseTime,
+    loadReplies(page) {
+      page = page || this.showAllApplies.page
+      this.loading = true
+      const id = this.data.id
+      getReplies(Object.assign({ id }, page))
+        .then(data => {
+          this.$emit('update:data', data.model)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    loadAllReplies() {
+      this.showAllApplies.enable = true
+      this.loadReplies()
+    },
     replyComment(id) {
       if (this.isMini) {
         return this.$emit('requireReply', this.data.from && this.data.from.id)
