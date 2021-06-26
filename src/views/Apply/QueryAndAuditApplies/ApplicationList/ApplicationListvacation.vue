@@ -23,12 +23,9 @@
                 :entity-type="entityType"
               />
               <el-link
-                :href="`#/user/profile?id=${row.userBase.id}`"
+                :href="`#/user/profile?id=${row.base.userId}`"
                 target="_blank"
-              >{{ row.userBase.realName }}</el-link>
-              <el-tooltip v-if="row.userBase.realName != row.base.realName" content="用户原姓名">
-                <span>({{ row.base.realName }})</span>
-              </el-tooltip>
+              >{{ row.base.realName }}</el-link>
             </div>
             <div
               v-if="!rowCanShow(row)"
@@ -43,12 +40,7 @@
         </template>
       </el-table-column>
       <el-table-column header-align="center" label="部职别">
-        <template slot-scope="{ row }">
-          <el-link
-            :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
-            target="_blank"
-          >{{ getCDdes(row.userBase, row.base) }}</el-link>
-        </template>
+        <template slot-scope="{ row }">{{ row.base.companyName }} {{ row.base.dutiesName }}</template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="创建时间" width="150rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
@@ -145,11 +137,10 @@
 
       <el-table-column align="center" label="状态" width="80rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <ApplyAuditStreamPreview
+          <ApplyAuditStreamPreviewLoader
             v-if="row.statusDesc"
-            :audit-status="row.steps"
-            :title="row.auditStreamSolution"
-            :now-step="row.nowStep ? row.nowStep.index : row.steps.length"
+            :id="row.id"
+            :entity-type="entityType"
           >
             <el-tag
               slot="content"
@@ -158,7 +149,7 @@
               size="mini"
               style="cursor:pointer;margin-left:0.5rem"
             >{{ row.statusDesc }}</el-tag>
-          </ApplyAuditStreamPreview>
+          </ApplyAuditStreamPreviewLoader>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -210,8 +201,8 @@ export default {
   components: {
     AuditApplyMutilDialog: () => import('../AuditApplyMutilDialog'),
     Pagination: () => import('@/components/Pagination'),
-    ApplyAuditStreamPreview: () =>
-      import('@/components/ApplicationApply/ApplyAuditStreamPreview'),
+    ApplyAuditStreamPreviewLoader: () =>
+      import('@/components/ApplicationApply/ApplyAuditStreamPreviewLoader'),
     VacationType: () => import('@/components/Vacation/VacationType'),
     vacationApplyDetail: () =>
       import('@/views/Apply/ApplyDetail/VacationApplyDetail'),

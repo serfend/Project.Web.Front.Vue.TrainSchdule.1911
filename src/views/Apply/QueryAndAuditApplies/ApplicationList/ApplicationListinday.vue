@@ -23,12 +23,9 @@
                 :entity-type="entityType"
               />
               <el-link
-                :href="`#/user/profile?id=${row.userBase.id}`"
+                :href="`#/user/profile?id=${row.base.userId}`"
                 target="_blank"
-              >{{ row.userBase.realName }}</el-link>
-              <el-tooltip v-if="row.userBase.realName != row.base.realName" content="用户原姓名">
-                <span>({{ row.base.realName }})</span>
-              </el-tooltip>
+              >{{ row.base.realName }}</el-link>
             </div>
             <div
               v-if="!rowCanShow(row)"
@@ -43,12 +40,7 @@
         </template>
       </el-table-column>
       <el-table-column header-align="center" label="部职别">
-        <template slot-scope="{ row }">
-          <el-link
-            :href="`#/dashboard?companyCode=${row.userBase.companyCode}`"
-            target="_blank"
-          >{{ getCDdes(row.userBase, row.base) }}</el-link>
-        </template>
+        <template slot-scope="{ row }">{{ row.base.companyName }} {{ row.base.dutiesName }}</template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="创建时间">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
@@ -103,11 +95,10 @@
                 :show="true"
               />
             </span>
-            <ApplyAuditStreamPreview
+            <ApplyAuditStreamPreviewLoader
               v-if="row.statusDesc"
-              :audit-status="row.steps"
-              :title="row.auditStreamSolution"
-              :now-step="row.nowStep ? row.nowStep.index : row.steps.length"
+              :id="row.id"
+              :entity-type="entityType"
             >
               <el-tag
                 slot="content"
@@ -116,7 +107,7 @@
                 size="mini"
                 style="cursor:pointer;margin-left:0.5rem"
               >{{ row.statusDesc }}</el-tag>
-            </ApplyAuditStreamPreview>
+            </ApplyAuditStreamPreviewLoader>
           </div>
         </template>
       </el-table-column>
@@ -169,8 +160,8 @@ export default {
   components: {
     AuditApplyMutilDialog: () => import('../AuditApplyMutilDialog'),
     Pagination: () => import('@/components/Pagination'),
-    ApplyAuditStreamPreview: () =>
-      import('@/components/ApplicationApply/ApplyAuditStreamPreview'),
+    ApplyAuditStreamPreviewLoader: () =>
+      import('@/components/ApplicationApply/ApplyAuditStreamPreviewLoader'),
     vacationApplyDetail: () =>
       import('@/views/Apply/ApplyDetail/VacationApplyDetail'),
     indayApplyDetail: () =>
@@ -257,20 +248,6 @@ export default {
           return [0, 0]
         }
       }
-    },
-    getCDdes(row, prevRow) {
-      const cn = row.companyName
-      const prevCn = prevRow.companyName
-      const dn = row.dutiesName
-      const prevDn = prevRow.dutiesName
-      const result = [cn, dn]
-      if (cn !== prevCn || dn !== prevDn) {
-        result.push('(')
-        result.push(prevCn)
-        result.push(prevDn)
-        result.push(')')
-      }
-      return result.join(' ')
     },
     formatApplyItem(li) {
       const statusObj = this.statusOptions[li.status]
