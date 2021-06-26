@@ -1,18 +1,29 @@
+import { Notification } from 'element-ui'
 export function FormRecorder(key, defaultItem) {
   this.key = `formRecorder.${key}`
-  this.defaultItem = JSON.stringify(defaultItem)
   this.setRecord = (query) => {
     if (Object.prototype.toString.call(query) !== '[object String]"') query = JSON.stringify(query)
     localStorage.setItem(this.key, query)
   }
   this.getRecord = () => {
-    const s = localStorage.getItem(this.key) || this.defaultItem
-    return JSON.parse(s)
+    const s = JSON.parse(localStorage.getItem(this.key) || '{}')
+    if (defaultItem._version) {
+      if (!s._version || s._version < defaultItem._version) {
+        Notification({
+          title: '存储器更新',
+          message: `${key}因版本更新已清空其存储的数据。版本由[${s._version || '无版本'}]更新为[${defaultItem._version}]。`,
+          duration: 10e3
+        })
+        this.setRecord(defaultItem)
+        return defaultItem
+      }
+    }
+    return Object.assign(defaultItem, s)
   }
 }
 
 export function toQueryStartEndByArray(datetime) {
-  if (datetime && datetime[0]) {
+  if (datetime && datetime.length >= 2) {
     return {
       start: datetime[0],
       end: datetime[1]
@@ -125,6 +136,16 @@ export function datetime_shortcuts(s) {
         picker.$emit('pick', [
           new Date(first_day_of_last_month(s) - 86400e3),
           new Date(first_day_of_month(s) - 86400e3)
+        ])
+      }
+    },
+    {
+      text: '今年',
+      onClick(picker) {
+        const y = new Date().getFullYear()
+        picker.$emit('pick', [
+          new Date(new Date(y, 0, 0).getTime() + s),
+          new Date(new Date(y + 1, 0, 0).getTime() + s)
         ])
       }
     }
