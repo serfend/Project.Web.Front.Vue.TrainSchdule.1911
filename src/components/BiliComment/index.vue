@@ -41,7 +41,8 @@ export default {
   }),
   methods: {
     comp() {
-      const t = comment_pan.find(i => this.$refs[i.name].length > 0)
+      const mapper = i => this.$refs[i.name] && this.$refs[i.name].length > 0
+      const t = comment_pan.find(mapper)
       return this.$refs[t.name]
     },
     handleClick(tab) {

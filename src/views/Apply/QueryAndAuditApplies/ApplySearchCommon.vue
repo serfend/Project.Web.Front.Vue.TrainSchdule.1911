@@ -146,7 +146,7 @@
                 <el-switch v-model="queryForm.isRemote" />
               </el-form-item>
             </el-tab-pane>
-            <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="时间">
+            <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="申请内容">
               <el-form-item v-show="adminQuery" label="创建时间">
                 <el-date-picker
                   v-model="queryForm.createTime"
@@ -180,6 +180,24 @@
                   format="yyyy年MM月dd日"
                   value-format="yyyy-MM-dd"
                   clearable
+                />
+              </el-form-item>
+              <el-form-item v-show="adminQuery" label="去向">
+                <CascaderSelector
+                  v-model="queryForm.vacationAdminDivision"
+                  :child-getter-method="locationChildren"
+                  :value-name="'code'"
+                  :label-name="'name'"
+                  style="width:30rem"
+                />
+              </el-form-item>
+              <el-form-item v-show="adminQuery" label="申请次数范围">
+                <el-slider
+                  v-model="queryForm.requestCounts"
+                  range
+                  show-stops
+                  :max="nowCountsMax"
+                  style="width:80%;float:right"
                 />
               </el-form-item>
             </el-tab-pane>
@@ -254,28 +272,25 @@
 <script>
 import Driver from 'driver.js' // import driver.js
 import 'driver.js/dist/driver.min.css' // import driver.js css
-import AuthCode from '@/components/AuthCode'
-import CompaniesSelector from '@/components/Company/CompaniesSelector'
-import CompanyTagSelector from '@/components/Company/CompanyTagSelector'
-import UserSelector from '@/components/User/UserSelector'
-import DutiesSelector from '@/components/Duty/DutiesSelector'
 import {
   queryList,
   queryListId,
   queryMyAudit,
   createQueryApplyModel
 } from '@/api/apply/query'
+import { locationChildren } from '@/api/common/static'
 import { debounce } from '@/utils'
-import VueFlip from 'vue-flip'
+import { FormRecorder } from '@/utils/form'
 export default {
   Name: 'ApplySearchCommon',
   components: {
-    Flip: VueFlip,
-    CompaniesSelector,
-    CompanyTagSelector,
-    AuthCode,
-    UserSelector,
-    DutiesSelector
+    Flip: () => import('vue-flip'),
+    CascaderSelector: () => import('@/components/CascaderSelector'),
+    CompaniesSelector: () => import('@/components/Company/CompaniesSelector'),
+    CompanyTagSelector: () => import('@/components/Company/CompanyTagSelector'),
+    AuthCode: () => import('@/components/AuthCode'),
+    UserSelector: () => import('@/components/User/UserSelector'),
+    DutiesSelector: () => import('@/components/Duty/DutiesSelector')
   },
   props: {
     list: {
@@ -303,7 +318,7 @@ export default {
     onLoading: false,
     onFormModifying: false,
     queryForm: null,
-    queryFormStartRecord: false,
+    queryFormRecord: false,
     innerPages: {
       pageIndex: 0,
       pageSize: 20
@@ -319,6 +334,10 @@ export default {
     btnExitTransform: null
   }),
   computed: {
+    nowCountsMax() {
+      const v = (this.queryForm.requestCounts[1] * 1.2 + 1) / 5
+      return Math.ceil(v) * 5
+    },
     onFilterAccept() {
       return this.queryForm.status.indexOf(100) > -1
     },
@@ -369,7 +388,7 @@ export default {
         ) {
           this.queryForm.createCompany = codes
         }
-        this.setFormRecord()
+        this.queryFormRecord.setRecord(this.queryForm)
         this.requireSearchData()
       },
       deep: true
@@ -386,8 +405,11 @@ export default {
     }
   },
   mounted() {
-    const tmpItem = localStorage.getItem('applySearchCommon.lastQuery')
-    const tmp = JSON.parse(tmpItem)
+    this.queryFormRecord = new FormRecorder(
+      'applySearchCommon.lastQuery',
+      this.createQueryForm()
+    )
+    const tmp = this.queryFormRecord.getRecord()
     if (tmp) {
       tmp.actionStatus = 'Received' // 默认查询待我审核的
       this.queryForm = tmp
@@ -399,6 +421,7 @@ export default {
     })
   },
   methods: {
+    locationChildren,
     checkPanelStatus() {
       if (this.panel_should_out) {
         this.panel_right = '0'
@@ -409,7 +432,6 @@ export default {
       this.btnExitTransform = 'translateY(2rem) scale(0.5)'
     },
     panel_out(out, delay) {
-      console.log('panel out', out, delay)
       this.panel_should_out = !!out
       if (!delay) this.checkPanelStatus()
       if (this.checker) clearTimeout(this.checker)
@@ -435,14 +457,6 @@ export default {
     removeFlashing() {
       this.classItem = this.classItem.replace(' flashing', '')
     },
-    setFormRecord() {
-      if (this.queryFormStartRecord) {
-        localStorage.setItem(
-          'applySearchCommon.lastQuery',
-          JSON.stringify(this.queryForm)
-        )
-      }
-    },
     exportAppliesNowFilter() {
       this.$emit('exportApplies')
     },
@@ -457,6 +471,7 @@ export default {
     },
     createQueryForm() {
       return {
+        _version: 4,
         createTime: null,
         stampLeaveTime: null,
         stampReturnTime: null,
@@ -470,6 +485,9 @@ export default {
         createCompany: [], // 申请单位
         dutiesType: null,
         companyType: null,
+        vacationAdminDivision: null,
+        requestCounts: [0, 0], // 指定时间范围内次数
+        requestCountsDate: null,
         auth: {
           authByUserId: '',
           code: ''
