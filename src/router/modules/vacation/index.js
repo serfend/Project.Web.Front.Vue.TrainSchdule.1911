@@ -10,6 +10,15 @@ const applicationRouter = {
     ctitle: '请休假',
     icon: 'clipboard'
   },
-  children: [vacation, inday, AuditStream]
+  children: [vacation, inday,
+    {
+      path: 'rank',
+      component: () => import('@/views/Apply/Rank'),
+      name: 'AppliesRank',
+      meta: {
+        ctitle: '排行榜',
+        icon: 'rank'
+      }
+    }, AuditStream]
 }
 export default applicationRouter

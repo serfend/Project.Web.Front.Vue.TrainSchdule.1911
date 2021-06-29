@@ -1,5 +1,42 @@
 import request from '@/utils/request'
 import form from '@/utils/form'
+import { cached_data } from '@/utils/cache'
+const apiRank = 'statisticsVacRank'
+/**
+ * 获取申请的排行榜
+ *
+ * @export
+ * @param {*} { user, page, entityType, rankType, date, company }
+ * @return {*}
+ */
+export function getRank(g) {
+  return getRankFunc(`${apiRank}/list`, g)
+}
+export function getRankWithSelf(g) {
+  if (!(g && g.rankType)) return
+  return getRankFunc(`${apiRank}/listWithSelf`, g)
+}
+const getRankFunc = (api, g) => {
+  const { user, page, entityType, rankType, date, company } = g
+  return request.post(api, {
+    user: form.toQueryValue(user),
+    entityType: form.toQueryValue(entityType),
+    rankType: form.toQueryStartEndByArray([rankType, 0]),
+    date: date && form.toQueryStartEndByArray([date, new Date()]),
+    company: form.toQueryValue(company),
+    page
+  })
+}
+/**
+ * 获取排序类型
+ *
+ * @export
+ * @return {*}
+ */
+export function getRankType() {
+  const url = `${apiRank}/rankTypes`
+  return cached_data(url, (e) => request.get(url), null)
+}
 
 /**
  *导出excel接口
