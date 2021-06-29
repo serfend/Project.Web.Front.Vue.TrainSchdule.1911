@@ -45,7 +45,11 @@ export default {
   },
   methods: {
     refresh() {
-      const f = Object.assign(Object.assign({}, this.queryForm), this.pages)
+      const page = {
+        pages: this.pages
+      }
+      const f1 = Object.assign({}, this.queryForm)
+      const f = Object.assign(f1, page)
       const func = getRankWithSelf(f)
       if (!func) return
       this.$emit('update:loading', true)

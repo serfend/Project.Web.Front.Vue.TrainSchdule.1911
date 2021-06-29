@@ -17,14 +17,14 @@ export function getRankWithSelf(g) {
   return getRankFunc(`${apiRank}/listWithSelf`, g)
 }
 const getRankFunc = (api, g) => {
-  const { user, page, entityType, rankType, date, company } = g
+  const { user, pages, entityType, rankType, date, company } = g
   return request.post(api, {
     user: form.toQueryValue(user),
     entityType: form.toQueryValue(entityType),
     rankType: form.toQueryStartEndByArray([rankType, 0]),
     date: date && form.toQueryStartEndByArray([date, new Date()]),
     company: form.toQueryValue(company),
-    page
+    page: pages
   })
 }
 /**

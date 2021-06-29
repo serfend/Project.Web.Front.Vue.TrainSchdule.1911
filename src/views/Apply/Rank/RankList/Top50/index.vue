@@ -36,13 +36,13 @@ export default {
   margin-top: 20px;
   border-radius: 10px;
   overflow: hidden;
-  height: 336px;
+  // height: 336px;
 }
 
 .scroll-container {
   position: relative;
   overflow: hidden;
-  height: 288px;
+  // height: 288px;
 }
 
 .top50 {
