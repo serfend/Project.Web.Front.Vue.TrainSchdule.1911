@@ -14,10 +14,17 @@
         :class="i.class"
         @click="setActive(i)"
       >
-        <VacationType v-model="i.name" :entity-type="vacType" plain :show-tag="false" />
+        <VacationType
+          v-model="i.name"
+          :entity-type="vacType"
+          plain
+          :show-tag="false"
+          placement="left"
+        />
       </li>
     </transition-group>
     <div class="nav-remind" style>可按单位/周期/申请类型/排序类型等方式排名</div>
+    <div class="nav-remind" style>标记的[休假中]和[请假中]状态为排名产生时的状态，除非筛选为今日，否则与今天实际状态无关。</div>
   </el-card>
 </template>
 

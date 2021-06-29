@@ -4,7 +4,7 @@
       v-if="v"
       v-model="show"
       trigger="hover"
-      placement="top"
+      :placement="placement"
       @hide="onHide"
       @show="hasShow = true"
     >
@@ -30,6 +30,7 @@ export default {
   name: 'VacationType',
   components: {
     vacationTypeDetail: () => import('./VacationTypeDetail'),
+    vacTypeDetail: () => import('./VacationTypeDetail'),
     indayTypeDetail: () => import('./IndayRequestTypeDetail')
   },
   model: {
@@ -42,7 +43,8 @@ export default {
     plain: { type: Boolean, default: false },
     leftLength: { type: Number, default: 0 },
     directShow: { type: Boolean, default: false },
-    entityType: { type: String, required: true }
+    entityType: { type: String, required: true },
+    placement: { type: String, default: 'top' }
   },
   data: () => ({
     show: false,
@@ -50,7 +52,7 @@ export default {
   }),
   computed: {
     isVacation() {
-      return this.entityType === 'vacation'
+      return this.entityType === 'vacation' || this.entityType === 'vac'
     },
     v() {
       const dict = this.vacationTypesDic
