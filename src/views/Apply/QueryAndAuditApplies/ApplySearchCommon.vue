@@ -471,7 +471,7 @@ export default {
     },
     createQueryForm() {
       return {
-        _version: 4,
+        _version: 5,
         createTime: null,
         stampLeaveTime: null,
         stampReturnTime: null,
