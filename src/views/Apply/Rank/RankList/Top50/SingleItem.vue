@@ -20,7 +20,7 @@
             <i v-if="data.status" class="live">{{ data.status }}</i>
           </div>
           <em class="score">
-            <span>{{ data.description }}</span>
+            <span>{{ data.levelDesc }}</span>
           </em>
         </dd>
       </dl>
