@@ -35,14 +35,18 @@
           />
           <div class="menu-divider" />
           <el-menu style="border-right: none">
-            <el-submenu index="1">
+            <el-menu-item index="1" @click="$router.push(`/user/profile`)">
+              <SvgIcon icon-class="namecard" />
+              <span>个人信息</span>
+            </el-menu-item>
+            <el-submenu index="2">
               <template slot="title">
                 <SvgIcon icon-class="principal" />
                 <span>账号</span>
               </template>
-              <el-menu-item index="1" @click="$router.push(`/user/profile`)">
+              <el-menu-item index="1" @click="$router.push(`/forget`)">
                 <SvgIcon icon-class="namecard" />
-                <span>个人信息</span>
+                <span>找回账号/密码</span>
               </el-menu-item>
               <el-menu-item index="2" @click="isToShowPasswordModefier = true">
                 <SvgIcon icon-class="scan_namecard" />
