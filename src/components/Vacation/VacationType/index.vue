@@ -11,6 +11,7 @@
       <component :is="`${entityType}TypeDetail`" v-if="hasShow" v-model="v" style="width:15rem" />
       <span slot="reference">
         <el-tag v-if="showTag" size="mini" :type="v.primary?'success':'danger'">{{ v.alias }}</el-tag>
+        <span v-else-if="plain">{{ v.alias }}</span>
         <span v-else>
           <span style="float: left">{{ v.alias }}</span>
           <span v-if="isVacation">
@@ -38,6 +39,7 @@ export default {
   props: {
     type: { type: String, default: null },
     showTag: { type: Boolean, default: true },
+    plain: { type: Boolean, default: false },
     leftLength: { type: Number, default: 0 },
     directShow: { type: Boolean, default: false },
     entityType: { type: String, required: true }
