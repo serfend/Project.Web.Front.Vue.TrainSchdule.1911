@@ -30,10 +30,10 @@ export function cached_data(id, action, timeout = 10e3, exception_timeout = 5e2)
   }
   cache_dict[id] = new Promise((res, rej) => {
     action().then(data => {
-      setTimeout(() => { delete cache_dict[id] }, timeout)
+      if (timeout) setTimeout(() => { delete cache_dict[id] }, timeout)
       res(data)
     }).catch(e => {
-      setTimeout(() => { delete cache_dict[id] }, exception_timeout)
+      if (exception_timeout) setTimeout(() => { delete cache_dict[id] }, exception_timeout)
       rej(e)
     })
   })
