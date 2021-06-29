@@ -1,9 +1,15 @@
 <template>
-  <div v-if="innerForm && innerForm.company">
-    <el-form-item prop="company" label="单位" style="width: 25.2rem">
+  <div v-if="innerForm">
+    <el-form-item prop="company" label="管理单位" style="width: 25.2rem">
       <CompanySelector
         v-model="innerForm.company"
-        :placeholder="innerForm.company.name || '仅当前登录的用户的单位可见'"
+        :placeholder="innerForm.company && innerForm.company.name || '仅当前登录的用户的单位可见'"
+      />
+    </el-form-item>
+    <el-form-item prop="company" label="编制单位" style="width: 25.2rem">
+      <CompanySelector
+        v-model="innerForm.companyOfManage"
+        :placeholder="innerForm.companyOfManage && innerForm.companyOfManage.name || '仅当前登录的用户的单位可见'"
       />
     </el-form-item>
     <el-form-item prop="duties" label="职务">
@@ -45,6 +51,7 @@
 <script>
 const createForm = () => ({
   company: {},
+  companyOfManage: {},
   duties: {},
   title: {}
 })
@@ -64,6 +71,7 @@ export default {
     }
   },
   data: () => ({
+    isFirstSelect: true,
     innerForm: createForm()
   }),
   watch: {
@@ -83,6 +91,14 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    'innerForm.company': {
+      handler(val) {
+        if (val && !this.isFirstSelect) return
+        this.isFirstSelect = true
+        this.innerForm.companyOfManage = val
+      },
+      deep: true
     }
   },
   methods: {
