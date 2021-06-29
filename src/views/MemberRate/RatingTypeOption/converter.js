@@ -1,5 +1,16 @@
 import { ratingTypeDict } from '../setting'
-export const descList = ['一季度', '二季度', '三季度', '四季度']
+export const descList = {
+  'season': [
+    { l: '一季度', v: '{y}-1-1' },
+    { l: '二季度', v: '{y}-4-1' },
+    { l: '三季度', v: '{y}-8-1' },
+    { l: '四季度', v: '{y}-12-1' },
+  ],
+  'half-year': [
+    { l: '上半年', v: '{y}-1-1' },
+    { l: '下半年', v: '{y}-6-1' },
+  ]
+}
 export function ratingTypeItem(ratingType) {
   return ratingTypeDict[ratingType]
 }
@@ -23,7 +34,13 @@ export function ratingTypeCycleToString(ratingType, cycleCount) {
     case 8: {
       cycleCount -= 1
       d.setMonth(cycleCount * 3)
-      return `${d.getFullYear()}年${descList[cycleCount % 4]}`
+      return `${d.getFullYear()}年${descList['season'][cycleCount % 4].l}`
+    }
+    // 半年
+    case 12: {
+      cycleCount -= 1
+      d.setMonth(cycleCount * 6)
+      return `${d.getFullYear()}年${descList['half-year'][cycleCount % 2].l}`
     }
     // 年
     case 16: {
@@ -52,12 +69,22 @@ export function dateValueToCycleCount(ratingType, dateValue, descValue) {
     // 季度
     case 8: {
       const y = (v.getFullYear() - 2000) * 4
-      const s = descList.findIndex(i => i === descValue)
+      const s = descList['season'].findIndex(i => i.l === descValue)
+      return y + (s === -1 ? 0 : s) + 1
+    }
+    // 半年
+    case 12: {
+      const y = (v.getFullYear() - 2000) * 2
+      const s = descList['half-year'].findIndex(i => i.l === descValue)
       return y + (s === -1 ? 0 : s) + 1
     }
     // 年
     case 16: {
       return v.getFullYear() - 2000
+    }
+    // 全部
+    case 32: {
+      return null
     }
   }
 }

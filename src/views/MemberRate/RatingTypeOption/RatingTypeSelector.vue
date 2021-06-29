@@ -20,19 +20,19 @@ export default {
     event: 'change'
   },
   props: {
-    v: {
-      type: Number,
-      default: 0
-    },
-    item: {
-      type: Array,
-      default: null
-    }
+    v: { type: Number, default: 0 },
+    item: { type: Array, default: null },
+    ratingTypes: { type: Array, default: null }
   },
   data: () => ({
     value: 0,
-    ratingType: ratingTypeDict
+    ratingTypeList: ratingTypeDict
   }),
+  computed: {
+    ratingType() {
+      return this.ratingTypes || this.ratingTypeList
+    }
+  },
   watch: {
     value: {
       handler(val) {
