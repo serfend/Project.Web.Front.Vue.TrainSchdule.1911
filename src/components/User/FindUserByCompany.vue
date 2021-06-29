@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-switch v-model="asManage" active-text="按编制单位" inactive-text="按管理单位" />
     <CompanySelector v-model="company" placeholder="选择单位" />
     <el-collapse
       v-model="nowCollapseSelectUserId"
@@ -37,6 +38,7 @@ export default {
   data: () => ({
     loading: false,
     company: null,
+    asManage: false,
     usersByCompany: [],
     hasNextPage: true,
     pages: {
@@ -62,8 +64,9 @@ export default {
   methods: {
     nextPage() {
       const code = this.company && this.company.code
+      const { asManage } = this
       if (this.loading || !code || !this.hasNextPage) return
-      const item = { code }
+      const item = { code, asManage }
       this.pages.pageIndex++
       const query = Object.assign(this.pages, item)
       this.loading = true

@@ -1,8 +1,8 @@
 import { getMembers } from '@/api/company'
 import { templateToStandard } from '../TemplateBuilder/standard'
-export function load_template({ code, ratingCycleCount, ratingType, ratingTypeItem, ratingTypeDesc }) {
+export function load_template({ code, ratingCycleCount, ratingType, ratingTypeItem, ratingTypeDesc, asManage }) {
   return new Promise((res, rej) => {
-    getMembers({ code, page: 0, pageSize: 1e3 }).then(data => {
+    getMembers({ code, page: 0, pageSize: 1e3, asManage }).then(data => {
       data.list = userSummaryToStandard({ list: data.list, code, ratingCycleCount, ratingType })
       res(templateToStandard(data, ratingTypeDesc, ratingTypeItem))
     }).catch(e => {

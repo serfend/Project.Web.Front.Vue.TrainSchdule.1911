@@ -19,6 +19,7 @@
             :loading="loading"
             @click="requireLoadWaitToAUthRegisterUsers"
           >刷新</el-button>
+          <el-switch v-model="MembersQuery.asManage" active-text="按编制单位" inactive-text="按管理单位" style="margin-left:3rem" />
         </el-form>
       </el-card>
 
@@ -123,6 +124,7 @@ export default {
   },
   data: () => ({
     MembersQuery: {
+      asManage: false,
       pageIndex: 0,
       pageSize: 10
     },

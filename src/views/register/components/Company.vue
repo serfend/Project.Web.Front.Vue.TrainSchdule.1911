@@ -71,7 +71,6 @@ export default {
     }
   },
   data: () => ({
-    isFirstSelect: true,
     innerForm: createForm()
   }),
   watch: {
@@ -91,14 +90,6 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-    'innerForm.company': {
-      handler(val) {
-        if (val && !this.isFirstSelect) return
-        this.isFirstSelect = true
-        this.innerForm.companyOfManage = val
-      },
-      deep: true
     }
   },
   methods: {

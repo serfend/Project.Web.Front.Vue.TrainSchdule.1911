@@ -76,12 +76,14 @@ export function companiesManagers(ids) {
  */
 export function getMembers({
   code,
+  asManage,
   pageIndex,
   pageSize
 }) {
   return request.get('/company/members', {
     params: {
       code,
+      asManage,
       page: pageIndex,
       pageSize
     }

@@ -318,10 +318,11 @@ export default {
           f.Base = data.base.base
           f.Application = data.application
           const duties = data.duties || {}
-          const company = data.company.company
+          const { company, companyOfManage } = data.company
           const { invitedBy, accountStatus } = data.application
           f.Company = {
             company,
+            companyOfManage,
             duties: {
               name: duties.name
             },
