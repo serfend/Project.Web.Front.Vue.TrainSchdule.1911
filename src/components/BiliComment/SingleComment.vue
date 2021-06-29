@@ -3,8 +3,8 @@
     <el-row :gutter="20">
       <el-col v-loading="loading_avatar" :span="2.5" style="justify-content:center;display:flex">
         <el-image
-          v-if="avatar"
-          :src="avatar"
+          v-if="avatar||defaultAvatar"
+          :src="avatar||defaultAvatar"
           :preview-src-list="[avatar]"
           class="avatar"
           :style="isMini?{height:'40px',width:'40px'}:null"
@@ -12,9 +12,21 @@
       </el-col>
       <el-col :span="21">
         <el-popover trigger="hover" placement="left" @show="userIsActive=true">
-          <User :data="data.from" :can-load-avatar="userIsActive" />
+          <User v-if="data.from" :data="data.from" :can-load-avatar="userIsActive" />
+          <span v-else>
+            <div>此用户以匿名方式发表</div>
+            <el-button
+              :disabled="iwannaTryDisabled"
+              type="text"
+              @click="()=>{$message.info('隐藏功能，无法尝试'),iwannaTryDisabled=true}"
+            >我也试试</el-button>
+          </span>
           <span slot="reference" class="user">
-            <span class="user-name">{{ data.from?data.from.realName:'未知用户' }}</span>
+            <span v-if="data.from" class="user-name">{{ data.from.realName }}</span>
+            <span v-else class="user-name-unknow">
+              <span style="font-size:10px;color:#ccc;">匿名</span>
+              <span style="color:#aaa">{{ data.anonymousNick }}</span>
+            </span>
           </span>
         </el-popover>
         <div v-if="!isMini" style="margin:1rem 0">
@@ -33,7 +45,11 @@
             <SvgIcon :icon-class="liked?'like_filled':'like'" style-normal="color:#c33" />
             <span>{{ like_count }}</span>
           </span>
-          <span v-if="currentUser === data.from.id" class="like" @click="handle_delete">
+          <span
+            v-if="currentUser === data.from && data.from.id"
+            class="like"
+            @click="handle_delete"
+          >
             <SvgIcon icon-class="delete" style-normal="color:#c33" />
             <span>删除</span>
           </span>
@@ -80,6 +96,7 @@
 </template>
 
 <script>
+import defaultAvatar from '@/assets/plain/defaultAvatar.js'
 import { formatTime, parseTime } from '@/utils'
 import { getUserAvatar } from '@/api/user/userinfo'
 import { likeComments, postComments, getReplies } from '@/api/apply/attach_info'
@@ -100,6 +117,7 @@ export default {
     isMini: { type: Boolean, default: false }
   },
   data: () => ({
+    defaultAvatar,
     avatar: '',
     liked: false,
     like_count: 0,
@@ -111,7 +129,8 @@ export default {
     showAllApplies: {
       enable: false,
       page: { pageIndex: 0, pageSize: 10 }
-    }
+    },
+    iwannaTryDisabled: false
   }),
   computed: {
     currentUser() {
@@ -158,7 +177,9 @@ export default {
     },
     replyComment(id) {
       if (this.isMini) {
-        return this.$emit('requireReply', this.data.from && this.data.from.id)
+        const from = this.data.from
+        const nick = this.data.anonymousNick
+        return this.$emit('requireReply', (from && from.id) || nick)
       }
       if (id) this.content = `@${id} `
       else this.content = ''

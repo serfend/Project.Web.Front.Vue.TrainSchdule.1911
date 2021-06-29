@@ -55,7 +55,6 @@ export default {
         const list = data.list.map(c => itemMapper(c, this.levelDescFunc))
         this.totalCount = data.totalCount
         this.self = itemMapper(data.self, this.levelDescFunc)
-        debugger
         this.list_top3 = list.slice(0, 3)
         this.list_top50 = list.slice(3)
       }

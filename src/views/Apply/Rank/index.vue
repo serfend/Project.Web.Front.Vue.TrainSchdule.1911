@@ -41,6 +41,7 @@
         </div>
       </div>
     </div>
+    <BiliComment id="7f27df03-bb1e-4a2a-b8cb-04a1039c3d23" />
   </div>
 </template>
 
@@ -50,6 +51,7 @@ import { parseTime } from '@/utils'
 export default {
   name: 'Rank',
   components: {
+    BiliComment: () => import('@/components/BiliComment'),
     CompanySelector: () => import('@/components/Company/CompanySelector'),
     RankList: () => import('./RankList'),
     TypeNav: () => import('./TypeNav'),

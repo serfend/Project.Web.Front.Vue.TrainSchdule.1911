@@ -44,13 +44,14 @@ export function getReplies({ id, pageIndex, pageSize }) {
  * @param {String} content 内容
  * @returns
  */
-export function postComments({ id, apply, content, reply, isRemove, auth }) {
+export function postComments({ id, apply, content, reply, isRemove, anonymousNick, auth }) {
+  if (!anonymousNick) anonymousNick = null
   return request({
     url: '/apply/comment',
     method: 'post',
     data: {
       data: {
-        id, apply, content, reply, isRemove
+        id, apply, content, reply, anonymousNick, isRemove
       },
       auth
     }

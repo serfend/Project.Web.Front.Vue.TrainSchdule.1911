@@ -4,16 +4,7 @@
       v-if="currentUser&&currentUser.id"
       id="7927df03-bb1e-4a2a-b8cb-04a1039c3d23"
       ref="comment"
-    >
-      <template slot="sender">
-        <MarkdownEditor ref="editor" v-model="comment" :options="options" />
-        <div style="height:5rem">
-          <div class="cmd-bar">
-            <el-button v-loading="loading" type="success" class="cmd-btn" @click="send_comment">发送</el-button>
-          </div>
-        </div>
-      </template>
-    </BiliComment>
+    />
     <Login v-else />
   </div>
 </template>
@@ -23,7 +14,6 @@ export default {
   name: 'Suggest',
   components: {
     BiliComment: () => import('@/components/BiliComment'),
-    MarkdownEditor: () => import('@/components/MarkdownEditor/Editor'),
     Login: () => import('@/views/login')
   },
   data: () => ({
