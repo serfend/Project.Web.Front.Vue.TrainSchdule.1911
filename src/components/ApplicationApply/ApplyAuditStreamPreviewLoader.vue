@@ -14,7 +14,7 @@
         :entity-type="entityType"
       />
     </el-dialog>
-    <div @click="showDialog">
+    <div style="cursor:pointer;" @click="showDialog">
       <slot name="content" />
     </div>
   </div>
