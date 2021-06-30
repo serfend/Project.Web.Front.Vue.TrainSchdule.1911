@@ -25,12 +25,9 @@
                   <TransportationType v-model="innerData.request.byTransportation" />
                 </el-form-item>
                 <el-form-item label="审批流程">
-                  <ApplyAuditStreamPreview
-                    :show-detail="false"
-                    :now-step="innerData.nowStep?(innerData.nowStep.index):(innerData.steps.length)"
-                    :audit-status="innerData.steps"
-                    :title="innerData.auditStreamSolution"
-                  />
+                  <ApplyAuditStreamPreviewLoader :id="innerData.id" :entity-type="entityType">
+                    <el-button slot="content" type="text">点击查看</el-button>
+                  </ApplyAuditStreamPreviewLoader>
                 </el-form-item>
                 <el-form-item
                   v-if="innerData.status!==20"
@@ -76,8 +73,8 @@ export default {
   name: 'ApplyCard',
   components: {
     ActionUser: () => import('@/views/Apply/QueryAndAuditApplies/ActionUser'),
-    ApplyAuditStreamPreview: () =>
-      import('@/components/ApplicationApply/ApplyAuditStreamPreview'),
+    ApplyAuditStreamPreviewLoader: () =>
+      import('@/components/ApplicationApply/ApplyAuditStreamPreviewLoader'),
     VacationType: () => import('@/components/Vacation/VacationType'),
     TransportationType: () => import('@/components/Vacation/TransportationType')
   },
