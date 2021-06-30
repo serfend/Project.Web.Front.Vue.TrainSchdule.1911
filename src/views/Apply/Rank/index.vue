@@ -63,8 +63,8 @@ export default {
     loading: false,
     types: [],
     form: {
-      type: null,
-      date: null,
+      type: 2,
+      date: new Date(),
       entityType: null,
       levelType: null,
       vacType: null,

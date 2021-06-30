@@ -70,6 +70,12 @@ export default {
     }
   },
   watch: {
+    rawDate: {
+      handler(val) {
+        this.ratingCycleDateValue = val
+      },
+      immediate: true
+    },
     ratingType: {
       handler(val) {
         this.onChange()
