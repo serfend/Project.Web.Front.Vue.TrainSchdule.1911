@@ -578,47 +578,5 @@ export default {
     opacity: 1;
   }
 }
-.flashing {
-  animation: flashing-item 5s 1 ease;
-  animation-delay: 1s;
-}
-@keyframes flashing-item {
-  0% {
-    opacity: 0.12;
-  }
-  4% {
-    opacity: 1;
-    right: 0;
-  }
-  8% {
-    opacity: 0.12;
-    right: 0;
-  }
-  12% {
-    opacity: 1;
-    right: 0;
-  }
-  16% {
-    opacity: 0.12;
-    right: 0;
-  }
-  20% {
-    opacity: 1;
-    right: 0;
-  }
-  24% {
-    opacity: 0.12;
-    right: 0;
-  }
-  28% {
-    opacity: 1;
-    right: 0;
-  }
-  55% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.12;
-  }
-}
+@import '@/styles/animation';
 </style>

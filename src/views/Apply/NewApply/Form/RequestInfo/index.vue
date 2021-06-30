@@ -1,6 +1,11 @@
 <template>
   <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
-    <el-card v-loading="loading" header="休假信息" style="position:relative">
+    <el-card
+      v-loading="loading"
+      header="休假信息"
+      class="flashing-alert"
+      style="position:relative;z-index:2"
+    >
       <el-form label-width="5rem">
         <el-form-item label="填报类型">
           <el-tooltip content="正式填报休假申请，审批通过后计入全年休假情况。">
@@ -90,7 +95,6 @@
                   view="year"
                   :color="theme"
                   format="YYYY-MM-DD"
-                  editable
                   locale="zh-cn"
                   :locale-config="localeConfig"
                   @change="updateChange"
@@ -487,3 +491,6 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+@import '@/styles/animation';
+</style>

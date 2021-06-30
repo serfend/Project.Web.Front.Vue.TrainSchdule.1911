@@ -1,7 +1,7 @@
 <template>
   <transition>
     <div v-show="!iDisabled" id="submit-form" v-loading="onLoading">
-      <div :style="{width:caculateParent,'background-color':theme}" :class="navClass">
+      <div :style="{width:caculateParent,'background-color':theme,'z-index':3}" :class="navClass">
         <span v-if="next_permit_submit<=new Date()">
           <el-button
             :disabled="iDisabled"
@@ -300,36 +300,8 @@ export default {
     opacity: 1;
   }
 }
+@import '@/styles/animation';
 
-.flashing {
-  animation: flashing-item 3s 1 linear;
-}
-@keyframes flashing-item {
-  0% {
-    opacity: 0.12;
-  }
-  5% {
-    opacity: 1;
-  }
-  10% {
-    opacity: 0.12;
-  }
-  15% {
-    opacity: 1;
-  }
-  20% {
-    opacity: 0.12;
-  }
-  25% {
-    opacity: 1;
-  }
-  75% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.12;
-  }
-}
 .item-put-center {
   margin-top: 1rem;
   justify-content: center;
