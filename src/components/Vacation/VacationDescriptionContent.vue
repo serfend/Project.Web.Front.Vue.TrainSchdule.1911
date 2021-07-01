@@ -1,6 +1,6 @@
 <template>
-  <div v-if="innerData" v-loading="loading">
-    <ul class="tooltip-vacation">
+  <div v-loading="loading">
+    <ul v-if="!loading_result" class="tooltip-vacation">
       <li>
         <b>全年假期天数：</b>
         <span>{{ innerData.yearlyLength }}</span>天
@@ -44,6 +44,7 @@
         <span v-else>无</span>
       </li>
     </ul>
+    <div v-else>{{ loading_result }}</div>
   </div>
 </template>
 
@@ -73,7 +74,8 @@ export default {
       handler(val) {
         this.innerData = val
       },
-      immediate: true
+      immediate: true,
+      deep: true
     },
     userid: {
       handler(val) {
@@ -86,10 +88,6 @@ export default {
     refresh() {
       const { userid } = this
       if (!userid) {
-        this.innerData = {}
-        this.loading_result = '未指定用户名'
-        this.$emit('update:loadingResult', this.loadingResult)
-        this.$emit('update:userVacation', this.innerData)
         return
       }
       this.loading = true

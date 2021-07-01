@@ -36,7 +36,7 @@
           <el-form v-if="formApply" ref="formApply" :model="formApply" label-width="6rem">
             <el-form-item label="年休假率">
               <VacationDescription
-                v-if="nowVacationType"
+                v-if="nowVacationType&&usersvacation"
                 :users-vacation="usersvacation"
                 :this-time-vacation-length="nowVacationType.primary?formApply.vacationLength:0"
               />

@@ -1,20 +1,20 @@
 <template>
   <div>
     <el-tooltip v-if="directShow" effect="light">
-      <VacationDescriptionContent
-        slot="content"
-        :userid="userid"
-        :user-vacation.sync="innerUserVacation"
-        loading-result.sync="loading_result"
-      />
+      <template #content>
+        <VacationDescriptionContent
+          :userid="userid"
+          :users-vacation.sync="innerUserVacation"
+          :loading-result.sync="loading_result"
+        />
+      </template>
       <el-progress :percentage="percent" :color="getColor(percent)" />
     </el-tooltip>
     <VacationDescriptionContent
       v-else
-      slot="content"
-      :users-vacation="usersVacation"
+      :users-vacation.sync="innerUserVacation"
       :userid="userid"
-      loading-result.sync="loading_result"
+      :loading-result.sync="loading_result"
     />
   </div>
 </template>
@@ -41,14 +41,16 @@ export default {
     userid: { type: String, default: null }
   },
   data: () => ({
-    innerUserVacation: {}
+    innerUserVacation: {},
+    innerLoadingResult: null
   }),
   computed: {
     loading_result: {
       get() {
-        return this.loadingResult
+        return this.innerLoadingResult
       },
       set(val) {
+        this.innerLoadingResult = val
         this.$emit('update:loadingResult', val)
       }
     },
@@ -65,6 +67,12 @@ export default {
     }
   },
   watch: {
+    loadingResult: {
+      handler(val) {
+        this.innerLoadingResult = val
+      },
+      immediate: true
+    },
     usersVacation: {
       handler(val) {
         this.innerUserVacation = val
