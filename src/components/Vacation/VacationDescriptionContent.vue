@@ -102,7 +102,7 @@ export default {
             ...data
           }
           this.loading_result = null
-          this.$emit('update:userVacation', this.innerData)
+          this.$emit('update:usersVacation', this.innerData)
         })
         .catch(e => {
           this.loading_result = JSON.stringify(e)
