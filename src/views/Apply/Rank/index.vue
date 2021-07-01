@@ -128,10 +128,10 @@ export default {
     load_types() {
       getRankType().then(data => {
         this.types = data.list.map(i => ({
-          code: i.item1,
-          name: i.item2,
-          desc: i.item3,
-          type: i.item4
+          code: i.id,
+          name: i.name,
+          desc: i.alias,
+          type: i.shortAlias
         }))
         this.form.type =
           this.types &&
