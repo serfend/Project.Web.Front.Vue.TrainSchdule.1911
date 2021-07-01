@@ -16,6 +16,7 @@
                 <span class="dot">...</span>
               </div>
             </UserAvatar>
+            <span v-if="data.company" style="color:#ccc">{{ data.company }}</span>
             <span v-if="data.title" class="uname">{{ data.title }}</span>
             <i v-if="data.status" class="live">{{ data.status }}</i>
           </div>

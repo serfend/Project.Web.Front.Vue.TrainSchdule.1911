@@ -13,6 +13,7 @@
         <h3>
           <span class="name t-over-hidden t-nowrap">{{ data.title }}</span>
           <em v-if="data.status" class="live" style>{{ data.status }}</em>
+          <div v-if="data.company" style="font-size:9px;">{{ data.company }}</div>
         </h3>
         <p style="color: #888888;">
           <span>{{ data.levelDesc }}</span>
