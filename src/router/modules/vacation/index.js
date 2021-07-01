@@ -5,7 +5,7 @@ const applicationRouter = {
   path: '/apply',
   component: () => import('@/layout'),
   redirect: 'noRedirect',
-  name: 'vacation',
+  name: 'Apply',
   meta: {
     ctitle: '请休假',
     icon: 'clipboard'

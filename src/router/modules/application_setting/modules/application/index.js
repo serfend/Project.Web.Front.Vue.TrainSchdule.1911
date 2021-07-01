@@ -11,7 +11,7 @@ const route = {
     {
       path: 'dashboard',
       component: () => import('@/views/dashboard/redirect'),
-      name: 'Dashboard',
+      name: 'ApplyDashboard',
       meta: {
         title: 'dashboard',
         icon: 'chart',

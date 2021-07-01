@@ -226,7 +226,7 @@ const actions = {
       })
 
       // dynamically add accessible routes
-      router.addRoutes(accessRoutes)
+      accessRoutes.map(i => router.addRoute(i))
 
       resolve()
     })
