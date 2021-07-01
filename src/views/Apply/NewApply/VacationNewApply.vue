@@ -10,7 +10,6 @@
           class="card-column"
           @submited="baseInfoSubmit"
         />
-
         <RequestInfo
           v-show="nowStep>=1"
           ref="RequestInfo"
@@ -22,15 +21,6 @@
           class="card-column"
           @submited="requestInfoSubmit"
           @vacationTypeUpdate="vacationTypeUpdate"
-        />
-        <SubmitApply
-          :request-id="formFinal.RequestId"
-          :base-info-id="formFinal.BaseInfoId"
-          :main-type="formFinal.mainType"
-          :entity-type="entityType"
-          :disabled="nowStep<2||childOnLoading"
-          @reset="createNewDirect"
-          @submit="userSubmit"
         />
       </el-col>
       <el-col v-show="nowStep>=1" :xl="singleColumn?24:12" :lg="24">
@@ -62,6 +52,15 @@
       target="#app"
       :bottom="100"
       style="width:3rem;height:3rem;box-shadow: 1px 1px 6px #3333aa"
+    />
+    <SubmitApply
+      :request-id="formFinal.RequestId"
+      :base-info-id="formFinal.BaseInfoId"
+      :main-type="formFinal.mainType"
+      :entity-type="entityType"
+      :disabled="nowStep<2||childOnLoading"
+      @reset="createNewDirect"
+      @submit="userSubmit"
     />
   </div>
 </template>

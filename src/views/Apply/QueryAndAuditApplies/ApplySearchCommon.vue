@@ -2,8 +2,8 @@
   <el-form
     v-if="queryForm"
     :class="classItem"
-    :style="{right:panel_right}"
-    @mouseenter.native="panelMouseEnter"
+    :style="{right:panel_right,cursor:panel_should_out?'':'pointer'}"
+    @mousedown.native="panelMouseEnter"
     @mouseleave.native="panelMouseLeave"
   >
     <Flip v-model="isFlip" width="100%" height="100%">
@@ -330,7 +330,7 @@ export default {
     checker: null,
     active_pane: '0',
     driver: null,
-    classItem: 'float-panel flashing',
+    classItem: 'float-panel flashing-layout-right',
     btnExitTransform: null
   }),
   computed: {
@@ -422,6 +422,7 @@ export default {
   },
   methods: {
     locationChildren,
+    // TODO 实现原生的动画
     checkPanelStatus() {
       if (this.panel_should_out) {
         this.panel_right = '0'
@@ -451,11 +452,11 @@ export default {
       this.panel_out(false, 2e3)
     },
     panelMouseEnter() {
-      this.panel_out(true)
       this.removeFlashing()
+      this.panel_out(true)
     },
     removeFlashing() {
-      this.classItem = this.classItem.replace(' flashing', '')
+      this.classItem = this.classItem.replace(' flashing-layout-right', '')
     },
     exportAppliesNowFilter() {
       this.$emit('exportApplies')

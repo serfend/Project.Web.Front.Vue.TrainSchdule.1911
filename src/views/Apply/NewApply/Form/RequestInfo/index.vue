@@ -4,7 +4,7 @@
       v-loading="loading"
       header="休假信息"
       class="flashing-alert"
-      style="position:relative;z-index:2"
+      style="position:relative;z-index:2;"
     >
       <el-form label-width="5rem">
         <el-form-item label="填报类型">

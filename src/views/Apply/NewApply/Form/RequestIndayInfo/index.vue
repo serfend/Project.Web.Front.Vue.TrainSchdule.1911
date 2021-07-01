@@ -1,6 +1,11 @@
 <template>
   <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
-    <el-card v-loading="loading" header="请假信息" class="flashing-alert" style="position:relative;z-index:2">
+    <el-card
+      v-loading="loading"
+      header="请假信息"
+      class="flashing-alert"
+      style="position:relative;z-index:2;"
+    >
       <el-container v-if="formApply">
         <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
