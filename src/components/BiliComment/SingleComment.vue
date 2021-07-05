@@ -29,7 +29,7 @@
             </span>
           </span>
         </el-popover>
-        <div v-if="!isMini" style="margin:1rem 0">
+        <div v-if="isMarkdown" style="margin:1rem 0">
           <MarkdownViewer :content="data.content" />
         </div>
         <span v-else style="color:#333;font-size:10px;">
@@ -114,7 +114,8 @@ export default {
   },
   props: {
     data: { type: Object, default: null },
-    isMini: { type: Boolean, default: false }
+    isMini: { type: Boolean, default: false },
+    isMarkdown: { type: Boolean, default: true }
   },
   data: () => ({
     defaultAvatar,
