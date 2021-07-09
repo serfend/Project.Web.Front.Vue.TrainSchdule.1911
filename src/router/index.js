@@ -13,6 +13,28 @@ import Layout from '@/layout'
 
 export const constantRoutes = [
   {
+    path: '/test',
+    component: () => import('@/views/AndTest'),
+    name: 'test',
+    hidden: true,
+    meta: {
+      ctitle: '测试',
+      icon: 'chart',
+      hide_footer: true
+    }
+  },
+  {
+    path: '/test-chat',
+    component: () => import('@/views/AndTest/Chat'),
+    name: 'test2',
+    hidden: true,
+    meta: {
+      ctitle: '测试',
+      icon: 'chart',
+      hide_footer: true
+    }
+  },
+  {
     path: '/dashboard',
     component: () => import('@/views/dashboard/index'),
     name: 'Dashboard',
