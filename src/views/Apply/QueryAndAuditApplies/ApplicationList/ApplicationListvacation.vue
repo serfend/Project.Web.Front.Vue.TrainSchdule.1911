@@ -190,6 +190,7 @@
       <h1 slot="title" style="text-align:center">详细信息</h1>
       <component :is="`${entityType}ApplyDetail`" :focus-id="apply_detail_focus_id" />
     </el-dialog>
+    <div style="height:3rem" />
   </div>
 </template>
 
