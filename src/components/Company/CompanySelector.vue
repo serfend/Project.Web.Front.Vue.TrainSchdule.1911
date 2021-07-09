@@ -20,18 +20,9 @@ export default {
     event: 'change'
   },
   props: {
-    data: {
-      type: Object,
-      default: null
-    },
-    placeholder: {
-      type: String,
-      default: null
-    },
-    code: {
-      type: String,
-      default: null
-    }
+    data: { type: Object, default: null },
+    placeholder: { type: String, default: null },
+    code: { type: String, default: null }
   },
   data: () => ({
     companySelectItem: null,
