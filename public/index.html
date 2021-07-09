@@ -1,27 +1,78 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:description"
+      content="<%= webpackConfig.description %>"
+    />
+    <meta name="description" content="<%= webpackConfig.description %>" />
+    <meta name="keywords" content="<%= webpackConfig.keywords %>" />
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="<%= BASE_URL %>favicon-16x16.ico"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="<%= BASE_URL %>favicon-32x32.ico"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="64x64"
+      href="<%= BASE_URL %>favicon-64x64.ico"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="128x128"
+      href="<%= BASE_URL %>favicon-128x128.ico"
+    />
+    <meta
+      property="og:image"
+      content="https://i.loli.net/2020/05/12/IAsdu3iVXPeNRK6.jpg"
+    />
+    <title><%= webpackConfig.name %></title>
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="renderer" content="webkit">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta property="og:type" content="website" />
-  <meta property="og:description" content="公网仅供静态展示及测试，如需使用业务请在内网办理！">
-  <meta name="description" content="公网仅供静态展示及测试，如需使用业务请在内网办理！">
-  <meta name="keywords" content="探亲,休假,管理,系统,请假,serfend">
-  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="<%= BASE_URL %>favicon-16x16.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="<%= BASE_URL %>favicon-32x32.ico">
-  <link rel="icon" type="image/png" sizes="64x64" href="<%= BASE_URL %>favicon-64x64.ico">
-  <link rel="icon" type="image/png" sizes="128x128" href="<%= BASE_URL %>favicon-128x128.ico">
-  <meta property="og:image" content="https://i.loli.net/2020/05/12/IAsdu3iVXPeNRK6.jpg">
-  <title><%= webpackConfig.name %></title>
-</head>
-
-<body>
-  <div id="app"></div>
-  <!-- built files will be auto injected -->
-</body>
-
+  <body>
+    <div id="app"></div>
+    <script>
+      var toCheck = [
+        { t: "edge/", v: 79 },
+        { t: "chrome/", v: 79 },
+        { t: "trident/", v: 999 },
+        { t: "firefox", v: 79 }
+      ];
+      function checkVersion() {
+        var userAgent = navigator.userAgent.toLowerCase();
+        for (var i = 0; i < toCheck.length; i++) {
+          var t = toCheck[i].t;
+          var v = toCheck[i].v;
+          var brand = userAgent.indexOf(toCheck[i].t);
+          if (brand < 0) continue;
+          var s = userAgent.substring(
+            brand + t.length,
+            userAgent.indexOf(".", brand)
+          );
+          return { t: t, v: v, rv: parseInt(s, 10) };
+        }
+        return { t: null };
+      }
+      var v = checkVersion();
+      console.log("browser", v);
+    </script>
+  </body>
 </html>
