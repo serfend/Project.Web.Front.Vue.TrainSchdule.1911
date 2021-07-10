@@ -35,8 +35,8 @@ export default {
 .top50-container {
   margin-top: 20px;
   border-radius: 10px;
-  overflow: hidden;
-  // height: 336px;
+  overflow: scroll;
+  height: 336px;
 }
 
 .scroll-container {
