@@ -324,13 +324,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/element-variables';
 .title-item {
   margin-right: 0.2rem;
 }
 .subject-link {
   cursor: pointer;
   &:hover {
-    color: #00f;
+    color: $--color-primary;
   }
 }
 </style>

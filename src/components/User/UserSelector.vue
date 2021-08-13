@@ -8,7 +8,7 @@
       <el-link type="info" @click="dialogVisible=true">
         <span
           v-loading="loading"
-          :style="{color:code?'#00f':'#aaa'}"
+          :class="[code?'active':'inactive']"
           @mouseenter="forgetHasShow=true"
         >{{ userRealName?userRealName:`${defaultInfo} ${code?code:''}` }}</span>
       </el-link>
@@ -35,10 +35,11 @@
 
 <script>
 import { getUserBase } from '@/api/user/userinfo'
-import FindUserByRealName from '@/components/User/FindUserByRealName'
 export default {
   name: 'UserSelector',
-  components: { FindUserByRealName },
+  components: {
+    FindUserByRealName: () => import('@/components/User/FindUserByRealName')
+  },
   model: {
     prop: 'code',
     event: 'change'
@@ -146,6 +147,12 @@ export default {
   }
 }
 </script>
-
-<style>
+<style lang="scss" scoped>
+@import '@/styles/element-variables';
+.active {
+  color: $--color-primary;
+}
+.inactive {
+  color: $--color-info;
+}
 </style>

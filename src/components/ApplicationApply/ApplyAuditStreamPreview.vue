@@ -54,6 +54,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/element-variables';
 .preview-btn {
   text-decoration: underline;
   transition: all 0.2s ease;
@@ -61,7 +62,7 @@ export default {
   font-size: 1rem;
   &:hover {
     text-decoration: none;
-    color: #00f;
+    color: $--color-primary;
     opacity: 0.8;
   }
 }

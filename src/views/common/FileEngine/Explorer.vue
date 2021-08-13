@@ -162,16 +162,16 @@ export default {
     display: flex;
   }
   &:nth-child(2n + 1) {
+    transition: all 0.5s;
     background-color: #0000ff10;
     :hover {
-      transition: all 0.5s;
       background-color: #0000ff47;
     }
   }
   &:nth-child(2n) {
+    transition: all 0.5s;
     background-color: #0000ff07;
     :hover {
-      transition: all 0.5s;
       background-color: #0000ff37;
     }
   }

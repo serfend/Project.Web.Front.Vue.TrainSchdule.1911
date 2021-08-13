@@ -42,9 +42,32 @@
 }
 
 .breadcrumb-move {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .breadcrumb-leave-active {
   position: absolute;
+}
+
+.fade-out-item {
+  transition: all ease 0.5s;
+  overflow: hidden;
+}
+.fade-out-enter-active {
+  opacity: 1 !important;
+}
+.fade-out-leave-active {
+  opacity: 1 !important;
+  position: fixed;
+}
+.fade-out-enter {
+  opacity: 0 !important;
+  // transform: translateX(-10rem);
+}
+.fade-out-leave-to {
+  opacity: 0 !important;
+  // transform: translateX(10rem);
+}
+.fade-out-move {
+  transition: all 0.6s ease;
 }

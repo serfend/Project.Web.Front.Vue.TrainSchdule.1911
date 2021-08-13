@@ -36,7 +36,7 @@ const DateIntervalOption = {
   },
   hour: (s, e) => getTimeDelta(s, e, 3600000),
   minute: (s, e) => getTimeDelta(s, e, 60000),
-  second: (s, e) => getTimeDelta(s, e, 1)
+  second: (s, e) => getTimeDelta(s, e, 1000)
 }
 /**
  *比较两个日期之间相差的天数

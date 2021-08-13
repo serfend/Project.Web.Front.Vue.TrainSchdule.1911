@@ -124,6 +124,9 @@ export default {
     }
   },
   computed: {
+    theme() {
+      return this.$store.state.settings.theme
+    },
     currentUser() {
       return this.$store.state.user.realName
     },
@@ -240,14 +243,14 @@ export default {
         }
         case 12450: {
           title = '账号审批被退回?'
-          msg = `进入<a style="color:#00f" href="/#/register/user">注册页面</a> 选中【切换到审批模式】、搜索本人姓名找到本人账号、修改正确信息并重新提交`
+          msg = `进入<a style="color:${this.theme}" href="/#/register/user">注册页面</a> 选中【切换到审批模式】、搜索本人姓名找到本人账号、修改正确信息并重新提交`
           break
         }
         case 11500: {
           this.wrongTime++
           if (this.wrongTime % 3 === 0 || this.wrongTime > 10) {
             title = '不记得密码了?'
-            msg = '尝试<a style="color:#00f" href="/#/forget">找回密码</a>'
+            msg = `尝试<a style="color:${this.theme}" href="/#/forget">找回密码</a>`
           }
           break
         }
@@ -255,7 +258,7 @@ export default {
           this.wrongTime++
           if (this.wrongTime % 3 === 0 || this.wrongTime > 10) {
             title = '不记得账号了?'
-            msg = '尝试<a style="color:#00f" href="/#/forget">找回账号</a>'
+            msg = `尝试<a style="color:${this.theme}" href="/#/forget">找回账号</a>`
           }
           break
         }

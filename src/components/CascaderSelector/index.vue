@@ -5,7 +5,7 @@
     :props="props"
     :show-all-levels="true"
     :placeholder="data&&(multiple?data.map(i=>i[labelName]).join(' '):data[labelName])||placeholder||'未选中任何节点'"
-    :style="{width:'100%',color:data&&data.length>0?'#00f':'#ccc'}"
+    :class="['card',data&&data.length?'active':'inactive']"
     clearable
     :disabled="disabled"
     @change="handleItemChange"
@@ -75,3 +75,16 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+@import '@/styles/element-variables';
+.card {
+  width: '100%';
+  transition: all ease 0.5s;
+}
+.active {
+  color: $--color-primary;
+}
+.inactive {
+  color: $--color-info;
+}
+</style>

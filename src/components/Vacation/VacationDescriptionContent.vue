@@ -119,6 +119,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/element-variables';
 .tooltip-vacation {
   width: 260px;
   ul,
@@ -126,7 +127,7 @@ export default {
     list-style: none;
     letter-spacing: 1px;
     span {
-      color: #00f;
+      color: $--color-primary;
     }
   }
 }

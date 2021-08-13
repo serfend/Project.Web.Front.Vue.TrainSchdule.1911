@@ -1,13 +1,13 @@
 <template>
   <div class="main">
-    <LottieIcon ref="icon" path="/assets/lottie/lottie.building.json" class="buiding" />
-    <div class="title-main">正在拼命施工中...</div>
+    <LottieIcon ref="icon" path="/assets/lottie/lottie.empty.json" class="buiding" />
+    <div class="title-main">这里没有任何数据...</div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'DefaultLoading',
+  name: 'DefaultEmpty',
   components: {
     LottieIcon: () => import('@/components/LottieIcon')
   },

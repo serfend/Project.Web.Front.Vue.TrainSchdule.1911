@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {
-  Message
+  Message,
+  MessageBox
 } from 'element-ui'
 import qs from 'qs'
 import {
@@ -83,7 +84,7 @@ service.interceptors.request.use(
 )
 
 service.interceptors.response.use(
-  response => {
+  (response) => {
     const res = response.data
     // const index = response.config.cacheIndex
     // cache.set(index, res)
@@ -93,7 +94,7 @@ service.interceptors.response.use(
     //   }, defaultOptions.time)
     // }
     const ignoreError = response.config.ignoreError
-    return extract_result(res, ignoreError)
+    return extract_result(res, ignoreError, response)
   },
   error => {
     // if (axios.isCancel(error)) {
@@ -107,7 +108,50 @@ service.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-export function extract_result(res, ignoreError) {
+export function handle_exception({ res, ignoreError, response, resolve, reject }) {
+  const { status, message } = res
+  // 通过缓存方式解决频繁报同一个错误的问题
+  if (ignoreError || warningInfoLog[message]) return
+  const callback = {}
+  callback[-2] = () => {
+    return MessageBox.confirm('已存在数据,是否覆盖?', {
+      confirmButtonText: '覆盖'
+    }).then(data => {
+      const pre_data = JSON.parse(response.config.data).data
+      response.config.data = {
+        allowOverWrite: true,
+        data: pre_data
+      }
+      service.request(response.config).then(data => resolve(data)).catch(e => reject(e))
+    }).catch(e => reject(e))
+  }
+  callback.default = () => {
+    warningInfoLog[message] = new Date()
+    setTimeout(() => {
+      delete warningInfoLog[message]
+    }, 5e3)
+    Message({
+      message: message,
+      type: 'error',
+      duration: 5 * 1000
+    })
+    if (res.data && res.data.list) {
+      const list = res.data.list
+      for (var i = 0; i < list.length; i++) {
+        setTimeout((errItem) => {
+          Message({
+            message: `${errItem.key}:${errItem.message}`,
+            type: 'error',
+            duration: 5e3
+          })
+        }, (i + 1) * 2000, list[i])
+      }
+    }
+  }
+  if (callback[status]) return callback[status]()
+  return callback.default()
+}
+export function extract_result(res, ignoreError, response) {
   return new Promise((resolve, reject) => {
     // 如果不存在status，说明是直接文件，直接返回
     if (res.status === undefined) {
@@ -117,31 +161,7 @@ export function extract_result(res, ignoreError) {
     if (res.status === 0) {
       return resolve(res.data)
     } else {
-      // 通过缓存方式解决频繁报同一个错误的问题
-      if (!ignoreError && !warningInfoLog[res.message]) {
-        warningInfoLog[res.message] = new Date()
-        setTimeout(() => {
-          delete warningInfoLog[res.message]
-        }, 5e3)
-        Message({
-          message: res.message,
-          type: 'error',
-          duration: 5 * 1000
-        })
-        if (res.data && res.data.list) {
-          const list = res.data.list
-          for (var i = 0; i < list.length; i++) {
-            setTimeout((errItem) => {
-              Message({
-                message: `${errItem.key}:${errItem.message}`,
-                type: 'error',
-                duration: 5e3
-              })
-            }, (i + 1) * 2000, list[i])
-          }
-        }
-      }
-      return reject(res)
+      handle_exception({ res, ignoreError, response, resolve, reject })
     }
   })
 }
