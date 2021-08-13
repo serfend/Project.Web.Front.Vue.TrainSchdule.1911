@@ -99,7 +99,7 @@ export default {
     },
     formatPercent(val) {
       if (this.spent <= 0) {
-        const start = -this.spent / 1e3
+        const start = -this.spent
         const left_desc = getTimeDesc(start)
         return `${left_desc} 未开始`
       }
@@ -109,7 +109,7 @@ export default {
           expect_return
         )}）`
       }
-      const left = (this.total - this.spent) / 1e3
+      const left = (this.total - this.spent)
       const left_desc = getTimeDesc(left)
       const percent = `${Math.round((this.spent / this.total) * 10000) / 100}%`
       return `${left_desc} ${percent}`
