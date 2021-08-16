@@ -13,7 +13,7 @@ import {
  */
 export function loadDocument(path, fileName) {
   return new Promise((res, rej) => {
-    requestFile(path, fileName)
+    requestFile({ filePath: path, fileName })
       .then(data => {
         if (data.file.isRemoved) {
           return rej(`文件:${path}/${fileName} 已于${data.file.removeDate}被移除`)

@@ -1,5 +1,12 @@
 <template>
   <el-row v-loading="loading">
+    <el-form label-width="8rem">
+      <el-form-item label="查看匿名文件">
+        <el-tooltip content="当用户登录时默认查看用户所属文件">
+          <el-switch v-model="queryForm.anonymous" :disabled="!currentUser" />
+        </el-tooltip>
+      </el-form-item>
+    </el-form>
     <el-card v-infinite-scroll="loadNextPage">
       <div v-for="(folder,index) in folders.array" :key="index">
         <SvgIcon icon-class="file" />
@@ -59,6 +66,7 @@ export default {
   data: () => ({
     loading: false,
     newFolder: null,
+    folderDict: {},
     folders: {
       array: [],
       pages: {
@@ -67,6 +75,7 @@ export default {
         totalCount: 0
       }
     },
+    folderFilesDict: {},
     folderFiles: {
       array: [],
       pages: {
@@ -75,9 +84,15 @@ export default {
         totalCount: 0
       }
     },
+    queryForm: {
+      anonymous: false
+    },
     nowPath: null
   }),
   computed: {
+    currentUser() {
+      return this.$store.state.user.userid
+    },
     foldersHasNextPage() {
       const pages = this.folders.pages
       return pages.totalCount >= (pages.pageIndex + 1) * pages.pageSize
@@ -97,6 +112,18 @@ export default {
         this.refresh()
       },
       immediate: true
+    },
+    queryForm: {
+      handler(val) {
+        this.refresh()
+      },
+      deep: true
+    },
+    currentUser: {
+      handler(val) {
+        if (!val) this.queryForm.anonymous = true
+      },
+      immediate: true
     }
   },
   methods: {
@@ -104,8 +131,10 @@ export default {
     numberFormatter,
     refresh() {
       console.log('refresh')
+      this.folderDict = {}
       this.folders.array = []
       this.folders.pages.pageIndex = -1
+      this.folderFilesDict = {}
       this.folderFiles.array = []
       this.folderFiles.pages.pageIndex = -1
       this.loadNextPage()
@@ -113,43 +142,40 @@ export default {
     enterPath(path) {
       this.nowPath = `${this.nowPath ? `${this.nowPath}/` : ''}${path}`
       this.$emit('update:path', this.nowPath)
-      this.refresh()
+    },
+    loadNextFilePage() {
+      const pages = this.folderFiles.pages
+      const userid = this.queryForm.anonymous ? null : this.currentUser
+      const path = this.nowPath
+      pages.pageIndex++
+      return folderFiles({ userid, pages, path }).then(data => {
+        this.folderFiles.array = this.folderFiles.array.concat(data.files)
+        pages.totalCount = data.totalCount
+      })
+    },
+    loadNextFolderPage() {
+      const pages = this.folders.pages
+      pages.pageIndex++
+      const userid = this.queryForm.anonymous ? null : this.currentUser
+      const path = this.nowPath
+      return requestFolder({ userid, path, pages }).then(data => {
+        const newList = data.folders.filter(i => {
+          const r = !this.folderDict[i.id]
+          if (!r) this.folderDict[i.id] = i
+          return r
+        })
+        this.folders.array = this.folders.array.concat(newList)
+        pages.totalCount = data.totalCount
+      })
     },
     loadNextPage() {
       if (this.loading) return
       this.loading = true
-      var pages = {}
-      if (this.foldersHasNextPage) {
-        pages = this.folders.pages
-        console.log(JSON.stringify(pages))
-        pages.pageIndex++
-        requestFolder(this.nowPath, pages)
-          .then(data => {
-            this.folders.array = this.folders.array.concat(data.folders)
-            pages.totalCount = data.totalCount
-            if (!this.foldersHasNextPage) {
-              this.$nextTick(() => {
-                this.loadNextPage()
-              })
-            }
-          })
-          .finally(() => {
-            this.loading = false
-          })
-      } else if (this.filesHasNextPage) {
-        pages = this.folderFiles.pages
-        pages.pageIndex++
-        folderFiles(this.nowPath, pages)
-          .then(data => {
-            this.folderFiles.array = this.folderFiles.array.concat(data.files)
-            pages.totalCount = data.totalCount
-          })
-          .finally(() => {
-            this.loading = false
-          })
-      } else {
-        this.loading = false
-      }
+      Promise.all([this.loadNextFolderPage(), this.loadNextFilePage()]).finally(
+        () => {
+          this.loading = false
+        }
+      )
     }
   }
 }

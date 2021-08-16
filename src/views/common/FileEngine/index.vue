@@ -15,8 +15,9 @@
               drag
               multiple
               :before-upload="beforeAvatarUpload"
+              :http-request="upload"
               :on-success="onUploadSuccess"
-              :action="uploadurl"
+              :action="''"
               :data="file"
             >
               <i class="el-icon-upload" />
@@ -104,19 +105,24 @@
 </template>
 
 <script>
+import { upload } from '@/api/common/file'
 import clipboard from '@/utils/clipboard'
-import AuthCode from '@/components/AuthCode'
-import Explorer from './Explorer'
 import { requestFile, getClientKey, deleteFile } from '@/api/common/file'
 export default {
   name: 'FileEngine',
-  components: { AuthCode, Explorer },
+  components: {
+    AuthCode: () => import('@/components/AuthCode'),
+    Explorer: () => import('./Explorer')
+  },
   data: () => ({
     statusLoading: false,
     newFolder: null,
     file: {
       fileName: '',
       filePath: '',
+      sha256: null,
+      isHidden: false,
+      userid: null,
       auth: {
         authByUserId: '',
         code: ''
@@ -131,10 +137,12 @@ export default {
       id: '',
       clientKey: ''
     },
-    uploadurl: '',
     statusList: []
   }),
   computed: {
+    currentUser() {
+      return this.$store.state.user.userid
+    },
     nowLoadingFile() {
       return `文件下载 ${this.file.filePath}/${this.file.fileName}`
     }
@@ -148,10 +156,8 @@ export default {
       immediate: true
     }
   },
-  mounted() {
-    this.uploadurl = process.env.VUE_APP_BASE_API + '/file/upload'
-  },
   methods: {
+    upload,
     initNewFolder() {
       this.newFolder = '新的文件夹'
       this.$nextTick(() => {
@@ -191,35 +197,35 @@ export default {
     },
     updateFile() {
       if (!this.file || !this.file.filePath || !this.file.fileName) return
-      requestFile(this.file.filePath, this.file.fileName).then(data => {
-        var id = data.file.id
-        data.file.clientKey = '加载中...'
-        this.$nextTick(() => {
-          getClientKey(id, this.file.auth)
-            .then(ck => {
-              this.fileInfo.clientKey = ck
-              this.file.clientKey = ck
-              this.$forceUpdate()
-            })
-            .catch(e => {
-              this.fileInfo.clientKey = `无法加载(${e.message})`
-            })
-          this.fileInfo = data.file
-        })
-      })
+      debugger
+      requestFile(Object.assign(this.file, { userid: this.currentUser })).then(
+        data => {
+          var id = data.file.id
+          data.file.clientKey = '加载中...'
+          this.$nextTick(() => {
+            getClientKey(id, this.file.auth)
+              .then(ck => {
+                this.fileInfo.clientKey = ck
+                this.file.clientKey = ck
+                this.$forceUpdate()
+              })
+              .catch(e => {
+                this.fileInfo.clientKey = `无法加载(${e.message})`
+              })
+            this.fileInfo = data.file
+          })
+        }
+      )
     },
     onUploadSuccess(data, status, arr) {
-      if (data.status !== 0) {
-        this.$message.error(data.message)
-      } else {
-        this.$message.success(`${status.name}上传成功`)
-      }
+      this.$message.success(`${status.name}上传成功`)
       this.refreshStatus()
       this.file.fileName = ''
     },
     beforeAvatarUpload(file) {
-      if (!this.file.filePath) this.file.filePath = 'client-sfvue'
-      this.file.fileName = file.name
+      const form = this.file
+      if (!form.filePath) this.file.filePath = 'client-sfvue'
+      form.fileName = file.name
       return true
     },
     refreshStatus() {

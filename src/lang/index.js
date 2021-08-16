@@ -26,7 +26,7 @@ for (let i = 0; i < lang.length; i++) {
     const langInfo = require(`./${l}.json`)
     Object.assign(messages[l], langInfo)
   }
-  downloadByPath('dataview', `${l}.json`, true).then((d) => {
+  downloadByPath({ path: 'dataview', filename: `${l}.json`, ignoreError: true }).then((d) => {
     const dict = d
     dict.tagsView = dict.settings
     dict.route = Object.assign({}, dict)

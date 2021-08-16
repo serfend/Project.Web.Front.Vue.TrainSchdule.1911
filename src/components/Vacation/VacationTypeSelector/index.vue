@@ -131,7 +131,7 @@ export default {
     }
   },
   mounted() {
-    requestFile(bgPath, 'default.jpg').then(data => {
+    requestFile({ filePath: bgPath, fileName: 'default.jpg' }).then(data => {
       const id = data.file.id
       const url = process.env.VUE_APP_BASEURL
       this.defaultUrl = `${url}${staticfile}${id}`
@@ -181,7 +181,7 @@ export default {
         if (type.background && !this.urlDict[type.name]) {
           loader.push(
             new Promise(res => {
-              requestFile(bgPath, type.background)
+              requestFile({ filePath: bgPath, fileName: type.background })
                 .then(d => res(d))
                 .catch(e => {
                   console.warn('加载失败', type.background, e)

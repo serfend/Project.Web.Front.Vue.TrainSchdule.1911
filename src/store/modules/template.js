@@ -25,7 +25,7 @@ const actions = {
       if (state.templates[templateName]) { return res(state.templates[templateName]) }
 
       state.templates[templateName] = {}
-      downloadByPath(templatePath, templateName, false, 'arraybuffer').then(data => {
+      downloadByPath({ path: templatePath, filename: templateName, ignoreError: false, responseType: 'arraybuffer' }).then(data => {
         if (data.byteLength < 1e2) {
           const d = '加载模板失败'
           Message.error(d)
