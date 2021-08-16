@@ -1,6 +1,7 @@
+@import "@/styles/variables";
 .menu-divider {
   width: 100%;
   height: 1px;
-  background-color: rgba(200, 33, 33, 0.533);
+  background-color: $divider-color;
   margin-top: 2px;
 }

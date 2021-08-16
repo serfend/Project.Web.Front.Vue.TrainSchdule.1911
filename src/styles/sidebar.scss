@@ -71,6 +71,7 @@
 
       &:hover {
         background-color: $menuHover !important;
+        color: $menuBg !important;
         transform: translateX(1rem);
       }
     }
@@ -87,6 +88,7 @@
 
       &:hover {
         background-color: $subMenuHover !important;
+        color: $subMenuBg !important;
         transform: translateX(1rem);
       }
     }
