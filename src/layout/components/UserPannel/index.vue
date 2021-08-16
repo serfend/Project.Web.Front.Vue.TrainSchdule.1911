@@ -8,7 +8,7 @@
   >
     <div v-if="!hasLogin && loginFormHasShow">
       <el-dialog :visible.sync="innerUserCardShow" width="80%" append-to-body>
-        <Login @login="hdlLogin" />
+        <Login />
       </el-dialog>
     </div>
     <div v-else style="width: 250px">
@@ -104,13 +104,20 @@ export default {
       return this.currentUser.avatar
     },
     hasLogin() {
-      return this.currentUser.userid
+      return !!this.currentUser.userid
     },
     isUserLogout() {
       return this.currentUser.isUserLogout
     },
     currentUser() {
       return this.$store.state.user
+    }
+  },
+  watch: {
+    hasLogin: {
+      handler(val) {
+        if (val) this.hdlLogin(true)
+      }
     }
   },
   mounted() {
@@ -145,8 +152,10 @@ export default {
       }, 100)
     },
     hdlLogin(success) {
+      console.log('login status', success)
       if (!success) return
       this.innerUserCardShow = false
+      this.userCardIsShowing = false
     },
     handleReg(isToRegister) {
       this.$router.push({

@@ -31,7 +31,8 @@ const state = {
   avatar: defaultAvatar,
   introduction: '',
   roles: [],
-  isToRegister: true
+  isToRegister: true,
+  loading: false
 }
 export function clear_login_status(commit) {
   commit('SET_TOKEN', '')
@@ -82,14 +83,20 @@ const mutations = {
 }
 
 const actions = {
-  initUserInfo({ commit }) {
-    return new Promise((res, rej) => {
-      this.dispatch('vacation/initDic')
-      this.dispatch('user/initBase').then(() => {
-        this.dispatch('user/initAvatar')
-        this.dispatch('user/initVacation')
-      })
+  initUserInfo({ commit, state }) {
+    if (state.loading) return
+    state.loading = true
+
+    setTimeout(() => {
+      state.loading = false
+    }, 1e3)
+    const a = this.dispatch('vacation/initDic')
+    const b = this.dispatch('user/initBase').then(() => {
+      const b1 = this.dispatch('user/initAvatar')
+      const b2 = this.dispatch('user/initVacation')
+      return Promise.all([b1, b2])
     })
+    return Promise.all([a, b])
   },
   // user login
   login({
@@ -133,13 +140,15 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      getUserSummary(null, true).then(data => {
+      console.log('start get summary')
+      getUserSummary().then(data => {
         commit('SET_NAME', data.realName)
         commit('SET_USERID', data.id)
         commit('SET_CMPID', data.companyCode)
         commit('SET_DUTYTYPE', data.dutiesRawType)
         commit('SET_INTRODUCTION', data.about)
         commit('SET_DATA', data)
+        console.log('complete get summary')
         return resolve()
       }).catch(() => {
         return reject()
