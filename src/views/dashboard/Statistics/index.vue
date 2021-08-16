@@ -302,9 +302,11 @@ export default {
   methods: {
     timeZone,
     requestFile(file) {
-      return requestFile('/dataview', file).then(data => {
-        return download(data.file.id)
-      })
+      return requestFile({ filePath: '/dataview', fileName: file }).then(
+        data => {
+          return download(data.file.id)
+        }
+      )
     },
     async init() {
       this.$nextTick(() => {
