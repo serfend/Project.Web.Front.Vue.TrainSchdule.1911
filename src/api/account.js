@@ -1,6 +1,6 @@
 import request from '../utils/request'
-import rsa from '../utils/crtypto/rsa'
-import aes from '../utils/crtypto/aes'
+import rsa from '../utils/crypto/rsa'
+import aes from '../utils/crypto/aes'
 import {
   parseTime
 } from '../utils'
