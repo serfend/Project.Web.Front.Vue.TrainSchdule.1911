@@ -2,7 +2,7 @@ import request from '@/utils/request'
 import { sha256 } from '@/utils/crypto/sha256'
 const CryptoJS = require('crypto-js')
 export function upload({ data, file }) {
-  const { filePath, fileName, isHidden } = data
+  const { filePath, fileName, isHidden, anonymous } = data
   var fd = new FormData()
   fd.append('file', file)
   return new Promise((res, rej) => {
@@ -11,6 +11,7 @@ export function upload({ data, file }) {
       fd.append('isHidden', isHidden)
       fd.append('filepath', filePath)
       fd.append('filename', fileName)
+      fd.append('anonymous', anonymous)
       request.post('file/upload', fd, {
         headers: {
           'Content-Type': 'multipart/form-data'

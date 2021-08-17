@@ -2,8 +2,8 @@
   <el-row v-loading="loading">
     <el-form label-width="8rem">
       <el-form-item label="查看匿名文件">
-        <el-tooltip content="当用户登录时默认查看用户所属文件">
-          <el-switch v-model="queryForm.anonymous" :disabled="!currentUser" />
+        <el-tooltip content="匿名文件是所有用户都可看到的公开文件，如选中，则上传和查询时都将查看公开的文件">
+          <el-switch v-model="innerQueryForm.anonymous" :disabled="!currentUser" />
         </el-tooltip>
       </el-form-item>
     </el-form>
@@ -61,7 +61,8 @@ export default {
   name: 'Explorer',
   components: { SvgIcon },
   props: {
-    path: { type: String, default: null }
+    path: { type: String, default: null },
+    queryForm: { type: Object, default: null }
   },
   data: () => ({
     loading: false,
@@ -84,7 +85,7 @@ export default {
         totalCount: 0
       }
     },
-    queryForm: {
+    innerQueryForm: {
       anonymous: false
     },
     nowPath: null
@@ -113,15 +114,16 @@ export default {
       },
       immediate: true
     },
-    queryForm: {
+    innerQueryForm: {
       handler(val) {
+        this.$emit('update:queryForm', val)
         this.refresh()
       },
       deep: true
     },
     currentUser: {
       handler(val) {
-        if (!val) this.queryForm.anonymous = true
+        if (!val) this.innerQueryForm.anonymous = true
       },
       immediate: true
     }
@@ -145,7 +147,7 @@ export default {
     },
     loadNextFilePage() {
       const pages = this.folderFiles.pages
-      const userid = this.queryForm.anonymous ? null : this.currentUser
+      const userid = this.innerQueryForm.anonymous ? null : this.currentUser
       const path = this.nowPath
       pages.pageIndex++
       return folderFiles({ userid, pages, path }).then(data => {
@@ -156,7 +158,7 @@ export default {
     loadNextFolderPage() {
       const pages = this.folders.pages
       pages.pageIndex++
-      const userid = this.queryForm.anonymous ? null : this.currentUser
+      const userid = this.innerQueryForm.anonymous ? null : this.currentUser
       const path = this.nowPath
       return requestFolder({ userid, path, pages }).then(data => {
         const newList = data.folders.filter(i => {

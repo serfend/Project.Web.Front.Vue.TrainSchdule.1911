@@ -97,7 +97,12 @@
               </template>
             </el-input>
           </template>
-          <Explorer ref="explorer" :path.sync="file.filePath" @select="fileSelect" />
+          <Explorer
+            ref="explorer"
+            :query-form.sync="queryForm"
+            :path.sync="file.filePath"
+            @select="fileSelect"
+          />
         </el-card>
       </el-col>
     </el-row>
@@ -137,6 +142,7 @@ export default {
       id: '',
       clientKey: ''
     },
+    queryForm: null,
     statusList: []
   }),
   computed: {
@@ -157,7 +163,11 @@ export default {
     }
   },
   methods: {
-    upload,
+    upload(data) {
+      const f = { anonymous: this.queryForm.anonymous }
+      data.data = Object.assign(f, data.data)
+      return upload(data)
+    },
     initNewFolder() {
       this.newFolder = '新的文件夹'
       this.$nextTick(() => {
@@ -197,25 +207,24 @@ export default {
     },
     updateFile() {
       if (!this.file || !this.file.filePath || !this.file.fileName) return
-      debugger
-      requestFile(Object.assign(this.file, { userid: this.currentUser })).then(
-        data => {
-          var id = data.file.id
-          data.file.clientKey = '加载中...'
-          this.$nextTick(() => {
-            getClientKey(id, this.file.auth)
-              .then(ck => {
-                this.fileInfo.clientKey = ck
-                this.file.clientKey = ck
-                this.$forceUpdate()
-              })
-              .catch(e => {
-                this.fileInfo.clientKey = `无法加载(${e.message})`
-              })
-            this.fileInfo = data.file
-          })
-        }
-      )
+      const form = this.queryForm || {}
+      const userid = form.anonymous ? null : this.currentUser
+      requestFile(Object.assign(this.file, { userid })).then(data => {
+        var id = data.file.id
+        data.file.clientKey = '加载中...'
+        this.$nextTick(() => {
+          getClientKey(id, this.file.auth)
+            .then(ck => {
+              this.fileInfo.clientKey = ck
+              this.file.clientKey = ck
+              this.$forceUpdate()
+            })
+            .catch(e => {
+              this.fileInfo.clientKey = `无法加载(${e.message})`
+            })
+          this.fileInfo = data.file
+        })
+      })
     },
     onUploadSuccess(data, status, arr) {
       this.$message.success(`${status.name}上传成功`)
