@@ -11,14 +11,16 @@ const urlGetUserSummary = `${api}/summary`
  * @returns
  */
 export function getUserSummary(id, ignoreErr) {
-  return cached_data(`${urlGetUserSummary}/${id}`, () =>
+  const action = () =>
     request.get(urlGetUserSummary, {
       params: {
         id
       },
       ignoreError: ignoreErr
     })
-  )
+
+  return id ? cached_data(`${urlGetUserSummary}/${id}`, action
+  ) : action()
 }
 const urlGetUserBase = `${api}/base`
 /**
