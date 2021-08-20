@@ -27,7 +27,8 @@ export default {
     valueName: { type: String, default: 'value' },
     labelName: { type: String, default: 'label' },
     multiple: { type: Boolean, default: false },
-    childGetterMethod: { type: Function, default: () => () => {} }
+    childGetterMethod: { type: Function, default: () => () => {} },
+    place: { type: String, default: null }
   },
   data() {
     return {
@@ -60,16 +61,20 @@ export default {
       console.log(v)
     },
     handleItemChange(val) {
+      const { valueName, labelName, multiple } = this
       this.$nextTick(() => {
         const nodes = this.$refs.elcascader.getCheckedNodes()
         const items = nodes.map(i => {
           const item = {}
-          item[this.valueName] = i.value
-          item[this.labelName] = i.label
+          item[valueName] = i.value
+          item[labelName] = i.label
           return item
         })
-        const data = this.multiple ? items : items[0]
+        const data = multiple ? items : items[0]
         this.$emit('change', data)
+        const place =
+          data && (multiple ? data.map(i => i[labelName]) : data[labelName])
+        this.$emit('update:place', place)
       })
     }
   }
