@@ -147,6 +147,7 @@ export function handle_exception({ res, ignoreError, response, resolve, reject }
         }, (i + 1) * 2000, list[i])
       }
     }
+    reject(res)
   }
   if (callback[status]) return callback[status]()
   return callback.default()
