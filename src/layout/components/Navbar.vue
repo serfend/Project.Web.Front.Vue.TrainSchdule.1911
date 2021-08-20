@@ -20,8 +20,8 @@
         <div>{{ currentUser.data.dutiesName }}</div>
       </div>
       <div v-if="!hasLogin" class="right-menu-item">
-        <el-link @click="$ref.userPannel.userCardShowing(true)">登录</el-link>
-        <el-link @click="$ref.userPannel.handleReg(true)">注册</el-link>
+        <el-link @click="$refs.userPannel.userCardShowing(true)">登录</el-link>
+        <el-link @click="$refs.userPannel.handleReg(true)">注册</el-link>
       </div>
       <div v-else class="right-menu-item">
         <el-popover trigger="hover">
