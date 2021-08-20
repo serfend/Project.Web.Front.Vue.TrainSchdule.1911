@@ -15,7 +15,7 @@
             :key="opt.index"
             :label="opt.name"
           >
-            <div :key="opt.index">
+            <div :key="opt.index" class="panel-content">
               <component
                 :is="opt.component"
                 :form.sync="registerForm[opt.component]"
@@ -125,7 +125,7 @@ import { checkUserValid } from '@/utils/validate'
 import AuthCode from '@/components/AuthCode'
 const Const_DisabledVacation = 4
 export default {
-  name: 'Register',
+  name: 'RegForm',
   components: {
     SvgIcon,
     Base,
@@ -421,6 +421,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.panel-content {
+  height: 25rem;
+  overflow: scroll;
+}
 .tab-container {
   .el-tab-pane {
     animation: fade 0.5s ease;

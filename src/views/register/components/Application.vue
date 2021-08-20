@@ -15,7 +15,7 @@
       </el-tooltip>
     </el-form-item>
     <el-tooltip v-model="capsTooltip" content="Caps lock is On" manual placement="right">
-      <el-form-item prop="password" label="密码" :style="{ width: '19rem' }">
+      <el-form-item prop="password" label="密码" class="normal-form-item">
         <el-input
           :key="passwordType"
           ref="password"
@@ -36,7 +36,7 @@
         </el-input>
       </el-form-item>
     </el-tooltip>
-    <el-form-item prop="confirmPassword" label="确认密码" :style="{ width: '19rem' }">
+    <el-form-item prop="confirmPassword" label="确认密码" class="normal-form-item">
       <el-input
         :key="passwordType"
         ref="confirmPassword"
@@ -90,14 +90,14 @@ export default {
   props: {
     isRegister: {
       type: Boolean,
-      default: false,
+      default: false
     },
     form: {
       type: Object,
       default() {
         return this.innerForm
-      },
-    },
+      }
+    }
   },
   data() {
     return {
@@ -105,16 +105,16 @@ export default {
         userName: '',
         password: '',
         confirmPassword: '',
-        email: '',
+        email: ''
       },
       invalid: {
         userName: {
           status: false,
-          des: '',
-        },
+          des: ''
+        }
       },
       capsTooltip: false,
-      passwordType: 'password',
+      passwordType: 'password'
     }
   },
   watch: {
@@ -128,14 +128,14 @@ export default {
         }
       },
       deep: true,
-      immediate: true,
+      immediate: true
     },
     innerForm: {
       handler(val) {
         this.$emit('update:form', val)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   methods: {
     modifyPassword() {
@@ -144,8 +144,8 @@ export default {
         accountPassword({
           id: f.userName,
           newPassword: f.password,
-          confirmNewPassword: f.confirmPassword,
-        }).then((data) => {
+          confirmNewPassword: f.confirmPassword
+        }).then(data => {
           this.$message.success('密码已修改')
         })
       })
@@ -184,7 +184,7 @@ export default {
       }
       this.invalid.userName.des = '验证成功'
       getUserSummary(userName, true)
-        .then((data) => {
+        .then(data => {
           this.invalid.userName.status = true
           this.invalid.userName.des =
             '此账号已被' + data.companyName + data.realName + '使用'
@@ -192,7 +192,10 @@ export default {
         .catch(() => {
           this.invalid.userName.status = false
         })
-    },
-  },
+    }
+  }
 }
 </script>
+<style lang="scss" scoped>
+@import '../common';
+</style>

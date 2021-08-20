@@ -10,7 +10,7 @@
       <p>创造美好生活</p>
     </div>
     <div class="reg-form">
-      <RegForm ref="reg" :show-submit-button="false" />
+      <RegForm ref="reg" class="reg-form-content" :show-submit-button="false" />
       <div class="reg-submit-button">
         <div>
           <el-button type="info" plain style="width:12rem" @click="next_step(-1)">上一步</el-button>
@@ -21,7 +21,7 @@
             @click="next_step(1)"
           >下一步</el-button>
         </div>
-        <el-button type="primary" plain style="width:28.3rem;margin-top:1rem" @click="hdlReg">注册</el-button>
+        <el-button type="primary" plain style="width:28.3rem;margin-top:0.5rem" @click="hdlReg">注册</el-button>
       </div>
     </div>
   </div>
@@ -38,8 +38,8 @@ export default {
     },
     hdlReg() {
       this.$refs.reg.submitRegister(true)
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -56,6 +56,13 @@ export default {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 1px 1px 1px 1px rgba(255, 255, 255, 0.9);
+  .reg-form-content {
+    .el-card {
+      .el-card__body {
+        padding: 0.5rem !important;
+      }
+    }
+  }
 }
 .mod-new-reg-bg {
   position: fixed;
@@ -69,7 +76,7 @@ export default {
 .reg-submit-button {
   position: absolute;
   margin-left: 1rem;
-  bottom: 1.4rem;
+  bottom: rem;
 }
 
 .mod-new-reg-text {
