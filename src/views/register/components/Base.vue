@@ -16,16 +16,25 @@
         :value-name="'code'"
         :label-name="'name'"
         :place.sync="innerForm.hometown"
+        :placeholder="innerForm.hometown"
         class="normal-form-item"
       />
     </el-form-item>
     <el-form-item label="民族">
-      <el-select v-model="innerForm.nation" class="normal-form-item">
+      <el-select
+        v-model="innerForm.nation"
+        :placeholder="innerForm.nation"
+        class="normal-form-item"
+      >
         <el-option v-for="i in nations" :key="i" :label="i" :value="i" />
       </el-select>
     </el-form-item>
     <el-form-item label="学历">
-      <el-select v-model="innerForm.education" class="normal-form-item">
+      <el-select
+        v-model="innerForm.education"
+        class="normal-form-item"
+        :placeholder="innerForm.education"
+      >
         <el-option v-for="i in educations" :key="i" :label="i" :value="i" />
       </el-select>
     </el-form-item>
