@@ -132,7 +132,7 @@
       :show.sync="multiAuditFormShow"
       :responselist="multiAuditFormSelection"
       :entity-type="entityType"
-      @updated="$emit('updated')"
+      @updated="requireUpdate(multiAuditFormSelection)"
     />
     <el-button
       v-show="!multiAuditFormShow && list.length > 1"
@@ -238,6 +238,18 @@ export default {
     parseTime,
     relativeDate,
     datedifference,
+    requireUpdate(selections) {
+      this.$emit('updated', selections)
+    },
+    handleUpdated(selections) {
+      const dict = {}
+      selections.map(i => (dict[i.id] = true))
+      this.formatedList
+        .filter(i => dict[i.id])
+        .map(i => {
+          i.statusDesc = null
+        })
+    },
     rowCanShow(row) {
       return row.status !== 20 // 状态：撤回
     },
