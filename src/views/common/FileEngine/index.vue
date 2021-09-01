@@ -59,7 +59,6 @@
           </div>
           <div>
             <el-button
-              :disabled="!fileInfo.clientKey||fileInfo.clientKey.length!=36"
               :loading="fileDownloading"
               type="danger"
               class="file-handle-btn"
@@ -142,7 +141,9 @@ export default {
       id: '',
       clientKey: ''
     },
-    queryForm: null,
+    queryForm: {
+      anonymous: false
+    },
     statusList: []
   }),
   computed: {
@@ -164,6 +165,7 @@ export default {
   },
   methods: {
     upload(data) {
+      debugger
       const f = { anonymous: this.queryForm.anonymous }
       data.data = Object.assign(f, data.data)
       return upload(data)
@@ -232,6 +234,7 @@ export default {
       this.file.fileName = ''
     },
     beforeAvatarUpload(file) {
+      debugger
       const form = this.file
       if (!form.filePath) this.file.filePath = 'client-sfvue'
       form.fileName = file.name
