@@ -49,30 +49,9 @@
 
   <body>
     <div id="app"></div>
+    <script src="/p/common/unsupport/check_version.js"></script>
     <script>
-      var toCheck = [
-        { t: "edge/", v: 79 },
-        { t: "chrome/", v: 79 },
-        { t: "trident/", v: 999 },
-        { t: "firefox", v: 79 }
-      ];
-      function checkVersion() {
-        var userAgent = navigator.userAgent.toLowerCase();
-        for (var i = 0; i < toCheck.length; i++) {
-          var t = toCheck[i].t;
-          var v = toCheck[i].v;
-          var brand = userAgent.indexOf(toCheck[i].t);
-          if (brand < 0) continue;
-          var s = userAgent.substring(
-            brand + t.length,
-            userAgent.indexOf(".", brand)
-          );
-          return { t: t, v: v, rv: parseInt(s, 10) };
-        }
-        return { t: null };
-      }
-      var v = checkVersion();
-      console.log("browser", v);
+      check_if_need_redirect();
     </script>
   </body>
 </html>
