@@ -111,7 +111,6 @@ service.interceptors.response.use(
 export function handle_exception({ res, ignoreError, response, resolve, reject }) {
   const { status, message } = res
   // 通过缓存方式解决频繁报同一个错误的问题
-  if (ignoreError || warningInfoLog[message]) return
   const callback = {}
   callback[-2] = () => {
     return MessageBox.confirm('已存在数据,是否覆盖?', {
@@ -126,15 +125,19 @@ export function handle_exception({ res, ignoreError, response, resolve, reject }
     }).catch(e => reject(e))
   }
   callback.default = () => {
+    if (!ignoreError && !warningInfoLog[message]) {
+      Message({
+        message: message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
+
     warningInfoLog[message] = new Date()
     setTimeout(() => {
       delete warningInfoLog[message]
     }, 5e3)
-    Message({
-      message: message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+
     if (res.data && res.data.list) {
       const list = res.data.list
       for (var i = 0; i < list.length; i++) {
