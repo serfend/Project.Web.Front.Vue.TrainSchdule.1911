@@ -4,7 +4,7 @@
       <el-input
         v-model="innerForm.userName"
         :style="{ width: '14rem' }"
-        placeholder="请填写用户名"
+        placeholder="用户名为唯一凭证，不可修改"
         auto-complete="on"
         type="text"
         @change="checkuserName"
