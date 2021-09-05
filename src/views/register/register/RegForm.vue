@@ -35,7 +35,11 @@
             <el-button type="warning" plain :loading="loading" @click="submitRegister(false)">修改信息</el-button>
             <el-button type="danger" plain :loading="loading" @click="removeAccount">删除账号</el-button>
           </el-form-item>
-          <el-form-item label="账号认证" style="margin-top:1rem">
+          <el-form-item
+            v-if="selectIsInvalidAccountType!=='success'"
+            label="账号认证"
+            style="margin-top:1rem"
+          >
             <el-button
               :disabled="selectIsInvalidAccount!==0"
               type="success"
@@ -230,8 +234,8 @@ export default {
       return s === 0 ? 'info' : s === 1 ? 'success' : 'danger'
     },
     selectIsInvalidAccountDescription() {
-      const s =
-        this.selectIsInvalidAccount && this.selectIsInvalidAccount.toString()
+      const status = this.selectIsInvalidAccount
+      const s = status && status.toString()
       const c = '用户信息认证'
       const dict = {
         '-1': '已驳回',
@@ -356,10 +360,12 @@ export default {
       this.set_account_status_disable_vacation(f)
     },
     async submitRegister(regOrModify) {
-      const confirm_action = await this.$confirm('确定要提交吗？').catch(e => {
-        this.$message.error('已取消')
-      })
-      if (!confirm_action) return
+      await this.$confirm('确定要提交吗？')
+      if (!regOrModify && this.selectIsInvalidAccountType !== 'success') {
+        const s =
+          '注意：当前用户状态为【待认证】，修改信息将使得其通过认证，认证人为信息修改者。是否继续？'
+        await this.$confirm(s)
+      }
       this.loading = true
       const f = this.registerForm
       const app = f.Application
