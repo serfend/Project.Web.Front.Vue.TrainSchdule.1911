@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-
 /**
  * 获取菜单
  *
@@ -97,7 +96,8 @@ export function exportSingleApply(templete, applyId) {
         value: applyId
       }
     }).then(data => {
-      downloadUrl(data.requestUrl)
+      const f = data.model
+      downloadUrl(`/file/frompath?path=${f.fullPath}&filename=${f.name}`)
       res(data)
     }).catch(e => rej(e))
   })
@@ -117,7 +117,8 @@ export function exportMultiApplies(templete, applies) {
         arrays: applies
       }
     }).then(data => {
-      downloadUrl(data.requestUrl)
+      const f = data.model
+      downloadUrl(`/file/frompath?path=${f.fullPath}&filename=${f.name}`)
       res(data)
     }).catch(e => rej(e))
   })

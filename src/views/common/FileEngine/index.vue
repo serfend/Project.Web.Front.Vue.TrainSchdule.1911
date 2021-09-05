@@ -212,8 +212,9 @@ export default {
       const form = this.queryForm || {}
       const userid = form.anonymous ? null : this.currentUser
       requestFile(Object.assign(this.file, { userid })).then(data => {
-        var id = data.file.id
-        data.file.clientKey = '加载中...'
+        const file = data.model.file
+        const id = file.id
+        file.clientKey = '加载中...'
         this.$nextTick(() => {
           getClientKey(id, this.file.auth)
             .then(ck => {
@@ -224,7 +225,7 @@ export default {
             .catch(e => {
               this.fileInfo.clientKey = `无法加载(${e.message})`
             })
-          this.fileInfo = data.file
+          this.fileInfo = file
         })
       })
     },

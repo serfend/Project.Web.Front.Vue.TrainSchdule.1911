@@ -5,7 +5,6 @@
         <ClipboardShare default-content="我把我的休假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。" />
       </el-dialog>
       <el-button type="text" icon="el-icon-share" @click="show_share=true">分享此休假详情</el-button>
-      <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出休假登记卡</el-button>
       <el-button icon="el-icon-date" type="text" @click="showMyApplies = true">查看历史记录</el-button>
       <ActionExamine
         :entity-type="entityType"
@@ -24,7 +23,6 @@
       <MyApply
         v-if="showMyApplies"
         :id="detail.base.id"
-        :list.sync="selfHistory"
         :entity-type="entityType"
         :start="null"
         :auto-expand="false"
@@ -121,7 +119,6 @@
 
 <script>
 import { detail } from '@/api/apply/query'
-import { exportUserApplies } from '@/api/common/static'
 import { datedifference, parseTime } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
 export default {
@@ -152,7 +149,6 @@ export default {
     show_share: false,
     loading: false,
     showMyApplies: false,
-    selfHistory: [],
     staticData: {
       vacationLength: 0,
       vacationSpent: 0,
@@ -228,14 +224,6 @@ export default {
         progress = Math.floor(progress)
       }
       s.vacationProgress = progress
-    },
-    downloadUserApplies() {
-      const dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
-      const his = this.selfHistory
-      if (!his || his.length === 0) {
-        return this.$message.warning('当前无申请可导出')
-      }
-      exportUserApplies(dutiesRawType, his.map(i => i.id))
     },
     loadDetail(id) {
       this.loading = true

@@ -1,5 +1,6 @@
 <template>
   <el-row class="row">
+    <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出登记卡</el-button>
     <el-card v-infinite-scroll="onScrollToBottom" style="position: relative;">
       <el-row v-if="!hideAddBtn" class="card-row">
         <div class="card-title" style="color:#333;font-size:1.5rem">新增</div>
@@ -86,6 +87,8 @@
 import { formatTime } from '@/utils'
 import { querySelf, detail } from '@/api/apply/query'
 import { get_item_summary, tag_single_item } from '@/utils/vacation'
+import { exportUserApplies } from '@/api/common/static'
+
 export default {
   name: 'AppliesList',
   components: {
@@ -165,6 +168,14 @@ export default {
   },
   methods: {
     get_item_summary,
+    downloadUserApplies() {
+      const dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
+      const his = this.iList
+      if (!his || his.length === 0) {
+        return this.$message.warning('当前无申请可导出')
+      }
+      exportUserApplies(dutiesRawType, his.map(i => i.id))
+    },
     format(val) {
       return formatTime(val)
     },

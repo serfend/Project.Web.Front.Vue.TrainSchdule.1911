@@ -304,7 +304,7 @@ export default {
     requestFile(file) {
       return requestFile({ filePath: '/dataview', fileName: file }).then(
         data => {
-          return download(data.file.id)
+          return download(data.model.file.id)
         }
       )
     },
