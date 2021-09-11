@@ -68,14 +68,14 @@ export function dateValueToCycleCount(ratingType, dateValue, descValue) {
     }
     // 季度
     case 8: {
-      const y = (v.getFullYear() - 2000) * 4
-      const s = descList['season'].findIndex(i => i.l === descValue)
+      const y = (v.getFullYear() - 2000) * 3
+      const s = descList['season'].findIndex(i => i.v === descValue)
       return y + (s === -1 ? 0 : s) + 1
     }
     // 半年
     case 12: {
       const y = (v.getFullYear() - 2000) * 2
-      const s = descList['half-year'].findIndex(i => i.l === descValue)
+      const s = descList['half-year'].findIndex(i => i.v === descValue)
       return y + (s === -1 ? 0 : s) + 1
     }
     // 年

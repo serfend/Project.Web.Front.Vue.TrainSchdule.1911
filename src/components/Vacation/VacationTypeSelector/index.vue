@@ -132,7 +132,8 @@ export default {
   },
   mounted() {
     requestFile({ filePath: bgPath, fileName: 'default.jpg' }).then(data => {
-      const id = data.file.id
+      const item = data.model || data.file
+      const id = item.id
       const url = process.env.VUE_APP_BASEURL
       this.defaultUrl = `${url}${staticfile}${id}`
     })
@@ -166,7 +167,8 @@ export default {
         }, 200)
       }
       const cb = (data, type) => {
-        const id = data.file.id
+        const item = data.model || data.file
+        const id = item.id
         const url = `${process.env.VUE_APP_BASEURL}${staticfile}${id}`
         this.urlDict[type.name] = id ? url : null
       }

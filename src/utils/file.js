@@ -18,7 +18,9 @@ export function loadDocument(path, fileName) {
         if (data.file.isRemoved) {
           return rej(`文件:${path}/${fileName} 已于${data.file.removeDate}被移除`)
         }
-        download(data.file.id).then(data => {
+        const item = data.model || data.file
+        const id = item.id
+        download(id).then(data => {
           var reader = new FileReader()
           reader.onload = function (event) {
             var content = reader.result

@@ -212,8 +212,8 @@ export default {
       const form = this.queryForm || {}
       const userid = form.anonymous ? null : this.currentUser
       requestFile(Object.assign(this.file, { userid })).then(data => {
-        const file = data.model.file
-        const id = file.id
+        const item = data.model || data.file
+        const id = item.id
         file.clientKey = '加载中...'
         this.$nextTick(() => {
           getClientKey(id, this.file.auth)
