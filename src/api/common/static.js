@@ -97,7 +97,7 @@ export function exportSingleApply(templete, applyId) {
       }
     }).then(data => {
       const f = data.model
-      downloadUrl(`/file/frompath?path=${f.fullPath}&filename=${f.name}`)
+      downloadUrl(`file/frompath?path=${f.fullPath}&filename=${f.name}`)
       res(data)
     }).catch(e => rej(e))
   })
@@ -118,14 +118,14 @@ export function exportMultiApplies(templete, applies) {
       }
     }).then(data => {
       const f = data.model
-      downloadUrl(`/file/frompath?path=${f.fullPath}&filename=${f.name}`)
+      downloadUrl(`file/frompath?path=${f.fullPath}&filename=${f.name}`)
       res(data)
     }).catch(e => rej(e))
   })
 }
 
 export function downloadUrl(url) {
-  var requestUrl = process.env.VUE_APP_BASEURL + url
+  var requestUrl = `${process.env.VUE_APP_BASEURL}/${url}`.replace('//', '/')
   var a = document.createElement('a')
   a.href = requestUrl
   a.click()

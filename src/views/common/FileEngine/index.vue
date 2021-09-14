@@ -195,7 +195,8 @@ export default {
       })
     },
     downloadUrl(fileId) {
-      return `${process.env.VUE_APP_BASE_API}/file/download?fileid=${fileId}`
+      const api_url = process.env.VUE_APP_BASE_API
+      return `${api_url}${api_url ? '/' : ''}file/download?fileid=${fileId}`
     },
     clipBoard(fileid, fileName, event) {
       clipboard(this.downloadUrl(fileid), event).then(() => {

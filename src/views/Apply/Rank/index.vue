@@ -103,9 +103,11 @@ export default {
       return `${vacType}.${entityType}@${levelType}`
     },
     banner_img() {
-      return `${
-        process.env.VUE_APP_BASEURL
-      }/file/frompath?path=client-sfvue&filename=applies_rank.png`
+      const url = process.env.VUE_APP_BASEURL
+      const url_file =
+        'file/frompath?path=client-sfvue&filename=applies_rank.png'
+      const raw_url = `${url}/${url_file}`
+      return raw_url.replace('//', '/')
     },
     currentUser() {
       return this.$store.state.user.userid

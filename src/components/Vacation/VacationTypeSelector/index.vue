@@ -37,7 +37,7 @@
 
 <script>
 const bgPath = 'dataview/vacationtype'
-const staticfile = '/file/staticfile/'
+const staticfile = 'file/staticfile/'
 import { requestFile } from '@/api/common/file'
 export default {
   name: 'VacationTypeSelector',
@@ -135,7 +135,7 @@ export default {
       const item = data.model || data.file
       const id = item.id
       const url = process.env.VUE_APP_BASEURL
-      this.defaultUrl = `${url}${staticfile}${id}`
+      this.defaultUrl = `${url}/${staticfile}${id}`.replace('//', '/')
     })
   },
   methods: {
@@ -169,7 +169,7 @@ export default {
       const cb = (data, type) => {
         const item = data.model || data.file
         const id = item.id
-        const url = `${process.env.VUE_APP_BASEURL}${staticfile}${id}`
+        const url = `${process.env.VUE_APP_BASEURL}/${staticfile}${id}`
         this.urlDict[type.name] = id ? url : null
       }
       const null_data = {

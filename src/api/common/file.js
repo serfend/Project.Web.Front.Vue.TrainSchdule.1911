@@ -179,7 +179,7 @@ export function status() {
  * @param {*} auth 授权码
  */
 export function getClientKey(id, auth) {
-  return request.post('/file/clientKey', {
+  return request.post('file/clientKey', {
     id,
     auth
   })
