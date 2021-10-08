@@ -139,9 +139,9 @@
     "password": "密码"
   },
   "profiles": {
-    "activity": "@",
-    "timeline": "动态",
-    "account": "我的"
+    "activity": "基本信息",
+    "timeline": "大事记",
+    "account": "账号日志"
   },
   "comments": {
     "title": "资讯",

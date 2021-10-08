@@ -1,15 +1,17 @@
 <template>
-  <div v-if="user" class="app-container">
-    <el-card>
-      <el-tabs v-model="activeTab">
-        <el-tab-pane :label="$t('profiles.activity')" name="activity">
-          <Activity :data="useractions" />
-        </el-tab-pane>
-        <el-tab-pane :label="$t('profiles.timeline')" name="timeline">
-          <Timeline />
-        </el-tab-pane>
-        <el-tab-pane :label="$t('profiles.account')" name="account">
-          <Account :user="user" />
+  <div>
+    <div class="banner" />
+    <el-card style="width:60rem;margin: 2rem auto">
+      <el-tabs v-model="activeTab" tab-position="left">
+        <el-tab-pane label="个人中心" disabled name="profile" />
+        <el-tab-pane v-for="page in pages" :key="page.name" :name="page.name">
+          <template #label>
+            <div class="label-item">
+              <SvgIcon :icon-class="page.icon" />
+              <span>{{ page.label }}</span>
+            </div>
+          </template>
+          <component :is="page" />
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -17,32 +19,51 @@
 </template>
 
 <script>
-import Activity from './components/Activity'
-import Timeline from './components/Timeline'
-import Account from './components/Account'
+import importAll from '@/utils/common/importAll'
+const modules = importAll(
+  require.context('./pages', true, /\.vue$/),
+  (keys, item) => {
+    if (keys.length > 2 || (!item || !item.label)) return null
+    return keys
+      .join('.')
+      .replace('.index', '')
+      .replace('.vue', '')
+  }
+)
 export default {
   name: 'Profile',
-  components: { Activity, Timeline, Account },
-  data() {
-    return {
-      activeTab: 'activity',
-      user: {}
-    }
+  components: {
+    SvgIcon: () => import('@/components/SvgIcon'),
+    ...modules
   },
+  data: () => ({
+    activeTab: null,
+    pages: null
+  }),
   computed: {
     nowuser() {
-      var baseUser = this.$store.state.user.data
-      baseUser.avatar = this.$store.state.user.avatar
-      return baseUser
-    },
-    useractions() {
-      return {}
+      return this.$store.state.user.data
     }
   },
-  methods: {
-    refreshUserAvatar() {
-      this.$store.dispatch('user/initAvatar')
-    }
-  }
+  mounted() {
+    this.pages = Object.values(modules).sort((a, b) => a.index - b.index)
+    this.activeTab = this.pages[0].name
+  },
+  methods: {}
 }
 </script>
+<style lang="scss" scoped>
+@import '@/styles/element-variables';
+.banner {
+  background-color: $--color-primary;
+  height: 6rem;
+  margin: -1rem;
+  opacity: 0.7;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+.label-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

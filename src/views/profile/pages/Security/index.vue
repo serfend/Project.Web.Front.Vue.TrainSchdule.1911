@@ -6,15 +6,13 @@
 
 <script>
 export default {
-  name: 'ProfileActivity',
+  name: 'Security',
+  label: '账号安全',
+  icon: 'safety_fill',
+  index: 3,
   components: {
     Loading: () => import('@/views/Loading')
   },
-  data() {
-    return {}
-  }
+  methods: {}
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
