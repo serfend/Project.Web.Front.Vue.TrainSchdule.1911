@@ -98,7 +98,6 @@ export const asyncRoutes = [{
   redirect: '/404',
   hidden: true
 }]
-
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({

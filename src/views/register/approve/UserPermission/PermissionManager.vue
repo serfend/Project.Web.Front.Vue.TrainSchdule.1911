@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { allPermissions, getPermission, postPermission } from '@/api/permission'
+import { allPermissions, getPermission } from '@/api/permission'
 export default {
   name: 'PermissionManager',
   components: {
@@ -91,19 +91,6 @@ export default {
     },
     do_submit(NewPermission, id) {
       this.loading = true
-      postPermission({
-        id,
-        auth: this.auth,
-        NewPermission
-      })
-        .then(() => {
-          this.$message.success('已提交')
-          this.lastUpdate = NewPermission
-        })
-        .finally(() => {
-          this.loading = false
-          this.show_permission_dialog = false
-        })
     },
     showPermissionDetail(node, data) {
       this.currentPermission = {
