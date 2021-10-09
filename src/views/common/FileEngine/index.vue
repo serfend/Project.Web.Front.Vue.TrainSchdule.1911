@@ -209,10 +209,11 @@ export default {
       a.click()
     },
     updateFile() {
-      if (!this.file || !this.file.filePath || !this.file.fileName) return
+      const file = this.file
+      if (!file || !file.filePath || !file.fileName) return
       const form = this.queryForm || {}
       const userid = form.anonymous ? null : this.currentUser
-      requestFile(Object.assign(this.file, { userid })).then(data => {
+      requestFile(Object.assign(file, { userid })).then(data => {
         const item = data.model || data.file
         const id = item.id
         file.clientKey = '加载中...'
@@ -220,7 +221,7 @@ export default {
           getClientKey(id, this.file.auth)
             .then(ck => {
               this.fileInfo.clientKey = ck
-              this.file.clientKey = ck
+              file.clientKey = ck
               this.$forceUpdate()
             })
             .catch(e => {
