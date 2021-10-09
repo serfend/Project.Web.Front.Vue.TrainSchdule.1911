@@ -50,6 +50,12 @@ export default {
     innerRegisterForm: null
   }),
   watch: {
+    user: {
+      handler(val) {
+        this.handleUserChange()
+      },
+      immediate: true
+    },
     registerForm: {
       handler(val) {
         if (!val) {
@@ -82,12 +88,12 @@ export default {
     handleUserChange() {
       const val = this.user
       if (!val) return
-      this.current_select_id = val.id
       this.$emit('update:loading', true)
       this.selectIsInvalidAccount = 0
-      getUserAllInfo(this.current_select_id)
+      this.innerRegisterForm = null
+      getUserAllInfo(val)
         .then(data => {
-          const f = this.innerRegisterForm
+          const f = {}
           f.Social = data.social
           f.Diy = data.diy
           f.Base = data.base.base
@@ -110,7 +116,7 @@ export default {
           }
           this.selectIsInvalidAccount = checkUserValid(invitedBy)
           this.nowSelectCompany = company
-          this.$emit('update:registerForm', f)
+          this.$emit('change', f)
         })
         .finally(() => {
           this.$emit('update:loading', false)

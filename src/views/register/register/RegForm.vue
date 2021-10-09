@@ -11,7 +11,7 @@
       <RegFormItems
         ref="reg"
         v-model="registerForm"
-        :loading="loading"
+        :loading.sync="loading"
         :user="current_select_id"
         :is-register="is_register"
       />
@@ -157,7 +157,8 @@ export default {
     },
     userInfo: {
       handler(val) {
-        this.current_select_id = val
+        if (!val) return
+        this.current_select_id = val.id
       },
       immediate: true
     }
