@@ -195,21 +195,9 @@ export default {
 </script>
 
 <style lang="scss"  scoped>
+@import "@/styles/animation";
 .content-card {
   padding-top: 20px;
 }
-.tab-container {
-  .el-tab-pane {
-    animation: fade 0.5s ease;
-  }
-  @keyframes fade {
-    from {
-      opacity: 0;
-      transform: translateX(100%);
-    }
-    to {
-      opacity: 1;
-    }
-  }
-}
+
 </style>

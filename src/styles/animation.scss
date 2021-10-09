@@ -10,6 +10,22 @@
   animation: 5s 1s ease-out forwards flashing-item-light,
     5s 1s ease forwards alert;
 }
+.tab-container {
+  .el-tab-pane {
+    animation: fade 0.5s ease;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}
 @keyframes alert {
   0% {
     background-color: #ff0000;
