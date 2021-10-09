@@ -8,24 +8,13 @@
           <el-button type="text" @click="switch_login">登录</el-button>
         </p>
       </div>
-      <el-form v-loading="loading" label-position="right" label-width="5rem">
-        <el-tabs v-model="nowStep" accordion>
-          <el-tab-pane
-            v-for="opt in stepOptions.filter((i) => !i.removed)"
-            :key="opt.index"
-            :label="opt.name"
-          >
-            <div :key="opt.index" class="panel-content">
-              <component
-                :is="opt.component"
-                :form.sync="registerForm[opt.component]"
-                :is-register="is_register"
-                :child-index="opt.childIndex"
-              />
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </el-form>
+      <RegFormItems
+        ref="reg"
+        v-model="registerForm"
+        :loading="loading"
+        :user="current_select_id"
+        :is-register="is_register"
+      />
       <el-card v-if="!is_register" style="margin-top:1rem">
         <el-form>
           <el-form-item label="认证状态">
@@ -71,20 +60,21 @@
     </el-dialog>
     <el-dialog :visible.sync="remove_account.show" append-to-body>
       <h2 slot="title">删除账号 - 敏感操作授权</h2>
-      <div style="color:#c00">
-        <h3>您确定要删除用户吗</h3>
-        <h3>{{ registerForm.Base.realName }} ({{ current_select_id }})</h3>
+      <div v-if="remove_account.show">
+        <div style="color:#c00">
+          <h3>您确定要删除用户吗</h3>
+          <h3>{{ registerForm.Base.realName }} ({{ current_select_id }})</h3>
+        </div>
+        <el-input
+          v-model="remove_account.reason"
+          rows="6"
+          type="textarea"
+          :placeholder="`填写删除${registerForm.Base.realName}的原因`"
+        />
+        <el-form style="margin-top:1rem">
+          <AuthCode v-model="remove_account.auth" select-name="注册账户" />
+        </el-form>
       </div>
-
-      <el-input
-        v-model="remove_account.reason"
-        rows="6"
-        type="textarea"
-        :placeholder="`填写删除${registerForm.Base.realName}的原因`"
-      />
-      <el-form style="margin-top:1rem">
-        <AuthCode v-model="remove_account.auth" select-name="注册账户" />
-      </el-form>
       <template slot="footer">
         <el-button type="text" style="color:#d77" @click="remove_account_confirm">确认</el-button>
         <el-button type="success" @click="remove_account.show=false">取消</el-button>
@@ -94,53 +84,19 @@
 </template>
 
 <script>
-const createForm = () => ({
-  Base: {},
-  Social: {},
-  Company: {
-    // company component require this prop
-    company: {},
-    title: {},
-    duties: {}
-  },
-  Application: {},
-  Diy: {},
-  Auth: {},
-  password: '',
-  confirmPassword: ''
-})
-import SvgIcon from '@/components/SvgIcon'
-import Base from '../components/Base'
-import Application from '../components/Application'
-import Company from '../components/Company'
-import Diy from '../components/Diy'
-import Social from '../components/Social'
-import Auth from '@/components/AuthCode'
 import {
   regnew,
   modifyUser,
   removeAccount,
   authUserRegister
 } from '@/api/account'
-import { getUserAllInfo } from '@/api/user/usercompany'
-import NotLoginRegisterNotice from '../NotLoginRegisterNotice'
-import Login from '@/views/login'
-import { checkUserValid } from '@/utils/validate'
-import AuthCode from '@/components/AuthCode'
-const Const_DisabledVacation = 4
+import { Const_DisabledVacation } from './config'
 export default {
   name: 'RegForm',
   components: {
-    SvgIcon,
-    Base,
-    Application,
-    Social,
-    Company,
-    Diy,
-    Auth,
-    NotLoginRegisterNotice,
-    Login,
-    AuthCode
+    NotLoginRegisterNotice: () => import('../NotLoginRegisterNotice'),
+    RegFormItems: () => import('./RegFormItems'),
+    AuthCode: () => import('@/components/AuthCode')
   },
   props: {
     showSubmitButton: {
@@ -152,73 +108,20 @@ export default {
       default: null
     }
   },
-  data() {
-    return {
-      loading: false,
-      registerForm: createForm(),
-      selectIsInvalidAccount: false,
-      current_select_id: null,
-      nowStep: '0',
-      stepOptions: [
-        {
-          name: '基本',
-          index: 1,
-          childIndex: 0,
-          childNum: 1,
-          icon: 'el-icon-s-custom',
-          component: 'Base'
-        },
-        {
-          name: '系统',
-          index: 2,
-          childIndex: 0,
-          childNum: 1,
-          icon: 'el-icon-document-copy',
-          component: 'Application'
-        },
-        {
-          name: '单位',
-          index: 3,
-          childIndex: 0,
-          childNum: 1,
-          icon: 'el-icon-office-building',
-          component: 'Company'
-        },
-        {
-          name: '家庭',
-          index: 4,
-          childIndex: 0,
-          childNum: 4,
-          icon: 'el-icon-s-home',
-          component: 'Social'
-        },
-        {
-          name: '其他(可不填)',
-          index: 5,
-          childIndex: 0,
-          childNum: 1,
-          icon: 'el-icon-s-grid',
-          component: 'Diy'
-        },
-        {
-          name: '授权(可不填)',
-          index: 6,
-          childIndex: 0,
-          childNum: 1,
-          icon: 'el-icon-s-check',
-          component: 'Auth'
-        }
-      ],
-      not_login_show: false,
-      init_page_over: false,
-      card_should_show: false,
-      remove_account: {
-        auth: null,
-        show: false,
-        reason: ''
-      }
-    }
-  },
+  data: () => ({
+    loading: false,
+    selectIsInvalidAccount: false,
+    current_select_id: null,
+    not_login_show: false,
+    init_page_over: false,
+    card_should_show: false,
+    remove_account: {
+      auth: null,
+      show: false,
+      reason: ''
+    },
+    registerForm: null
+  }),
   computed: {
     is_register() {
       return this.userInfo === null
@@ -254,7 +157,7 @@ export default {
     },
     userInfo: {
       handler(val) {
-        return this.handleCurrentChange(val)
+        this.current_select_id = val
       },
       immediate: true
     }
@@ -267,21 +170,6 @@ export default {
   methods: {
     modifyUser,
     regnew,
-    next_step(step) {
-      let now_index = parseInt(this.nowStep)
-      const target = this.stepOptions[now_index]
-      if (
-        target.childIndex + step < target.childNum &&
-        target.childIndex + step >= 0
-      ) {
-        target.childIndex += step
-        return
-      }
-      if (now_index + step < this.stepOptions.length && now_index + step >= 0) {
-        now_index += step
-        this.nowStep = now_index.toString()
-      }
-    },
     // 授权当前账号
     submitValidAccount(valid) {
       if (this.current_select_id === '') {
@@ -309,41 +197,6 @@ export default {
         }
       )
     },
-    handleCurrentChange(val) {
-      if (!val) return
-      this.current_select_id = val.id
-      this.loading = true
-      this.selectIsInvalidAccount = 0
-      getUserAllInfo(this.current_select_id)
-        .then(data => {
-          const f = this.registerForm
-          f.Social = data.social
-          f.Diy = data.diy
-          f.Base = data.base.base
-          f.Application = data.application
-          const duties = data.duties || {}
-          const { company, companyOfManage } = data.company
-          const { invitedBy, accountStatus } = data.application
-          f.Company = {
-            company,
-            companyOfManage,
-            duties: {
-              name: duties.name
-            },
-            title: {
-              name: duties.title
-            },
-            titleDate: duties.titleDate,
-            disabledVacation:
-              (accountStatus & Const_DisabledVacation) > 0 ? 1 : -1
-          }
-          this.selectIsInvalidAccount = checkUserValid(invitedBy)
-          this.nowSelectCompany = company
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
     set_account_status_disable_vacation(f) {
       const app = f.Application
       // reset status to normal
@@ -358,6 +211,9 @@ export default {
     },
     set_account_status(f) {
       this.set_account_status_disable_vacation(f)
+    },
+    next_step(step) {
+      return this.$refs.reg.next_step(step)
     },
     async submitRegister(regOrModify) {
       await this.$confirm('确定要提交吗？')
@@ -427,27 +283,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.panel-content {
-  height: 25rem;
-  overflow: scroll;
-}
-.tab-container {
-  .el-tab-pane {
-    animation: fade 0.5s ease;
-  }
-
-  @keyframes fade {
-    from {
-      opacity: 0;
-      transform: translateX(100%);
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
-}
-
 .top-enter,
 .top-leave-to {
   transform: translate3d(0, -100%, 0);
