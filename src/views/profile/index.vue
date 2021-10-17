@@ -1,10 +1,29 @@
 <template>
   <div>
     <div class="banner" />
-    <el-card style="width:60rem;margin: 2rem auto">
-      <el-tabs v-model="activeTab" tab-position="left">
-        <el-tab-pane label="个人中心" disabled name="profile" />
-        <el-tab-pane v-for="page in pages" :key="page.name" :name="page.name">
+    <el-card class="content">
+      <div class="content-title">
+        <div class="left-content">个人中心</div>
+        <div v-if="modules[activeTab]" class="right-content">
+          <span class="right-content-tip">.</span>
+          <span>{{ modules[activeTab].label }}</span>
+        </div>
+      </div>
+      <el-tabs
+        v-model="activeTab"
+        tab-position="left"
+        type="border-card"
+        stretch
+        class="panel-tabs"
+      >
+        <el-tab-pane
+          v-for="page in pages"
+          :ref="page.name"
+          :key="page.name"
+          :name="page.name"
+          lazy
+          class="panel-content"
+        >
           <template #label>
             <div class="label-item">
               <SvgIcon :icon-class="page.icon" />
@@ -38,7 +57,8 @@ export default {
   },
   data: () => ({
     activeTab: null,
-    pages: null
+    pages: null,
+    modules
   }),
   computed: {
     nowuser() {
@@ -52,8 +72,54 @@ export default {
   methods: {}
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
 @import '@/styles/element-variables';
+.content {
+  width: 60rem;
+  margin: 2rem auto;
+}
+.content-title {
+  border-top: 1px solid $--border-color-light;
+  border-left: 1px solid $--border-color-light;
+  border-right: 1px solid $--border-color-light;
+  display: flex;
+  align-items: center;
+  .left-content {
+    width: 8rem;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 16px;
+    color: $--border-color-light;
+    cursor: default;
+    border-right: 1px solid $--border-color-light;
+  }
+  .right-content {
+    .right-content-tip {
+      width: 4px;
+      height: 16px;
+      margin-top: 18px;
+      background-color: $--color-primary;
+      border-radius: 4px;
+    }
+    margin: 0 0 0 1rem;
+    color: $--color-primary;
+  }
+}
+.current-panel-title {
+  width: 100%;
+  border-left: 0.5rem solid $--color-primary;
+  color: $--color-primary;
+}
+.panel-content {
+  min-height: 50rem;
+}
+.panel-tabs {
+  .el-tabs__item {
+    height: 60px !important;
+    line-height: 60px;
+  }
+}
 .banner {
   background-color: $--color-primary;
   height: 6rem;
