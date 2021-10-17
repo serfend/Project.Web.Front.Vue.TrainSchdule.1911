@@ -103,7 +103,7 @@ export default {
       return `${vacType}.${entityType}@${levelType}`
     },
     banner_img() {
-      const url = process.env.VUE_APP_BASEURL
+      const url = require('@/utils/website').getWebLocation()
       const url_file =
         'file/frompath?path=client-sfvue&filename=applies_rank.png'
       const raw_url = `${url}/${url_file}`

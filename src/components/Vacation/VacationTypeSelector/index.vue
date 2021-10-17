@@ -134,7 +134,7 @@ export default {
     requestFile({ filePath: bgPath, fileName: 'default.jpg' }).then(data => {
       const item = data.model || data.file
       const id = item.id
-      const url = process.env.VUE_APP_BASEURL
+      const url = require('@/utils/website').getWebLocation()
       this.defaultUrl = `${url}/${staticfile}${id}`.replace('//', '/')
     })
   },
@@ -169,7 +169,7 @@ export default {
       const cb = (data, type) => {
         const item = data.model || data.file
         const id = item.id
-        const url = `${process.env.VUE_APP_BASEURL}/${staticfile}${id}`
+        const url = `${require('@/utils/website').getWebLocation()}/${staticfile}${id}`
         this.urlDict[type.name] = id ? url : null
       }
       const null_data = {

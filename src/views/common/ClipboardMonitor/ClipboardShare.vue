@@ -39,7 +39,7 @@ import clipboard from '@/utils/clipboard'
 import ShortUrl from '@/views/common/ShortUrl/ShortUrl'
 import SvgIcon from '@/components/SvgIcon'
 export default {
-  name: 'DetailShare',
+  name: 'ClipboardShare',
   components: { ShortUrl, SvgIcon },
   props: {
     defaultContent: {
@@ -65,7 +65,7 @@ export default {
         : window.location.href
     },
     short_url() {
-      return `${process.env.VUE_APP_BASE_API}/s/${this.urlKey}`
+      return `${require('@/utils/website').getWebLocation()}/s/${this.urlKey}`
     }
   },
   watch: {
@@ -112,8 +112,8 @@ export default {
       }, 1000)
       content = `￥${content}￥`
       const final_content = this.defaultContent
-        .replace('{url}', this.short_url)
-        .replace('{key}', content)
+        .replace('${url}', this.short_url)
+        .replace('${key}', content)
       clipboard(final_content, event).then(() => {
         this.$message.success(`分享码已复制，快发给小伙伴吧~`)
       })
