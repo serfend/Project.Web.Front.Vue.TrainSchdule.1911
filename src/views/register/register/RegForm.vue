@@ -14,6 +14,7 @@
         :loading.sync="loading"
         :user="current_select_id"
         :is-register="is_register"
+        :select-is-invalid-account.sync="selectIsInvalidAccount"
       />
       <el-card v-if="!is_register" style="margin-top:1rem">
         <el-form>

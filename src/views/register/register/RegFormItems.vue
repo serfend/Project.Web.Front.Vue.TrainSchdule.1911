@@ -2,11 +2,11 @@
   <el-form v-if="innerRegisterForm" v-loading="loading" label-position="right" label-width="5rem">
     <el-tabs v-model="nowStep" accordion class="tab-container">
       <el-tab-pane
-        v-for="opt in stepOptions.filter((i) => !i.removed)"
+        v-for="opt in stepOptions.filter((i) => !i.removed && !ignorePanelsDict[i.component])"
         :key="opt.index"
         :label="opt.name"
       >
-        <div :key="opt.index" class="panel-content">
+        <div :key="opt.index" class="panel-content" :style="{height:isRegister?'25rem':''}">
           <component
             :is="opt.component"
             :form.sync="innerRegisterForm[opt.component]"
@@ -42,13 +42,24 @@ export default {
     loading: { type: Boolean, default: false },
     user: { type: String, default: null },
     registerForm: { type: Object, default: null },
-    isRegister: { type: Boolean, default: false }
+    isRegister: { type: Boolean, default: false },
+    ignorePanels: { type: Array, default: null }
   },
   data: () => ({
     nowStep: '0',
     stepOptions,
     innerRegisterForm: null
   }),
+  computed: {
+    ignorePanelsDict() {
+      const dict = {}
+      if (!this.ignorePanels) return dict
+      this.ignorePanels.map(i => {
+        dict[i] = true
+      })
+      return dict
+    }
+  },
   watch: {
     user: {
       handler(val) {
@@ -89,7 +100,7 @@ export default {
       const val = this.user
       if (!val) return
       this.$emit('update:loading', true)
-      this.selectIsInvalidAccount = 0
+      this.$emit('update:selectIsInvalidAccount', 0)
       this.innerRegisterForm = null
       getUserAllInfo(val)
         .then(data => {
@@ -114,7 +125,7 @@ export default {
             disabledVacation:
               (accountStatus & Const_DisabledVacation) > 0 ? 1 : -1
           }
-          this.selectIsInvalidAccount = checkUserValid(invitedBy)
+          this.$emit('update:selectIsInvalidAccount', checkUserValid(invitedBy))
           this.nowSelectCompany = company
           this.$emit('change', f)
         })
@@ -128,7 +139,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/animation';
 .panel-content {
-  height: 25rem;
   overflow: scroll;
 }
 </style>
