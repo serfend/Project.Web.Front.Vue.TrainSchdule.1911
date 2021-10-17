@@ -125,7 +125,7 @@ export function exportMultiApplies(templete, applies) {
 }
 
 export function downloadUrl(url) {
-  var requestUrl = `${process.env.VUE_APP_BASEURL}/${url}`.replace('//', '/')
+  var requestUrl = `${require('@/utils/website').getWebLocation()}/${url}`.replace('//', '/')
   var a = document.createElement('a')
   a.href = requestUrl
   a.click()
