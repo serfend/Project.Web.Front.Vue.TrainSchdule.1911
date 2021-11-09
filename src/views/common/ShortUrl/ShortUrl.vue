@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { shortUrlContent } from './config'
 import UserFormItem from '@/components/User/UserFormItem'
 import ContactMe from '@/components/ContactMe'
 import { loadDwz } from '@/api/common/dwz'
@@ -40,33 +41,31 @@ export default {
   props: {
     showLabel: {
       type: Boolean,
-      default: true,
+      default: true
     },
     urlKey: {
       type: String,
-      default: '',
+      default: ''
     },
     data: {
       type: Object,
-      default: null,
-    },
-  },
-  data() {
-    return {
-      innerData: {
-        urlKey: '',
-        create: '',
-        createBy: '',
-        target: '',
-        expire: '',
-      },
-      hasShow: false,
+      default: null
     }
   },
+  data: () => ({
+    innerData: {
+      urlKey: '',
+      create: '',
+      createBy: '',
+      target: '',
+      expire: ''
+    },
+    hasShow: false
+  }),
   computed: {
     url() {
-      return `${process.env.VUE_APP_BASE_API}/s/${this.innerData.urlKey}`
-    },
+      return shortUrlContent(this.innerData && this.innerData.urlKey)
+    }
   },
   watch: {
     urlKey: {
@@ -74,8 +73,8 @@ export default {
         if (val) {
           loadDwz({
             key: val,
-            pages: { pageIndex: 0, pageSize: 1 },
-          }).then((data) => {
+            pages: { pageIndex: 0, pageSize: 1 }
+          }).then(data => {
             if (data.list.length === 0) return
             var item = data.list[0]
             this.innerData = item
@@ -83,7 +82,7 @@ export default {
           })
         }
       },
-      immediate: true,
+      immediate: true
     },
     data: {
       handler(val) {
@@ -92,15 +91,15 @@ export default {
         }
       },
       deep: true,
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     loadQrCode() {
       if (this.hasShow) return
       this.hasShow = true
-    },
-  },
+    }
+  }
 }
 </script>
 

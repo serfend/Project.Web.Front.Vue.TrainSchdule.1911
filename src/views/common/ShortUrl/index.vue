@@ -38,7 +38,7 @@
           <el-table :data="shortUrls">
             <el-table-column label="短链接">
               <template slot-scope="scope">
-                <el-link :href="`${baseUrl}/s/${scope.row.key}`">{{ scope.row.key }}</el-link>
+                <el-link :href="shortUrlContent(scope.row.key)">{{ scope.row.key }}</el-link>
               </template>
             </el-table-column>
             <el-table-column label="目标">
@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { shortUrlContent } from './config'
 import { createDwz, loadDwz, remove } from '@/api/common/dwz'
 import ShortUrl from './ShortUrl'
 import ShortUrlStatistics from './ShortUrlStatistics'
@@ -77,32 +78,30 @@ import Pagination from '@/components/Pagination'
 export default {
   name: 'ShortUrlView',
   components: { ShortUrl, ShortUrlStatistics, Pagination },
-  data() {
-    return {
-      onLoading: false,
-      target: '',
-      urlKey: '',
-      expire: '',
-      validDateLength: 1,
-      statisticsData: {},
-      statisticsQuery: {
-        create: { start: '', end: '' },
-        viewBy: '',
-        ip: '',
-        device: '',
-        pages: { pageIndex: 0, pageSize: 999 }
-      },
-      shortUrls: [],
-      pages: {
-        pageIndex: 0,
-        pageSize: 20
-      },
-      pagesTotalCount: 0
-    }
-  },
+  data: () => ({
+    onLoading: false,
+    target: '',
+    urlKey: '',
+    expire: '',
+    validDateLength: 1,
+    statisticsData: {},
+    statisticsQuery: {
+      create: { start: '', end: '' },
+      viewBy: '',
+      ip: '',
+      device: '',
+      pages: { pageIndex: 0, pageSize: 999 }
+    },
+    shortUrls: [],
+    pages: {
+      pageIndex: 0,
+      pageSize: 20
+    },
+    pagesTotalCount: 0
+  }),
   computed: {
     baseUrl() {
-      return process.env.VUE_APP_BASE_API
+      return require('@/utils/website').getWebLocation()
     }
   },
   watch: {
@@ -117,13 +116,15 @@ export default {
     pages: {
       handler(val) {
         this.loadShortUrls()
-      }, immediate: true
+      },
+      immediate: true
     }
   },
   mounted() {
     this.loadShortUrls()
   },
   methods: {
+    shortUrlContent,
     create(key) {
       createDwz(this.target, key, this.expire).then(data => {
         this.urlKey = data.key
@@ -135,7 +136,7 @@ export default {
         this.$message.success('已删除')
       })
     },
-    loadStatistics() { },
+    loadStatistics() {},
     loadShortUrls() {
       this.onLoading = true
       loadDwz({ pages: this.pages })
