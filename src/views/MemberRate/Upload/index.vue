@@ -180,7 +180,7 @@ export default {
     }
   },
   mounted() {
-    this.uploadurl = process.env.VUE_APP_BASE_API + '/memberRate/xlsUpload'
+    this.uploadurl = `${require('@/utils/website').getWebLocation()}/memberRate/xlsUpload`
     this.ratingCycleDate = this.ratingCycleDateValue
     this.loading_company = true
     setTimeout(() => {
