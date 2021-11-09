@@ -4,7 +4,7 @@
       <el-dialog :visible.sync="show_share" title="分享请假申请详情" append-to-body>
         <ClipboardShare default-content="我把我的请假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。" />
       </el-dialog>
-      <el-button type="text" icon="el-icon-share" @click="show_share=true">分享此请假详情</el-button>
+      <el-button v-if="route_id" type="text" icon="el-icon-share" @click="show_share=true">分享此请假详情</el-button>
       <el-button icon="el-icon-date" type="text" @click="showMyApplies = true">查看历史记录</el-button>
       <ActionExamine
         :entity-type="entityType"
