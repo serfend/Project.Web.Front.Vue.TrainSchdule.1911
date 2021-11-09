@@ -66,7 +66,6 @@ export default {
   },
   data: () => ({
     loading: false,
-    newFolder: null,
     folderDict: {},
     folders: {
       array: [],
@@ -132,7 +131,6 @@ export default {
     formatTime,
     numberFormatter,
     refresh() {
-      console.log('refresh')
       this.folderDict = {}
       this.folders.array = []
       this.folders.pages.pageIndex = -1
@@ -150,34 +148,39 @@ export default {
       const userid = this.innerQueryForm.anonymous ? null : this.currentUser
       const path = this.nowPath
       pages.pageIndex++
+      console.log('load page of file,', pages.pageIndex)
       return folderFiles({ userid, pages, path }).then(data => {
-        this.folderFiles.array = this.folderFiles.array.concat(data.files)
+        if (!data.list) return
+        this.folderFiles.array = this.folderFiles.array.concat(data.list)
         pages.totalCount = data.totalCount
       })
     },
     loadNextFolderPage() {
       const pages = this.folders.pages
       pages.pageIndex++
+      console.log('load page of folder,', pages.pageIndex)
       const userid = this.innerQueryForm.anonymous ? null : this.currentUser
       const path = this.nowPath
       return requestFolder({ userid, path, pages }).then(data => {
-        const newList = data.folders.filter(i => {
-          const r = !this.folderDict[i.id]
-          if (!r) this.folderDict[i.id] = i
-          return r
+        //  本地去重
+        const newList = data.list.filter(i => {
+          const r = this.folderDict[i]
+          if (!r) this.folderDict[i] = true
+          return !r
         })
+        if (!newList) return
         this.folders.array = this.folders.array.concat(newList)
         pages.totalCount = data.totalCount
       })
     },
     loadNextPage() {
       if (this.loading) return
+      if (!this.filesHasNextPage && !this.foldersHasNextPage) return
       this.loading = true
-      Promise.all([this.loadNextFolderPage(), this.loadNextFilePage()]).finally(
-        () => {
-          this.loading = false
-        }
-      )
+      const actions = [this.loadNextFolderPage(), this.loadNextFilePage()]
+      Promise.all(actions).finally(() => {
+        this.loading = false
+      })
     }
   }
 }

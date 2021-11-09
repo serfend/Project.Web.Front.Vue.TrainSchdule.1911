@@ -30,7 +30,7 @@
         </el-card>
         <el-card :header="nowLoadingFile" style="margin-top:1rem">
           <el-form-item label="id">{{ fileInfo.id }}</el-form-item>
-          <el-form-item label="路径">{{ fileInfo.path }}</el-form-item>
+          <el-form-item label="路径">{{ fileInfo.fullPath }}</el-form-item>
           <el-form-item label="名称">{{ fileInfo.name }}</el-form-item>
           <el-form-item label="大小">{{ fileInfo.length }}</el-form-item>
           <el-form-item label="创建时间">{{ fileInfo.create }}</el-form-item>
@@ -44,7 +44,7 @@
               type="info"
               class="file-handle-btn"
               icon="el-icon-document-copy"
-              @click="clipBoard(fileInfo.id,`${fileInfo.path}_${fileInfo.name}`,$event)"
+              @click="clipBoard(fileInfo.id,`${fileInfo.fullPath}_${fileInfo.name}`,$event)"
             >复制链接</el-button>
           </div>
           <div>
@@ -54,7 +54,7 @@
               type="success"
               class="file-handle-btn"
               icon="el-icon-download"
-              @click="download(fileInfo.id,`${fileInfo.path}_${fileInfo.name}`)"
+              @click="download(fileInfo.id,`${fileInfo.fullPath}_${fileInfo.name}`)"
             >下载文件</el-button>
           </div>
           <div>
@@ -63,7 +63,7 @@
               type="danger"
               class="file-handle-btn"
               icon="el-icon-delete"
-              @click="deleteFile(fileInfo.path,fileInfo.name,fileInfo.clientKey)"
+              @click="deleteFile(fileInfo.fullPath,fileInfo.name,fileInfo.clientKey)"
             >删除文件{{ fileInfo.clientKey||fileInfo.clientKey.length==36?'':'(需要授权码)' }}</el-button>
           </div>
         </el-card>
@@ -147,6 +147,11 @@ export default {
     statusList: []
   }),
   computed: {
+    userid() {
+      const form = this.queryForm || {}
+      const userid = form.anonymous ? null : this.currentUser
+      return userid
+    },
     currentUser() {
       return this.$store.state.user.userid
     },
@@ -189,13 +194,14 @@ export default {
     fileSelect(file) {
       this.file.fileName = file
     },
-    deleteFile(filepath, filename, clientkey) {
-      deleteFile(filepath, filename, clientkey).then(() => {
+    deleteFile(filepath, filename, clientKey) {
+      const { userid } = this
+      deleteFile({ userid, filepath, filename, clientKey }).then(() => {
         this.$message.success('删除成功')
       })
     },
     downloadUrl(fileId) {
-      const api_url = process.env.VUE_APP_BASE_API
+      const api_url = require('@/utils/website').getWebLocation()
       return `${api_url}${api_url ? '/' : ''}file/download?fileid=${fileId}`
     },
     clipBoard(fileid, fileName, event) {
@@ -209,10 +215,9 @@ export default {
       a.click()
     },
     updateFile() {
-      const file = this.file
+      const { file, userid } = this
       if (!file || !file.filePath || !file.fileName) return
-      const form = this.queryForm || {}
-      const userid = form.anonymous ? null : this.currentUser
+
       requestFile(Object.assign(file, { userid })).then(data => {
         const item = data.model || data.file
         const id = item.id
@@ -227,7 +232,7 @@ export default {
             .catch(e => {
               this.fileInfo.clientKey = `无法加载(${e.message})`
             })
-          this.fileInfo = file
+          this.fileInfo = item
         })
       })
     },
