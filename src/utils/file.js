@@ -15,12 +15,11 @@ export function loadDocument(path, fileName) {
   return new Promise((res, rej) => {
     requestFile({ filePath: path, fileName })
       .then(data => {
-        if (data.file.isRemoved) {
-          return rej(`文件:${path}/${fileName} 已于${data.file.removeDate}被移除`)
+        const f = data.file || data.model
+        if (f.isRemoved) {
+          return rej(`文件:${path}/${fileName} 已于${f.removeDate}被移除`)
         }
-        const item = data.model || data.file
-        const id = item.id
-        download(id).then(data => {
+        download(f.id).then(data => {
           var reader = new FileReader()
           reader.onload = function (event) {
             var content = reader.result
