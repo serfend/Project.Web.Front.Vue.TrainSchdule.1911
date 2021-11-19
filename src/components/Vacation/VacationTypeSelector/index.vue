@@ -134,8 +134,8 @@ export default {
     requestFile({ filePath: bgPath, fileName: 'default.jpg' }).then(data => {
       const item = data.model || data.file
       const id = item.id
-      const url = require('@/utils/website').getWebLocation()
-      this.defaultUrl = `${url}/${staticfile}${id}`.replace('//', '/')
+      const url = `${staticfile}${id}`
+      this.defaultUrl = require('@/utils/website').getWebUrlPath(url)
     })
   },
   methods: {
@@ -169,8 +169,9 @@ export default {
       const cb = (data, type) => {
         const item = data.model || data.file
         const id = item.id
-        const url = `${require('@/utils/website').getWebLocation()}/${staticfile}${id}`
-        this.urlDict[type.name] = id ? url : null
+        this.urlDict[type.name] = id
+          ? require('@/utils/website').getWebUrlPath(`${staticfile}${id}`)
+          : null
       }
       const null_data = {
         file: {

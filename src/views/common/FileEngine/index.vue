@@ -201,8 +201,9 @@ export default {
       })
     },
     downloadUrl(fileId) {
-      const api_url = require('@/utils/website').getWebLocation()
-      return `${api_url}${api_url ? '/' : ''}file/download?fileid=${fileId}`
+      return require('@/utils/website').getWebUrlPath(
+        `file/download?fileid=${fileId}`
+      )
     },
     clipBoard(fileid, fileName, event) {
       clipboard(this.downloadUrl(fileid), event).then(() => {

@@ -100,9 +100,6 @@ export default {
     pagesTotalCount: 0
   }),
   computed: {
-    baseUrl() {
-      return require('@/utils/website').getWebLocation()
-    }
   },
   watch: {
     validDateLength: {

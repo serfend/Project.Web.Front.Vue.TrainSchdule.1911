@@ -103,11 +103,9 @@ export default {
       return `${vacType}.${entityType}@${levelType}`
     },
     banner_img() {
-      const url = require('@/utils/website').getWebLocation()
-      const url_file =
+      const url =
         'file/frompath?path=client-sfvue&filename=applies_rank.png'
-      const raw_url = `${url}/${url_file}`
-      return raw_url.replace('//', '/')
+      return require('@/utils/website').getWebUrlPath(url)
     },
     currentUser() {
       return this.$store.state.user.userid

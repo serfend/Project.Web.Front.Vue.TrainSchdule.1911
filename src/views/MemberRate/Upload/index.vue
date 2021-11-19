@@ -180,7 +180,9 @@ export default {
     }
   },
   mounted() {
-    this.uploadurl = `${require('@/utils/website').getWebLocation()}/memberRate/xlsUpload`
+    this.uploadurl = require('@/utils/website').getWebUrlPath(
+      '/memberRate/xlsUpload'
+    )
     this.ratingCycleDate = this.ratingCycleDateValue
     this.loading_company = true
     setTimeout(() => {

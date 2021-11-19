@@ -14,7 +14,7 @@ export default {
   },
   mounted() {
     if (this.$route && this.$route.query.src) {
-      this.src = `${require('@/utils/website').getWebLocation()}/${this.$route.query.src}`
+      this.src = require('@/utils/website').getWebUrlPath(this.$route.query.src)
     } else {
       this.$message.error('未指定src')
       setTimeout(() => {

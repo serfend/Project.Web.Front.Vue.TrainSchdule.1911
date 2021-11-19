@@ -125,9 +125,8 @@ export function exportMultiApplies(templete, applies) {
 }
 
 export function downloadUrl(url) {
-  var requestUrl = `${require('@/utils/website').getWebLocation()}/${url}`.replace('//', '/')
   var a = document.createElement('a')
-  a.href = requestUrl
+  a.href = require('@/utils/website').getWebUrlPath(url)
   a.click()
 }
 /**

@@ -65,7 +65,7 @@ export default {
         : window.location.href
     },
     short_url() {
-      return `${require('@/utils/website').getWebLocation()}/s/${this.urlKey}`
+      return require('@/utils/website').getWebUrlPath(`/s/${this.urlKey}`)
     }
   },
   watch: {
