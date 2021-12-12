@@ -118,7 +118,7 @@ export function dutiesDetail(name) {
  */
 export function dutiesQuery(name, tag, page) {
   page = page || {
-    pageSize: 20,
+    pageSize: 50,
     pageIndex: 0
   }
   const {
