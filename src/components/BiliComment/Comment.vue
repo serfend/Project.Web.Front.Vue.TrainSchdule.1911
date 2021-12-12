@@ -1,5 +1,5 @@
 <template>
-  <div v-if="id" v-loading="loading_whole">
+  <div v-if="id" v-infinite-scroll="load_page" v-loading="loading_whole">
     <slot v-if="$slots.sender" name="sender" />
     <CommentSender v-show="!$slots.sender" :id="id" ref="default_sender" @newContent="newContent" />
     <el-divider />
