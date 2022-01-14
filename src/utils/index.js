@@ -402,9 +402,9 @@ export function uniqueArr(arr) {
  * @returns {string}
  */
 export function createUniqueString() {
-  const timestamp = +new Date() + ''
-  const randomNum = parseInt((1 + Math.random()) * 65536) + ''
-  return (+(randomNum + timestamp)).toString(32)
+  const timestamp = new Date().getTime()
+  const randomNum = parseInt((1 + Math.random()) * 65536)
+  return (+`${randomNum}${timestamp}`).toString(32)
 }
 
 /**
@@ -436,4 +436,75 @@ export function removeClass(ele, cls) {
     const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
     ele.className = ele.className.replace(reg, ' ')
   }
+}
+
+/**
+ * 数组去重，同id将保留最后一个
+ *
+ * @export
+ * @param {*} array 原数组
+ * @param {*} idFunc 如何区分是否重复
+ * @return {*}
+ */
+export function distinct(array, idFunc) {
+  if (!idFunc) idFunc = v => v
+  const dict = {}
+  if (!Array.isArray(array)) return array
+  array.forEach(v => { dict[idFunc(v)] = v })
+  return Object.values(dict)
+}
+
+/**
+ * 将数值数组转换为位运算值
+ *
+ * @export
+ * @param {*} array
+ * @return {*}
+ */
+export function arrayToBinaryFlag(array) {
+  array = distinct(array || [])
+  const v = array.reduce((prev, cur) => prev | cur, 0)
+  return v
+}
+
+/**
+ * 将位运算值解构为数值数组
+ *
+ * @export
+ * @param {*} v
+ */
+export function binaryFlagToArray(v) {
+  let current = 1
+  const result = []
+  v = Number(v)
+  while (current <= v) {
+    if (v & current) result.push(current)
+    current <<= 1
+  }
+  return result
+}
+
+/**
+ *构建树
+ *
+ * @export
+ * @param {*} array
+ * @param {*} idFunc
+ * @param {*} parentIdFunc
+ */
+export function arrayToTree(array, idFunc, parentIdFunc) {
+  idFunc = idFunc || ((a) => a.id)
+  parentIdFunc = parentIdFunc || ((a) => a.parentId)
+  const root = []
+  const dict = {} // 构建字典
+  array.map(i => {
+    dict[idFunc(i)] = i
+    i.children = []
+  })
+  array.map(i => {
+    const item = dict[parentIdFunc(i)]
+    const list = item ? item.children : root
+    list.push(i)
+  })
+  return root
 }

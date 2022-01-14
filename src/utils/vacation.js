@@ -44,36 +44,3 @@ export function get_item_type(i) {
   }
   return result
 }
-
-export function get_item_stamp(i) {
-  let result = i.tag && i.tag.stamp
-  if (!result) {
-    if (!i.tag) i.tag = {}
-    i.tag.stamp = new Date((i.request && i.request.stampLeave) || i.create)
-    result = i.tag.stamp
-  }
-  i.tag.year = i.tag.stamp.getFullYear()
-  return result
-}
-export function check_label(i, prei) {
-  const iStamp = get_item_stamp(i)
-  const pStamp = get_item_stamp(prei)
-  const from_last = datedifference(iStamp, pStamp)
-  if (from_last === 0) return
-  put_label(i)
-}
-export function put_label(item, from_now) {
-  // item.tag.title = from_now < 0 ? '未来' : from_now === 0 ? '今天' : from_now === 1 ? '昨天' : null
-  // if (item.tag.title) return
-  const m = item.tag.stamp.getMonth() + 1
-  item.tag.title = `${m}月`
-  item.tag.desc = item.tag.stamp.getDate()
-}
-export function tag_single_item(list, index) {
-  const item = list[index]
-  if (item.tag && item.tag.labeled) return
-  get_item_stamp(item)
-  if (index === 0) put_label(item)
-  else check_label(item, list[index - 1])
-  return
-}

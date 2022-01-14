@@ -3,16 +3,18 @@ import i18n from '@/lang'
 import {
   Message
 } from 'element-ui'
-export default function handleClipboard(text, event) {
+export default function handleClipboard(text, event, showMessage) {
   return new Promise((res, rej) => {
     const clipboard = new Clipboard(event.target, {
       text: () => text
     })
     clipboard.on('success', (e) => {
-      Message({
-        type: 'success',
-        message: i18n.t('default.system.clipboard.success')
-      })
+      if (showMessage) {
+        Message({
+          type: 'success',
+          message: i18n.t('default.system.clipboard.success')
+        })
+      }
       res(e)
       clipboard.off('error')
       clipboard.off('success')

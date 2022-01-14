@@ -33,8 +33,8 @@ export function toQueryStartEndByArray(datetime) {
   }
 }
 
-export function toQueryValue(value) {
-  if (value !== null && value !== undefined && value !== '') {
+export function toQueryValue(value, build_object_event_is_null) {
+  if (build_object_event_is_null || value !== null && value !== undefined && value !== '') {
     return {
       value
     }
@@ -47,12 +47,10 @@ export function toQueryStartEnd(start, end) {
 }
 
 export function toQueryArrays(arr) {
-  if (arr && arr.length > 0) {
-    return {
-      arrays: arr
-    }
+  if (!arr) return null
+  return {
+    arrays: Array.isArray(arr) ? arr : [arr]
   }
-  return null
 }
 const today = (startTime) => {
   const nowday = getTimeInDay(new Date())

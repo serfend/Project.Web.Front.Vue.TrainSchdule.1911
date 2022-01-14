@@ -142,8 +142,9 @@ export function handle_exception({ res, ignoreError, response, resolve, reject }
       const list = res.data.list
       for (var i = 0; i < list.length; i++) {
         setTimeout((errItem) => {
+          const isGuidEmpty = errItem.message.indexOf('System.Guid') > -1
           Message({
-            message: `${errItem.key}:${errItem.message}`,
+            message: `${errItem.key}:${isGuidEmpty ? '未填写' : errItem.message}`,
             type: 'error',
             duration: 5e3
           })

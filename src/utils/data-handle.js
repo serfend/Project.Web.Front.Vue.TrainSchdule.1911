@@ -129,27 +129,29 @@ export function pairSetting(i1, i2) {
  * @param {Array} targetArr 目标数组 不能 为空
  * @param {Function} cb 完成变换后的回调
  * @param {Number} interval 变换间隔
- * @param {String} id_field 如何识别唯一性,默认为id
+ * @param {String} idFunc 如何识别唯一性,默认为id
  */
-export function transition_Array(rawArr, targetArr, cb, interval, id_field = 'id', rawRemoveIndex = -1, targetAddIndex = -1) {
+export function transition_Array(rawArr, targetArr, cb, interval, idFunc, rawRemoveIndex = -1, targetAddIndex = -1) {
+  if (!idFunc) idFunc = i => i.id
   interval = interval || 1e2
   targetArr = targetArr || []
   if (rawRemoveIndex === -1) rawRemoveIndex = rawArr.length
   if (targetAddIndex === -1) targetAddIndex = targetArr.length
   const dict_target = {}
   const dict_raw = {}
-  targetArr.map(i => { dict_target[i.id] = i })
-  rawArr.map(i => { dict_raw[i.id] = i })
+  targetArr.map(i => { dict_target[idFunc(i)] = i })
+  rawArr.map(i => { dict_raw[idFunc(i)] = i })
+  // console.log('transiaction dict', dict_raw, dict_target)
   let nowOffset = 0
   const should_remove_index = rawArr.map((i, index) => {
-    if (!dict_target[i.id]) return index
+    if (!dict_target[idFunc(i)]) return index
     return -1
   }).filter(i => i >= 0).map(i => {
     const result = i - nowOffset
     nowOffset++
     return result
   }).map(i => ({ a: true, v: i }))
-  const should_add = targetArr.filter(i => !dict_raw[i.id]).map(i => ({ a: false, v: i }))
+  const should_add = targetArr.filter(i => !dict_raw[idFunc(i)]).map(i => ({ a: false, v: i }))
   let nowTask = 0
   const callback = () => {
     nowTask--
@@ -176,6 +178,7 @@ export function transition_Array(rawArr, targetArr, cb, interval, id_field = 'id
  * @return {*}
  */
 function direct_transition_Array(rawArray, interval, actionQueue, cb) {
+  // console.log('start transition', actionQueue)
   if (!actionQueue.length) {
     return cb && cb()
   }
