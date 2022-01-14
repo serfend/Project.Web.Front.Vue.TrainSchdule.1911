@@ -4,6 +4,7 @@
     :options="Object.assign(defaultOptions,options)"
     :initial-value="value"
     :initial-edit-type="'wysiwyg'"
+    :height="height"
     @load="init"
   />
 </template>
@@ -21,6 +22,10 @@ export default {
   },
   props: {
     value: {
+      type: String,
+      default: ''
+    },
+    height: {
       type: String,
       default: ''
     },

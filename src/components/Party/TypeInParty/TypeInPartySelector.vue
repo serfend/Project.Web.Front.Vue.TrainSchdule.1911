@@ -1,12 +1,11 @@
 <template>
-  <el-select v-model="inner_value" :multiple="multi" clearable collapse-tags>
+  <el-select v-if="types" v-model="innerValue" :multiple="multi" clearable>
     <el-option
       v-for="(item) in types.filter(i=>i.value>=valueRange[0] && i.value<=valueRange[1])"
       :key="item.id"
       :value="item.value"
       :label="item.alias"
       :disabled="isDisabled(item)"
-      style="width:auto;"
     >
       <Index :type="item.value" />
     </el-option>
@@ -15,7 +14,7 @@
 
 <script>
 export default {
-  name: 'ConferTypeSelector',
+  name: 'TypeInPartySelector',
   components: {
     Index: () => import('./index')
   },
@@ -24,28 +23,28 @@ export default {
     prop: 'value'
   },
   props: {
-    value: { type: [Number, Array], default: null },
+    value: { type: [Number, Array], default: 0 },
     valueRange: { type: Array, default: () => [1, 999] },
     except: { type: Array, default: null },
     multi: { type: Boolean, default: false }
   },
   data: () => ({
-    inner_value_value: null
+    inner_value: null
   }),
   computed: {
-    inner_value: {
+    innerValue: {
       set(val) {
-        val = val || (this.multi ? [] : 0)
-        this.inner_value_value = val
+        val = val === undefined ? (this.multi ? [] : 0) : val
+        this.inner_value = val
         this.$emit('update:value', val)
         this.$emit('change', val)
       },
       get() {
-        return this.inner_value_value
+        return this.inner_value
       }
     },
     types() {
-      return this.$store.state.party.conferTypes || []
+      return this.$store.state.party.typeInParty || []
     },
     exceptDict() {
       const dict = {}
@@ -59,7 +58,9 @@ export default {
   watch: {
     value: {
       handler(val) {
-        this.inner_value_value = val
+        if (Array.isArray(val)) return
+        if (Number.isInteger(val)) return
+        this.innerValue = null
       },
       immediate: true
     }

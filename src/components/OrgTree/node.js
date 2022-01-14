@@ -54,6 +54,7 @@ export const renderLabel = (h, data, context) => {
   // console.log('render label', data)
   const { props, listeners } = context
   const label = data[props.props.label]
+  const click = data.click || false
   const renderContent = props.renderContent
 
   // event handlers
@@ -76,6 +77,7 @@ export const renderLabel = (h, data, context) => {
 
   const cls = ['org-tree-node-label-inner']
   let { labelWidth, labelClassName, selectedClassName } = props
+  const frontColor = click ? '#409EFF' : 'black'
   const { selectedKey } = props
   if (typeof labelWidth === 'number') {
     labelWidth += 'px'
@@ -104,7 +106,7 @@ export const renderLabel = (h, data, context) => {
     domProps: {
       className: (data && data.switch) + ' org-tree-node-label-inner ' + cls.join(' ')
     },
-    style: { width: labelWidth },
+    style: { width: labelWidth, color: frontColor, cursor: click ? 'pointer' : 'no-drop' },
     on: {
       'click': e => clickHandler && clickHandler(e, data),
       'mouseover': e => mouseOverHandler && mouseOverHandler(e, data),

@@ -1,7 +1,15 @@
 <template>
-  <el-image v-bind="$attrs" :src="data.src" class="img">
-    <slot slot="placeholder" name="placeholder" />
-  </el-image>
+  <div class="user-avatar-container">
+    <el-image
+      v-loading="loading"
+      v-bind="$attrs"
+      :src="data.src"
+      class="user-avatar"
+      :style="Object.assign(styleNormal||{},{width:size,height:size})"
+    >
+      <slot slot="placeholder" name="placeholder" />
+    </el-image>
+  </div>
 </template>
 
 <script>
@@ -10,7 +18,10 @@ import defaultAvatar from '@/assets/plain/defaultAvatar.js'
 export default {
   name: 'UserAvatar',
   props: {
-    user: { type: String, default: null }
+    user: { type: String, default: null },
+    avatar: { type: String, default: null },
+    styleNormal: { type: Object, default: null },
+    size: { type: String, default: '40px' }
   },
   data: () => ({
     loading: false,
@@ -21,10 +32,12 @@ export default {
   watch: {
     user: {
       handler(val) {
-        if (!val) {
-          this.data.src = defaultAvatar
-          return
-        }
+        this.refresh()
+      },
+      immediate: true
+    },
+    avatar: {
+      handler(val) {
         this.refresh()
       },
       immediate: true
@@ -33,7 +46,7 @@ export default {
   methods: {
     refresh() {
       this.loading = true
-      getUserAvatar(this.user, null, true)
+      getUserAvatar(this.user, this.avatar, true)
         .then(d => {
           this.data.src = d.url
         })
@@ -44,3 +57,13 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.user-avatar-container {
+  margin: 0 1rem 0 0;
+  display: flex;
+  align-items: center;
+  .user-avatar {
+    border-radius: 50%;
+  }
+}
+</style>

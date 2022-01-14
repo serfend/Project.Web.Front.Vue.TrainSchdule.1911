@@ -1,5 +1,6 @@
 <template>
   <span
+    v-waves
     :class="['single-item',isSelector?'selector':null,inner_selected?'selected':null]"
     @click="handleClick"
   >
@@ -9,14 +10,20 @@
       effect="dark"
     >{{ type.alias }}</el-tag>
     <el-tag v-else type="info">未知类型</el-tag>
-    <span>{{ item.alias }}</span>
+    <el-tooltip class="item" effect="dark" :content="item.alias" placement="top">
+      <span class="item-alias">{{ item.alias }}</span>
+    </el-tooltip>
   </span>
 </template>
 
 <script>
+import waves from '@/directive/waves'
 import { groupDetail } from '@/api/zzxt/party-group'
 export default {
   name: 'PartyGroup',
+  directives: {
+    waves
+  },
   model: {
     prop: 'id',
     event: 'change'
@@ -47,14 +54,14 @@ export default {
     },
     type() {
       const type = this.partyGroupTypeDict
-      if (!type || !type[this.item.groupType]) return null
-      return type[this.item.groupType]
+      if (!type || !type[this.item.level]) return null
+      return type[this.item.level]
     },
     item() {
       return (
         this.data ||
         this.inner_data || {
-          alias: '未知'
+          alias: '未选择'
         }
       )
     }
@@ -70,7 +77,8 @@ export default {
       handler(val) {
         if (!val) return
         this.refresh()
-      }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -101,13 +109,10 @@ export default {
   border-radius: 5px;
   box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.5);
   padding: 0.5rem;
-  width: 15rem;
+  width: 12rem;
   display: flex;
   align-items: center;
   color: $--color-text-regular;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .selector {
   cursor: pointer;
@@ -117,5 +122,13 @@ export default {
   box-shadow: 0 2px 12px 0 rgba(24, 118, 224, 0.5);
   background-color: $--color-primary;
   color: $--border-color-light;
+}
+.item-alias {
+  color: #555;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

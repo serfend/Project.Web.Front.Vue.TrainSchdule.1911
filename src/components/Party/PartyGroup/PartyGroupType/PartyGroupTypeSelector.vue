@@ -1,21 +1,20 @@
 <template>
-  <el-select v-model="inner_value" :multiple="multi" clearable collapse-tags>
+  <el-select v-model="inner_value" clearable>
     <el-option
       v-for="(item) in types.filter(i=>i.value>=valueRange[0] && i.value<=valueRange[1])"
       :key="item.id"
       :value="item.value"
       :label="item.alias"
       :disabled="isDisabled(item)"
-      style="width:auto;"
     >
-      <Index :type="item.value" />
+      <Index :type="item.value" :alias-map-func="aliasMapFunc" />
     </el-option>
   </el-select>
 </template>
 
 <script>
 export default {
-  name: 'ConferTypeSelector',
+  name: 'PartyGroupTypeSelector',
   components: {
     Index: () => import('./index')
   },
@@ -24,10 +23,10 @@ export default {
     prop: 'value'
   },
   props: {
-    value: { type: [Number, Array], default: null },
+    value: { type: Number, default: 1 },
     valueRange: { type: Array, default: () => [1, 999] },
     except: { type: Array, default: null },
-    multi: { type: Boolean, default: false }
+    aliasMapFunc: { type: Function, default: name => name }
   },
   data: () => ({
     inner_value_value: null
@@ -35,7 +34,7 @@ export default {
   computed: {
     inner_value: {
       set(val) {
-        val = val || (this.multi ? [] : 0)
+        val = val || 0
         this.inner_value_value = val
         this.$emit('update:value', val)
         this.$emit('change', val)
@@ -45,7 +44,7 @@ export default {
       }
     },
     types() {
-      return this.$store.state.party.conferTypes || []
+      return this.$store.state.party.partyGroupType || []
     },
     exceptDict() {
       const dict = {}

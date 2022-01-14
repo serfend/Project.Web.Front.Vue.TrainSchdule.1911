@@ -1,10 +1,10 @@
 <template>
-  <BaseDictionaryType :type="type" :dictionary="dict" />
+  <BaseDictionaryType :type="type" :dictionary="dict" :config="{props:{alias:'name'}}" />
 </template>
 
 <script>
 export default {
-  name: 'ConferRecordType',
+  name: 'PartyDuty',
   components: {
     BaseDictionaryType: () => import('../BaseDictionaryType')
   },
@@ -13,11 +13,11 @@ export default {
     event: 'change'
   },
   props: {
-    type: { type: Number, default: -1 }
+    type: { type: [Number, Array], default: -1 }
   },
   computed: {
     dict() {
-      return this.$store.state.party.conferRecordTypesDict
+      return this.$store.state.party.partyDutiesDict
     }
   }
 }

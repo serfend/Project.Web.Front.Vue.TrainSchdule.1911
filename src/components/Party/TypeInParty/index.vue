@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'ConferRecordType',
+  name: 'TypeInParty',
   components: {
     BaseDictionaryType: () => import('../BaseDictionaryType')
   },
@@ -17,7 +17,7 @@ export default {
   },
   computed: {
     dict() {
-      return this.$store.state.party.conferRecordTypesDict
+      return this.$store.state.party.typeInPartyDict
     }
   }
 }
