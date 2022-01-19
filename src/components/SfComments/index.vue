@@ -33,12 +33,7 @@ export default {
   name: 'SfComments',
   components: { ReplyItem, CommentItem },
   props: {
-    comments: {
-      type: Array,
-      default() {
-        return this.innerComments
-      }
-    }
+    comments: { type: Array, default() { return this.innerComments } }
   },
   data() {
     return {

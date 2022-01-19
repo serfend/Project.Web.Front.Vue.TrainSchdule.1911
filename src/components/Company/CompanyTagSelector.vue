@@ -7,6 +7,7 @@
     clearable
     default-first-option
     remote
+    :multiple="multiple"
     placeholder="选择类别"
     @change="tagChange"
   >
@@ -24,7 +25,8 @@ export default {
     event: 'change'
   },
   props: {
-    tag: { type: String, default: null }
+    tag: { type: [String, Array], default: null },
+    multiple: { type: Boolean, default: true }
   },
   data: () => ({
     iTag: null,

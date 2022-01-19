@@ -59,12 +59,7 @@ export default {
     content: { type: String, default: '' },
     liked: { type: Boolean, default: false },
     likes: { type: Number, default: 0 },
-    tools: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
+    tools: { type: Array, default: () => [] },
     time: { type: String, default: '' },
     hasReply: { type: Boolean, default: false }
   },

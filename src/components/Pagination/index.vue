@@ -21,18 +21,8 @@ import { scrollTo } from '@/utils/scroll-to'
 export default {
   name: 'Pagination',
   props: {
-    pagesetting: {
-      required: true,
-      type: Object,
-      default() {
-        return this.innerPages
-      }
-    },
-    pageSizes: {
-      type: Array,
-      default() {
-        return [5, 10, 20, 30, 50, 100]
-      }
+    pagesetting: { required: true, type: Object, default: () => this.innerPages },
+    pageSizes: { type: Array, default() { return [5, 10, 20, 30, 50, 100] }
     },
     totalCount: { type: Number, default: 0 },
     layout: {

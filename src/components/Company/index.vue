@@ -39,24 +39,10 @@ export default {
     event: 'change'
   },
   props: {
-    data: {
-      type: Object,
-      default() {
-        return this.defaultData()
-      }
-    },
-    id: {
-      type: String,
-      default: null
-    },
-    width: {
-      type: String,
-      default: '200px'
-    },
-    canLoad: {
-      type: Boolean,
-      default: false
-    }
+    data: { type: Object, default() { return this.defaultData() } },
+    id: { type: String, default: null },
+    width: { type: String, default: '200px' },
+    canLoad: { type: Boolean, default: false }
   },
   data() {
     return {

@@ -45,16 +45,8 @@ export default {
     GiftCode
   },
   props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    codeApi: {
-      type: Function,
-      default() {
-        return () => {}
-      }
-    },
+    title: { type: String, default: '' },
+    codeApi: { type: Function, default: () => () => {} },
     codelist: {
       type: Array,
       default() {

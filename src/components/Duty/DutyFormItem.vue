@@ -12,16 +12,7 @@ import Duty from './index'
 export default {
   name: 'DutyFormItem',
   components: { Duty },
-  props: {
-    data: {
-      type: Object,
-      default() {
-        return {
-          realName: 'null'
-        }
-      }
-    }
-  },
+  props: { data: { type: Object, default: () => ({ realName: 'null' }) }},
   mounted() {}
 }
 </script>

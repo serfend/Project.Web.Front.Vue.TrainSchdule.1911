@@ -25,22 +25,9 @@ export default {
     draggable
   },
   props: {
-    headerText: {
-      type: String,
-      default: 'Header'
-    },
-    options: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
-    list: {
-      type: Array,
-      default() {
-        return []
-      }
-    }
+    headerText: { type: String, default: 'Header' },
+    options: { type: Object, default: () => ({}) },
+    list: { type: Array, default: () => [] }
   },
   methods: {
     setData(dataTransfer) {

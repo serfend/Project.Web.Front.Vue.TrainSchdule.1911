@@ -20,18 +20,9 @@ export default {
     event: 'change',
   },
   props: {
-    gender: {
-      type: Number,
-      default: 1,
-    },
-    disabled: {
-      type: Boolean,
-      default: true,
-    },
-    data: {
-      type: Object,
-      default: () => {},
-    },
+    gender: { type: Number, default: 1, },
+    disabled: { type: Boolean, default: true, },
+    data: { type: Object, default: () => ({}), },
   },
   data: () => ({
     innerGender: 0,

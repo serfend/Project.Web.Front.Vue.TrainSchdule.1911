@@ -17,11 +17,12 @@ export function postRecallOrder({ entityType, data, auth }) {
  * @param {*} id
  * @returns
  */
-export function getRecallOrder({ id, entityType }) {
+export function getRecallOrder({ id, entityType, ignoreError }) {
   return request.get('/apply/recallorder', {
     params: {
       id
-    }
+    },
+    ignoreError
   })
 }
 

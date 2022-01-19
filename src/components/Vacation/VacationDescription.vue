@@ -29,12 +29,7 @@ export default {
     VacationDescriptionContent: () => import('./VacationDescriptionContent')
   },
   props: {
-    usersVacation: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
+    usersVacation: { type: Object, default: () => ({}) },
     thisTimeVacationLength: { type: Number, default: 0 },
     directShow: { type: Boolean, default: true },
     loadingResult: { type: String, default: null },

@@ -23,14 +23,7 @@
 export default {
   name: 'Duty',
   props: {
-    data: {
-      type: Object,
-      default() {
-        return {
-          name: 'null'
-        }
-      }
-    }
+    data: { type: Object, default: () => ({ name: 'null' }) }
   }
 }
 </script>

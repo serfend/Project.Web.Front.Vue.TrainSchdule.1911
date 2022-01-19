@@ -63,7 +63,7 @@ export default {
       import('@/components/Vacation/VacationDescriptionContent')
   },
   props: {
-    data: { type: Object, default: () => {} },
+    data: { type: Object, default: () => ({}) },
     canLoadAvatar: { type: Boolean, default: false },
     direction: { type: String, default: 'top' },
     width: { type: String, default: '350px' }

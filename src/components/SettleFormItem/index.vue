@@ -56,24 +56,10 @@ export default {
   name: 'SettleFormItem',
   components: { CascaderSelector },
   props: {
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    form: {
-      type: Object,
-      default() {
-        return this.createInnerForm()
-      },
-    },
-    showLabel: {
-      type: Boolean,
-      default: true,
-    },
+    disabled: { type: Boolean, default: false, },
+    label: { type: String, default: '', },
+    form: { type: Object, default() { return this.createInnerForm() }, },
+    showLabel: { type: Boolean, default: true, },
   },
   data() {
     return {
