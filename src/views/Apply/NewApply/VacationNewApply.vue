@@ -22,8 +22,6 @@
           @submited="requestInfoSubmit"
           @vacationTypeUpdate="vacationTypeUpdate"
         />
-      </el-col>
-      <el-col v-show="nowStep>=1" :xl="singleColumn?24:12" :lg="24">
         <VacationPreview
           ref="VacationPreview"
           :entity-type="entityType"
@@ -31,7 +29,8 @@
           :userid="userid"
           class="card-column"
         />
-
+      </el-col>
+      <el-col v-show="nowStep>=1" :xl="singleColumn?24:12" :lg="24">
         <div class="card-column">
           <h2>历史记录</h2>
           <MyApply

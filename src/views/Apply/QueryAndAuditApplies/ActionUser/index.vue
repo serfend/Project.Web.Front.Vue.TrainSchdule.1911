@@ -20,10 +20,10 @@
       v-loading="loading"
       trigger="click"
       size="mini"
-      @click="exportApply(row)"
+      :style="{width:btnType?'100%':null}"
       @command="c=>handle_action(c,row)"
     >
-      <el-button type="text">操作</el-button>
+      <el-button :type="btnType||'text'" :plain="!!btnType" :style="{width:btnType?'100%':null}">操作</el-button>
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item
@@ -58,13 +58,9 @@ export default {
     AuthCode: () => import('@/components/AuthCode')
   },
   props: {
-    row: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
-    entityType: { type: String, default: 'vacation' }
+    row: { type: Object, default: () => ({}) },
+    entityType: { type: String, default: 'vacation' },
+    btnType: { type: String, default: null }
   },
   data() {
     return {

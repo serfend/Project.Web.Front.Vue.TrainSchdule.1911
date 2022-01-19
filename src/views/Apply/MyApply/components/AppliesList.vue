@@ -29,11 +29,17 @@
               transition="el-zoom-in-center"
             >
               <div class="single-item">
-                <div class="header" style="cursor:pointer" @click="i.show = !i.show">
+                <div class="header" @click="i.show = !i.show">
                   <div class="card-title">
                     <div style="color:#333;font-size:1rem">{{ i.tag.title }}</div>
                     <div style="color:#333;font-size:2.2rem">{{ i.tag.desc }}</div>
                   </div>
+                  <ActionExamine
+                    :row="i"
+                    :entity-type="entityType"
+                    class="card-status"
+                    @updated="applyUpdate(index,i.id)"
+                  />
                   <div class="card-description">
                     <span>{{ format(i.create) }}</span>
                     <el-tag
@@ -86,7 +92,8 @@
 <script>
 import { formatTime } from '@/utils'
 import { querySelf, detail } from '@/api/apply/query'
-import { get_item_summary, tag_single_item } from '@/utils/vacation'
+import { get_item_summary } from '@/utils/vacation'
+import { tag_single_item } from '@/utils/timeline-handler'
 import { exportUserApplies } from '@/api/common/static'
 
 export default {
@@ -96,7 +103,8 @@ export default {
     Sticky: () => import('@/components/Sticky'),
     SvgIcon: () => import('@/components/SvgIcon'),
     indayApplyCard: () => import('./ApplyCard/IndayApplyCard'),
-    vacationApplyCard: () => import('./ApplyCard/VacationApplyCard')
+    vacationApplyCard: () => import('./ApplyCard/VacationApplyCard'),
+    ActionExamine: () => import('@/views/Apply/QueryAndAuditApplies/ActionExamine')
   },
   props: {
     id: { type: String, default: null },
@@ -290,16 +298,22 @@ export default {
   display: inline-block;
   font-weight: 600;
 }
+.card-status{
+	padding:0 1rem;
+	width:6rem;
+}
 .card-description {
   display: inline-block;
   .card-summary-description {
     margin-bottom: 0.3rem;
-    color: #aaa;
+    color: #333;
   }
 }
 .single-item {
-  max-width: 45rem;
+  max-width: 100%;
   .header {
+		cursor:pointer;
+		display: flex;
     padding-top: 0.5rem;
     transition: all 0.3s ease;
     border-left: 0rem solid rgb(15, 167, 255);

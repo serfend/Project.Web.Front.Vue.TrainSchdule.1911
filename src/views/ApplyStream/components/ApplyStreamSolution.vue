@@ -46,8 +46,8 @@
         </el-table-column>
         <el-table-column label="单位">
           <template slot-scope="scope">
-            <div v-if="!scope.row.companies||scope.row.companies.length==0">
-              <div v-if="scope.row.companyCodeLength.length>0 || scope.row.companyTags.length>0">
+            <div v-if="!scope.row.companies||!scope.row.companies.length">
+              <div v-if="scope.row.companyCodeLength.length || scope.row.companyTags.length">
                 <el-tooltip effect="light">
                   <div slot="content">
                     <el-form>
