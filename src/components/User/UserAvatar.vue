@@ -62,6 +62,7 @@ export default {
   margin: 0 1rem 0 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   .user-avatar {
     border-radius: 50%;
   }

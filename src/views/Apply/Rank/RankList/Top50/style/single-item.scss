@@ -76,7 +76,12 @@ li dd em {
   top: 0;
   right: 0;
 }
-
+li dd .name-info {
+  display: flex;
+}
+li dd .name-info .name-info-avatar {
+  width: 40px;
+}
 li dd .name-info .href-enable {
   cursor: pointer;
 }

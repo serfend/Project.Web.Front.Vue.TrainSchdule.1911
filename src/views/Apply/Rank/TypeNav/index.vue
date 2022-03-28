@@ -1,26 +1,8 @@
 <template>
   <el-card class="child-nav">
-    <transition-group
-      name="slide-fade"
-      tag="ul"
-      class="slide-container"
-      @enter="enter"
-      @before-enter="beforeEnter"
-    >
-      <li
-        v-for="(i,index) in types"
-        :key="i.name"
-        :index="index"
-        :class="i.class"
-        @click="setActive(i)"
-      >
-        <VacationType
-          v-model="i.name"
-          :entity-type="vacType"
-          plain
-          :show-tag="false"
-          placement="left"
-        />
+    <transition-group name="slide-fade" tag="ul" class="slide-container" @enter="enter" @before-enter="beforeEnter">
+      <li v-for="(i,index) in types" :key="i.name" :index="index" :class="i.class" @click="setActive(i)">
+        <VacationType v-model="i.name" :entity-type="vacType" plain :show-tag="false" placement="left" />
       </li>
     </transition-group>
     <div class="nav-remind" style>可按单位/周期/申请类型/排序类型等方式排名</div>
@@ -44,31 +26,32 @@ export default {
     types: []
   }),
   computed: {
-    v() {
+    v () {
       return this.$store.state.vacation
     }
   },
   watch: {
     vacType: {
-      handler(val) {
+      handler (val) {
+        if (!val) return
         this.refresh()
       },
       immediate: true
     }
   },
   methods: {
-    beforeEnter(el) {
+    beforeEnter (el) {
       el.style.opacity = 0
       el.style['right'] = '-20px'
     },
-    enter(el, done) {
+    enter (el, done) {
       const delay = Number(el.getAttribute('index')) * 150
       setTimeout(() => {
         Velocity(el, { right: '0px', opacity: 1 }, { complete: done })
       }, delay)
     },
-    focus(v) {},
-    setActive(item) {
+    focus (v) { },
+    setActive (item) {
       this.$emit('update:entityType', item.name)
       this.types.map(i => {
         i.class = ''
@@ -76,7 +59,7 @@ export default {
       item.class = 'active'
       this.$forceUpdate()
     },
-    refresh() {
+    refresh () {
       const v = this.v
       const items = this.vacType === 'vac' ? v.vacationTypes : v.requestTypes
       const types = Object.values(items)

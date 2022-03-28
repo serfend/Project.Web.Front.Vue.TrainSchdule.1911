@@ -10,7 +10,7 @@
         </dt>
         <dd>
           <div class="name-info">
-            <UserAvatar :user="data.user">
+            <UserAvatar :user="data.user" class="name-info-avatar">
               <div slot="placeholder" class="image-slot">
                 加载中
                 <span class="dot">...</span>

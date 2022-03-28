@@ -4,39 +4,22 @@
       <el-image :src="banner_img" />
     </div>
     <div class="container">
-      <EntityTypeNav
-        :vac-type.sync="form.vacType"
-        :level-type.sync="form.levelType"
-        style="margin-top:1rem"
-      />
+      <EntityTypeNav :vac-type.sync="form.vacType" :level-type.sync="form.levelType" style="margin-top:1rem" />
       <div class="rank-main">
         <div class="rank-content">
           <TypeNav :vac-type="form.vacType" :entity-type.sync="form.entityType" />
           <div v-loading="loading" class="rank-content-detail">
             <div class="selector-container">
-              <RatingCycleSelector
-                :raw-date.sync="form.date"
-                :rating-type="form.type"
-                :rating-types="types"
-              />
+              <RatingCycleSelector :raw-date.sync="form.date" :rating-type="form.type" :rating-types="types" />
               <el-select v-model="form.type" style="width:7rem;">
-                <el-option
-                  v-for="item in types"
-                  :key="item.code"
-                  :label="item.desc"
-                  :value="item.code"
-                >
+                <el-option v-for="item in types" :key="item.code" :label="item.desc" :value="item.code">
                   <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
                   <span style="float: right; color: #f0f0f0; font-size: 10px">{{ item.code }}</span>
                 </el-option>
               </el-select>
               <CompanySelector v-model="form.company" style="width:10rem" />
             </div>
-            <RankList
-              :loading.sync="loading"
-              :query-form="queryForm"
-              :level-desc-func="levelDescFunc"
-            />
+            <RankList :loading.sync="loading" :query-form="queryForm" :level-desc-func="levelDescFunc" />
           </div>
         </div>
       </div>
@@ -72,7 +55,7 @@ export default {
     }
   }),
   computed: {
-    levelDescFunc() {
+    levelDescFunc () {
       const lev = this.form.levelType
       const vac = this.form.vacType
       if (!lev || !vac) return s => s
@@ -83,7 +66,7 @@ export default {
         },
         inday: {
           c: s => `${s}次请假`,
-          l: s => `${Math.ceil(s / 3600)}小时请假`
+          l: s => `${Math.ceil(s / 3600)} 小时请假`
         }
       }
       return dict[vac][lev]

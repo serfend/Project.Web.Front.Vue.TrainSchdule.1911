@@ -3,7 +3,7 @@
     <a :href="data.href" target="_blank">
       <div class="content-detail">
         <div :class="`img-contain rank-${index}`">
-          <UserAvatar :user="data.user">
+          <UserAvatar :user="data.user" size="80px">
             <div slot="placeholder" class="image-slot">
               加载中
               <span class="dot">...</span>
