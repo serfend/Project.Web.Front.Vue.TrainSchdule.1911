@@ -40,7 +40,9 @@
         </template>
       </el-table-column>
       <el-table-column header-align="center" label="部职别">
-        <template slot-scope="{ row }">{{ row.base.companyName }} {{ row.base.dutiesName }}</template>
+        <template slot-scope="{ row }">
+          <ApplyCompany :data="row.base" />
+        </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="创建时间" width="150rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
@@ -209,7 +211,8 @@ export default {
       import('@/views/Apply/ApplyDetail/VacationApplyDetail'),
     indayApplyDetail: () =>
       import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
-    TransportationType: () => import('@/components/Vacation/TransportationType')
+    TransportationType: () => import('@/components/Vacation/TransportationType'),
+    ApplyCompany: () => import('../../CommonComponents/ApplyCompany')
   },
   props: {
     list: {

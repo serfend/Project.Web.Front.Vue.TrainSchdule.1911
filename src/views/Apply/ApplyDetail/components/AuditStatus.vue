@@ -1,14 +1,11 @@
 <template>
   <el-card v-if="detail" v-loading="loading" shadow="hover">
-    <h3
-      slot="header"
-    >{{ `审批进度(${detail.auditSolution||'审批流程'})` }} {{ detail.status == 20?'(已撤回)':null }}</h3>
-    <el-steps
-      v-if="detail.steps&&detail.steps.length>0"
-      :space="200"
-      :active="nowActiveAudit"
-      finish-status="success"
-    >
+    <h3 slot="header">
+      <span>{{ `审批进度(${detail.auditSolution||'审批流程'})` }}</span>
+      <span>{{ detail.status == 20?'(已撤回)':null }}</span>
+      <ApplyCompany :data="detail.baseInfo" />
+    </h3>
+    <el-steps v-if="detail.steps&&detail.steps.length>0" :space="200" :active="nowActiveAudit" finish-status="success">
       <el-step v-for="step in detail.steps" :key="step.id">
         <el-popover slot="description" trigger="click">
           <el-table :data="get_audit_list(step)" stripe style="width:32rem">
@@ -44,11 +41,7 @@
             <el-table-column header-align="center" align="center" label="操作" width="60rem">
               <template slot-scope="{row}">
                 <el-tooltip content="通过站内信和豆豆通知其尽快审批此申请">
-                  <el-button
-                    :disabled="row.status_urged"
-                    type="text"
-                    @click="send_notice_urged(row)"
-                  >催促</el-button>
+                  <el-button :disabled="row.status_urged" type="text" @click="send_notice_urged(row)">催促</el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -77,17 +70,12 @@
 
             <div class="audit-process-companyName grey--text row layout justify-start align-center">
               <i class="el-icon-office-building black--text title mr-1" />
-              <el-badge
-                is-dot
-                :hidden="detail.response.filter(i=>i.index===step.index && i.remark).length==0"
-              >
+              <el-badge is-dot :hidden="detail.response.filter(i=>i.index===step.index && i.remark).length==0">
                 <span>{{ step.firstMemberCompanyName }}</span>
               </el-badge>
             </div>
             <div class="row layout justify-space-between black--text">
-              <span
-                class="audit-process-person"
-              >{{ step.membersAcceptToAudit.length }}/{{ getNeedAudit(step.requireMembersAcceptCount) }}</span>
+              <span class="audit-process-person">{{ step.membersAcceptToAudit.length }}/{{ getNeedAudit(step.requireMembersAcceptCount) }}</span>
               <span class="audit-process-handleStamp">
                 <el-tooltip v-if="step.timeStamp" effect="light">
                   <span slot="content">{{ step.timeStamp }}</span>
@@ -119,14 +107,16 @@
 
 <script>
 import { formatTime, parseTime } from '@/utils'
-import UserFormItem from '@/components/User/UserFormItem'
 export default {
   name: 'AuditStatus',
-  components: { UserFormItem },
+  components: {
+    UserFormItem: () => import('@/components/User/UserFormItem'),
+    ApplyCompany: () => import('../../CommonComponents/ApplyCompany')
+  },
   props: {
     data: {
       type: Object,
-      default() {
+      default () {
         return null
       }
     },
@@ -135,23 +125,23 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       nowActiveAudit: 0,
       detail: {}
     }
   },
   computed: {
-    statusDic() {
+    statusDic () {
       return this.$store.state.vacation.statusDic
     },
-    status() {
+    status () {
       return this.statusDic[this.detail.status]
     }
   },
   watch: {
     data: {
-      handler(val) {
+      handler (val) {
         if (val && val.steps) {
           this.detail = val
           this.refresh()
@@ -163,7 +153,7 @@ export default {
   methods: {
     formatTime,
     parseTime,
-    getStatus() {
+    getStatus () {
       const res = this.detail.response
       if (!res || res.length === 0) return null
       const r = res.findIndex(
@@ -171,20 +161,20 @@ export default {
       )
       return r < 0 ? res.length : r
     },
-    send_notice_urged(row) {
+    send_notice_urged (row) {
       row.status_urged = true
       this.$message.error('开发中')
       setTimeout(() => {
         row.status_urged = false
       }, 3000)
     },
-    get_status_desc(row) {
+    get_status_desc (row) {
       return row.status === 4 ? '通过' : row.status === 8 ? '驳回' : '未处理'
     },
-    get_status_type(row) {
+    get_status_type (row) {
       return row.status === 4 ? 'success' : row.status === 8 ? 'danger' : 'info'
     },
-    get_audit_list(step) {
+    get_audit_list (step) {
       let list = this.detail.response
       const user_dict = {}
       list = list.filter(i => {
@@ -201,12 +191,12 @@ export default {
         return i
       })
     },
-    getNeedAudit(requireAuditMemberCount) {
+    getNeedAudit (requireAuditMemberCount) {
       if (requireAuditMemberCount < 0) return '无需'
       if (requireAuditMemberCount === 0) return '所有人'
       return `${requireAuditMemberCount}人`
     },
-    GetHandleTimeAgo(step) {
+    GetHandleTimeAgo (step) {
       const arr = this.detail.response.filter(r => r.index === step.index)
       if (arr.length > 0) {
         const item = arr.reduce((prev, cur) =>
@@ -216,7 +206,7 @@ export default {
       }
       return null
     },
-    refresh() {
+    refresh () {
       if (!this.detail || !this.statusDic || this.statusDic.length === 0) return
       for (let i = 0; i < this.detail.steps.length; i++) {
         const step = this.detail.steps[i]

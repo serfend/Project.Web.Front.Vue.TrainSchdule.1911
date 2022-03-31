@@ -17,15 +17,8 @@
         <template slot-scope="{ row }">
           <component :is="!rowCanShow(row) ? 'ElTooltip' : 'div'" effect="light">
             <div slot="content">
-              <VacationType
-                v-if="rowCanShow(row)"
-                v-model="row.request.requestType"
-                :entity-type="entityType"
-              />
-              <el-link
-                :href="`#/user/profile?id=${row.base.userId}`"
-                target="_blank"
-              >{{ row.base.realName }}</el-link>
+              <VacationType v-if="rowCanShow(row)" v-model="row.request.requestType" :entity-type="entityType" />
+              <el-link :href="`#/user/profile?id=${row.base.userId}`" target="_blank">{{ row.base.realName }}</el-link>
             </div>
             <div
               v-if="!rowCanShow(row)"
@@ -40,7 +33,9 @@
         </template>
       </el-table-column>
       <el-table-column header-align="center" label="部职别">
-        <template slot-scope="{ row }">{{ row.base.companyName }} {{ row.base.dutiesName }}</template>
+        <template slot-scope="{ row }">
+          <ApplyCompany :data="row.base" />
+        </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="创建时间">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
@@ -95,18 +90,9 @@
                 :show="true"
               />
             </span>
-            <ApplyAuditStreamPreviewLoader
-              v-if="row.statusDesc"
-              :id="row.id"
-              :entity-type="entityType"
-            >
-              <el-tag
-                slot="content"
-                :color="row.statusColor"
-                class="white--text"
-                size="mini"
-                style="cursor:pointer;margin-left:0.5rem"
-              >{{ row.statusDesc }}</el-tag>
+            <ApplyAuditStreamPreviewLoader v-if="row.statusDesc" :id="row.id" :entity-type="entityType">
+              <el-tag slot="content" :color="row.statusColor" class="white--text" size="mini" style="cursor:pointer;margin-left:0.5rem">{{ row.statusDesc }}
+              </el-tag>
             </ApplyAuditStreamPreviewLoader>
           </div>
         </template>
@@ -116,12 +102,7 @@
           <span>
             <slot :row="row" name="action" />
             <el-tooltip content="此申请可能为外出结束后创建">
-              <el-tag
-                v-if="row.checkIfIsReplentApply"
-                size="mini"
-                color="#ff0000"
-                class="white--text"
-              >补充申请</el-tag>
+              <el-tag v-if="row.checkIfIsReplentApply" size="mini" color="#ff0000" class="white--text">补充申请</el-tag>
             </el-tooltip>
             <el-tag v-if="row.type.isPlan" color="#cccccc" size="mini" class="white--text">计划</el-tag>
           </span>
@@ -140,11 +121,7 @@
       type="success"
       @click="showMutilAudit"
     >审批当前选中项</el-button>
-    <Pagination
-      :pagesetting.sync="pagesetting"
-      :total-count="pagesTotalCount"
-      :hidden="formatedList.length === 0"
-    />
+    <Pagination :pagesetting.sync="pagesetting" :total-count="pagesTotalCount" :hidden="formatedList.length === 0" />
     <el-dialog :visible.sync="apply_detail_focus" width="80%">
       <h1 slot="title" style="text-align:center">详细信息</h1>
       <component :is="`${entityType}ApplyDetail`" :focus-id="apply_detail_focus_id" />
@@ -171,19 +148,20 @@ export default {
     TransportationType: () =>
       import('@/components/Vacation/TransportationType'),
     IndayApplyProgress: () =>
-      import('@/views/Apply/MyApply/components/ApplyCard/IndayApplyProgress')
+      import('@/views/Apply/MyApply/components/ApplyCard/IndayApplyProgress'),
+    ApplyCompany: () => import('../../CommonComponents/ApplyCompany')
   },
   props: {
     list: {
       type: Array,
-      default() {
+      default () {
         return []
       }
     },
     loading: { type: Boolean, default: false },
     pages: {
       type: Object,
-      default() {
+      default () {
         return {}
       }
     },
@@ -197,37 +175,37 @@ export default {
     formatedList: [] // 经过格式化过的主列表
   }),
   computed: {
-    requestTypesDic() {
+    requestTypesDic () {
       return this.$store.state.vacation.requestTypes
     },
     pagesetting: {
-      get() {
+      get () {
         return this.pages
       },
-      set(val) {
+      set (val) {
         this.$emit('update:pages', val)
       }
     },
-    myUserid() {
+    myUserid () {
       return this.$store.state.user.userid
     },
-    statusOptions() {
+    statusOptions () {
       return this.$store.state.vacation.statusDic
     },
     apply_detail_focus: {
-      set(val) {
+      set (val) {
         if (!val) {
           this.apply_detail_focus_id = null // only set if null
         }
       },
-      get() {
+      get () {
         return this.apply_detail_focus_id !== null
       }
     }
   },
   watch: {
     list: {
-      handler(val) {
+      handler (val) {
         this.formatedList = val.map(li => this.formatApplyItem(li))
       },
       deep: true
@@ -238,10 +216,10 @@ export default {
     parseTime,
     relativeDate,
     datedifference,
-    requireUpdate(selections) {
+    requireUpdate (selections) {
       this.$emit('updated', selections)
     },
-    handleUpdated(selections) {
+    handleUpdated (selections) {
       const dict = {}
       selections.map(i => (dict[i.id] = true))
       this.formatedList
@@ -250,10 +228,10 @@ export default {
           i.statusDesc = null
         })
     },
-    rowCanShow(row) {
+    rowCanShow (row) {
       return row.status !== 20 // 状态：撤回
     },
-    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+    arraySpanMethod ({ row, column, rowIndex, columnIndex }) {
       if (!this.rowCanShow(row)) {
         if (columnIndex === 1) {
           return [1, 8]
@@ -262,7 +240,7 @@ export default {
         }
       }
     },
-    formatApplyItem(li) {
+    formatApplyItem (li) {
       const statusObj = this.statusOptions[li.status]
       li.statusDesc = statusObj ? statusObj.desc : '未知状态'
       li.statusColor = statusObj ? statusObj.color : 'gray'
@@ -276,18 +254,18 @@ export default {
       li.type = get_item_type(li)
       return li
     },
-    countOtherTime(row) {
+    countOtherTime (row) {
       return (
         datedifference(row.stampReturn, row.stampLeave) -
         row.onTripLength -
         row.vacationLength
       )
     },
-    showMutilAudit() {
+    showMutilAudit () {
       this.multiAuditFormSelection = this.$refs.singleTable.selection
       this.multiAuditFormShow = true
     },
-    showDetail(row, column, event) {
+    showDetail (row, column, event) {
       if (column.label === '操作') return
       this.apply_detail_focus_id = row.id
       // this.$router.push(`/vacation/applyDetail?id=${row.id}`)
