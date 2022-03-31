@@ -14,33 +14,26 @@
               :stamp-leave="innerData.request && innerData.request.stampLeave"
               :stamp-return="innerData.request && innerData.request.stampReturn"
             />
-            <el-row>
-              <el-col class="apply-form-info" :lg="8" :md="12" :sm="24">
-                <el-form>
-                  <el-form-item v-if="innerData.status!==20" label="请假类别">
-                    <VacationType v-model="innerData.request.requestType" :entity-type="entityType" />
-                    <TransportationType v-model="innerData.request.byTransportation" />
-                  </el-form-item>
-                  <el-form-item label="审批流程">
-                    <ApplyAuditStreamPreviewLoader :id="innerData.id" :entity-type="entityType">
-                      <el-button slot="content" type="text">点击查看</el-button>
-                    </ApplyAuditStreamPreviewLoader>
-                  </el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="请假原因">{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="请假去向">
-                    {{ `${innerData.request.vacationPlace.name} ${innerData.request.vacationPlaceName==null?'无详细地址':innerData.request.vacationPlaceName}` }}
-                  </el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="离队时间">{{ timeFormat(innerData.request.stampLeave) }}</el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="归队时间">{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
-                  <el-form-item v-if="innerData.status>50" label="实际归队">
-                    <ExecuteStatus v-model="innerData.executeStatusId" />
-                  </el-form-item>
-                </el-form>
-              </el-col>
-              <el-col class="apply-execute-info" :lg="8" :md="12" hidden-sm-and-down>
-                <ActionExamine :row="innerData" :entity-type="entityType" :as-operation="false" />
-              </el-col>
-            </el-row>
+            <div style="display:flex">
+              <el-form style="min-width:22rem;max-width:30rem">
+                <el-form-item v-if="innerData.status!==20" label="请假类别">
+                  <VacationType v-model="innerData.request.requestType" :entity-type="entityType" />
+                  <TransportationType v-model="innerData.request.byTransportation" />
+                </el-form-item>
+                <el-form-item label="审批流程">
+                  <ApplyAuditStreamPreviewLoader :id="innerData.id" :entity-type="entityType">
+                    <el-button slot="content" type="text">点击查看</el-button>
+                  </ApplyAuditStreamPreviewLoader>
+                </el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="请假原因">{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="请假去向">
+                  {{ `${innerData.request.vacationPlace.name} ${innerData.request.vacationPlaceName==null?'无详细地址':innerData.request.vacationPlaceName}` }}
+                </el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="预计离队">{{ timeFormat(innerData.request.stampLeave) }}</el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="预计归队">{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
+              </el-form>
+              <ActionExamine :row="innerData" :entity-type="entityType" :as-operation="false" />
+            </div>
           </div>
           <NoData v-else content="无效的申请" />
         </el-card>
@@ -59,7 +52,6 @@ export default {
     ApplyAuditStreamPreviewLoader: () => import('@/components/ApplicationApply/ApplyAuditStreamPreviewLoader'),
     VacationType: () => import('@/components/Vacation/VacationType'),
     TransportationType: () => import('@/components/Vacation/TransportationType'),
-    ExecuteStatus: () => import('./ExecuteStatus'),
     IndayApplyProgress: () => import('./IndayApplyProgress'),
     NoData: () => import('@/views/Loading/NoData')
   },

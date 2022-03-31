@@ -12,7 +12,7 @@
         <el-button v-else @click="$emit('update:show',false)">取 消</el-button>
       </span>
     </el-dialog>
-    <el-card v-else>
+    <el-card v-else style="min-width:25rem">
       <ExecuteForm :data.sync="auditForm" :display-name="displayName" :only-view="onlyView" />
     </el-card>
   </span>

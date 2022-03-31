@@ -9,36 +9,32 @@
               <ActionUser btn-type="danger" :row="innerData" @updated="userUpdate" />
             </div>
             <el-progress :percentage="percent" :format="formatPercent" :stroke-width="24" text-inside />
-            <el-row>
-              <el-col class="apply-form-info" :lg="8" :md="12" :sm="24">
-                <el-form>
-                  <el-form-item v-if="innerData.status!==20" label="休假类别">
-                    <VacationType v-model="innerData.request.vacationType" :entity-type="entityType" />
-                    <TransportationType v-model="innerData.request.byTransportation" />
-                  </el-form-item>
-                  <el-form-item label="审批流程">
-                    <ApplyAuditStreamPreviewLoader :id="innerData.id" :entity-type="entityType">
-                      <el-button slot="content" type="text">点击查看</el-button>
-                    </ApplyAuditStreamPreviewLoader>
-                  </el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="休假原因">{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="假期天数">
-                    <span>{{ `净假期${innerData.request.vacationLength}天 在途${innerData.request.onTripLength}天` }}</span>
-                    <el-tooltip v-for="a in innerData.request.additialVacations" :key="a.id" :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`">
-                      <el-tag style="margin:10px">{{ `${a.length}天${a.name}` }}</el-tag>
-                    </el-tooltip>
-                  </el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="休假地点">
-                    {{ `${innerData.request.vacationPlace.name} ${innerData.request.vacationPlaceName==null?'无详细地址':innerData.request.vacationPlaceName}` }}
-                  </el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="离队时间">{{ timeFormat(innerData.request.stampLeave) }}</el-form-item>
-                  <el-form-item v-if="innerData.status!==20" label="归队时间">{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
-                </el-form>
-              </el-col>
-              <el-col class="apply-execute-info" :lg="8" :md="12" hidden-sm-and-down>
-                <ActionExamine :row="innerData" :entity-type="entityType" :as-operation="false" />
-              </el-col>
-            </el-row>
+            <div style="display:flex">
+              <el-form style="min-width:22rem;max-width:30rem">
+                <el-form-item v-if="innerData.status!==20" label="休假类别">
+                  <VacationType v-model="innerData.request.vacationType" :entity-type="entityType" />
+                  <TransportationType v-model="innerData.request.byTransportation" />
+                </el-form-item>
+                <el-form-item label="审批流程">
+                  <ApplyAuditStreamPreviewLoader :id="innerData.id" :entity-type="entityType">
+                    <el-button slot="content" type="text">点击查看</el-button>
+                  </ApplyAuditStreamPreviewLoader>
+                </el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="休假原因">{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="假期天数">
+                  <span>{{ `净假期${innerData.request.vacationLength}天 在途${innerData.request.onTripLength}天` }}</span>
+                  <el-tooltip v-for="a in innerData.request.additialVacations" :key="a.id" :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`">
+                    <el-tag style="margin:10px">{{ `${a.length}天${a.name}` }}</el-tag>
+                  </el-tooltip>
+                </el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="休假地点">
+                  {{ `${innerData.request.vacationPlace.name} ${innerData.request.vacationPlaceName==null?'无详细地址':innerData.request.vacationPlaceName}` }}
+                </el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="离队时间">{{ timeFormat(innerData.request.stampLeave) }}</el-form-item>
+                <el-form-item v-if="innerData.status!==20" label="归队时间">{{ timeFormat(innerData.request.stampReturn) }}</el-form-item>
+              </el-form>
+              <ActionExamine :row="innerData" :entity-type="entityType" :as-operation="false" />
+            </div>
           </div>
           <NoData v-else content="无效的申请" />
         </el-card>

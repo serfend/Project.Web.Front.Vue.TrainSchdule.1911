@@ -14,7 +14,7 @@
         style="width:100%"
       />
     </el-form-item>
-    <el-form-item label="离队时间">
+    <el-form-item label="预计离队">
       <el-date-picker
         v-model="auditForm.rawStampLeave"
         type="datetime"
@@ -22,7 +22,7 @@
         style="width:100%"
       />
     </el-form-item>
-    <el-form-item label="原归队时">
+    <el-form-item label="预计归队">
       <el-date-picker
         v-model="auditForm.recallData.rawStampReturn"
         type="datetime"
