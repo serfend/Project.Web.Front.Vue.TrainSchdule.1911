@@ -22,13 +22,9 @@
                 </el-tooltip>
               </span>
             </el-form-item>
-            <el-row>
-              <el-col>
-                <el-form-item label="部职别">
-                  <el-tag v-if="form.companyName">{{ form.companyName }} {{ form.duties }}</el-tag>
-                </el-form-item>
-              </el-col>
-            </el-row>
+            <el-form-item label="部职别">
+              <ApplyCompany :data="form.company" />
+            </el-form-item>
             <el-form-item
               label="联系方式"
               prop="Phone"
@@ -77,7 +73,8 @@ export default {
   components: {
     UserSelector,
     CardTooltipAlert,
-    SettleFormItem
+    SettleFormItem,
+    ApplyCompany: () => import('@/views/Apply/CommonComponents/ApplyCompany')
   },
   props: {
     defailtId: { type: String, default: null },
@@ -151,12 +148,10 @@ export default {
       }
     },
     createNewBase() {
-      console.log('request create new base')
       const f = {
         id: null,
         realName: null,
         company: null,
-        companyName: null,
         duties: null,
         Phone: '0',
         Settle: {
@@ -180,8 +175,13 @@ export default {
           const form = this.form
           form.id = id
           form.realName = base.base.realName
-          form.company = company.company.code
-          form.companyName = company.company.name
+          form.company = {
+            companyOfIndayName: company.companyCodeOfApplyInday.company,
+            companyOfVacationName: company.companyCodeOfApplyVacation.company,
+            companyOfManageName: company.companyOfManage.company,
+            companyName: company.company.name,
+            dutiesName: company.duties
+          }
           form.duties = duties.name
           form.Phone = social.phone
           const { self, lover, parent, loversParent } = social.settle
