@@ -1,6 +1,6 @@
 <template>
-  <div v-loading="!solutionName||loading">
-    <div v-if="solutionName">
+  <div v-loading="loading">
+    <div v-if="solutionName&&!validateInfoInner">
       <el-steps
         :active="nowStep>=0?nowStep:(streams?streams.length:0)"
         :finish-status="nowStep>=0?'success':'finish'"
@@ -55,7 +55,8 @@ export default {
     nowStep: { type: Number, default: -1 },
     entityType: { type: String, default: 'vacation' },
     entityTypeDesc: { type: String, default: null },
-    title: { type: String, default: null }
+    title: { type: String, default: null },
+    validateInfo: { type: String, default: null }
   },
   data: () => ({
     loading: false,
@@ -64,7 +65,14 @@ export default {
     managers: {},
     userStatus: []
   }),
-  computed: {},
+  computed: {
+    validateInfoInner: {
+      get() { return this.validateInfo },
+      set(v) {
+        this.$emit('update:validateInfo', v)
+      }
+    }
+  },
   watch: {
     auditStatus: {
       handler(val) {
@@ -102,16 +110,20 @@ export default {
     }
   },
   methods: {
-    auditStream,
     refresh() {
-      console.log('load audit stream', this.entityTypeDesc)
+      this.loading = true
       this.solutionName = null
       auditStream(this.userid, this.entityTypeDesc || this.entityType).then(
         data => {
           this.solutionName = data.solutionName
           this.streams = data.steps
+          this.validateInfoInner = null
         }
-      )
+      ).catch(e => {
+        this.validateInfoInner = (e && e.message) || '未知原因'
+      }).finally(() => {
+        this.loading = false
+      })
     },
     user_should_show(u, s) {
       const managers = this.managers
@@ -140,12 +152,12 @@ export default {
         const index = streams[i].index
         if (!this.userStatus[index]) this.userStatus[index] = {}
         const dic = this.userStatus[index]
-        for (var u of streams[i].membersFitToAudit) {
+        Object.keys(streams[i].membersFitToAudit).map(u => {
           dic[u] = 'primary'
-        }
-        for (u of streams[i].membersAcceptToAudit) {
+        })
+        Object.keys(streams[i].membersAcceptToAudit).map(u => {
           dic[u] = 'success'
-        }
+        })
       }
     },
     initCompanyManagerDirect() {
@@ -156,13 +168,17 @@ export default {
         if (waitToLoad.indexOf(mCode) === -1) waitToLoad.push(mCode)
       }
       companiesManagers(waitToLoad).then(data => {
-        for (var c of Object.keys(data.companies)) {
-          if (data.companies[c].list) {
-            this.managers[c] = data.companies[c].list.map(item => item.id)
-          } else {
+        Object.keys(data.companies).map(c => {
+          if (!data.companies[c].list) {
             this.managers[c] = {}
+            return
           }
-        }
+          this.managers[c] = data
+            .companies[c]
+            .list
+            .map(item => item.id)
+        })
+      }).finally(() => {
         this.loading = false
       })
     },

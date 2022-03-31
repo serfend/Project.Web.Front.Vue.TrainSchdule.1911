@@ -7,6 +7,7 @@
     :entity-type="entityType"
     :entity-type-desc="entityTypeDesc"
     :solution-name.sync="solutionName"
+    :validate-info.sync="validateInfoInner"
   />
   <el-popover v-else trigger="hover" @show="userHasHover=true">
     <ApplyAuditStreamPreviewInner
@@ -18,6 +19,7 @@
       :entity-type-desc="entityTypeDesc"
       :solution-name.sync="solutionName"
       :title="title"
+      :validate-info.sync="validateInfoInner"
     />
     <span v-if="!$slots.content" slot="reference" class="preview-btn">{{ title }}</span>
     <slot v-else slot="reference" style="display:flex" name="content" />
@@ -36,12 +38,21 @@ export default {
     nowStep: { type: Number, default: -1 },
     title: { type: String, default: null },
     entityType: { type: String, default: 'vacation' },
-    entityTypeDesc: { type: String, default: null }
+    entityTypeDesc: { type: String, default: null },
+    validateInfo: { type: String, default: null }
   },
   data: () => ({
     solutionName: null,
     userHasHover: false
   }),
+  computed: {
+    validateInfoInner: {
+      get() { return this.validateInfo },
+      set(v) {
+        this.$emit('update:validateInfo', v)
+      }
+    }
+  },
   watch: {
     solutionName: {
       handler(val) {
