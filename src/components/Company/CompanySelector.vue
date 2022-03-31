@@ -29,7 +29,7 @@ export default {
     value: {}
   }),
   computed: {
-    requireCheckName() {
+    requireCheckName () {
       return debounce(() => {
         this.checkName()
       }, 500)
@@ -37,12 +37,13 @@ export default {
   },
   watch: {
     code: {
-      handler(val) {
+      handler (val) {
         this.handleDataChange({ code: val })
-      }
+      },
+      immediate: true
     },
     data: {
-      handler(val) {
+      handler (val) {
         this.handleDataChange(val)
       },
       deep: true,
@@ -51,7 +52,7 @@ export default {
   },
   methods: {
     companyChild,
-    handleDataChange(val) {
+    handleDataChange (val) {
       if (!val || !val.code) {
         this.value = {}
         return
@@ -60,7 +61,7 @@ export default {
         this.value = d.model
       })
     },
-    updateItem(val) {
+    updateItem (val) {
       const item = {}
       if (val) {
         item.code = val.value
@@ -70,7 +71,7 @@ export default {
       this.$emit('update:data', item)
       this.$emit('update:code', item.code)
     },
-    checkName() {
+    checkName () {
       const data = this.data
       const val = this.placeholder
       if (val || !data) return

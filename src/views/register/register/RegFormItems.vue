@@ -1,18 +1,9 @@
 <template>
   <el-form v-if="innerRegisterForm" v-loading="loading" label-position="right" label-width="5rem">
     <el-tabs v-model="nowStep" accordion class="tab-container">
-      <el-tab-pane
-        v-for="opt in stepOptions.filter((i) => !i.removed && !ignorePanelsDict[i.component])"
-        :key="opt.index"
-        :label="opt.name"
-      >
+      <el-tab-pane v-for="opt in stepOptions.filter((i) => !i.removed && !ignorePanelsDict[i.component])" :key="opt.index" :label="opt.name">
         <div :key="opt.index" class="panel-content" :style="{height:isRegister?'25rem':''}">
-          <component
-            :is="opt.component"
-            :form.sync="innerRegisterForm[opt.component]"
-            :is-register="isRegister"
-            :child-index="opt.childIndex"
-          />
+          <component :is="opt.component" :form.sync="innerRegisterForm[opt.component]" :is-register="isRegister" :child-index="opt.childIndex" />
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -51,7 +42,7 @@ export default {
     innerRegisterForm: null
   }),
   computed: {
-    ignorePanelsDict() {
+    ignorePanelsDict () {
       const dict = {}
       if (!this.ignorePanels) return dict
       this.ignorePanels.map(i => {
@@ -62,13 +53,13 @@ export default {
   },
   watch: {
     user: {
-      handler(val) {
+      handler (val) {
         this.handleUserChange()
       },
       immediate: true
     },
     registerForm: {
-      handler(val) {
+      handler (val) {
         if (!val) {
           val = createForm()
           this.$emit('change', val)
@@ -81,7 +72,7 @@ export default {
     }
   },
   methods: {
-    next_step(step) {
+    next_step (step) {
       let now_index = parseInt(this.nowStep)
       const target = this.stepOptions[now_index]
       if (
@@ -96,7 +87,7 @@ export default {
         this.nowStep = now_index.toString()
       }
     },
-    handleUserChange() {
+    handleUserChange () {
       const val = this.user
       if (!val) return
       this.$emit('update:loading', true)
@@ -112,7 +103,7 @@ export default {
           const duties = data.duties || {}
           const { company, companyOfManage } = data.company
           const { invitedBy, accountStatus } = data.application
-          f.Company = {
+          const c = {
             company,
             companyOfManage,
             duties: {
@@ -125,6 +116,13 @@ export default {
             disabledVacation:
               (accountStatus & Const_DisabledVacation) > 0 ? 1 : -1
           }
+          const cmps = ['companyCodeOfApplyVacation', 'companyCodeOfApplyInday']
+          cmps.map(i => {
+            const c_item = data.company[i] || {}
+            c[`${i}Enable`] = c_item.enable
+            c[i] = c_item.company
+          })
+          f.Company = c
           this.$emit('update:selectIsInvalidAccount', checkUserValid(invitedBy))
           this.nowSelectCompany = company
           this.$emit('change', f)

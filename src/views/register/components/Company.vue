@@ -1,10 +1,15 @@
 <template>
   <div v-if="innerForm">
     <el-form-item prop="company" label="管理单位" style="width: 25.2rem">
-      <CompanySelector
-        v-model="innerForm.company"
-        :placeholder="innerForm.company && innerForm.company.name || '仅当前登录的用户的单位可见'"
-      />
+      <CompanySelector v-model="innerForm.company" :placeholder="innerForm.company && innerForm.company.name || '仅当前登录的用户的单位可见'" />
+    </el-form-item>
+    <el-form-item prop="company" label="默认单位" style="width: 25.2rem">
+      <el-switch v-model="innerForm.companyCodeOfApplyVacationEnable" active-text="指定休假管理单位" />
+      <CompanySelector v-show="innerForm.companyCodeOfApplyVacationEnable" :code.sync="innerForm.companyCodeOfApplyVacation" />
+    </el-form-item>
+    <el-form-item prop="company" label="默认单位" style="width: 25.2rem">
+      <el-switch v-model="innerForm.companyCodeOfApplyIndayEnable" active-text="指定请假管理单位" />
+      <CompanySelector v-show="innerForm.companyCodeOfApplyIndayEnable" :code.sync="innerForm.companyCodeOfApplyInday" />
     </el-form-item>
     <el-form-item prop="company" label="编制单位" style="width: 25.2rem">
       <CompanySelector
@@ -29,13 +34,7 @@
       </el-tooltip>
     </el-form-item>
     <el-form-item prop="titleDate" label="等级时间">
-      <el-date-picker
-        v-model="innerForm.titleDate"
-        placeholder="职务等级生效时间"
-        format="yyyy年MM月dd日"
-        value-format="yyyy-MM-dd"
-        style="width: 14rem"
-      />
+      <el-date-picker v-model="innerForm.titleDate" placeholder="职务等级生效时间" format="yyyy年MM月dd日" value-format="yyyy-MM-dd" style="width: 14rem" />
     </el-form-item>
     <el-form-item label="附加项">
       <el-radio-group v-model="innerForm.disabledVacation">
@@ -52,6 +51,10 @@
 const createForm = () => ({
   company: {},
   companyOfManage: {},
+  companyCodeOfApplyInday: null,
+  companyCodeOfApplyIndayEnable: false,
+  companyCodeOfApplyVacation: null,
+  companyCodeOfApplyVacationEnable: false,
   duties: {},
   title: {}
 })
@@ -75,7 +78,7 @@ export default {
   }),
   watch: {
     form: {
-      handler(val) {
+      handler (val) {
         if (!val || !val.company) return
         this.innerForm = val
       },
@@ -83,7 +86,7 @@ export default {
       immediate: true
     },
     innerForm: {
-      handler(val, oldVal) {
+      handler (val, oldVal) {
         this.$nextTick(() => {
           this.$emit('update:form', this.innerForm)
         })
@@ -94,11 +97,11 @@ export default {
   },
   methods: {
     companyChild,
-    async companyTitleQuery(queryString, cb) {
+    async companyTitleQuery (queryString, cb) {
       var data = await companyTitleQuery(queryString)
       await this.queryItem(data, cb)
     },
-    async queryItem(data, cb) {
+    async queryItem (data, cb) {
       var list = data.list
       var result = list.map(item => {
         return {
