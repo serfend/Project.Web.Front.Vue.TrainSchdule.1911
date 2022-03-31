@@ -4,39 +4,25 @@
       <el-card>
         <el-form>
           <el-form-item label="选择成员">
-            <UserSelector
-              :code.sync="nowSelectRealName"
-              default-info="未选择"
-              style="display: inline; margin: 0 1rem 0 0"
-              @change="handleCurrentChange"
-            />
+            <UserSelector :code.sync="nowSelectRealName" default-info="未选择" style="display: inline; margin: 0 1rem 0 0" @change="handleCurrentChange" />
           </el-form-item>
           <el-form-item label="选择单位">
             <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width: 40%" />
           </el-form-item>
-          <el-button
-            type="primary"
-            :loading="loading"
-            @click="requireLoadWaitToAUthRegisterUsers"
-          >刷新</el-button>
-          <el-switch v-model="MembersQuery.asManage" active-text="按编制单位" inactive-text="按管理单位" style="margin-left:3rem" />
+          <el-button type="primary" :loading="loading" @click="requireLoadWaitToAUthRegisterUsers">刷新</el-button>
+          <el-select v-model="MembersQuery.userCompanyType" placeholder="查询单位">
+            <el-option v-for="item in [[0,'按管理单位'],[1,'按编制单位'],[2,'按休假审批单位'],[4,'按请假审批单位']]" :key="item[0]" :label="item[1]" :value="item[0]">
+              <span style="float: left">{{ item[1] }}</span>
+              <span style="float: right; color: #cccccc; font-size: 13px">{{ item[0] }}</span>
+            </el-option>
+          </el-select>
         </el-form>
       </el-card>
 
-      <el-table
-        v-loading="loading"
-        :data="waitToAuthRegisterUsers"
-        highlight-current-row
-        style="width: 100%"
-        @row-click="handleCurrentChange"
-      >
+      <el-table v-loading="loading" :data="waitToAuthRegisterUsers" highlight-current-row style="width: 100%" @row-dblclick="handleCurrentChange">
         <el-table-column label="姓名" width="100">
           <template slot-scope="scope">
-            <el-popover
-              placement="right-start"
-              trigger="hover"
-              @show="scope.row.userHasShow = true"
-            >
+            <el-popover placement="right-start" trigger="hover" @show="scope.row.userHasShow = true">
               <User :data="scope.row" :can-load-avatar="scope.row.userHasShow" />
               <span slot="reference">{{ scope.row.realName }}</span>
             </el-popover>
@@ -51,9 +37,8 @@
         </el-table-column>
         <el-table-column prop="accountAuthStatus" label="状态" width="100">
           <template slot-scope="scope">
-            <el-tag
-              :type="scope.row.accountAuthStatus == 1?'success': scope.row.accountAuthStatus == 0?'info':'danger'"
-            >{{ scope.row.accountAuthStatus == 1 ? '已认证' : scope.row.accountAuthStatus == 0 ? '待认证' : '已退回' }}</el-tag>
+            <el-tag :type="scope.row.accountAuthStatus == 1?'success': scope.row.accountAuthStatus == 0?'info':'danger'">
+              {{ scope.row.accountAuthStatus == 1 ? '已认证' : scope.row.accountAuthStatus == 0 ? '待认证' : '已退回' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="vacation.description" label="休假详情描述">
@@ -81,10 +66,7 @@
           />
         </el-tab-pane>
         <el-tab-pane label="权限管理">
-          <UserPermission
-            v-if="detail_pane=='1'"
-            :user-id="current_select_id&&current_select_id.id"
-          />
+          <UserPermission v-if="detail_pane=='1'" :user-id="current_select_id&&current_select_id.id" />
         </el-tab-pane>
         <el-tab-pane label="操作日志">
           <div v-if="detail_pane=='2'">
@@ -124,7 +106,7 @@ export default {
   },
   data: () => ({
     MembersQuery: {
-      asManage: false,
+      userCompanyType: 0,
       pageIndex: 0,
       pageSize: 10
     },
@@ -137,22 +119,22 @@ export default {
     detail_pane: ''
   }),
   computed: {
-    currentUser() {
+    currentUser () {
       return this.$store.state.user.data
     },
-    currentCmp() {
+    currentCmp () {
       return this.$store.state.user.companyid
     },
-    requireLoadWaitToAUthRegisterUsers() {
+    requireLoadWaitToAUthRegisterUsers () {
       return debounce(() => {
         this.loadWaitToAuthRegisterUsers()
       }, 500)
     },
     approve_show: {
-      get() {
+      get () {
         return this.current_select_id !== null
       },
-      set(val) {
+      set (val) {
         if (!val) {
           this.current_select_id = null
         }
@@ -161,7 +143,7 @@ export default {
   },
   watch: {
     currentCmp: {
-      handler(val) {
+      handler (val) {
         this.nowSelectCompany = {
           code: val
         }
@@ -170,7 +152,7 @@ export default {
       immediate: true
     },
     nowSelectCompany: {
-      handler(val) {
+      handler (val) {
         if (val) {
           this.MembersQuery.pageIndex = 0
           this.requireLoadWaitToAUthRegisterUsers()
@@ -179,7 +161,7 @@ export default {
       immediate: true
     },
     MembersQuery: {
-      handler(val) {
+      handler (val) {
         if (val) {
           this.requireLoadWaitToAUthRegisterUsers()
         }
@@ -188,12 +170,12 @@ export default {
     }
   },
   methods: {
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       // console.log('approve user change to', val)
       if (!val) return
       this.current_select_id = val
     },
-    async loadSingleUser() {
+    async loadSingleUser () {
       const fn = []
       for (let i = 0; i < this.waitToAuthRegisterUsers.length; i++) {
         fn.push(
@@ -214,7 +196,7 @@ export default {
       }
       await Promise.all(fn)
     },
-    loadUserList(list) {
+    loadUserList (list) {
       const result = list.map(item => {
         const obj = {
           userHasShow: false,
@@ -227,7 +209,7 @@ export default {
       return result
     },
     // 刷新待认证人员列表
-    async loadWaitToAuthRegisterUsers() {
+    async loadWaitToAuthRegisterUsers () {
       this.loading = true
       const q = Object.assign(
         { code: this.nowSelectCompany.code },
