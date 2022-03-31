@@ -21,13 +21,6 @@
           @submited="requestInfoSubmit"
           @requestTypeUpdate="requestTypeUpdate"
         />
-        <VacationPreview
-          ref="VacationPreview"
-          :entity-type="entityType"
-          :entity-type-desc="entityTypeDesc"
-          :userid="userid"
-          class="card-column"
-        />
       </el-col>
       <el-col v-show="nowStep>=1" :xl="singleColumn?24:12" :lg="24">
         <div class="card-column">
@@ -59,7 +52,15 @@
       :entity-type="entityType"
       @reset="createNewDirect"
       @submit="userSubmit"
-    />
+    >
+      <VacationPreview
+        ref="VacationPreview"
+        :entity-type="entityType"
+        :entity-type-desc="entityTypeDesc"
+        :userid="userid"
+        class="card-column"
+      />
+    </SubmitApply>
   </div>
 </template>
 

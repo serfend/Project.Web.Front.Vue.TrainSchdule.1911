@@ -2,6 +2,7 @@
   <transition>
     <div v-show="!iDisabled" id="submit-form" v-loading="onLoading">
       <div :style="{width:caculateParent,'background-color':theme,'z-index':3}" :class="navClass">
+        <slot />
         <span v-if="next_permit_submit<=new Date()">
           <el-button
             :disabled="iDisabled"
@@ -289,7 +290,6 @@ export default {
 <style lang="scss" scoped>
 .footer-nav {
   z-index: 1;
-  height: 8em;
   position: fixed;
   bottom: 0;
   opacity: 0.12;

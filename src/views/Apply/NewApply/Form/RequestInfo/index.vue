@@ -452,17 +452,16 @@ export default {
       const lawVacations = this.lawVacations
       s = Object.assign({ lawVacationSet: lawVacations }, s)
       getStampReturn(s).then(data => {
+        if (!data) return
         this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
         const des = data.descriptions ? data.descriptions : []
-        const t =
-          lawVacations.length !== des.length ||
-          des.find(i => {
-            const item = lawVacations.find(l => i.id === l.id)
-            return !item || item.length !== i.length
-          })
-        if (t) {
-          this.lawVacations = des
-        }
+        const t1 =
+          lawVacations.length !== des.length
+        const t2 = des.find(i => {
+          const item = lawVacations.find(l => i.id === l.id)
+          return !item || item.length !== i.length
+        })
+        if (t1 || t2) this.lawVacations = des
       })
     },
     caculaingDate() {
