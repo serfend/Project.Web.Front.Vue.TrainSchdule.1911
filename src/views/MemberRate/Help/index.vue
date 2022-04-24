@@ -6,7 +6,7 @@
 export default {
   name: 'MemberRateHelp',
   components: {
-    MarkdownViewer: () => import('@/components/MarkdownEditor/Viewer')
+    MarkdownViewer: () => import('@/components/MarkdownEditor/InnerViewer')
   }
 }
 </script>

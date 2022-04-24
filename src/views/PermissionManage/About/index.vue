@@ -7,7 +7,7 @@ export default {
   name: 'About',
   label: '关于',
   components: {
-    MarkdownViewer: () => import('@/components/MarkdownEditor/Viewer')
+    MarkdownViewer: () => import('@/components/MarkdownEditor/InnerViewer')
   },
   data: () => ({ fileName: 'permission.about.md' })
 }

@@ -16,7 +16,7 @@ export default {
     },
     path: {
       type: String,
-      default: 'client-sfvue'
+      default: null
     },
     content: {
       type: String,
@@ -26,6 +26,11 @@ export default {
   data() {
     return {
       value: '> 加载中...'
+    }
+  },
+  computed: {
+    filePath() {
+      return this.path || 'client-sfvue'
     }
   },
   watch: {
@@ -46,14 +51,17 @@ export default {
     }
   },
   mounted() {
-    const fn = this.$route && this.$route.query && this.$route.query.filename
-    this.refreshDoc(fn)
+    const q = this.$route && this.$route.query
+    const targetFile = q && q.filename
+    const targetPath = q && q.path
+    this.refreshDoc({ targetFile, targetPath })
   },
   methods: {
-    refreshDoc(targetFile) {
+    refreshDoc({ targetPath, targetFile }) {
       targetFile = targetFile || this.fileName
+      targetPath = targetPath || this.filePath
       if (!targetFile) return
-      loadDocument(this.path, targetFile)
+      loadDocument(targetPath, targetFile)
         .then(i => {
           this.$refs.Viewer.editor.setMarkdown(i)
         })

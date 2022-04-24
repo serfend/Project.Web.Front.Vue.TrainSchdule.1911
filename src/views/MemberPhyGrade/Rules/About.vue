@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MarkdownViewer from '@/components/MarkdownEditor/Viewer'
+import MarkdownViewer from '@/components/MarkdownEditor/InnerViewer'
 export default {
   name: 'About',
   components: { MarkdownViewer },

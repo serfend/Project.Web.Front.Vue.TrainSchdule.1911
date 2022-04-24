@@ -102,7 +102,7 @@ import { getUserAvatar } from '@/api/user/userinfo'
 import { likeComments, postComments, getReplies } from '@/api/apply/attach_info'
 import SvgIcon from '@/components/SvgIcon'
 import User from '@/components/User'
-import MarkdownViewer from '@/components/MarkdownEditor/Viewer'
+import MarkdownViewer from '@/components/MarkdownEditor/InnerViewer'
 export default {
   name: 'SingleComment',
   components: {
