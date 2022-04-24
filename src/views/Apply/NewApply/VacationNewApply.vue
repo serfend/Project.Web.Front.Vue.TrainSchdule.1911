@@ -22,6 +22,24 @@
           @submited="requestInfoSubmit"
           @vacationTypeUpdate="vacationTypeUpdate"
         />
+        <SubmitApply
+          :request-id="formFinal.RequestId"
+          :base-info-id="formFinal.BaseInfoId"
+          :main-type="formFinal.mainType"
+          :entity-type="entityType"
+          :disabled="nowStep<2||childOnLoading"
+          class="card-column"
+          @reset="createNewDirect"
+          @submit="userSubmit"
+        >
+          <VacationPreview
+            ref="VacationPreview"
+            :entity-type="entityType"
+            :entity-type-desc="entityTypeDesc"
+            :userid="userid"
+            class="card-column"
+          />
+        </SubmitApply>
       </el-col>
       <el-col v-show="nowStep>=1" :xl="singleColumn?24:12" :lg="24">
         <div class="card-column">
@@ -45,23 +63,6 @@
       :bottom="100"
       style="width:3rem;height:3rem;box-shadow: 1px 1px 6px #3333aa"
     />
-    <SubmitApply
-      :request-id="formFinal.RequestId"
-      :base-info-id="formFinal.BaseInfoId"
-      :main-type="formFinal.mainType"
-      :entity-type="entityType"
-      :disabled="nowStep<2||childOnLoading"
-      @reset="createNewDirect"
-      @submit="userSubmit"
-    >
-      <VacationPreview
-        ref="VacationPreview"
-        :entity-type="entityType"
-        :entity-type-desc="entityTypeDesc"
-        :userid="userid"
-        class="card-column"
-      />
-    </SubmitApply>
   </div>
 </template>
 

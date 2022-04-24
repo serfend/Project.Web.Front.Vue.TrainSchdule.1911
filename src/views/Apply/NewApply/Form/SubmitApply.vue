@@ -1,15 +1,10 @@
 <template>
   <transition>
     <div v-show="!iDisabled" id="submit-form" v-loading="onLoading">
-      <div :style="{width:caculateParent,'background-color':theme,'z-index':3}" :class="navClass">
+      <div :style="{'background-color':theme,'z-index':3}" :class="navClass">
         <slot />
         <span v-if="next_permit_submit<=new Date()">
-          <el-button
-            :disabled="iDisabled"
-            type="success"
-            style="width:100%"
-            @click="submitApply(2)"
-          >发 布</el-button>
+          <el-button :disabled="iDisabled" type="success" style="width:100%" @click="submitApply(2)">发 布</el-button>
           <div style="margin:0.5rem 0">
             <el-popover placement="top-start" trigger="hover">
               <div>
@@ -35,51 +30,23 @@
             <el-button v-show="submitId" size="mini" type="success" @click="skimDetail">查 看 详 情</el-button>
           </div>
         </span>
-        <el-progress
-          v-else
-          :percentage="percent"
-          status="exception"
-          :text-inside="true"
-          :stroke-width="25"
-          :format="formatPercent"
-        />
+        <el-progress v-else :percentage="percent" status="exception" :text-inside="true" :stroke-width="25" :format="formatPercent" />
 
         <el-dialog :visible.sync="showSuccessDialog" append-to-body>
           <div v-if="!errorMsg">
             <div style="display:flex;justify-content:center">
-              <LottieIcon
-                path="/assets/lottie/lottie.success.json"
-                :animate-speed="0.5"
-                style="width:15rem"
-              />
+              <LottieIcon path="/assets/lottie/lottie.success.json" :animate-speed="0.5" style="width:15rem" />
             </div>
             <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">申 请 提 交 成 功</div>
           </div>
           <div v-else>
             <div style="display:flex;justify-content:center">
-              <LottieIcon
-                path="/assets/lottie/lottie.fail.json"
-                :animate-speed="0.5"
-                style="width:15rem"
-              />
+              <LottieIcon path="/assets/lottie/lottie.fail.json" :animate-speed="0.5" style="width:15rem" />
             </div>
-            <el-alert
-              v-if="errorMsg"
-              type="error"
-              center
-              effect="dark"
-              show-icon
-              closable
-            >{{ errorMsg }}</el-alert>
+            <el-alert v-if="errorMsg" type="error" center effect="dark" show-icon closable>{{ errorMsg }}</el-alert>
           </div>
           <div class="item-put-center">
-            <el-popover
-              v-for="(i,index) in errorList"
-              :key="i.id"
-              trigger="hover"
-              placement="top"
-              @show="i.can_show=true"
-            >
+            <el-popover v-for="(i,index) in errorList" :key="i.id" trigger="hover" placement="top" @show="i.can_show=true">
               <component
                 :is="`${entityType}ApplyDetail`"
                 :can-show="i.can_show"
@@ -89,11 +56,7 @@
                 style="width:80rem"
               />
               <template #reference>
-                <el-button
-                  style="cursor:pointer;margin-left:0.3rem"
-                  type="text"
-                  @click="show_detail(i)"
-                >第{{ index+1 }}项</el-button>
+                <el-button style="cursor:pointer;margin-left:0.3rem" type="text" @click="show_detail(i)">第{{ index+1 }}项</el-button>
               </template>
             </el-popover>
           </div>
@@ -145,34 +108,33 @@ export default {
     caculateParent: ''
   }),
   computed: {
-    navClass() {
+    navClass () {
       const i = this.isFlashing ? ' flashing' : ''
       return `footer-nav${i}`
     },
-    iDisabled() {
+    iDisabled () {
       return this.disabled || !this.baseInfoId || !this.requestId
     },
-    theme() {
+    theme () {
       return this.$store.state.settings.theme
     },
-    applyDetailUrl() {
+    applyDetailUrl () {
       return `#/apply/${this.entityType}/applydetail?id=${this.submitId}`
     }
   },
   watch: {
     disabled: {
-      handler(val) {
-        this.refresh()
+      handler (val) {
       },
       immediate: true
     },
     submitId: {
-      handler(val) {
+      handler (val) {
         if (val) this.showSuccessDialog = true
       }
     }
   },
-  mounted() {
+  mounted () {
     clearInterval(this.time_updator)
     this.time_updator = setInterval(() => {
       if (!this.next_permit_submit) return
@@ -184,27 +146,23 @@ export default {
       this.percent = 100 - Math.floor((spent / total) * 1e4) / 1e2
     }, 5e2)
   },
-  destroyed() {
+  destroyed () {
     clearInterval(this.time_updator)
   },
   methods: {
     getTimeDesc,
-    refresh() {
-      if (!this.$parent.$el) this.caculateParent = '100%'
-      else this.caculateParent = `${this.$parent.$el.clientWidth}px`
-    },
-    formatPercent(v) {
+    formatPercent (v) {
       return this.time_desc
     },
-    skimDetail() {
+    skimDetail () {
       const url = this.applyDetailUrl
       window.open(url)
     },
-    show_detail(id) {},
+    show_detail (id) { },
     /**
      * 提交申请 0:仅提交，1:提交并保存，2:提交并发布
      */
-    submitApply(actionStatus) {
+    submitApply (actionStatus) {
       if (this.onLoading === true) {
         return this.$message.info('提交中，请等待')
       }
@@ -274,7 +232,7 @@ export default {
     /**
      * 创建新的申请
      */
-    createNew() {
+    createNew () {
       this.$confirm('此操作将清空并重新填写, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -290,8 +248,6 @@ export default {
 <style lang="scss" scoped>
 .footer-nav {
   z-index: 1;
-  position: fixed;
-  bottom: 0;
   opacity: 0.12;
   box-shadow: 0 -2px 10px -4px;
   padding: 8px;
