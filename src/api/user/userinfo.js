@@ -224,3 +224,21 @@ export function postUserAvatar(newAvatar, ignoreErr) {
     ignoreError: ignoreErr
   })
 }
+
+/**
+ * 修改用户单位
+ *
+ * @export
+ * @param {Array} modifies {
+ *  userid 目标用户id或数组
+ *  companyType 单位类型
+ *  targetCompany 目标单位
+ * }
+ * @param {Object} auth 授权
+ */
+export function postUserCompany(modifies, auth) {
+  return request.post('/users/usersCompany', {
+    auth,
+    data: modifies
+  })
+}

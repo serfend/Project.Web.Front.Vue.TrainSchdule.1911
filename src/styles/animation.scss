@@ -2,13 +2,12 @@
   animation: flashing-item 5s 1 ease;
 }
 .flashing-layout-right {
-  animation: 5s 1 ease-out forwards flashing-item-light,
-    5s 1s ease forwards layout-right;
+  animation: 5s 1 ease-out none flashing-item-light,
+    5s 1s ease none layout-right;
   animation-delay: 1s;
 }
 .flashing-alert {
-  animation: 5s 1s ease-out forwards flashing-item-light,
-    5s 1s ease forwards alert;
+  animation: 5s 1s ease-out none flashing-item-light, 5s 1s ease none alert;
 }
 .tab-container {
   .el-tab-pane {

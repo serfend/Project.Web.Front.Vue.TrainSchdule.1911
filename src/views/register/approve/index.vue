@@ -1,67 +1,79 @@
 <template>
   <div>
-    <el-card v-if="currentUser&&currentUser.id">
+    <div v-if="currentUser&&currentUser.id">
       <el-card>
-        <el-form>
-          <el-form-item label="选择成员">
-            <UserSelector :code.sync="nowSelectRealName" default-info="未选择" style="display: inline; margin: 0 1rem 0 0" @change="handleCurrentChange" />
-          </el-form-item>
-          <el-form-item label="选择单位">
-            <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width: 40%" />
-          </el-form-item>
-          <el-button type="primary" :loading="loading" @click="requireLoadWaitToAUthRegisterUsers">刷新</el-button>
-          <el-select v-model="MembersQuery.userCompanyType" placeholder="查询单位">
-            <el-option v-for="item in [[0,'按管理单位'],[1,'按编制单位'],[2,'按休假审批单位'],[4,'按请假审批单位']]" :key="item[0]" :label="item[1]" :value="item[0]">
-              <span style="float: left">{{ item[1] }}</span>
-              <span style="float: right; color: #cccccc; font-size: 13px">{{ item[0] }}</span>
-            </el-option>
-          </el-select>
-        </el-form>
+        <el-card>
+          <el-form>
+            <el-form-item label="选择成员">
+              <UserSelector :code.sync="nowSelectRealName" default-info="未选择" style="display: inline; margin: 0 1rem 0 0" @change="handleCurrentChange" />
+            </el-form-item>
+            <el-form-item label="选择单位">
+              <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width: 40%" />
+            </el-form-item>
+            <el-button type="primary" :loading="loading" @click="requireLoadWaitToAuthRegisterUsers">刷新</el-button>
+            <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
+          </el-form>
+        </el-card>
+        <BatchOperation
+          v-if="currentFocusUsers.length"
+          ref="BatchOperation"
+          v-model="currentFocusUsers"
+          class="right-hover-panel flashing-layout-right"
+          @requireUpdate="requireLoadWaitToAuthRegisterUsers"
+        />
+        <el-table
+          v-loading="loading"
+          :data="waitToAuthRegisterUsers"
+          highlight-current-row
+          style="width: 100%"
+          @row-dblclick="handleCurrentChange"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" />
+          <el-table-column label="姓名" width="100">
+            <template slot-scope="scope">
+              <el-popover placement="right-start" trigger="hover" @show="scope.row.userHasShow = true">
+                <User :data="scope.row" :can-load-avatar="scope.row.userHasShow" />
+                <span slot="reference">{{ scope.row.realName }}</span>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column prop="dutiesName" label="职务" width="150" />
+          <el-table-column label="全年假" width="70">
+            <template slot-scope="scope">{{ scope.row.vacation.yearlyLength }}天</template>
+          </el-table-column>
+          <el-table-column label="路途" width="50">
+            <template slot-scope="scope">{{ scope.row.vacation.maxTripTimes }}次</template>
+          </el-table-column>
+          <el-table-column prop="accountAuthStatus" label="状态" width="100">
+            <template slot-scope="scope">
+              <el-tag :type="scope.row.accountAuthStatus == 1?'success': scope.row.accountAuthStatus == 0?'info':'danger'">
+                {{ scope.row.accountAuthStatus == 1 ? '已认证' : scope.row.accountAuthStatus == 0 ? '待认证' : '已退回' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="vacation.description" label="休假详情描述">
+            <template slot-scope="scope">
+              <span slot="reference">{{ scope.row.vacation.description }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="vacation.description" label="休假率">
+            <template slot-scope="scope">
+              <VacationDescription :users-vacation="scope.row.vacation" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <Pagination :pagesetting.sync="MembersQuery" :total-count="MembersQueryTotalCount" />
       </el-card>
+    </div>
 
-      <el-table v-loading="loading" :data="waitToAuthRegisterUsers" highlight-current-row style="width: 100%" @row-dblclick="handleCurrentChange">
-        <el-table-column label="姓名" width="100">
-          <template slot-scope="scope">
-            <el-popover placement="right-start" trigger="hover" @show="scope.row.userHasShow = true">
-              <User :data="scope.row" :can-load-avatar="scope.row.userHasShow" />
-              <span slot="reference">{{ scope.row.realName }}</span>
-            </el-popover>
-          </template>
-        </el-table-column>
-        <el-table-column prop="dutiesName" label="职务" width="150" />
-        <el-table-column label="全年假" width="70">
-          <template slot-scope="scope">{{ scope.row.vacation.yearlyLength }}天</template>
-        </el-table-column>
-        <el-table-column label="路途" width="50">
-          <template slot-scope="scope">{{ scope.row.vacation.maxTripTimes }}次</template>
-        </el-table-column>
-        <el-table-column prop="accountAuthStatus" label="状态" width="100">
-          <template slot-scope="scope">
-            <el-tag :type="scope.row.accountAuthStatus == 1?'success': scope.row.accountAuthStatus == 0?'info':'danger'">
-              {{ scope.row.accountAuthStatus == 1 ? '已认证' : scope.row.accountAuthStatus == 0 ? '待认证' : '已退回' }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="vacation.description" label="休假详情描述">
-          <template slot-scope="scope">
-            <span slot="reference">{{ scope.row.vacation.description }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="vacation.description" label="休假率">
-          <template slot-scope="scope">
-            <VacationDescription :users-vacation="scope.row.vacation" />
-          </template>
-        </el-table-column>
-      </el-table>
-      <Pagination :pagesetting.sync="MembersQuery" :total-count="MembersQueryTotalCount" />
-    </el-card>
     <Login v-else />
     <el-dialog :visible.sync="approve_show">
       <el-tabs v-model="detail_pane">
         <el-tab-pane label="基本信息">
-          <register
+          <Register
             v-if="detail_pane=='0'"
             :user-info="current_select_id"
-            @requireUpdate="requireLoadWaitToAUthRegisterUsers"
+            @requireUpdate="requireLoadWaitToAuthRegisterUsers"
             @requireHide="approve_show = false"
           />
         </el-tab-pane>
@@ -79,30 +91,25 @@
 </template>
 
 <script>
-import Pagination from '@/components/Pagination'
-import VacationDescription from '@/components/Vacation/VacationDescription'
-import Login from '@/views/login'
-import UserSelector from '@/components/User/UserSelector'
-import CompanySelector from '@/components/Company/CompanySelector'
-import User from '@/components/User'
 import { getMembers } from '@/api/company'
 import { getUsersVacationLimit, getUserAvatar } from '@/api/user/userinfo'
 import { checkUserValid } from '@/utils/validate'
 import { debounce } from '@/utils'
-import register from '../register/RegForm'
-import UserPermission from './UserPermission'
+import { companyTypes } from '../components/dictionary'
 export default {
   name: 'Approve',
   components: {
-    UserSelector,
-    CompanySelector,
-    VacationDescription,
-    Pagination,
-    Login,
-    User,
-    register,
-    UserPermission,
-    Loading: () => import('@/views/Loading')
+    UserSelector: () => import('@/components/User/UserSelector'),
+    CompanySelector: () => import('@/components/Company/CompanySelector'),
+    VacationDescription: () => import('@/components/Vacation/VacationDescription'),
+    Pagination: () => import('@/components/Pagination'),
+    Login: () => import('@/views/login'),
+    User: () => import('@/components/User'),
+    Register: () => import('../register/RegForm'),
+    UserPermission: () => import('./UserPermission'),
+    Loading: () => import('@/views/Loading'),
+    BatchOperation: () => import('./BatchOperation'),
+    CompanyTypeSelector: () => import('../components/CompanyTypeSelector')
   },
   data: () => ({
     MembersQuery: {
@@ -110,13 +117,15 @@ export default {
       pageIndex: 0,
       pageSize: 10
     },
+    companyTypes,
     nowSelectRealName: '', // 通过姓名选择器选中的人员
     MembersQueryTotalCount: 0,
     waitToAuthRegisterUsers: [],
     current_select_id: null,
     nowSelectCompany: null,
     loading: false,
-    detail_pane: ''
+    detail_pane: '',
+    currentFocusUsers: []
   }),
   computed: {
     currentUser () {
@@ -125,7 +134,7 @@ export default {
     currentCmp () {
       return this.$store.state.user.companyid
     },
-    requireLoadWaitToAUthRegisterUsers () {
+    requireLoadWaitToAuthRegisterUsers () {
       return debounce(() => {
         this.loadWaitToAuthRegisterUsers()
       }, 500)
@@ -155,7 +164,7 @@ export default {
       handler (val) {
         if (val) {
           this.MembersQuery.pageIndex = 0
-          this.requireLoadWaitToAUthRegisterUsers()
+          this.requireLoadWaitToAuthRegisterUsers()
         }
       },
       immediate: true
@@ -163,13 +172,16 @@ export default {
     MembersQuery: {
       handler (val) {
         if (val) {
-          this.requireLoadWaitToAUthRegisterUsers()
+          this.requireLoadWaitToAuthRegisterUsers()
         }
       },
       deep: true
     }
   },
   methods: {
+    handleSelectionChange (v) {
+      this.currentFocusUsers = v
+    },
     handleCurrentChange (val) {
       // console.log('approve user change to', val)
       if (!val) return
@@ -229,5 +241,6 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import '@/styles/animation.scss';
 </style>
