@@ -13,4 +13,7 @@
     "strings": true
   },
   "editor.formatOnSave": false,
+  "i18n-ally.localesPaths": [
+    "src/lang"
+  ],
 }
