@@ -63,6 +63,15 @@
         "summary": {
           "title": "评比情况"
         }
+      },
+      "securityManage":{
+        "title":"安全管理",
+        "history":{
+          "title":"历史事件"
+        },
+        "indicator":{
+          "title":"指标"
+        }
       }
     },
     "utils": {

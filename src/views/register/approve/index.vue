@@ -62,7 +62,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <Pagination :pagesetting.sync="MembersQuery" :total-count="MembersQueryTotalCount" />
+        <Pagination :pagesetting.sync="MembersQuery.page" :total-count="MembersQueryTotalCount" />
       </el-card>
     </div>
 
@@ -114,8 +114,10 @@ export default {
   data: () => ({
     MembersQuery: {
       userCompanyType: 0,
-      pageIndex: 0,
-      pageSize: 10
+      page: {
+        pageIndex: 0,
+        pageSize: 10
+      }
     },
     companyTypes,
     nowSelectRealName: '', // 通过姓名选择器选中的人员
@@ -163,7 +165,7 @@ export default {
     nowSelectCompany: {
       handler (val) {
         if (val) {
-          this.MembersQuery.pageIndex = 0
+          this.MembersQuery.page.pageIndex = 0
           this.requireLoadWaitToAuthRegisterUsers()
         }
       },
@@ -223,10 +225,11 @@ export default {
     // 刷新待认证人员列表
     async loadWaitToAuthRegisterUsers () {
       this.loading = true
-      const q = Object.assign(
-        { code: this.nowSelectCompany.code },
-        this.MembersQuery
-      )
+      const code = this.nowSelectCompany.code
+      const { MembersQuery } = this
+      const { page } = MembersQuery
+      let q = Object.assign({ code }, this.MembersQuery)
+      q = Object.assign(q, page)
       getMembers(q)
         .then(async data => {
           this.MembersQueryTotalCount = data.totalCount
