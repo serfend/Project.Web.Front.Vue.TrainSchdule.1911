@@ -34,6 +34,16 @@ const DateIntervalOption = {
     const e_date = new Date(e.getYear(), e.getMonth(), e.getDate())
     return getTimeDelta(s_date, e_date, 24 * 3600000)
   },
+  dayWithObject: (s, e) => {
+    let r = getTimeDelta(s, e, 1000)
+    const day = Math.floor(r / 86400)
+    r = (r - day * 86400)
+    const hour = Math.floor(r / 3600)
+    r = r - hour * 3600
+    const minute = Math.floor(r / 60)
+    const second = r - minute * 60
+    return { day, hour, minute, second }
+  },
   hour: (s, e) => getTimeDelta(s, e, 3600000),
   minute: (s, e) => getTimeDelta(s, e, 60000),
   second: (s, e) => getTimeDelta(s, e, 1000)
@@ -107,11 +117,19 @@ export function parseTime(time, cFormat) {
     if (result.length > 0 && value < 10) {
       value = '0' + value
     }
-    return value || 0
+    return value || '00'
   })
   return time_str
 }
-
+export function sci_str (data, length = 2, padding = '0', prefix_or_append = false) {
+  data = `${data}`
+  const l = length - data.length
+  if (l <= 0) return data
+  const r = new Array(l).fill(padding).join('')
+  if (prefix_or_append) data = `${r}${data}`
+  else data = `${data}${r}`
+  return data
+}
 /**
  * 将任意时间转换为时间
  *

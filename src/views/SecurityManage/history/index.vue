@@ -1,21 +1,14 @@
 <template>
-  <div>
+  <div class="big-screen-limitation">
     <el-row class="row">
-      <el-card>
-        <h1 class="center">
-          <span>历史上的今天</span>
-          <span class="center-date">2022年9月22日</span>
-        </h1>
-      </el-card>
+      <CounterTimer />
     </el-row>
     <el-row :gutter="20" class="row">
-      <el-col :span="8">
-        <EventList />
+      <el-col :span="12">
+        <EventList title="安全保密警钟长鸣" database="security_event" />
       </el-col>
-      <el-col :span="16">
-        <el-card>
-          详情
-        </el-card>
+      <el-col :span="12">
+        <EventList title="学习先进积极前行" database="best_event" />
       </el-col>
     </el-row>
   </div>
@@ -24,18 +17,18 @@
 export default {
   name: 'SecurityManage',
   components: {
-    EventList: () => import('../event/EventList')
+    EventList: () => import('../event/EventList'),
+    CounterTimer: () => import('./CounterTimer')
   }
 }
 </script>
 <style lang="scss" scoped>
-.center {
-  text-align: center;
-}
-.center-date{
-  color:#f00;
-}
+
 .row{
   margin-bottom:1rem;
+}
+.big-screen-limitation{
+  height:1080px;
+  overflow: hidden;
 }
 </style>

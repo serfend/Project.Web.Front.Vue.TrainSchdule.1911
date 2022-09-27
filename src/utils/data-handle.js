@@ -192,3 +192,26 @@ function direct_transition_Array(rawArray, interval, actionQueue, cb) {
     direct_transition_Array(rawArray, interval, actionQueue, cb)
   }, interval)
 }
+
+/**
+ * 随机选取
+ *
+ * @export
+ * @param {*} array 数据列表
+ * @param {*} count 选取个数
+ * @param {*} allow_same 是否可重复
+ */
+export function pick (array, count, allow_same) {
+  const result = []
+  const length = array.length
+  const dict = {}
+  if (count > length && !allow_same) return array
+  while (count > 0) {
+    count--
+    const i = Math.floor(length * Math.random())
+    if (!allow_same && dict[i]) continue
+    dict[i] = true
+    result.push(i)
+  }
+  return result.map(i => array[i])
+}

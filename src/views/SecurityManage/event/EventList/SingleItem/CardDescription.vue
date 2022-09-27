@@ -13,10 +13,10 @@
       </el-tooltip>
     </div>
     <div class="card-summary">
-      <div class="card-summary-title">{{ summary }}</div>
+      <div class="card-summary-title">{{ summary || '无标题' }}</div>
       <div
         class="card-summary-decription"
-      >{{ (data.content && data.content.substr(0,50))||'无详细内容' }}</div>
+      >{{ data.content||'无详细内容' }}</div>
     </div>
   </div>
 </template>
@@ -31,10 +31,8 @@ export default {
   computed: {
     summary() {
       const data = this.data
-      if (!data) return '无'
-      const host = data.host && data.host.userSummary
-      const hostDesc = (host && host.realName) || '无主持'
-      return `${data.title} ${hostDesc}`
+      if (!data) return '无效信息'
+      return data.title
     }
   },
   methods: {
@@ -48,18 +46,19 @@ export default {
   display: flex;
   .card-summary {
     width: 100%;
+    margin-bottom:2rem;
     .card-summary-decription {
       opacity: 0.6;
-      font-size: 0.8rem;
+      font-size: 1.2rem;
       overflow-wrap: break-word;
     }
     .card-summary-title {
-      font-size: 1.2rem;
+      font-size: 1.8rem;
       overflow: hidden;
     }
   }
   .card-title {
-    width: 3.7rem;
+    width: 10rem;
   }
 }
 </style>

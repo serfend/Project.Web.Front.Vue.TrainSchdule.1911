@@ -2,14 +2,14 @@
 @import "@/styles/variables";
 .card-title {
   vertical-align: top;
-  width: 3.7rem;
+  width: 8rem;
   height: 100%;
   padding-right: 0.7rem;
   text-align: right;
   display: inline-block;
   font-weight: 600;
   .title-content {
-    font-size: 1rem;
+    font-size: 2rem;
   }
   .title-description {
     font-size: 2.2rem;
@@ -28,7 +28,7 @@
   border-left: 1rem solid $color;
 }
 .single-item {
-  max-width: 45rem;
+  // max-width: 45rem;
   .header {
     transition: all 0.3s ease;
     border-left: 0rem solid $--color-primary;

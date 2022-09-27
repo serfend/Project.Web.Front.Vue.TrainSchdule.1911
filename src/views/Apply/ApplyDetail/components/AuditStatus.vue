@@ -49,19 +49,19 @@
           <div slot="reference" class="audit-process-card">
             <div v-if="detail.nowStep" class="audit-process-status">
               <span v-if="step.index > detail.nowStep.index">
-                <i class="el-icon-more-outline title grey-text" />
+                <i class="el-icon-more-outline audit-title grey-text" />
                 <span>未收到审批</span>
               </span>
               <span v-if="step.index === detail.nowStep.index&&detail.status!==75">
-                <i class="el-icon-loading title red--text" />
+                <i class="el-icon-loading audit-title red--text" />
                 <span>审批中</span>
               </span>
               <span v-if="step.index < detail.nowStep.index">
-                <i class="el-icon-success title green--text" />
+                <i class="el-icon-success audit-title green--text" />
                 <span>通过审核</span>
               </span>
               <span v-if="step.index === detail.nowStep.index&&detail.status===75">
-                <i class="el-icon-circle-close title red--text" />
+                <i class="el-icon-circle-close audit-title red--text" />
                 <span>驳回</span>
               </span>
             </div>
@@ -69,7 +69,7 @@
             <div v-else>审批已结束</div>
 
             <div class="audit-process-companyName grey--text row layout justify-start align-center">
-              <i class="el-icon-office-building black--text title mr-1" />
+              <i class="el-icon-office-building black--text audit-title mr-1" />
               <el-badge is-dot :hidden="detail.response.filter(i=>i.index===step.index && i.remark).length==0">
                 <span>{{ step.firstMemberCompanyName }}</span>
               </el-badge>
@@ -236,5 +236,8 @@ export default {
   border-width: 1px;
   border-color: #3f3f3f;
   cursor: pointer;
+}
+.audit-title{
+  font-size:1rem;
 }
 </style>

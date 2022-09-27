@@ -1,8 +1,8 @@
-import Layout from '@/layout'
+// import Layout from '@/layout'
 
 const router = {
   path: '/security-manage',
-  component: Layout,
+  component: () => import('@/views/blank'),
   meta: {
     title: 'SecurityManage',
     icon: 'security-safe'
@@ -14,7 +14,8 @@ const router = {
       name: 'History',
       meta: {
         title: 'history',
-        icon: 'user'
+        icon: 'user',
+        hide_footer: true
       }
     },
     {
