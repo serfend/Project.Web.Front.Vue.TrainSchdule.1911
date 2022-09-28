@@ -1,33 +1,13 @@
 // import Layout from '@/layout'
 
 const router = {
-  path: '/security-manage',
-  component: () => import('@/views/blank'),
+  path: '/security-manage/dashboard',
+  component: () => import('@/views/SecurityManage/dashboard'),
   meta: {
-    title: 'SecurityManage',
-    icon: 'security-safe'
+    ctitle: '安全管理态势',
+    icon: 'security-safe',
+    hide_footer: true
   },
-  children: [
-    {
-      path: 'history',
-      component: () => import('@/views/SecurityManage/history'),
-      name: 'History',
-      meta: {
-        title: 'history',
-        icon: 'user',
-        hide_footer: true
-      }
-    },
-    {
-      path: 'indicator',
-      component: () => import('@/views/SecurityManage/indicator'),
-      name: 'Indicator',
-      meta: {
-        title: 'indicator',
-        icon: 'user'
-      }
-    }
-  ]
 }
 
 export default router
