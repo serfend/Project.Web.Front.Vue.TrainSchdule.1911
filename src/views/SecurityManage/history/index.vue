@@ -1,8 +1,5 @@
 <template>
   <div class="big-screen-limitation">
-    <el-row class="row">
-      <CounterTimer />
-    </el-row>
     <el-row :gutter="20" class="row">
       <el-col :span="12">
         <EventList title="安全保密警钟长鸣" database="security_event" />
@@ -17,8 +14,7 @@
 export default {
   name: 'SecurityManage',
   components: {
-    EventList: () => import('../event/EventList'),
-    CounterTimer: () => import('./CounterTimer')
+    EventList: () => import('../event/EventList')
   }
 }
 </script>
