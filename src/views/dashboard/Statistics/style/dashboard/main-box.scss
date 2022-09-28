@@ -1,15 +1,15 @@
 .mainbox {
   display: flex;
-  min-width: 1024px;
-  max-width: 8172px;
+  min-width: 1080px;
+  max-width: 1920px;
   margin: 0 auto;
-  padding: 0.125rem 0.125rem 0;
+  padding: 1rem 1rem;
 }
 .mainbox .column {
   flex: 2;
 }
 .mainbox .column:nth-child(2) {
   flex: 3;
-  margin: 0 0.125rem 0.1875rem;
+  margin: 0 1rem 1.5rem 0;
   overflow: hidden;
 }

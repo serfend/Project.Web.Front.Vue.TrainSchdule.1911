@@ -15,6 +15,7 @@
               :color="color_main"
               :companies="companies"
               :data="accumulateData"
+              style="height:25rem"
             />
           </Square>
           <Square>
@@ -30,6 +31,7 @@
               :color="color_main"
               :companies="companies"
               :data="trendData"
+              style="height:25rem"
             />
           </Square>
         </div>
@@ -42,7 +44,7 @@
             <VacationMap3D
               v-if="echartGeoComplete&&memberCardSetting"
               ref="vacationMap"
-              height="100%"
+              height="980px"
               :file-load="requestFile"
               :color="color_card"
               :data="memberCardSetting.data"
@@ -73,7 +75,7 @@
 </template>
 
 <script>
-import Flexible from './js/flexible'
+// import Flexible from './js/flexible'
 import Square from './components/Square'
 
 import TimeCenter from './components/NumberCounter/TimeCenter'
@@ -108,7 +110,7 @@ export default {
     VacationStatisticsLine
   },
   data: () => ({
-    flexible: new Flexible(window, document),
+    // flexible: new Flexible(window, document),
     loading: false,
     echartGeoComplete: false,
     initStatus: 'wait init',
@@ -293,10 +295,10 @@ export default {
     }, 2000)
   },
   created() {
-    this.flexible.init()
+    // this.flexible.init()
   },
   beforeDestroy() {
-    this.flexible.terminate()
+    // this.flexible.terminate()
     window.removeEventListener('resize', this.resize)
   },
   methods: {
