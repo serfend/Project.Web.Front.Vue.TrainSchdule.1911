@@ -1,9 +1,10 @@
-
 <template>
-  <el-card>
+  <el-card class="counter-timer-primary">
     <span class="center primary-title">
       <span>历史上的</span>
-      <span class="center-date">{{ parseTime(new Date(),'{y}年{m}月{d}日 {h}:{i}:{s}') }}</span>
+      <span class="center-date">{{
+        parseTime(new Date(), "{y}年{m}月{d}日 {h}:{i}:{s}")
+      }}</span>
       <span>今天</span>
     </span>
     <span class="center primary-title">
@@ -11,13 +12,15 @@
       <span class="center-date">{{ sci_str(config.countDown.time[0]) }}</span>
       <span>天</span>
       <span class="center-date">{{ sci_str(config.countDown.time[1]) }}</span>
-      <span :style="{opacity:spliter_opacity}">:</span>
+      <span :style="{ opacity: spliter_opacity }">:</span>
       <span class="center-date">{{ sci_str(config.countDown.time[2]) }}</span>
       <span
         v-show="config.showSecond"
-        :style="{opacity:spliter_opacity}"
+        :style="{ opacity: spliter_opacity }"
       >:</span>
-      <span v-show="config.showSecond">{{ sci_str(config.countDown.time[3]) }}</span>
+      <span v-show="config.showSecond">{{
+        sci_str(config.countDown.time[3])
+      }}</span>
       <span>倒计时</span>
     </span>
   </el-card>
@@ -30,7 +33,7 @@ const week = [
   '星期三',
   '星期四',
   '星期五',
-  '星期六',
+  '星期六'
 ]
 import { datedifference, parseTime, sci_str } from '@/utils'
 export default {
@@ -50,16 +53,16 @@ export default {
         target: new Date('2023-1-1'),
         value: null,
         time: []
-      },
+      }
     },
-    lastDate: 0,
+    lastDate: 0
   }),
   computed: {
     spliter_opacity() {
       const { config } = this
       const r = !config.running || config.spliter_breath
       return r ? 1 : 0
-    },
+    }
   },
   mounted() {
     this.time_reset()
@@ -70,14 +73,16 @@ export default {
   methods: {
     parseTime,
     sci_str,
-    showBtn () {
+    showBtn() {
       this.config.show_btn = true
-      if (this.config.show_btn_timer) { clearTimeout(this.config.show_btn_timer) }
+      if (this.config.show_btn_timer) {
+        clearTimeout(this.config.show_btn_timer)
+      }
       this.config.show_btn_timer = setTimeout(() => {
         this.config.show_btn = false
       }, 5e3)
     },
-    update_time () {
+    update_time() {
       if (!this.config.running) return
       this.time = this.getTime()
       const { countDown } = this.config
@@ -89,11 +94,11 @@ export default {
       }
       if (this.config.useClock) this.date = this.time[3]
     },
-    time_reset () {
+    time_reset() {
       this.lastDate = -1
       this.update_time()
     },
-    getTime () {
+    getTime() {
       this.config.spliter_breath = !this.config.spliter_breath
       const n = new Date()
       let r
@@ -104,13 +109,14 @@ export default {
         r = [
           Math.floor(this.lastDate / 3600),
           Math.floor((this.lastDate % 3600) / 60),
-          Math.floor(this.lastDate % 60),
+          Math.floor(this.lastDate % 60)
         ]
       }
-      r = r.map((i) => i.toString().padStart(2, '0'))
+      r = r.map(i => i.toString().padStart(2, '0'))
       if (u) {
         r.push(
-          `${n.getFullYear()}年${n.getMonth() + 1}月${n.getDate()}日${week[n.getDay()]
+          `${n.getFullYear()}年${n.getMonth() + 1}月${n.getDate()}日${
+            week[n.getDay()]
           }`
         )
       }
@@ -123,12 +129,20 @@ export default {
 .center {
   text-align: center;
 }
-.center-date{
-  color:#f00;
+.center-date {
+  color: #f00;
 }
-.primary-title{
+.primary-title {
   font-size: 4rem;
   display: block;
   font-weight: 800;
+}
+@import "../style";
+@import "@/views/dashboard/Statistics/style";
+.counter-timer-primary {
+  @include common();
+  text-shadow: 1px 0px 10px #fff;
+  background: url(~@/assets/dashboard/images/head_bg.png) no-repeat;
+  background-size: 100% 13.5rem;
 }
 </style>

@@ -23,12 +23,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
-.row{
-  margin-bottom:1rem;
+@import "../style";
+.row {
+  margin-bottom: 1rem;
 }
-.big-screen-limitation{
-  height:1080px;
+.big-screen-limitation {
+  height: 1080px;
   overflow: hidden;
+  @include common();
 }
 </style>

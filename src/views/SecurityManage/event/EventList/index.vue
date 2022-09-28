@@ -199,8 +199,11 @@ export default {
     padding: 0 !important;
   }
 }
+@import "../../style";
+@import "@/views/dashboard/Statistics/style";
 .main-card {
   position: relative;
+  @include common();
   :hover {
     .right-button {
       right: 0.5rem;
