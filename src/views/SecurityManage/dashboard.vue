@@ -28,7 +28,7 @@
             <Square>
               <div slot="title">各类事件概率</div>
               <div slot="chart">
-                <div style="height:17rem">内容</div>
+                <EventRate height="17rem" />
               </div>
             </Square>
           </el-col>
@@ -57,6 +57,7 @@ export default {
     History: () => import('./history'),
     CounterTimer: () => import('./CounterTimer'),
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
+    EventRate: () => import('./EventRate')
   }
 }
 </script>
