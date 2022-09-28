@@ -121,7 +121,7 @@ export function parseTime(time, cFormat) {
   })
   return time_str
 }
-export function sci_str (data, length = 2, padding = '0', prefix_or_append = false) {
+export function sci_str (data, length = 2, padding = '0', prefix_or_append = true) {
   data = `${data}`
   const l = length - data.length
   if (l <= 0) return data
