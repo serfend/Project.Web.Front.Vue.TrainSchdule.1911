@@ -1,21 +1,22 @@
 <template>
   <div class="card-item">
-    <div class="card-title">
+    <div class="card-title" :style="{width:`${size*10}rem`}">
       <el-tooltip>
         <template #content>
           <div>{{ formatTime(data.create) }}</div>
           <div>{{ data.create }}</div>
         </template>
-        <div class="card-title">
-          <div class="title-content">{{ data.tag.title }}</div>
-          <div class="title-description">{{ data.tag.desc }}</div>
+        <div class="card-title" :style="{height:`${6*size}rem`,'padding-right':`${0.7*size}rem`}">
+          <div class="title-content" :style="{'font-size':`${2.2*size}rem`}">{{ data.tag.title }}</div>
+          <div class="title-description" :style="{'font-size':`${1.2*size}rem`}">{{ data.tag.desc }}</div>
         </div>
       </el-tooltip>
     </div>
-    <div class="card-summary">
-      <div class="card-summary-title">{{ summary || '无标题' }}</div>
+    <div class="card-summary" :style="{'margin-bottom':`${2*size}rem`}">
+      <div class="card-summary-title" :style="{'font-size':`${1.8*size}rem`}">{{ summary || '无标题' }}</div>
       <div
         class="card-summary-decription"
+        :style="{'font-size':`${1.2*size}rem`}"
       >{{ data.content||'无详细内容' }}</div>
     </div>
   </div>
@@ -26,7 +27,8 @@ import { formatTime } from '@/utils'
 export default {
   name: 'CardDescription',
   props: {
-    data: { type: Object, required: true }
+    data: { type: Object, required: true },
+    size: { type: Number, default: 1 }
   },
   computed: {
     summary() {
@@ -46,19 +48,13 @@ export default {
   display: flex;
   .card-summary {
     width: 100%;
-    margin-bottom:2rem;
     .card-summary-decription {
       opacity: 0.6;
-      font-size: 1.2rem;
       overflow-wrap: break-word;
     }
     .card-summary-title {
-      font-size: 1.8rem;
       overflow: hidden;
     }
-  }
-  .card-title {
-    width: 10rem;
   }
 }
 </style>

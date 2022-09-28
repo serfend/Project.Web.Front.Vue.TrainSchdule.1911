@@ -4,10 +4,12 @@
       v-if="showStickContent"
       :sticky-top="48"
       :class-name="'card-divider-year'"
-      :style="{opacity:(now_active_year.length&&now_active_year[now_active_year.length-1]>index)?0:1,transition:'all ease 0.5s','margin-bottom':'0.5rem'}"
+      :style="{opacity:(now_active_year.length&&now_active_year[now_active_year.length-1]>index)?0:1,transition:'all ease 0.5s','margin-bottom':'0.5rem',height:`${size*2}rem`}"
       @reset="year_banner_reset()"
       @sticky="year_banner_sticky(index)"
-    >{{ data.tag.banner }}</Sticky>
+    >
+      <span :style="{'font-size':`${size*1.8}rem`}">{{ data.tag.banner }}</span>
+    </Sticky>
     <div :class="['card-row']">
       <el-tooltip
         :content="data.show?'点击隐藏详情':'点击查看详情'"
@@ -18,7 +20,7 @@
       >
         <div class="single-item">
           <div class="header" style="cursor:pointer" @click="$emit('itemClick')">
-            <CardDescription :data="data" :class="['card-description' ,focus?'on-focus':'']" />
+            <CardDescription :size="size" :data="data" :class="['card-description' ,focus?'on-focus':'']" />
           </div>
           <slot
             v-if="data.create"
@@ -45,7 +47,8 @@ export default {
     index: { type: Number, default: 0 },
     data: { type: Object, default: null },
     showStickContent: { type: Boolean, default: false },
-    focus: { type: Boolean, default: false }
+    focus: { type: Boolean, default: false },
+    size: { type: Number, default: 1 }
   },
   data: () => ({
     now_active_year: []

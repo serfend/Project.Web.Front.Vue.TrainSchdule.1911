@@ -15,11 +15,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../style";
 .h2-title {
   position: absolute;
   left: 0;
   top: 0;
   right: 0;
   margin: auto;
+  text-align: center;
 }
 </style>

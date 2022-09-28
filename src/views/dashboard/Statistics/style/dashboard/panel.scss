@@ -1,7 +1,6 @@
 .panel {
   position: relative;
-  height: 5rem;
-  margin-bottom: 0.1875rem;
+  margin: 1rem 0.5rem 0 0.5rem;
   transition: all 0.5s;
   &:hover {
     background-color: #479dff3e;
@@ -9,25 +8,26 @@
     transform: translateY(4px);
   }
 }
+%base-panel{
+  width: 1.2rem;
+  height: 1.2rem;
+  content: "";
+}
 .panel::before {
   position: absolute;
   top: 0;
   left: 0;
-  width: 0.12rem;
-  height: 0.12rem;
-  border-left: 0.03rem solid #02a6b5;
-  border-top: 0.03rem solid #02a6b5;
-  content: "";
+  border-left: 0.3rem solid #02a6b5;
+  border-top: 0.3rem solid #02a6b5;
+  @extend %base-panel;
 }
 .panel::after {
   position: absolute;
   top: 0;
   right: 0;
-  width: 0.12rem;
-  height: 0.12rem;
-  border-right: 0.03rem solid #02a6b5;
-  border-top: 0.03rem solid #02a6b5;
-  content: "";
+  border-right: 0.3rem solid #02a6b5;
+  border-top: 0.3rem solid #02a6b5;
+  @extend %base-panel;
 }
 .panel .panel-footer {
   position: absolute;
@@ -39,21 +39,17 @@
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 0.12rem;
-  height: 0.12rem;
-  border-left: 0.03rem solid #02a6b5;
-  border-bottom: 0.03rem solid #02a6b5;
-  content: "";
+  border-left: 0.3rem solid #02a6b5;
+  border-bottom: 0.3rem solid #02a6b5;
+  @extend %base-panel;
 }
 .panel .panel-footer::after {
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 0.12rem;
-  height: 0.12rem;
-  border-right: 0.03rem solid #02a6b5;
-  border-bottom: 0.03rem solid #02a6b5;
-  content: "";
+  border-right: 0.3rem solid #02a6b5;
+  border-bottom: 0.3rem solid #02a6b5;
+  @extend %base-panel;
 }
 .panel h2 {
   height: 0.6rem;

@@ -1,12 +1,13 @@
 <template>
   <el-row class="row">
-    <h2 style="text-align: center;font-size:3rem;">{{ title }}</h2>
+    <h2 :style="{'text-align': 'center','font-size':`${3*size}rem`,'height':`${3*size}rem`,'line-height':`${3*size}rem`}">{{ title }}</h2>
     <el-card v-infinite-scroll="onScrollToBottom" class="main-card">
       <div ref="primary_container" v-loading="loading" :style="{position:'relative',transition:'all ease 1.5s',top:auto_play_top_value}">
         <div v-if="innerList && innerList.length">
           <SingleItem
             v-for="(i, index) in innerList"
             :key="i.id"
+            :size="size"
             :index="index"
             :data="i"
             :show-stick-content="
@@ -46,6 +47,7 @@ export default {
     list: { type: Array, default: () => [] }, // 同步数据输出
     showAddNewItem: { type: Boolean, default: false },
     type: { type: Number, default: 0 },
+    size: { type: Number, default: 1 }
   },
   data: () => ({
     loading: false,
@@ -112,7 +114,7 @@ export default {
     next_play_top () {
       this.auto_play_top -= 10
       const v = this.$refs.primary_container
-      if (v.offsetHeight + v.offsetTop < 700) this.auto_play_top = 0
+      if (v.offsetHeight + v.offsetTop < 700 * this.size) this.auto_play_top = 0
       this.auto_play_top_player = setTimeout(this.next_play_top, 3e3 + Math.random() * 2e3)
     },
     focusNext () {

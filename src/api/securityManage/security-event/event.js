@@ -51,7 +51,7 @@ function date_pick (date1, date2) {
   return new Date((date1 * date_ratio) + (date2 * (1 - date_ratio)))
 }
 const date_range = [new Date('2019-8-1').getTime(), new Date().getTime()]
-const summary_length = 50
+const summary_length = 150
 const events = [
   {
     'name': '山东五彩龙投资有限公司栖霞市笏山金矿“1·10”重大爆炸事故',
@@ -109,7 +109,7 @@ function generate_event (database_name) {
   return data
 }
 function init_database (database_name) {
-  let _database = new Array(20).fill(null).map((i, index) => generate_event(database_name))
+  let _database = new Array(5).fill(null).map((i, index) => generate_event(database_name))
   _database.sort((a, b) => b.record - a.record)
   _database = groupByFiled(_database, 'type')
   return Object.values(_database).flat()

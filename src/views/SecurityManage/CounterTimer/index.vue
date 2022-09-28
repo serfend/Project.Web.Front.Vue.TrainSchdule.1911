@@ -141,7 +141,7 @@ export default {
 @import "@/views/dashboard/Statistics/style";
 .counter-timer-primary {
   @include common();
-  text-shadow: 1px 0px 10px #fff;
+  text-shadow: 1px 0px 2px #fff;
   background: url(~@/assets/dashboard/images/head_bg.png) no-repeat;
   background-size: 100% 13.5rem;
 }
