@@ -65,6 +65,7 @@ const map = {
   '雨': rainy,
   '雪': lightSnowy,
   '无': unknown,
+  '未知': unknown,
 }
 import variables from '@/styles/element-variables.scss'
 const themeColor = variables.theme
@@ -78,4 +79,51 @@ Object.keys(map).map(i => {
     return raw_func(o.r / 255, o.g / 255, o.b / 255)
   }
 })
-export default Object.assign({}, map)
+
+const weatherDict = [
+  '未知',
+  '晴',
+  '晴夜',
+  '晴风',
+  '多云',
+  '多云夜',
+  '多云风',
+  '小雨',
+  '中雨',
+  '大雨',
+  '阵雨',
+  '雷电',
+  '小雪',
+  '大雪',
+  '雾霾'
+]
+const temperatureMockDict = [
+  0.2,
+  0.18,
+  0.16,
+  0.14,
+  0.12,
+  0.10,
+  0.09,
+  0.15,
+  0.2,
+  0.3,
+  0.5,
+  0.7,
+  0.83,
+  0.92,
+  0.95,
+  1,
+  0.98,
+  0.92,
+  0.85,
+  0.7,
+  0.58,
+  0.47,
+  0.37,
+  0.28
+]
+export default Object.assign({
+  weatherDict,
+  temperatureMockDict
+}, map)
