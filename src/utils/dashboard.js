@@ -1,4 +1,4 @@
-const rgbIndex = ['r', 'g', 'b']
+export const rgbIndex = ['r', 'g', 'b']
 /**
  * #ff00ff to {r:,g:,b:}
  *

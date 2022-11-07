@@ -92,12 +92,11 @@ export function modify(item, callback, freezingOffCallBack) {
  * @returns if property not exist or is `null`,it would return null
  */
 export function getProp(node, names, directZoomIn = 'value') {
-  if (!node) return null
+  if (node === undefined || node === null) return null
   const isStr = Object.prototype.toString.call(names) === '[object String]'
   if (names.length === 0) return node
-  const q = names.splice(0, 1)
   if (directZoomIn && node[directZoomIn]) node = node[directZoomIn]
-  const r = isStr ? node[names] : getProp(node[q[0]], names)
+  const r = isStr ? node[names] : getProp(node[names.shift()], names)
   if (directZoomIn && r && r[directZoomIn] !== undefined) return r[directZoomIn]
   return r
 }
