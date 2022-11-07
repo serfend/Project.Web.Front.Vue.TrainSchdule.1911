@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <LottieIcon ref="icon" path="/assets/lottie/lottie.empty.json" class="buiding" />
-    <div class="title-main">这里没有任何数据...</div>
+    <LottieIcon ref="icon" path="/assets/lottie/lottie.empty.json" :style="{width:`${size*5}rem`}" />
+    <div class="title-main" :style="{'font-size':`${size}rem`}">这里没有任何数据...</div>
   </div>
 </template>
 
@@ -10,6 +10,9 @@ export default {
   name: 'DefaultEmpty',
   components: {
     LottieIcon: () => import('@/components/LottieIcon')
+  },
+  props: {
+    size: { type: Number, default: 1 }
   },
   mounted() {},
   methods: {}
@@ -27,9 +30,5 @@ export default {
 }
 .title-main {
   color: #ccc;
-  font-size: 1rem;
-}
-.buiding {
-  width: 5rem;
 }
 </style>
