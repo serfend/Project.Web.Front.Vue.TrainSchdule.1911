@@ -35,8 +35,10 @@
           <el-col :span="6">
             <Square>
               <div slot="title">天气轮询</div>
-              <div slot="chart">
-                <div style="height:17rem">内容</div>
+              <div slot="chart" style="height:17rem">
+                <div style="font-size:0.1px;height:1.5rem">-</div>
+                <WeatherGroup :district="[110000,420600]" />
+                <WeatherGroup :district="[130623,140922]" />
               </div>
             </Square>
           </el-col>
@@ -57,7 +59,8 @@ export default {
     History: () => import('./history'),
     CounterTimer: () => import('./CounterTimer'),
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
-    EventRate: () => import('./EventRate')
+    EventRate: () => import('./EventRate'),
+    WeatherGroup: () => import('@/components/Weather/WeatherGroup')
   }
 }
 </script>

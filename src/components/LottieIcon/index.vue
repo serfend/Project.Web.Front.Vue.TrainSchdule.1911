@@ -7,23 +7,14 @@ import lottie from 'lottie-web'
 export default {
   name: 'LottieIcon',
   props: {
-    animationData: {
-      type: Object,
-      default: null
-    },
+    animationData: { type: Object, default: null },
     path: {
       type: String,
       default: null,
       require: true
     },
-    loop: {
-      type: Boolean,
-      default: true
-    },
-    animateSpeed: {
-      type: Number,
-      default: 1
-    }
+    loop: { type: Boolean, default: true },
+    animateSpeed: { type: Number, default: 1 }
   },
   data: () => ({
     lottie: null
@@ -31,7 +22,12 @@ export default {
   watch: {
     path: {
       handler(val) {
-        console.log('path', val)
+        this.destroyInstance()
+        this.initLottie()
+      }
+    },
+    animationData: {
+      handler(val) {
         this.destroyInstance()
         this.initLottie()
       }
@@ -83,15 +79,14 @@ export default {
       this.$emit('isLottieFinish', true)
     },
 
-    initLottie() {
-      console.log('init lottie', this.path)
+    initLottie () {
+      const { animationData, path, loop } = this
       this.lottie = lottie.loadAnimation({
         container: this.$refs.lottieBox,
         renderer: 'svg',
-        loop: this.loop || true,
-        animationData: this.animationData,
-        // 如果需要用到路径请求，请使用 path ，lottie 如果 animationData 为空 ，则自动选择 path
-        path: this.path
+        loop: loop || true,
+        path: path,
+        animationData
       })
 
       this.lottie.addEventListener('data_ready', this.isLottieFinish, {
