@@ -22,7 +22,7 @@
 <script>
 const red = [245, 108, 108]
 const green = [103, 194, 58]
-import { rgbToHex } from '@/utils'
+import { getColorByPercentage } from '@/utils'
 export default {
   name: 'VacationDescription',
   components: {
@@ -77,17 +77,7 @@ export default {
     }
   },
   methods: {
-    getColor(percent) {
-      percent = percent / 100
-      let r = (1 - percent) * red[0] + percent * green[0]
-      let g = (1 - percent) * red[1] + percent * green[1]
-      let b = (1 - percent) * red[2] + percent * green[2]
-      r = Math.floor(r)
-      g = Math.floor(g)
-      b = Math.floor(b)
-      const c = rgbToHex(`rgba(${r},${g},${b},255)`)
-      return c
-    }
+    getColor: (v) => getColorByPercentage(v, red, green)
   }
 }
 </script>

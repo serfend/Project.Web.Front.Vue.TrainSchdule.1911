@@ -337,6 +337,20 @@ export function rgbToHex(value) {
   }
   return value
 }
+
+const default_red = [245, 108, 108]
+const default_green = [103, 194, 58]
+export function getColorByPercentage(percent, red = default_red, green = default_green) {
+  percent = percent / 100
+  let r = (1 - percent) * red[0] + percent * green[0]
+  let g = (1 - percent) * red[1] + percent * green[1]
+  let b = (1 - percent) * red[2] + percent * green[2]
+  r = Math.floor(r)
+  g = Math.floor(g)
+  b = Math.floor(b)
+  const c = rgbToHex(`rgba(${r},${g},${b},255)`)
+  return c
+}
 /**
  * @param {Function} func
  * @param {number} wait
