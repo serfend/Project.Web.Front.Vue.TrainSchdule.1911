@@ -1,7 +1,7 @@
 <template>
   <el-row class="row">
     <h2 :style="{'text-align': 'center','font-size':`${3*size}rem`,'height':`${3*size}rem`,'line-height':`${3*size}rem`}">{{ title }}</h2>
-    <el-card v-infinite-scroll="onScrollToBottom" class="main-card">
+    <el-card v-infinite-scroll="onScrollToBottom" class="styled-primary-card">
       <div ref="primary_container" v-loading="loading" :style="{position:'relative',transition:'all ease 1.5s',top:auto_play_top_value}">
         <div v-if="innerList && innerList.length">
           <SingleItem
@@ -203,13 +203,4 @@ export default {
 }
 @import "../../style";
 @import "@/views/dashboard/Statistics/style";
-.main-card {
-  position: relative;
-  @include common();
-  :hover {
-    .right-button {
-      right: 0.5rem;
-    }
-  }
-}
 </style>
