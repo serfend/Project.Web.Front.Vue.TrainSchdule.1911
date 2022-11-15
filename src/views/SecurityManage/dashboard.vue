@@ -7,17 +7,11 @@
       <el-col :span="11">
         <el-row class="row">
           <Square>
-            <div slot="title">本周人员情况</div>
+            <div slot="title">安全指标监测</div>
             <div slot="chart">
-              <div style="height:26rem">内容</div>
-            </div>
-          </Square>
-        </el-row>
-        <el-row class="row">
-          <Square>
-            <div slot="title">本周出车情况</div>
-            <div slot="chart">
-              <div style="height:26rem">内容</div>
+              <div style="height:54rem;padding:2rem 3rem 1rem 3rem">
+                <Indicator />
+              </div>
             </div>
           </Square>
         </el-row>
@@ -63,7 +57,8 @@ export default {
     CounterTimer: () => import('./CounterTimer'),
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
     EventRate: () => import('./EventRate'),
-    WeatherGroup: () => import('@/components/Weather/WeatherGroup')
+    WeatherGroup: () => import('@/components/Weather/WeatherGroup'),
+    Indicator: () => import('./indicator')
   }
 }
 </script>
