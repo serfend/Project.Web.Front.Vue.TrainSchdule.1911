@@ -1,16 +1,10 @@
 <template>
   <div class="card-item">
     <div class="card-title" :style="{width:`${size*10}rem`}">
-      <el-tooltip>
-        <template #content>
-          <div>{{ formatTime(data.create) }}</div>
-          <div>{{ data.create }}</div>
-        </template>
-        <div class="card-title" :style="{height:`${6*size}rem`,'padding-right':`${0.7*size}rem`}">
-          <div class="title-content" :style="{'font-size':`${2.2*size}rem`}">{{ data.tag.title }}</div>
-          <div class="title-description" :style="{'font-size':`${1.2*size}rem`}">{{ data.tag.desc }}</div>
-        </div>
-      </el-tooltip>
+      <div class="card-title" :style="{height:`${6*size}rem`,'padding-right':`${0.7*size}rem`}">
+        <div class="title-content" :style="{'font-size':`${2.2*size}rem`}">{{ data.tag.title }}</div>
+        <div class="title-description" :style="{'font-size':`${1.2*size}rem`}">{{ data.tag.desc }}</div>
+      </div>
     </div>
     <div class="card-summary" :style="{'margin-bottom':`${2*size}rem`}">
       <div class="card-summary-title" :style="{'font-size':`${1.8*size}rem`}">{{ summary || '无标题' }}</div>
