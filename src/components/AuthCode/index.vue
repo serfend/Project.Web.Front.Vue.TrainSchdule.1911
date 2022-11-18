@@ -21,7 +21,7 @@
         </el-form-item>
         <el-form-item label="授权码">
           <CodeInput
-            :listen-user-input.sync="collaspseIsOpen"
+            :listen-user-input.sync="collapseIsOpen"
             :check-code-method="checkCode"
             :code.sync="innerForm.code"
           />
@@ -50,7 +50,7 @@ export default {
     selectName: { type: String, default: null }
   },
   data: () => ({
-    collaspseIsOpen: false,
+    collapseIsOpen: false,
     innerForm: {
       authByUserId: null,
       code: null

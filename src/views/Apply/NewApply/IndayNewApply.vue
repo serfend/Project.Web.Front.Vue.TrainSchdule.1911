@@ -1,60 +1,66 @@
 <template>
   <div>
     <el-row :gutter="20">
-      <el-col :xl="singleColumn?24:12" :lg="24">
-        <BaseInfo
-          ref="BaseInfo"
-          :submit-id.sync="formFinal.BaseInfoId"
-          :userid.sync="userid"
-          :self-settle.sync="selfSettle"
-          class="card-column"
-          @submited="baseInfoSubmit"
-        />
-        <RequestInfo
-          v-show="nowStep>=1"
-          ref="RequestInfo"
-          :submit-id.sync="formFinal.RequestId"
-          :userid.sync="userid"
-          :self-settle.sync="selfSettle"
-          :entity-type="entityType"
-          class="card-column"
-          @submited="requestInfoSubmit"
-          @requestTypeUpdate="requestTypeUpdate"
-        />
+      <BaseInfo
+        ref="BaseInfo"
+        :submit-id.sync="formFinal.BaseInfoId"
+        :userid.sync="userid"
+        :self-settle.sync="selfSettle"
+        class="card-column"
+        @submited="baseInfoSubmit"
+      />
+      <RequestInfo
+        v-show="nowStep>=1"
+        ref="RequestInfo"
+        :submit-id.sync="formFinal.RequestId"
+        :userid.sync="userid"
+        :self-settle.sync="selfSettle"
+        :entity-type="entityType"
+        class="card-column"
+        @submited="requestInfoSubmit"
+        @requestTypeUpdate="requestTypeUpdate"
+      />
 
-        <SubmitApply
-          :request-id="formFinal.RequestId"
-          :base-info-id="formFinal.BaseInfoId"
-          :disabled="nowStep<2||childOnLoading"
+      <SubmitApply
+        :request-id="formFinal.RequestId"
+        :base-info-id="formFinal.BaseInfoId"
+        :disabled="nowStep<2||childOnLoading"
+        :entity-type="entityType"
+        @reset="createNewDirect"
+        @submit="userSubmit"
+      >
+        <VacationPreview
+          ref="VacationPreview"
           :entity-type="entityType"
-          @reset="createNewDirect"
-          @submit="userSubmit"
-        >
-          <VacationPreview
-            ref="VacationPreview"
-            :entity-type="entityType"
-            :entity-type-desc="entityTypeDesc"
-            :userid="userid"
-            class="card-column"
-          />
-        </SubmitApply>
-      </el-col>
-      <el-col v-show="nowStep>=1" :xl="singleColumn?24:12" :lg="24">
-        <div class="card-column">
-          <h2>历史记录</h2>
-          <MyApply
-            v-if="userid"
-            :id="userid"
-            :entity-type="entityType"
-            :hide-user-card="true"
-            :hide-add-btn="true"
-          >
-            <template #inner>
-              <span />
-            </template>
-          </MyApply>
-        </div>
-      </el-col>
+          :entity-type-desc="entityTypeDesc"
+          :userid="userid"
+          class="card-column"
+        />
+      </SubmitApply>
+
+    </el-row>
+    <el-row>
+      <el-collapse v-show="nowStep>=1" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+        <el-collapse-item title="授权人">
+          <template slot="title">
+            <h2>历史记录</h2>
+          </template>
+          <div class="card-column">
+
+            <MyApply
+              v-if="userid"
+              :id="userid"
+              :entity-type="entityType"
+              :hide-user-card="true"
+              :hide-add-btn="true"
+            >
+              <template #inner>
+                <span />
+              </template>
+            </MyApply>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
     </el-row>
     <el-backtop
       target="#app"

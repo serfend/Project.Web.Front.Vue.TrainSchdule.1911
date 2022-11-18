@@ -3,7 +3,7 @@
     <template #title>
       <h2>参会记录编辑</h2>
     </template>
-    <el-collapse v-model="activeCollaspes">
+    <el-collapse v-model="activeCollapses">
       <el-collapse-item v-for="type in type_list" :key="type.value" :name="type.value">
         <template #title>
           <div class="summary-title">
@@ -94,7 +94,7 @@ export default {
     showUserSelect: false,
     userSelectFocusType: 0,
     showNewType: false,
-    activeCollaspes: []
+    activeCollapses: []
   }),
   computed: {
     conferRecordTypesDict() {
@@ -190,7 +190,7 @@ export default {
       this.showNewType = false
       this.inner_records.push({ type: val, id: new Date().getTime() })
       this.$nextTick(() => {
-        this.activeCollaspes.push(val)
+        this.activeCollapses.push(val)
       })
     }
   }
