@@ -11,6 +11,8 @@
       v-bind="$attrs"
       @size-change="handleSizeChange"
       @current-change="handlePageChange"
+      @prev-click="$emit('prev-click')"
+      @next-click="$emit('next-click')"
     />
   </div>
 </template>
