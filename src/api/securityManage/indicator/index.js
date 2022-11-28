@@ -1,3 +1,5 @@
+import { parseTime } from '@/utils'
+import request from '@/utils/request'
 const indicators = [
   { name: '指标1', description: '描述内容', value: 32, range: [10, 60] },
   { name: '指标2', description: '描述内容', value: 14, range: [5, 20] },
@@ -18,26 +20,37 @@ const indicators = [
   { name: '项目完成率4', description: '描述内容', value: 0.75, range: [0.8, 1] },
   { name: '周请假次数5', value: 6, range: [0, 2] },
 ]
-
+const api = 'securityData'
+export function all_indicators () {
+  return request.get(`${api}/AllIndicators`, {
+    params: {
+    }
+  })
+}
 /**
  * 获取指标状态
  *
  * @export
  * @param {*} {
- * type string ["normal"|"warning"],
- * date DateTime
+ * name string
+ * start DateTime
+ * end DateTime
  * }
  * @return {*}
  */
-export function get_indicators ({ type, date }) {
-  return new Promise((res) => {
-    res({
-      list: indicators,
-      totalCount: indicators.length
-    })
+export function get_indicator ({ name, start, end }) {
+  const d = new Date()
+  start = parseTime(start || d, '{y}-{m}-{d}')
+  d.setDate(d.getDate() + 1)
+  end = parseTime(end || d, '{y}-{m}-{d}')
+  return request.get(`${api}/IndicatorFetch/${name}`, {
+    params: {
+      start, end
+    }
   })
 }
 
 export default {
-  get_indicators
+  get_indicator,
+  all_indicators
 }
