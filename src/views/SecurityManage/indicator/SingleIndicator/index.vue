@@ -1,5 +1,6 @@
 <template>
   <el-card
+    v-loading="!data.range"
     :class="[
       'styled-primary-card',
       inner_focus ? 'focus' : 'un-focus',
@@ -8,7 +9,7 @@
   >
     <template slot="header">
       <div class="title">
-        <span class="content">{{ data.name }}</span>
+        <span class="content">{{ data.alias }}</span>
         <el-tag
           v-if="is_normal"
           class="status"
@@ -26,7 +27,7 @@
       />
       <div class="description">{{ data.description || "无描述" }}</div>
       <div class="range">
-        <span>正常范围 {{ data.range[0] }} - {{ data.range[1] }}</span>
+        <span v-if="data.range">正常范围 {{ data.range[0] }} - {{ data.range[1] }}</span>
         <span>当前值 {{ data.value }}</span>
       </div>
     </div>
@@ -47,6 +48,7 @@ export default {
   computed: {
     is_normal() {
       const { value, range } = this.data
+      if (!range) return false
       return value >= range[0] && value <= range[1]
     },
     status_color() {
@@ -54,10 +56,11 @@ export default {
     },
     percentage() {
       const { range, value } = this.data
+      if (!range) return 0
       const v = value - range[0]
       const r = range[1] - range[0]
       if (v < 0) return 0
-      if (v > r) return 100
+      if (v >= r) return 100
       return (100 * v) / r
     }
   },
