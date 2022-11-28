@@ -1,15 +1,15 @@
 .flashing {
-  animation: flashing-item 0.5s 1 ease;
-  animation-iteration-count: 5;
+  animation: flashing-item 0.5s ease;
+  animation-iteration-count: 2;
 }
 .flashing-layout-right {
   animation: 0.5s ease-out none flashing-item-light, 0.5s ease none layout-right;
   animation-delay: 1s;
-  animation-iteration-count: 5;
+  animation-iteration-count: 2;
 }
 .flashing-alert {
   animation: 0.5s ease-out none flashing-item-light, 0.5s ease none alert;
-  animation-iteration-count: 5;
+  animation-iteration-count: 2;
 }
 .tab-container {
   .el-tab-pane {
@@ -30,10 +30,10 @@
 @keyframes alert {
   0% {
   }
-  10% {
+  30% {
     background-color: #ff0000;
   }
-  90% {
+  70% {
     background-color: #ff0000;
   }
   100% {
@@ -52,10 +52,10 @@
   0% {
     opacity: 1;
   }
-  10% {
+  30% {
     opacity: 0.12;
   }
-  90% {
+  70% {
     opacity: 0.12;
   }
   100% {
