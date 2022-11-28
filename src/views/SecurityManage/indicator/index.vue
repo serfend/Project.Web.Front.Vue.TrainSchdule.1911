@@ -53,7 +53,7 @@
 import { to_dict } from '@/utils/data-handle'
 import Velocity from 'velocity-animate'
 import api_indicator from '@/api/securityManage/indicator'
-import { deepClone } from '@/utils'
+import { distinct } from '@/utils'
 export default {
   name: 'IndicatorContainer',
   components: {
@@ -67,6 +67,7 @@ export default {
   data: () => ({
     indicator_catalogue: [],
     indicators: [],
+    indicator_anicache: {},
     current_group: -1,
     group_player: null,
     last_active: null,
@@ -103,23 +104,30 @@ export default {
   },
   methods: {
     getDelay(el) {
-      const index = Number(el.getAttribute('index'))
+      const item = Number(el.getAttribute('item'))
       const sindex = Number(el.getAttribute('sindex'))
       const delay = sindex * 100
-      return { index, sindex, delay }
+      return { item, sindex, delay }
+    },
+    register_animation (index, front, delay, delete_after_move) {
+      if (!this.indicator_anicache[index]) this.indicator_anicache[index] = this.indicators[index]
+
+      setTimeout(() => {
+        const item = this.indicator_anicache[index]
+        if (item)item.flip_front = front
+        if (delete_after_move) delete this.indicator_anicache[index]
+      }, delay)
     },
     beforeEnter(el) {
       const { index, delay } = this.getDelay(el)
-      setTimeout(() => {
-        this.indicators[index].flip_front = true
-      }, delay + 50)
+      this.register_animation(index, true, delay + 50)
       el.style.opacity = 0
       el.style.display = 'block'
     },
     enter(el, done) {
       const { index, delay } = this.getDelay(el)
+      this.register_animation(index, false, delay + 50)
       setTimeout(() => {
-        this.indicators[index].flip_front = false
         Velocity(el, { opacity: 1 }, { complete: done })
       }, delay + 50)
     },
@@ -138,7 +146,7 @@ export default {
     },
     leave(el, done) {
       const { index, delay } = this.getDelay(el)
-      this.indicators[index].flip_front = true
+      this.register_animation(index, true, 0)
       setTimeout(() => {
         Velocity(el, { opacity: 0 }, { complete: done })
       }, delay)
@@ -243,7 +251,7 @@ export default {
     refresh_indicators_data() {
       return new Promise(res => {
         const { indicators, indicator_catalogue, countPerGroup } = this
-        const new_indicators = indicators // deepClone(indicators)
+        const new_indicators = indicators.filter(i => !i.is_removed) // deepClone(indicators)
         const dict = to_dict(indicator_catalogue)
 
         this.$nextTick(async () => {
@@ -252,32 +260,26 @@ export default {
           // 检查当前页是否有删除的
           let need_check = countPerGroup
           let current_pos = pageIndex * pageSize
-          const need_update = []
+          if (current_pos > new_indicators.length)current_pos = 0
+          let need_update = []
           const check_single = async () => {
             // 记录开始位置，开始i检查需要移除的项目
-            {
-              let to_remove = 0
-              let need_run = true
-              const start_pos = current_pos
-              while (need_run) {
-                if (current_pos >= new_indicators.length) return false
-                const item = new_indicators[current_pos]
-                if (item && dict[item.name]) need_run = false
-                else {
-                  to_remove++
-                  current_pos++
-                }
+            let need_run = true
+            while (need_run) {
+              if (current_pos >= new_indicators.length) {
+                break
               }
-              if (to_remove) {
-                new_indicators.splice(start_pos, to_remove)
+              const item = new_indicators[current_pos]
+              if (item && dict[item.name]) need_run = false
+              else {
+                new_indicators[current_pos].is_removed = true
+                current_pos++
               }
             }
-            return true
           }
-          while (need_check-- > 0) {
-            const r = await check_single()
-            if (!r) break
-            need_update.push(current_pos) // 添加有效项目
+          while (need_check-- > 0 && current_pos < new_indicators.length) {
+            await check_single()
+            if (current_pos < new_indicators.length)need_update.push(current_pos) // 添加有效项目
             current_pos++
           }
           // 将新增的放到后续去
@@ -292,18 +294,22 @@ export default {
               flip_front: false,
               active: false
             })
+            need_update.push(new_indicators.length - 1)
           })
-          while (current_pos < new_indicators.length) {
+          // 所有新增的都是可以直接上屏的
+          while (need_check-- >= 0 && current_pos < new_indicators.length) {
             need_update.push(current_pos)
             current_pos++
           }
+          need_update = distinct(need_update)
+          console.log('update', need_update)
           Promise.all(
             need_update.map(i => {
               new_indicators[i].index = i
-              this.update_single(i, new_indicators)
+              return this.update_single(i, new_indicators)
             })
           ).finally(() => {
-            // this.indicators = new_indicators
+            this.indicators = new_indicators.filter(i => !i.is_removed)
             res()
           })
         })
