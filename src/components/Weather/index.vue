@@ -113,7 +113,7 @@ export default {
     },
     initWeatherData() {
       const { data } = this
-      this.weather_dict = []
+      this.weather_dict = [{}]
       const getSingle = weather => {
         const n = weather.name || this.getWeatherName(weather.type)
         let v = weatherData[n]
@@ -122,7 +122,7 @@ export default {
         return Object.assign({ data: v }, weather)
       }
       if (Object.prototype.toString.call(data) !== '[object Number]') {
-        this.weather_dict[0] = getSingle(data)
+        this.weather_dict[0] = getSingle(data) || {}
         data.children.map((i, index) => {
           this.weather_dict[index + 1] = getSingle(i)
         })
@@ -147,7 +147,7 @@ export default {
             })
           }
           if (!v[0].label)v[0].label = `${district}(无)`
-          this.weather_dict = v.map(i => getSingle(i))
+          this.weather_dict = v.map(i => getSingle(i) || {})
         })
         .finally(() => {
           this.loading = false
