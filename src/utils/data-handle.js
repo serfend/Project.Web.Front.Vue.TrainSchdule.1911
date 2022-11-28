@@ -214,3 +214,23 @@ export function pick (array, count, allow_same) {
   }
   return result.map(i => array[i])
 }
+
+/**
+ * 数组转字典
+ *
+ * @export
+ * @param {*} array
+ * @param {*} predict_key
+ * @param {*} predict_element
+ * @return {*}
+ */
+export function to_dict (array, predict_key, predict_element) {
+  if (!predict_key) predict_key = (x, index) => x
+  if (!predict_element)predict_element = (x) => x
+  const result = {}
+  if (!array) return result
+  array.map((i, index) => {
+    result[predict_key(i, index)] = predict_element(i)
+  })
+  return result
+}
