@@ -20,16 +20,12 @@
           <template #front>
             <SingleIndicator
               :data="item"
-              :focus="item.active"
+              :focus.sync="item.active"
               @click.native="setActive(item)"
             />
           </template>
           <template #back>
-            <SingleIndicator
-              :data="item"
-              :focus="item.active"
-              @click.native="setActive(item)"
-            />
+            <h2>{{ item.name }}</h2>
           </template>
         </Flip>
       </div>
@@ -181,6 +177,12 @@ export default {
         this.group_player = setTimeout(this.run_group_refresh, 8e3)
       }
       clearTimeout(this.group_player)
+      if (this.last_active_index !== null) {
+        // 检查是否对象已释放
+        const i = this.indicators[this.last_active_index]
+        if (i && i.active) return
+        this.last_active_index = null
+      }
       if (this.last_active && new Date() - this.last_active < 8e3) return next_round()
       this.refresh()
         .then(() => {})

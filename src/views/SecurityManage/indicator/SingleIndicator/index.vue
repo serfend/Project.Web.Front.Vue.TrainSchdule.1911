@@ -27,10 +27,37 @@
       />
       <div class="description">{{ data.description || "无描述" }}</div>
       <div class="range">
-        <span v-if="data.range">正常范围 {{ data.range[0] }} - {{ data.range[1] }}</span>
+        <span
+          v-if="data.range"
+        >正常范围 {{ data.range[0] }} - {{ data.range[1] }}</span>
         <span>当前值 {{ data.value }}</span>
       </div>
+      <div class="warning">{{ data.message }}</div>
     </div>
+    <el-dialog :visible.sync="inner_focus" append-to-body>
+      <template #title>
+        <h2>指标详情：{{ data.alias }}</h2>
+      </template>
+      <el-form label-width="5rem" style="font-size:2rem">
+        <el-form-item label="名称">{{ data.name }}({{ data.alias }})</el-form-item>
+        <el-form-item label="说明">{{ data.description }}</el-form-item>
+        <el-form-item
+          label="正常范围"
+        >{{ data.range[0] }} - {{ data.range[1] }}</el-form-item>
+        <el-form-item label="当前值">{{ data.value }}</el-form-item>
+        <el-divider />
+        <el-progress
+          :percentage="percentage"
+          :color="status_color"
+          :show-text="false"
+        />
+        <div v-if="data.message" class="warning-description">
+          <div v-for="(i, index) in data.message.split('\n')" :key="index">
+            {{ i }}
+          </div>
+        </div>
+      </el-form>
+    </el-dialog>
   </el-card>
 </template>
 <script>
@@ -70,6 +97,11 @@ export default {
         this.inner_focus = v
       },
       immediate: true
+    },
+    inner_focus: {
+      handler (v) {
+        this.$emit('update:focus', v)
+      }
     }
   },
   methods: {
@@ -86,6 +118,20 @@ export default {
   background-color: $color !important;
   box-shadow: 0 0 10px #fff;
   cursor: pointer;
+}
+.warning-description {
+  margin: 1rem;
+  color:#f00;
+}
+.warning {
+  position: absolute;
+  bottom: 0.2rem;
+  color: #f00;
+  font-weight: 600;
+  width: 20rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .indicator-card {
   width: 22rem;
