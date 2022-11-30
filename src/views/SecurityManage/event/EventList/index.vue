@@ -1,8 +1,32 @@
 <template>
   <el-row class="row">
-    <h2 :style="{'text-align': 'center','font-size':`${3*size}rem`,'height':`${3*size}rem`,'line-height':`${3*size}rem`}">{{ title }}</h2>
+    <h2
+      :style="{
+        'text-align': 'center',
+        'font-size': `${3 * size}rem`,
+        height: `${3 * size}rem`,
+        'line-height': `${3 * size}rem`
+      }"
+    >
+      {{ title }}
+    </h2>
+    <el-button
+      class="setting-btn"
+      type="text"
+      @click="showSetting = true"
+    >设置</el-button>
+    <EventConfig v-model="searchSetting" :show.sync="showSetting" :name="database" />
+
     <el-card v-infinite-scroll="onScrollToBottom" class="styled-primary-card">
-      <div ref="primary_container" v-loading="loading" :style="{position:'relative',transition:'all ease 1.5s',top:auto_play_top_value}">
+      <div
+        ref="primary_container"
+        v-loading="loading"
+        :style="{
+          position: 'relative',
+          transition: 'all ease 1.5s',
+          top: auto_play_top_value
+        }"
+      >
         <div v-if="innerList && innerList.length">
           <SingleItem
             v-for="(i, index) in innerList"
@@ -38,7 +62,8 @@ export default {
   name: 'EventList',
   components: {
     SingleItem: () => import('./SingleItem'),
-    NoData: () => import('@/views/Loading/NoData')
+    NoData: () => import('@/views/Loading/NoData'),
+    EventConfig: () => import('./EventConfig')
   },
   props: {
     title: { type: String, default: '' },
@@ -57,17 +82,35 @@ export default {
     auto_loader: null,
     auto_play_top: 0,
     auto_play_top_player: null,
+    auto_reload: null,
     page: {
       pageIndex: 0,
       pageSize: 10
     },
     totalCount: -1,
     inner_list: [],
-    errorMsg: null,
-    conferenceContent: null
+    showSetting: false,
+    searchSetting: {
+      databaseName: null,
+      securityEventType: null,
+      securityEventPeriod: null,
+      eventType: null,
+      eventTag: null,
+      company: null,
+      title: null,
+      detail: null,
+      summary: null,
+      type: null,
+      tag: null,
+      time: null,
+      filterDate: null,
+    }
   }),
   computed: {
-    auto_play_top_value () {
+    dict() {
+      return this.$store.state.secEvent.securityEventTypesDict
+    },
+    auto_play_top_value() {
       return `${this.auto_play_top}rem`
     },
     requireRefresh() {
@@ -92,18 +135,33 @@ export default {
     }
   },
   watch: {
+    database: {
+      handler (val) {
+        this.searchSetting.databaseName = val
+      },
+      immediate: true
+    },
     list: {
       handler(val) {
         this.innerList = val
       },
       immediate: true
+    },
+    searchSetting: {
+      handler (val) {
+        this.reload()
+      },
+      deep: true
     }
   },
-  mounted () {
+  mounted() {
     this.auto_loader = setInterval(this.requireRefresh, 5e3)
+    this.auto_reload = setInterval(this.reload, 3600e3)
     this.reload()
     this.next_play_top()
     this.focusNext()
+
+    this.$store.dispatch('secEvent/initDictionary')
   },
   destroyed() {
     clearTimeout(this.auto_loader)
@@ -111,20 +169,27 @@ export default {
     clearInterval(this.auto_focuser)
   },
   methods: {
-    next_play_top () {
+    next_play_top() {
       this.auto_play_top -= 10
       const v = this.$refs.primary_container
-      if (v.offsetHeight + v.offsetTop < 700 * this.size) this.auto_play_top = 0
-      this.auto_play_top_player = setTimeout(this.next_play_top, 3e3 + Math.random() * 2e3)
+      if (v.offsetHeight + v.offsetTop < 700 * this.size) {
+        this.auto_play_top = 0
+      }
+      this.auto_play_top_player = setTimeout(
+        this.next_play_top,
+        3e3 + Math.random() * 2e3
+      )
     },
-    focusNext () {
+    focusNext() {
       this.focusIndex += 1
       if (this.focusIndex >= this.innerList.length) {
         this.focusIndex = 0
         this.auto_play_top = 0
       }
       const item = this.innerList[this.focusIndex]
-      if (item) { this.focusId = item.id }
+      if (item) {
+        this.focusId = item.id
+      }
       this.auto_focuser = setTimeout(this.focusNext, 3e3 + Math.random() * 2e3)
     },
     handleItemClick(i) {
@@ -146,11 +211,10 @@ export default {
     },
     convert_card(item, index) {
       item.tag = {
-        title: parseTime(item.record, '{y}年'),
+        title: parseTime(item.date, '{y}年'),
         banner: item.type,
         desc: null
       }
-      item.title = item.name
       item.content =
         item.summary || (item.detail && item.detail.substring(0, 20))
       return item
@@ -158,8 +222,8 @@ export default {
     refresh() {
       if (this.loading || !this.haveNext) return
       this.loading = true
-      const { database, page } = this
-      eventList({ database_name: database, page })
+      const { searchSetting, page } = this
+      eventList(Object.assign({ page }, searchSetting))
         .then(data => {
           const length = this.innerList.length + 1 // 当前序号
           let previous_item = null // 记录上一个项目用于去重
@@ -200,6 +264,11 @@ export default {
   .el-button--medium {
     padding: 0 !important;
   }
+}
+.setting-btn {
+  position: absolute;
+  top: -0.1rem;
+  left: 0.4rem;
 }
 @import "../../style";
 @import "@/views/dashboard/Statistics/style";
