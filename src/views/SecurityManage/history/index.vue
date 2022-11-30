@@ -1,11 +1,20 @@
 <template>
-  <div class="big-screen-limitation" :style="{height}">
+  <div class="big-screen-limitation" :style="{ height }">
     <el-row :gutter="20" class="row">
-      <el-col :span="12" :style="{height:`${size*55}rem`}">
-        <EventList :size="size" title="安全保密警钟长鸣" database="security_event" />
+      <el-col :span="12" :style="{ height: `${size * 55}rem` }">
+        <EventList
+          :size="size"
+          title="安全保密警钟长鸣"
+          database="security_event"
+          @change="v => $emit('change', v)"
+        />
       </el-col>
-      <el-col :span="12" :style="{height:`${size*55}rem`}">
-        <EventList :size="size" title="学习先进积极前行" database="best_event" />
+      <el-col :span="12" :style="{ height: `${size * 55}rem` }">
+        <EventList
+          :size="size"
+          title="学习先进积极前行"
+          database="best_event"
+        />
       </el-col>
     </el-row>
   </div>

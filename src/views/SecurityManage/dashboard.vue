@@ -19,10 +19,18 @@
       <el-col :span="13">
         <el-row class="row" :gutter="10">
           <el-col :span="18">
+            <EventList
+              title="statistics"
+              database="security_event"
+              :default-data="{securityEventType:2}"
+              :engine-only="true"
+              style="top:1rem;left:1rem;z-index:1;"
+              @change="data_arrived"
+            />
             <Square>
               <div slot="title">各类事件概率</div>
               <div slot="chart">
-                <EventRate height="20rem" />
+                <EventRate v-model="event_list" height="20rem" />
               </div>
             </Square>
           </el-col>
@@ -55,10 +63,19 @@ export default {
   components: {
     History: () => import('./history'),
     CounterTimer: () => import('./CounterTimer'),
+    EventList: () => import('./event/EventList'),
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
     EventRate: () => import('./EventRate'),
     WeatherGroup: () => import('@/components/Weather/WeatherGroup'),
     Indicator: () => import('./indicator')
+  },
+  data: () => ({
+    event_list: []
+  }),
+  methods: {
+    data_arrived (v) {
+      this.event_list = v
+    }
   }
 }
 </script>

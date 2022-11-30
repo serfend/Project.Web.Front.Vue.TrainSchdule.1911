@@ -24,8 +24,15 @@ export default {
     nowIndex: 0,
     userSelect: false
   }),
+  watch: {
+    data: {
+      handler (v) {
+        this.initChart()
+      }
+    }
+  },
   mounted() {
-    this.initChart()
+
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -75,14 +82,14 @@ export default {
       }))
       if (directClear || this.nowIndex === 0) this.chart.clear()
       const total_value = series.reduce((prev, current) => prev + current.data[0], 0)
+      const percent = (v) => Math.floor(10000 * ((v.data || v.value) / total_value)) / 100
 
       const option = {
         color: this.color,
         label: {
           show: true,
-          formatter: function (v) {
-            const percent = Math.floor(10000 * (v.data / total_value)) / 100
-            return `${v.seriesName}:${percent}%`
+          formatter: (v) => {
+            return `${v.seriesName} ${v.value}(${percent(v)}%)`
           }
         },
         tooltip: {
@@ -90,6 +97,13 @@ export default {
           axisPointer: {
             // 坐标轴指示器，坐标轴触发有效
             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          },
+          formatter: (data) => {
+            const result = []
+            data.map(v => {
+              result.push(`${v.marker}${v.seriesName}:${v.data}(${percent(v)}%)`)
+            })
+            return result.join('<br>')
           }
         },
         legend: {
@@ -155,13 +169,17 @@ export default {
         const s = series[0]
         s.data = series.map(i => i.data[0])
         s.roseType = 'area'
+        s.label = { position: 'inside' }
         series = [s]
-        option.legend = null
+
+        option.coordinateSystem = 'calendar'
+        delete option.legend
       }
       option.series = series
       this.chart.setOption(option)
     },
-    initChart() {
+    initChart () {
+      echarts.dispose(this.$el)
       this.chart = echarts.init(this.$el)
       this.initChartSkeleton()
       this.nextShowOfData()

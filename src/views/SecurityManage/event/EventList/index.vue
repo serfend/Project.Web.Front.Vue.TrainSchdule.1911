@@ -1,57 +1,58 @@
 <template>
   <el-row class="row">
-    <h2
-      :style="{
-        'text-align': 'center',
-        'font-size': `${3 * size}rem`,
-        height: `${3 * size}rem`,
-        'line-height': `${3 * size}rem`
-      }"
-    >
-      {{ title }}
-    </h2>
     <el-button
       class="setting-btn"
       type="text"
       @click="showSetting = true"
     >设置</el-button>
     <EventConfig v-model="searchSetting" :show.sync="showSetting" :name="database" />
-
-    <el-card v-infinite-scroll="onScrollToBottom" class="styled-primary-card">
-      <div
-        ref="primary_container"
-        v-loading="loading"
+    <div v-if="!engineOnly">
+      <h2
         :style="{
-          position: 'relative',
-          transition: 'all ease 1.5s',
-          top: auto_play_top_value
+          'text-align': 'center',
+          'font-size': `${3 * size}rem`,
+          height: `${3 * size}rem`,
+          'line-height': `${3 * size}rem`
         }"
       >
-        <div v-if="innerList && innerList.length">
-          <SingleItem
-            v-for="(i, index) in innerList"
-            :key="i.id"
-            :size="size"
-            :index="index"
-            :data="i"
-            :show-stick-content="
-              index === 0 || innerList[index - 1].tag.banner !== i.tag.banner
-            "
-            :focus="i.id === focusId"
-            @itemClick="handleItemClick(i)"
-          />
-          <el-button
-            v-if="haveNext"
-            :loading="loading"
-            type="text"
-            style="width:100%"
-            @click="requireRefresh"
-          >{{ loading ? "加载中..." : "点击加载更多记录" }}</el-button>
-          <div v-else class="divider" />
+        {{ title }}
+      </h2>
+      <el-card v-infinite-scroll="onScrollToBottom" class="styled-primary-card">
+        <div
+          ref="primary_container"
+          v-loading="loading"
+          :style="{
+            position: 'relative',
+            transition: 'all ease 1.5s',
+            top: auto_play_top_value
+          }"
+        >
+          <div v-if="innerList && innerList.length">
+            <SingleItem
+              v-for="(i, index) in innerList"
+              :key="i.id"
+              :size="size"
+              :index="index"
+              :data="i"
+              :show-stick-content="
+                index === 0 || innerList[index - 1].tag.banner !== i.tag.banner
+              "
+              :focus="i.id === focusId"
+              @itemClick="handleItemClick(i)"
+            />
+            <el-button
+              v-if="haveNext"
+              :loading="loading"
+              type="text"
+              style="width:100%"
+              @click="requireRefresh"
+            >{{ loading ? "加载中..." : "点击加载更多记录" }}</el-button>
+            <div v-else class="divider" />
+          </div>
+          <NoData v-show="!innerList || !innerList.length" />
         </div>
-        <NoData v-show="!innerList || !innerList.length" />
-      </div>
-    </el-card>
+      </el-card>
+    </div>
   </el-row>
 </template>
 
@@ -65,6 +66,10 @@ export default {
     NoData: () => import('@/views/Loading/NoData'),
     EventConfig: () => import('./EventConfig')
   },
+  model: {
+    prop: 'list',
+    event: 'change'
+  },
   props: {
     title: { type: String, default: '' },
     database: { type: String, required: true },
@@ -72,7 +77,9 @@ export default {
     list: { type: Array, default: () => [] }, // 同步数据输出
     showAddNewItem: { type: Boolean, default: false },
     type: { type: Number, default: 0 },
-    size: { type: Number, default: 1 }
+    size: { type: Number, default: 1 },
+    engineOnly: { type: Boolean, default: false },
+    defaultConfig: { type: Object, default: null }
   },
   data: () => ({
     loading: false,
@@ -135,9 +142,18 @@ export default {
     }
   },
   watch: {
+    defaultConfig: {
+      handler (v) {
+        this.searchSetting = v
+      },
+      deep: true,
+      immediate: true
+    },
     database: {
       handler (val) {
-        this.searchSetting.databaseName = val
+        const { searchSetting } = this
+        if (!searchSetting) return
+        searchSetting.databaseName = val
       },
       immediate: true
     },
@@ -172,12 +188,11 @@ export default {
     next_play_top() {
       this.auto_play_top -= 10
       const v = this.$refs.primary_container
-      if (v.offsetHeight + v.offsetTop < 700 * this.size) {
+      if (v && v.offsetHeight + v.offsetTop < 700 * this.size) {
         this.auto_play_top = 0
       }
-      this.auto_play_top_player = setTimeout(
-        this.next_play_top,
-        3e3 + Math.random() * 2e3
+      const time = 3e3 + Math.random() * 2e3
+      this.auto_play_top_player = setTimeout(this.next_play_top, time
       )
     },
     focusNext() {
@@ -210,6 +225,8 @@ export default {
       this.requireRefresh()
     },
     convert_card(item, index) {
+      const type = this.dict[item.type]
+      item.type = (type && type.fullName) || '未知类型'
       item.tag = {
         title: parseTime(item.date, '{y}年'),
         banner: item.type,
@@ -220,7 +237,7 @@ export default {
       return item
     },
     refresh() {
-      if (this.loading || !this.haveNext) return
+      if (this.loading || !this.haveNext || !this.dict) return
       this.loading = true
       const { searchSetting, page } = this
       eventList(Object.assign({ page }, searchSetting))
@@ -240,6 +257,8 @@ export default {
           })
           this.totalCount = data.totalCount
           this.page.pageIndex += 1
+
+          this.$emit('change', this.innerList)
         })
         .finally(() => {
           this.loading = false
