@@ -304,7 +304,6 @@ export default {
             current_pos++
           }
           need_update = distinct(need_update)
-          console.log('update', need_update)
           Promise.all(
             need_update.map(i => {
               new_indicators[i].index = i
