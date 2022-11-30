@@ -22,14 +22,14 @@ export function FormRecorder(key, defaultItem) {
   }
 }
 
-export function toQueryStartEndByArray(datetime) {
-  if (datetime && datetime.length >= 2) {
-    return {
-      start: datetime[0],
-      end: datetime[1]
-    }
-  } else {
-    return null
+export function toQueryStartEndByArray (datetime) {
+  if (!datetime) return null
+  if (Object.prototype.toString.call(datetime) !== '[object Array]') {
+    datetime = [datetime]
+  }
+  return {
+    start: datetime[0],
+    end: datetime[1]
   }
 }
 
