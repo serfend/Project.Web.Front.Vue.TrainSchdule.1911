@@ -57,6 +57,7 @@ export default {
   props: {
     show: { type: Boolean, default: true },
     name: { type: String, default: null },
+    keyName: { type: String, default: null },
     data: { type: Object, default: null }
   },
   data: () => ({
@@ -81,7 +82,7 @@ export default {
       return this.$store.state.settings.theme
     },
     key () {
-      return `config.sec-event.event-list@${this.name}`
+      return `config.sec-event.event-list@${this.keyName}`
     }
   },
   watch: {

@@ -20,7 +20,7 @@
         <el-row class="row" :gutter="10">
           <el-col :span="18">
             <EventList
-              title="statistics"
+              title="security_event-statistics"
               database="security_event"
               :default-data="{securityEventType:2}"
               :engine-only="true"

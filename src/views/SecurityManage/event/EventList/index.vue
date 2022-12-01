@@ -5,7 +5,7 @@
       type="text"
       @click="showSetting = true"
     >设置</el-button>
-    <EventConfig v-model="searchSetting" :show.sync="showSetting" :name="database" />
+    <EventConfig v-model="searchSetting" :show.sync="showSetting" :name="database" :key-name="title" />
     <div v-if="!engineOnly">
       <h2
         :style="{
