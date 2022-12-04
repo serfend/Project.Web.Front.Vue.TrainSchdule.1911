@@ -233,7 +233,8 @@ export default {
         desc: null
       }
       item.content =
-        item.summary || (item.detail && item.detail.substring(0, 20))
+        item.summary || item.detail && `${item.detail.substring(0, 50)}${item.detail.length > 50 ? '...' : ''}`
+      if (!item.content)item.content = '无内容'
       return item
     },
     refresh() {
