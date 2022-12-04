@@ -1,15 +1,21 @@
 <template>
   <div
-    :style="{height:height,width:width}"
+    :style="{height:height,width:width,display:'flex','align-items': 'center'}"
     @mouseenter="userSelect = true"
     @mouseleave="userSelect = false"
-  />
+  >
+    <div v-if="data && data[0] && data[0].length" class="chart" />
+    <NoData v-else />
+  </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
 export default {
   name: 'EventRateBaseChart',
+  components: {
+    NoData: () => import('@/views/Loading/NoData')
+  },
   props: {
     width: { type: String, default: '100%' },
     height: { type: String, default: '300px' },
@@ -167,10 +173,12 @@ export default {
       if (this.type === 'pie') {
         // 饼状图只支持一个系列
         const s = series[0]
-        s.data = series.map(i => i.data[0])
-        s.roseType = 'area'
-        s.label = { position: 'inside' }
-        series = [s]
+        if (s) {
+          s.data = series.map(i => i.data && i.data[0])
+          s.roseType = 'area'
+          s.label = { position: 'inside' }
+          series = [s]
+        }
 
         option.coordinateSystem = 'calendar'
         delete option.legend
@@ -179,8 +187,10 @@ export default {
       this.chart.setOption(option)
     },
     initChart () {
-      echarts.dispose(this.$el)
-      this.chart = echarts.init(this.$el)
+      const el = this.$el.querySelector('.chart')
+      if (!el) return
+      echarts.dispose(el)
+      this.chart = echarts.init(el)
       this.initChartSkeleton()
       this.nextShowOfData()
     },
