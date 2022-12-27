@@ -242,6 +242,8 @@ export default {
               value: currentData.currentValue,
               message: currentData.message,
               range: [currentConfig.min, currentConfig.max],
+              ranges: currentConfig.range,
+              exceedingUsers: currentData.exceedingUsers,
               valid: !!(currentData.name)
             }
             Object.assign(indicators[index], mapped_item)
