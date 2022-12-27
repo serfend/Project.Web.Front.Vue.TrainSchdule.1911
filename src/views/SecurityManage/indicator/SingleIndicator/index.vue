@@ -43,7 +43,10 @@
         <el-form-item label="说明">{{ data.description }}</el-form-item>
         <el-form-item
           label="正常范围"
-        >{{ data.range[0] }} - {{ data.range[1] }}</el-form-item>
+        >
+          <el-tag type="success">{{ data.range[0] }} - {{ data.range[1] }}</el-tag>
+          <el-tag v-for="i,index in data.ranges" :key="index">{{ i.sciMin }} - {{ i.sciMax }}</el-tag>
+        </el-form-item>
         <el-form-item label="当前值">{{ data.value }}</el-form-item>
         <el-divider />
         <el-progress
