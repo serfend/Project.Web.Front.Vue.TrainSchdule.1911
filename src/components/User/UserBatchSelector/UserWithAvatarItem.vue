@@ -1,20 +1,24 @@
 <template>
-  <div
-    :class="['user-item',innerSelected?'selected':'']"
-    @click="handleClick"
-    @dblclick="handleDblClick"
-  >
-    <UserAvatar
-      :user="user"
-      :style-normal="{'border-radius':'5px'}"
-      :class="['user-avatar']"
-      size="3rem"
-    />
-    <div class="user-name">
-      <span>{{ summary && summary.realName }}</span>
-      <slot name="description" />
+  <el-popover placement="right-start" trigger="hover" @show="userHasShow = true">
+    <User :data="summary" :can-load-avatar="userHasShow" />
+    <div
+      slot="reference"
+      :class="['user-item',innerSelected?'selected':'']"
+      @click="handleClick"
+      @dblclick="handleDblClick"
+    >
+      <UserAvatar
+        :user="user"
+        :style-normal="{'border-radius':'5px'}"
+        :class="['user-avatar']"
+        size="3rem"
+      />
+      <div class="user-name">
+        <span>{{ summary && summary.realName }}</span>
+        <slot name="description" />
+      </div>
     </div>
-  </div>
+  </el-popover>
 </template>
 
 <script>
@@ -22,7 +26,8 @@ import { getUserSummary } from '@/api/user/userinfo'
 export default {
   name: 'UserWithAvatarItem',
   components: {
-    UserAvatar: () => import('@/components/User/UserAvatar')
+    UserAvatar: () => import('@/components/User/UserAvatar'),
+    User: () => import('../index')
   },
   props: {
     user: { type: String, default: null },
@@ -30,7 +35,8 @@ export default {
   },
   data: () => ({
     summary: null,
-    inner_selected: false
+    inner_selected: false,
+    userHasShow: false
   }),
   computed: {
     innerSelected: {
