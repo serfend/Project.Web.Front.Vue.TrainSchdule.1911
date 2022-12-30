@@ -274,24 +274,17 @@ import {
   deleteStreamNode,
   buildFilter
 } from '@/api/audit/applyAuditStream'
-import CompaniesSelector from '@/components/Company/CompaniesSelector'
-import DutiesSelector from '@/components/Duty/DutiesSelector'
-import AuthCode from '@/components/AuthCode'
-import CompanyFormItem from '@/components/Company/CompanyFormItem'
-import DutyFormItem from '@/components/Duty/DutyFormItem'
-import UserFormItem from '@/components/User/UserFormItem'
-import UserSelector from '@/components/User/UserSelector'
 import { formatTime } from '@/utils'
 export default {
   name: 'ApplyAuditStreamAction',
   components: {
-    CompanyFormItem,
-    DutyFormItem,
-    CompaniesSelector,
-    AuthCode,
-    UserFormItem,
-    DutiesSelector,
-    UserSelector
+    CompanyFormItem: () => import('@/components/Company/CompanyFormItem'),
+    DutyFormItem: () => import('@/components/Duty/DutyFormItem'),
+    CompaniesSelector: () => import('@/components/Company/CompaniesSelector'),
+    AuthCode: () => import('@/components/AuthCode'),
+    UserFormItem: () => import('@/components/User/UserFormItem'),
+    DutiesSelector: () => import('@/components/Duty/DutiesSelector'),
+    UserSelector: () => import('@/components/User/UserSelector')
   },
   props: {
     data: {

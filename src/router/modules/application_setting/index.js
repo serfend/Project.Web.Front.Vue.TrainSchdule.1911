@@ -5,6 +5,7 @@ import Company from './modules/user_manage/Company'
 import User from './modules/user_manage/User'
 import Permission from './modules/user_manage/Permission'
 import UserRestore from './modules/user_manage/UserRestore'
+import GeneralConfig from './modules/user_manage/GeneralConfig'
 import system from '../system'
 
 const router = {
@@ -22,7 +23,7 @@ const router = {
       ctitle: '系统数据',
       icon: 'workset'
     },
-    children: [Social, Company, User, Permission, UserRestore]
+    children: [Social, Company, User, Permission, UserRestore, GeneralConfig]
   }, system]
 }
 
