@@ -200,9 +200,10 @@ export default {
         const handle_catalogue = data => {
           const response_list = data.list
             .slice(1)
-          const dict_next = to_dict(response_list) // 第一个必然是通用指标，需跳过
+            .filter(i => i.enable)
+          const dict_next = to_dict(response_list, x => x.name) // 第一个必然是通用指标，需跳过
           const catalogue = this.indicator_catalogue
-          const dict_prev = to_dict(catalogue)
+          const dict_prev = to_dict(catalogue, x => x.name)
           const to_remove = []
           catalogue.map((i, index) => {
             if (!dict_next[i]) to_remove.push(index)
@@ -256,7 +257,7 @@ export default {
       return new Promise(res => {
         const { indicators, indicator_catalogue, countPerGroup } = this
         const new_indicators = indicators.filter(i => !i.is_removed) // deepClone(indicators)
-        const dict = to_dict(indicator_catalogue)
+        const dict = to_dict(indicator_catalogue, x => x.name)
 
         this.$nextTick(async () => {
           this.next_group()
