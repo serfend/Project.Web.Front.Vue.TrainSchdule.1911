@@ -89,8 +89,8 @@ export default {
         ...d
       }))
       if (directClear || this.nowIndex === 0) this.chart.clear()
-      const total_value = series.reduce((prev, current) => prev + current.data[0], 0)
-      const percent = (v) => Math.floor(10000 * ((v.data || v.value) / total_value)) / 100
+      const total_value = series.reduce((prev, current) => prev + current.data, 0)
+      const percent = (v) => Math.floor(10000 * (((v.data && v.data.value || v.data) || v.value) / total_value)) / 100
 
       const option = {
         color: this.color,
