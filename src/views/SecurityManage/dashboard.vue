@@ -1,7 +1,8 @@
 <template>
   <div class="primary-container">
     <el-row class="row">
-      <CounterTimer />
+      <Loading v-if="!componentLoaded" />
+      <component :is="name" v-else />
     </el-row>
     <el-row class="row" :gutter="20">
       <el-col :span="11">
@@ -58,6 +59,10 @@
   </div>
 </template>
 <script>
+import { getConfig } from '@/api/common/general_config'
+import { loader } from '@/utils/common/vueLoader'
+const name = 'global.sec.banner'
+import Vue from 'vue'
 export default {
   name: 'SecurityManageDashboard',
   components: {
@@ -67,14 +72,31 @@ export default {
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
     EventRate: () => import('./EventRate'),
     WeatherGroup: () => import('@/components/Weather/WeatherGroup'),
-    Indicator: () => import('./indicator')
+    Indicator: () => import('./indicator'),
+    Loading: () => import('@/views/Loading')
   },
   data: () => ({
-    event_list: []
+    componentLoaded: false,
+    event_list: [],
+    name
   }),
+  mounted() {
+    this.initComponents()
+  },
   methods: {
     data_arrived (v) {
       this.event_list = v
+    },
+    initComponents () {
+      getConfig({ name }).then((data) => {
+        if (!data.model) return this.$message.error(`未定义组件:${name}`)
+
+        loader(data.model.data).then(component => {
+          this.name = 'Test'
+          Vue.component(this.name, component)
+          this.componentLoaded = true
+        })
+      })
     }
   }
 }
