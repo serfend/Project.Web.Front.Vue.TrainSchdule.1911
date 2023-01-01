@@ -209,7 +209,7 @@ export default {
     },
     handleItemClick(i) {
       i.show = !i.show
-      this.$emit('requireDetail', i.id)
+      this.$emit('requireDetail', i)
     },
     reload() {
       this.clear_data()
