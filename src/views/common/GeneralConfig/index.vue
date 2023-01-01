@@ -164,7 +164,7 @@ export default {
       })
     },
     deleteNode () {
-      return this.submitNode({ is_remove: true })
+      return this.submitNode({ isRemove: true })
     },
     showNodeDialoag(mode, target) {
       const node = this.newNode
