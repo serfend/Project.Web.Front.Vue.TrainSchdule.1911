@@ -4,7 +4,7 @@
     @mouseenter="userSelect = true"
     @mouseleave="userSelect = false"
   >
-    <div v-if="data && data[0] && data[0].length" class="chart" />
+    <div v-if="data && data[0] && data[0][0] && data[0][0].data" ref="chart" class="chart" />
     <NoData v-else />
   </div>
 </template>
@@ -33,7 +33,9 @@ export default {
   watch: {
     data: {
       handler (v) {
-        this.initChart()
+        this.$nextTick(() => {
+          this.initChart()
+        })
       }
     }
   },
@@ -73,7 +75,7 @@ export default {
       this.setOpt(directClear)
       this.chart.hideLoading()
     },
-    setOpt(directClear) {
+    setOpt (directClear) {
       if (!this.data) return
       const nowGroup = this.data[this.nowIndex]
       if (!nowGroup) return
@@ -128,68 +130,71 @@ export default {
           bottom: '10%',
           containLabel: true
         },
-        xAxis: [
-          {
-            type: 'value',
-            axisTick: {
-              alignWithLabel: true
-            },
-            // 修改刻度标签 相关样式
-            axisLabel: {
-              color: 'rgba(255,255,255,.6) ',
-              fontSize: '12'
-            },
-            // 不显示x坐标轴的样式
-            axisLine: {
-              show: false
+        xAxis: {
+          type: 'value',
+          axisTick: {
+            alignWithLabel: true
+          },
+          // 修改刻度标签 相关样式
+          axisLabel: {
+            color: 'rgba(255,255,255,.6) ',
+            fontSize: '12'
+          },
+          // 不显示x坐标轴的样式
+          axisLine: {
+            show: false
+          }
+        },
+        yAxis: {
+          type: 'category',
+          data: [''],
+          // 修改刻度标签 相关样式
+          axisLabel: {
+            color: 'rgba(255,255,255,.6) ',
+            fontSize: 12
+          },
+          // y轴的线条改为了 2像素
+          axisLine: {
+            lineStyle: {
+              color: 'rgba(255,255,255,.1)',
+              width: 2
+            }
+          },
+          // y轴分割线的颜色
+          splitLine: {
+            lineStyle: {
+              color: 'rgba(255,255,255,.1)'
             }
           }
-        ],
-        yAxis: [
-          {
-            type: 'category',
-            data: [''],
-            // 修改刻度标签 相关样式
-            axisLabel: {
-              color: 'rgba(255,255,255,.6) ',
-              fontSize: 12
-            },
-            // y轴的线条改为了 2像素
-            axisLine: {
-              lineStyle: {
-                color: 'rgba(255,255,255,.1)',
-                width: 2
-              }
-            },
-            // y轴分割线的颜色
-            splitLine: {
-              lineStyle: {
-                color: 'rgba(255,255,255,.1)'
-              }
-            }
-          }
-        ]
+        }
       }
       if (this.type === 'pie') {
         // 饼状图只支持一个系列
         const s = series[0]
         if (s) {
-          s.data = series.map(i => i.data && i.data[0])
+          s.data = series.map(i => ({ name: i.name, value: i.data }))
           s.roseType = 'area'
-          s.label = { position: 'inside' }
+          s.label = { show: false, position: 'center' }
+          s.emphasis = { label: {
+            show: true,
+            fontSize: 40,
+            fontWeight: 'bold'
+          }}
           series = [s]
         }
 
         option.coordinateSystem = 'calendar'
         delete option.legend
+      } else {
+        series.map(i => { i.data = [i.data] })
       }
       option.series = series
       this.chart.setOption(option)
     },
     initChart () {
-      const el = this.$el.querySelector('.chart')
+      const el = this.$refs.chart
       if (!el) return
-      echarts.dispose(el)
+      if (this.chart) this.chart.dispose()
       this.chart = echarts.init(el)
       this.initChartSkeleton()
       this.nextShowOfData()
@@ -200,3 +205,10 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.chart{
+  height:100%;
+  width:100%;
+}
+</style>

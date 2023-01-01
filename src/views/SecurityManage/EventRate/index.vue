@@ -33,7 +33,7 @@ export default {
     data () {
       const { list } = this
       const group = groupByFiled(list, 'type')
-      const result = Object.keys(group).map(i => ({ name: i, data: [group[i].length] }))
+      const result = Object.keys(group).map(i => ({ name: i, data: group[i].length }))
       return [result]
     }
   },
