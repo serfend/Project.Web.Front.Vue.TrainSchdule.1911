@@ -102,8 +102,9 @@ export default {
     getDelay(el) {
       const item = Number(el.getAttribute('item'))
       const sindex = Number(el.getAttribute('sindex'))
+      const index = Number(el.getAttribute('index'))
       const delay = sindex * 100
-      return { item, sindex, delay }
+      return { item, index, sindex, delay }
     },
     register_animation (index, front, delay, delete_after_move) {
       if (!this.indicator_anicache[index]) this.indicator_anicache[index] = this.indicators[index]
@@ -115,14 +116,14 @@ export default {
       }, delay)
     },
     beforeEnter(el) {
-      const { index, delay } = this.getDelay(el)
-      this.register_animation(index, true, delay + 50)
+      const { index } = this.getDelay(el)
+      this.register_animation(index, true, 0)
       el.style.opacity = 0
       el.style.display = 'block'
     },
     enter(el, done) {
       const { index, delay } = this.getDelay(el)
-      this.register_animation(index, false, delay + 50)
+      this.register_animation(index, false, delay + 500)
       setTimeout(() => {
         Velocity(el, { opacity: 1 }, { complete: done })
       }, delay + 50)
