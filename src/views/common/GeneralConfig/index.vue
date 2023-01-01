@@ -76,7 +76,7 @@
           />
         </el-form-item>
         <el-form-item label="单位" style="width:400px">
-          <CompanySelector v-model="newNode.company" />
+          <CompanySelector :code.sync="newNode.companyRegion" />
         </el-form-item>
         <el-form-item label="激活">
           <el-switch v-model="newNode.enable" />
@@ -121,7 +121,7 @@ export default {
     pagesTotalCount: 0,
     configs: [],
     nodeDialogShow: false,
-    newNode: { mode: null, name: null, data: null, dataType: null, enable: false, description: null, company: null, auth: {}},
+    newNode: { mode: null, name: null, data: null, dataType: null, enable: false, description: null, companyRegion: null, auth: {}},
     userSelect: {},
     search: null
   }),
