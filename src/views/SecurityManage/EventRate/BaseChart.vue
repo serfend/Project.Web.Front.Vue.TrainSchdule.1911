@@ -177,7 +177,7 @@ export default {
           s.label = { show: false, position: 'center' }
           s.emphasis = { label: {
             show: true,
-            fontSize: 40,
+            fontSize: 10,
             fontWeight: 'bold'
           }}
           series = [s]

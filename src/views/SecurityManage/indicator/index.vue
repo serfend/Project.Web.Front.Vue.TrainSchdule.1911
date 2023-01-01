@@ -25,7 +25,7 @@
             />
           </template>
           <template #back>
-            <el-card class="indicator-back">指标卡</el-card>
+            <el-card class="indicator-back">指标统计</el-card>
           </template>
         </Flip>
       </div>
