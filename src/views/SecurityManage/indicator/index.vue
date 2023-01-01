@@ -25,7 +25,7 @@
             />
           </template>
           <template #back>
-            <h2>{{ item.name }}</h2>
+            <el-card class="indicator-back">指标卡</el-card>
           </template>
         </Flip>
       </div>
@@ -344,4 +344,14 @@ export default {
   @include common();
 }
 @import "../style";
+.indicator-back{
+  background-color:#ccccccaf;
+  height:8rem;
+  width: 20rem;
+  line-height: 5rem;
+  margin:auto;
+  text-align: center;
+  font-size:2rem;
+  color:#ffffff;
+}
 </style>
