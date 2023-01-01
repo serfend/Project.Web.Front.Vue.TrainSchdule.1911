@@ -60,7 +60,7 @@
           </div>
         </div>
       </el-form>
-      <div v-if="Object.keys(data.exceedingUsers).length">
+      <div v-if="data.exceedingUsers && Object.keys(data.exceedingUsers).length">
         <el-divider />
         <h2>人员名单</h2>
         <el-collapse style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
