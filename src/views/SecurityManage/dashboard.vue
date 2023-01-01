@@ -67,7 +67,6 @@ export default {
   name: 'SecurityManageDashboard',
   components: {
     History: () => import('./history'),
-    CounterTimer: () => import('./CounterTimer'),
     EventList: () => import('./event/EventList'),
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
     EventRate: () => import('./EventRate'),
