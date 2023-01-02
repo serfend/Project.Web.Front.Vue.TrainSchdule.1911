@@ -97,7 +97,10 @@ export default {
         label: {
           show: true,
           formatter: (v) => {
-            return `${v.seriesName} ${v.value}(${percent(v)}%)`
+            const p = `(${percent(v)}%)`
+            const d = v.data
+            if (d && d.name) return `${d.name}:${d.value} ${p}`
+            return `${v.seriesName} ${v.value}${p}`
           }
         },
         tooltip: {
@@ -182,7 +185,6 @@ export default {
           }}
           series = [s]
         }
-
         option.coordinateSystem = 'calendar'
         delete option.legend
       } else {
