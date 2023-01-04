@@ -39,12 +39,7 @@
             <Square>
               <div slot="title">天气轮询</div>
               <div slot="chart" style="height:20rem">
-                <el-row style="padding:1rem 0.5rem">
-                  <WeatherGroup :district="[110000,420600]" />
-                </el-row>
-                <el-row style="padding:1rem 0.5rem">
-                  <WeatherGroup :district="[130623,140922]" />
-                </el-row>
+                <WeatherCard config-id="global.sec.weather-card" />
               </div>
             </Square>
           </el-col>
@@ -70,7 +65,7 @@ export default {
     EventList: () => import('./event/EventList'),
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
     EventRate: () => import('./EventRate'),
-    WeatherGroup: () => import('@/components/Weather/WeatherGroup'),
+    WeatherCard: () => import('./WeatherCard'),
     Indicator: () => import('./indicator'),
     Loading: () => import('@/views/Loading')
   },
