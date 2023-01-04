@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <Weather v-model="currentWeather" />
-  </div>
+  <Weather v-model="currentWeather" />
 </template>
 <script>
 export default {
@@ -10,9 +8,9 @@ export default {
     Weather: () => import('../index'),
   },
   props: {
-    district: { type: Array, default: () => [] },
-    weatherData: { type: Array, default: () => [] }, // 与district 2选1
-    interval: { type: Number, default: 5000 }
+    district: { type: Array, default: null },
+    weatherData: { type: Array, default: null }, // 与district 2选1
+    interval: { type: Number, default: 10000 }
   },
   data: () => ({
     current: 0,
@@ -22,19 +20,21 @@ export default {
   computed: {
     currentWeather () {
       const { group, current } = this
-      if (group.length <= current) return {}
+      if (group.length <= current) return null
       return group[current]
     }
   },
   watch: {
     district: {
       handler(v) {
+        if (!v) return
         this.group = v
       },
       immediate: true
     },
     weatherData: {
-      handler(v) {
+      handler (v) {
+        if (!v) return
         this.group = v
       },
       immediate: true

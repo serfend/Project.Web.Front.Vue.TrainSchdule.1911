@@ -1,53 +1,29 @@
 <template>
-  <div v-loading="loading">
-    <el-row>
-      <el-col class="primary-icon" :span="7">
-        <LottieIcon
-          :animation-data="weather_dict[0].data"
-          :animate-speed="0.5"
-          style="width:90%;margin: auto;color:#fff"
-        />
-      </el-col>
-      <el-col :span="8">
-        <h2 class="primary-tempature">{{ getTemperature(weather_dict[0]) }}</h2>
-        <span class="primary-subtitle">{{ getProp(weather_dict[0],'subLabel') || getWeatherName(getProp(weather_dict[0],'type')) }}</span>
-      </el-col>
-      <el-col class="primary-title" :span="8">
-        <span>{{ getProp(weather_dict[0],'label') }}</span>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col v-for="(i,index) in ['今天','明天','后天']" :key="index" :span="8">
-        <div v-if="weather_dict[index]">
-          <el-row class="secondary-title">
-            <span>{{ i }}</span>
-          </el-row>
-          <el-row class="secondary-icon">
-            <LottieIcon
-              :animation-data="weather_dict[index].data"
-              :animate-speed="0.5"
-              style="width:90%;margin: auto;color:#fff"
-            />
-          </el-row>
-          <el-row class="secondary-subtitle">
-            <span>{{ (index>0 && getProp(weather_dict[index],'subLabel')) || getTemperatureRange(weather_dict[index]) }}</span>
-          </el-row>
-        </div>
-        <NoData v-else :size="0.5" />
-      </el-col>
-    </el-row>
-  </div>
+  <Flip
+    v-model="flip_front"
+    width="100%"
+    height="100%"
+  >
+    <template #front>
+      <WeatherBody v-model="innerData" :weather-data.sync="weatherData" />
+    </template>
+    <template #back>
+      <el-card class="weather-back">
+        <div v-if="desc">
+          <h3>{{ desc.city }} {{ parseTime(desc.date,'{m}月{d}日') }}</h3>
+          <div class="weather-warning">{{ desc.description }}</div></div>
+      </el-card>
+    </template>
+  </Flip>
 </template>
 <script>
-import weatherData from './weather'
-import { getDistrictWeather } from '@/api/common/weather'
-import { getProp } from '@/utils/data-handle'
-import { datedifference } from '@/utils'
+import { parseTime } from '@/utils'
+
 export default {
   name: 'Weather',
   components: {
-    LottieIcon: () => import('@/components/LottieIcon'),
-    NoData: () => import('@/views/Loading/NoData')
+    WeatherBody: () => import('./WeatherBody'),
+    Flip: () => import('vue-flip')
   },
   model: {
     prop: 'data',
@@ -56,133 +32,83 @@ export default {
   props: {
     data: {
       type: [Object, Number], // 数据对象 或 区域代码
-      default: () => ({
-        name: '晴',
-        temperature: { current: 8, hourSeries: [] },
-        label: '北京',
-        sublabel: '东南风 2-3级 寒冷',
-        children: [
-          {
-            name: '晴',
-            temperature: { min: 4, max: 17 },
-            label: '今天'
-          },
-          {
-            name: '多云',
-            temperature: { min: 3, max: 15 },
-            label: '明天'
-          },
-          {
-            name: '阴',
-            temperature: { min: 3, max: 16 },
-            label: '后天'
-          }
-        ]
-      })
+      default: null
     }
   },
   data: () => ({
-    weather_dict: [],
-    loading: false
+    flip_front: false,
+    flip_last: new Date(), // 用于避免值变更冲突
+    flip_counter: null,
+    weatherData: null
   }),
-  watch: {
-    data: {
-      handler() {
-        this.initWeatherData()
+  computed: {
+    typeAttribute () {
+      const { weatherData } = this
+      if (!weatherData || !weatherData[0]) return null
+      const { weatherTypeAttribute } = weatherData[0]
+      return weatherTypeAttribute
+    },
+    innerData: {
+      get() {
+        return this.data
       },
-      immediate: true
+      set (v) {
+        this.$emit('change', v)
+      }
+    },
+    hasBack () {
+      const { typeAttribute } = this
+      return !!typeAttribute
+    },
+    desc () {
+      const { weatherData, typeAttribute, hasBack } = this
+      if (!hasBack) return null
+      const item = weatherData[0]
+      return {
+        city: item.label,
+        date: item.date,
+        description: typeAttribute.description
+      }
     }
   },
+  watch: {
+    data: {
+      handler (val) {
+        this.flip_last = new Date()
+        this.flip_front = false
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  mounted() {
+    this.flip_counter = setInterval(this.doFlip, 5e3)
+  },
+  destroyed() {
+    clearInterval(this.flip_counter)
+  },
   methods: {
-    getProp,
-    getTemperatureRange (w) {
-      const max = getProp(w, ['temperature', 'max'])
-      const min = getProp(w, ['temperature', 'min'])
-      if (max === null || min === null) return '-'
-      return `${min}-${max}℃`
-    },
-    getTemperature (w) {
-      const max = getProp(w, ['temperature', 'max'])
-      const min = getProp(w, ['temperature', 'min'])
-      if (max === null || min === null) return '-'
-      const v = min + (max - min) * weatherData.temperatureMockDict[new Date().getHours()]
-      return `${Math.round(v)}℃`
-    },
-    getWeatherName (type) {
-      return weatherData.weatherDict[type] || '未知'
-    },
-    initWeatherData() {
-      const { data } = this
-      this.weather_dict = [{}]
-      const getSingle = weather => {
-        const n = weather.name || this.getWeatherName(weather.type)
-        let v = weatherData[n]
-        if (!v) v = weatherData['无']
-        v = v()
-        return Object.assign({ data: v }, weather)
-      }
-      if (Object.prototype.toString.call(data) !== '[object Number]') {
-        this.weather_dict[0] = getSingle(data) || {}
-        data.children.map((i, index) => {
-          this.weather_dict[index + 1] = getSingle(i)
-        })
-        return
-      }
-      const datestart = new Date()
-      const dateend = new Date(datestart.getTime() + 86400e3 * 3)
-      const district = data
-      this.loading = true
-      getDistrictWeather({ district, datestart, dateend })
-        .then(weatherData => {
-          const v = new Array(3).fill({ label: null }) // 有且仅统计近三天的
-          const list = weatherData.list
-          list.map(i => {
-            const diff = datedifference(new Date(i.date), datestart, 'day')
-            if (diff > 3) return
-            v[diff] = i
-          })
-          if (!v[0].label) { // 填充地理位置
-            v.map(i => {
-              if (i.label)v[0].label = i.label
-            })
-          }
-          if (!v[0].label)v[0].label = `${district}(无)`
-          this.weather_dict = v.map(i => getSingle(i) || {})
-        })
-        .finally(() => {
-          this.loading = false
-        })
+    parseTime,
+    doFlip() {
+      if (!this.hasBack || new Date() - this.flip_last < 1e3) return
+      this.flip_front = !this.flip_front
     }
   }
 }
 </script>
+<style>
+.front {
+  width: 100%;
+  height: 100%;
+}
+.back {
+  width: 100%;
+  height: 100%;
+}
+</style>
 <style lang="scss" scoped>
-.secondary-subtitle{
-  justify-content: center;
-  text-align: center;
-  font-size: 0.8rem;
-}
-.secondary-icon{
-  text-align: center;
-  width:50%;
-  margin: auto;
-}
-.secondary-title{
-  justify-content: center;
-  text-align: center;
-}
-.primary-title{
-  justify-content: center;
-  text-align: right;
-}
-.primary-subtitle{
-  justify-content: center;
-}
-.primary-tempature{
-  justify-content: center;
-
-}
-.primary-icon{
-  justify-content: center;
+.weather-warning{
+  color:#db370e;
+  font-weight: bold;
 }
 </style>
