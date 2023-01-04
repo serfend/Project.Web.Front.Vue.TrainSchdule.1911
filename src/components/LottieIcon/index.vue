@@ -3,6 +3,7 @@
 </template>
 
 <script>
+const local_cache = {}
 import lottie from 'lottie-web'
 export default {
   name: 'LottieIcon',
@@ -75,20 +76,22 @@ export default {
 
     isLottieFinish() {
       // this.lottie.removeEventListener('data_ready', this.isLottieFinish)
+      if (this.path) { local_cache[this.path] = this.lottie.animationData }
       this.onSpeedChange()
       this.$emit('isLottieFinish', true)
     },
 
     initLottie () {
       const { animationData, path, loop } = this
+      const animationDataLoad = local_cache[this.path] || animationData
+      const pathLoad = local_cache[this.path] ? null : path
       this.lottie = lottie.loadAnimation({
         container: this.$refs.lottieBox,
         renderer: 'svg',
         loop: loop || true,
-        path: path,
-        animationData
+        path: pathLoad,
+        animationData: animationDataLoad
       })
-
       this.lottie.addEventListener('data_ready', this.isLottieFinish, {
         once: true
       })
