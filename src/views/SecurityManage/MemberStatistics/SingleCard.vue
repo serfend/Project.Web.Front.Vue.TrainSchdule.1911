@@ -34,7 +34,7 @@ export default {
   },
   data: () => ({
     current: null,
-    currentIndex: 0,
+    currentIndex: -1,
     refresher: null
   }),
   computed: {},
