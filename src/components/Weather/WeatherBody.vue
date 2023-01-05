@@ -9,7 +9,7 @@
         />
       </el-col>
       <el-col :span="8">
-        <div class="primary-tempature">
+        <div class="primary-temperature">
           {{ getTemperature(weather_dict[0]) }}
         </div>
         <div class="primary-subtitle">
@@ -211,7 +211,7 @@ export default {
   line-clamp: 2;
   width: 200%;
 }
-.primary-tempature {
+.primary-temperature {
   justify-content: center;
   font-size: 2rem;
 }
