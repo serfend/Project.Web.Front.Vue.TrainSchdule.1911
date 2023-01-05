@@ -25,7 +25,7 @@
         :color="status_color"
         :show-text="false"
       />
-      <div class="description">{{ data.description || "无描述" }}</div>
+      <div class="description">{{ description }}</div>
       <div class="range">
         <span
           v-if="data.range"
@@ -115,6 +115,13 @@ export default {
       if (v < 0) return 0
       if (v >= r) return 100
       return (100 * v) / r
+    },
+    description () {
+      const { data } = this
+      const { description } = data
+      if (!description) return '无描述'
+      if (description.length > 50) return `${description.substring(0, 50)}..`
+      return description
     }
   },
   watch: {
@@ -138,6 +145,9 @@ export default {
 </script>
 <style lang="scss">
 @import "../../style";
+.el-card__header{
+  padding:0.5rem 1rem;
+}
 </style>
 <style lang="scss" scoped>
 @mixin card-focus($color: #ffffff99) {
@@ -182,7 +192,7 @@ export default {
   }
 }
 .content {
-  height: 4rem;
+  height: 4.5rem;
   .range {
     display: flex;
     justify-content: space-between;

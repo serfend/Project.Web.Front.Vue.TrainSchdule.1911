@@ -4,6 +4,7 @@
       name="slide-fade"
       tag="ul"
       class="slide-container"
+      :style="{height:`${height}rem`}"
       @enter="enter"
       @before-enter="beforeEnter"
       @leave="leave"
@@ -21,6 +22,7 @@
             <SingleIndicator
               :data="item"
               :focus.sync="item.active"
+              :height="height"
               @click.native="setActive(item)"
             />
           </template>
@@ -58,7 +60,8 @@ export default {
     Flip: () => import('vue-flip')
   },
   props: {
-    countPerGroup: { type: Number, default: 8 }
+    countPerGroup: { type: Number, default: 8 },
+    height: { type: Number, default: 37 }
   },
   data: () => ({
     indicator_catalogue: [],

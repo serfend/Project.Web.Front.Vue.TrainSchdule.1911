@@ -7,11 +7,17 @@
     <el-row class="row" :gutter="20">
       <el-col :span="11">
         <el-row class="row">
+          <Square style="height:16rem">
+            <div slot="title">人员情况</div>
+            <div slot="chart">人员情况</div>
+          </Square>
+        </el-row>
+        <el-row class="row">
           <Square>
             <div slot="title">安全指标监测</div>
             <div slot="chart">
-              <div style="height:54rem;padding:2rem 3rem 1rem 3rem">
-                <Indicator />
+              <div style="height:37rem;padding:2rem 3rem 1rem 3rem">
+                <Indicator :count-per-group="6" :height="30" />
               </div>
             </div>
           </Square>
