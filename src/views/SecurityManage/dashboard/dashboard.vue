@@ -30,7 +30,7 @@
             <EventList
               title="security_event-statistics"
               database="security_event"
-              :default-data="{securityEventType:2}"
+              :default-data="{securityEventType:3}"
               :engine-only="true"
               style="top:1rem;left:1rem;z-index:1;"
               @change="data_arrived"
@@ -54,14 +54,11 @@
         <el-row>
           <el-col :span="12">
             <Square>
-              <div slot="title">折线图</div>
-              <div slot="chart" style="height:33rem">1</div>
+              <History slot="chart" height="33rem" :size="0.6" />
             </Square>
           </el-col>
           <el-col :span="12">
-            <Square>
-              <History slot="chart" height="33rem" :size="0.6" />
-            </Square>
+            <LinearChartsDefault :height="32" />
           </el-col>
         </el-row>
       </el-col>
@@ -83,6 +80,7 @@ export default {
     WeatherCard: () => import('../WeatherCard'),
     Indicator: () => import('../indicator'),
     MemberStatistics: () => import('../MemberStatistics'),
+    LinearChartsDefault: () => import('../LinearCharts/LinearChartsDefault'),
     Loading: () => import('@/views/Loading')
   },
   data: () => ({

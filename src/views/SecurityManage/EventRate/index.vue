@@ -11,6 +11,7 @@
 
 <script>
 import { groupByFiled } from '@/utils/data-handle'
+import { getConfig } from '@/api/common/general_config'
 
 export default {
   name: 'EventRate',
@@ -37,6 +38,13 @@ export default {
       return [result]
     }
   },
-  methods: {}
+  methods: {
+    loadConfig () {
+      getConfig({ name: 'global.sec.chart.color' }).then(data => {
+        if (!data.model || !data.model.data) return
+        this.color = data.model.data
+      })
+    }
+  }
 }
 </script>

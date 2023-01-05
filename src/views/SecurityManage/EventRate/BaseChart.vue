@@ -11,6 +11,7 @@
 
 <script>
 import * as echarts from 'echarts'
+import { parseTime } from '@/utils'
 export default {
   name: 'EventRateBaseChart',
   components: {
@@ -19,10 +20,9 @@ export default {
   props: {
     width: { type: String, default: '100%' },
     height: { type: String, default: '300px' },
-    color: { type: Array, default() { return [] } },
-    companies: { type: Array, default() { return [] } },
-    data: { type: Array, default: () => { } },
-    type: { type: String, default: 'bar' }
+    color: { type: Array, default: () => [] },
+    data: { type: Array, default: null },
+    type: { type: String, default: 'bar' },
   },
   data: () => ({
     chart: null,
@@ -89,15 +89,19 @@ export default {
         ...d
       }))
       if (directClear || this.nowIndex === 0) this.chart.clear()
-      const total_value = series.reduce((prev, current) => prev + current.data, 0)
-      const percent = (v) => Math.floor(10000 * (((v.data && v.data.value || v.data) || v.value) / total_value)) / 100
+      let total_value = series.reduce((prev, current) => prev + current.data, 0)
+      if (Object.prototype.toString.call(total_value) === '[object String]')total_value = -1 // 当计算失败时将总数作废
+      const percent = (v) => {
+        const r = Math.floor(10000 * (((v.data && v.data.value || v.data) || v.value) / total_value)) / 100
+        return total_value < 0 ? '' : `(${r}%)`
+      }
 
       const option = {
         color: this.color,
         label: {
           show: true,
           formatter: (v) => {
-            const p = `(${percent(v)}%)`
+            const p = percent(v)
             const d = v.data
             if (d && d.name) return `${d.name}:${d.value} ${p}`
             return `${v.seriesName} ${v.value}${p}`
@@ -112,7 +116,7 @@ export default {
           formatter: (data) => {
             const result = []
             data.map(v => {
-              result.push(`${v.marker}${v.seriesName}:${v.data}(${percent(v)}%)`)
+              result.push(`${v.marker}${v.seriesName}:${v.data}${percent(v)}`)
             })
             return result.join('<br>')
           }
@@ -177,7 +181,7 @@ export default {
         if (s) {
           s.data = series.map(i => ({ name: i.name, value: i.data }))
           s.roseType = 'area'
-          s.label = { show: false, position: 'center' }
+          s.label = { show: false }
           s.emphasis = { label: {
             show: true,
             fontSize: 10,
@@ -188,8 +192,27 @@ export default {
         option.coordinateSystem = 'calendar'
         delete option.legend
       } else {
-        series.map(i => { i.data = [i.data] })
+        series.map(i => {
+          if (Object.prototype.toString.call(i.data) === '[object Array]') return
+          i.data = [i.data]
+        })
       }
+
+      if (this.type === 'line') {
+        option.xAxis = {
+          type: 'category',
+        }
+        option.yAxis = { type: 'value' }
+        option.label = { show: false }
+        series.map(i => {
+          let date = new Date()
+          i.data = i.data.map((x, index) => {
+            date -= 86400e3
+            return [parseTime(new Date(date), '{d}日'), x]
+          })
+        })
+      }
+
       option.series = series
       this.chart.setOption(option)
     },
