@@ -1,8 +1,8 @@
 <template>
   <div id="container" class="container">
-    <Header :title="title" :style="{height:isActive?'5rem':0,transition:'all ease 0.5s'}">
+    <Header v-if="showHeader" :title="title" :style="{height:isActive?'5rem':0,transition:'all ease 0.5s'}">
       <template #setting>
-        <slot v-if="slots.setting" name="setting" />
+        <slot v-if="$slots.setting" name="setting" />
         <el-form v-else>
           <el-form-item label="配置">
             <span />
@@ -14,7 +14,7 @@
       <Breadcrumb style="margin-left:2rem;margin-top:-0.5rem;position:absolute" />
       <slot />
     </div>
-    <Footer />
+    <Footer v-if="showFooter" />
   </div>
 </template>
 
@@ -27,7 +27,9 @@ export default {
     Breadcrumb: () => import('@/components/Breadcrumb'),
   },
   props: {
-    title: { type: String, default: null }
+    title: { type: String, default: null },
+    showFooter: { type: Boolean, default: true },
+    showHeader: { type: Boolean, default: true },
   },
   data: () => ({
     isActive: false,
