@@ -38,7 +38,7 @@
         />
         <DatetimePicker
           v-if="!is_today"
-          v-model="inner_data.time"
+          v-model="inner_data.filterDate"
           type="datetime"
           :color="theme"
           format="YYYY-MM-DD"
@@ -109,27 +109,36 @@ export default {
       }
     },
     data: {
-      handler(val) {
+      handler (val) {
+        this.is_today = !val.filterDate
         this.inner_data = val
       }
     },
     inner_data: {
-      handler(val) {
+      handler (val) {
         this.$emit('change', Object.assign(val, { databaseName: this.name }))
         localStorage.setItem(this.key, JSON.stringify(val))
       },
       deep: true
+    },
+    is_today (val) {
+      const v = this.inner_data
+      if (!v) return
+      if (val && v.filterDate) v.filterDate = null
     }
   },
   mounted() {
     const data = localStorage.getItem(this.key) || '{}'
-    this.inner_data = JSON.parse(data)
+    const jData = JSON.parse(data)
+    this.is_today = !jData.filterDate
+    this.inner_data = jData
   },
   methods: {
     reset_setting () {
       this.$confirm('重置后将恢复默认查询设置').then(() => {
         localStorage.removeItem(this.key)
-        this.$message.success('已重置配置 刷新页面生效')
+        this.inner_data = {}
+        this.$message.success('已重置配置')
       })
     }
   }
