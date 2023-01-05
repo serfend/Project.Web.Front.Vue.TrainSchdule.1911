@@ -29,6 +29,7 @@ export default {
 
   display: flex;
   justify-content: center;
+  box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, 0.3);
   background-color: #ffffff3f;
   height: 12rem;
   width: 15rem;

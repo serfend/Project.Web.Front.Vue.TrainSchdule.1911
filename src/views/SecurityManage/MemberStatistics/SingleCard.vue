@@ -15,7 +15,7 @@ export default {
   },
   props: {
     progressTitle: { type: String, default: null },
-    digital: { type: String, default: '无数据' },
+    digital: { type: [String, Number], default: '无数据' },
     title: { type: String, default: '无标题' },
     progress: { type: Number, default: 70 },
   },

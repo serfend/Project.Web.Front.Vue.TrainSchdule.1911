@@ -7,8 +7,7 @@
     <el-row class="row" :gutter="20">
       <el-col :span="11">
         <el-row class="row">
-          <Square style="height:16rem">
-            <div slot="title">人员情况</div>
+          <Square style="height:15rem">
             <div slot="chart" style="height: 100%;display: flex;align-items: center;justify-content: center;">
               <MemberStatistics />
             </div>
@@ -18,8 +17,8 @@
           <Square>
             <div slot="title">安全指标监测</div>
             <div slot="chart">
-              <div style="height:37rem;padding:2rem 3rem 1rem 3rem">
-                <Indicator :count-per-group="6" :height="30" />
+              <div style="height:38rem;padding:2rem 3rem 1rem 3rem">
+                <Indicator :count-per-group="6" :height="31" />
               </div>
             </div>
           </Square>
@@ -27,7 +26,7 @@
       </el-col>
       <el-col :span="13">
         <el-row class="row" :gutter="10">
-          <el-col :span="18">
+          <el-col :span="16">
             <EventList
               title="security_event-statistics"
               database="security_event"
@@ -43,7 +42,7 @@
               </div>
             </Square>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <Square>
               <div slot="title">天气轮询</div>
               <div slot="chart" style="height:20rem">
@@ -53,9 +52,17 @@
           </el-col>
         </el-row>
         <el-row>
-          <Square>
-            <History slot="chart" height="33rem" :size="0.6" />
-          </Square>
+          <el-col :span="12">
+            <Square>
+              <div slot="title">折线图</div>
+              <div slot="chart" style="height:33rem">1</div>
+            </Square>
+          </el-col>
+          <el-col :span="12">
+            <Square>
+              <History slot="chart" height="33rem" :size="0.6" />
+            </Square>
+          </el-col>
         </el-row>
       </el-col>
     </el-row>
