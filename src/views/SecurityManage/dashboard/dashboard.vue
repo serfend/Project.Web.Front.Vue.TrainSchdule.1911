@@ -27,14 +27,6 @@
       <el-col :span="13">
         <el-row class="row" :gutter="10">
           <el-col :span="16">
-            <EventList
-              title="security_event-statistics"
-              database="security_event"
-              :default-data="{securityEventType:3}"
-              :engine-only="true"
-              style="top:1rem;left:1rem;z-index:1;"
-              @change="data_arrived"
-            />
             <Square>
               <div slot="title">各类事件概率</div>
               <div slot="chart">
@@ -54,7 +46,7 @@
         <el-row>
           <el-col :span="12">
             <Square>
-              <History slot="chart" height="33rem" :size="0.6" />
+              <History slot="chart" height="33rem" :size="0.6" @change="data_arrived" />
             </Square>
           </el-col>
           <el-col :span="12">
@@ -66,6 +58,15 @@
   </div>
 </template>
 <script>
+// 原数据引擎
+// <!-- <EventList
+//               title="security_event-statistics"
+//               database="security_event"
+//               :default-data="{securityEventType:3}"
+//               :engine-only="true"
+//               style="top:1rem;left:1rem;z-index:1;"
+//               @change="data_arrived"
+//             /> -->
 import { getConfig } from '@/api/common/general_config'
 import { loader } from '@/utils/common/vueLoader'
 const name = 'global.sec.banner'
