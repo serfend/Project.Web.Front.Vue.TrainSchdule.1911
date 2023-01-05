@@ -61,12 +61,12 @@ import Vue from 'vue'
 export default {
   name: 'SecurityManageDashboard',
   components: {
-    History: () => import('./history'),
-    EventList: () => import('./event/EventList'),
+    History: () => import('../history'),
+    EventList: () => import('../event/EventList'),
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
-    EventRate: () => import('./EventRate'),
-    WeatherCard: () => import('./WeatherCard'),
-    Indicator: () => import('./indicator'),
+    EventRate: () => import('../EventRate'),
+    WeatherCard: () => import('../WeatherCard'),
+    Indicator: () => import('../indicator'),
     Loading: () => import('@/views/Loading')
   },
   data: () => ({
@@ -97,7 +97,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/views/dashboard/Statistics/style";
-@import "./style";
+@import "../style";
 .primary-container {
   @include common();
   @extend %background-img;
