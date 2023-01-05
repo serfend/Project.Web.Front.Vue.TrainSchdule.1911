@@ -204,9 +204,10 @@ export default {
         option.yAxis = { type: 'value' }
         option.label = { show: false }
         series.map(i => {
-          let date = new Date()
+          const single_day = 86400e3
+          let date = new Date() - i.data.length * single_day
           i.data = i.data.map((x, index) => {
-            date -= 86400e3
+            date += 86400e3
             return [parseTime(new Date(date), '{d}日'), x]
           })
         })
