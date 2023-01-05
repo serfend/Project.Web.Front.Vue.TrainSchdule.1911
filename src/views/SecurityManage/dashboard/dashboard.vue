@@ -7,7 +7,7 @@
     <el-row class="row" :gutter="20">
       <el-col :span="11">
         <el-row class="row">
-          <Square style="height:15rem">
+          <Square style="height:18rem">
             <div slot="chart" style="height: 100%;display: flex;align-items: center;justify-content: center;">
               <MemberStatistics />
             </div>
@@ -17,7 +17,7 @@
           <Square>
             <div slot="title">安全指标监测</div>
             <div slot="chart">
-              <div style="height:38rem;padding:2rem 3rem 1rem 3rem">
+              <div style="height:40rem;padding:2rem 3rem 1rem 3rem">
                 <Indicator :count-per-group="6" :height="31" />
               </div>
             </div>
@@ -30,14 +30,14 @@
             <Square>
               <div slot="title">各类事件概率</div>
               <div slot="chart">
-                <EventRate v-model="event_list" height="20rem" />
+                <EventRate v-model="event_list" height="22rem" />
               </div>
             </Square>
           </el-col>
           <el-col :span="8">
             <Square>
               <div slot="title">天气轮询</div>
-              <div slot="chart" style="height:20rem">
+              <div slot="chart" style="height:22rem">
                 <WeatherCard config-id="global.sec.weather-card" />
               </div>
             </Square>
