@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="weather_dict && weather_dict[0]">
     <el-row>
       <el-col class="primary-icon" :span="7">
         <LottieIcon
@@ -9,15 +9,26 @@
         />
       </el-col>
       <el-col :span="8">
-        <h2 class="primary-tempature">{{ getTemperature(weather_dict[0]) }}</h2>
-        <span class="primary-subtitle">{{ getProp(weather_dict[0],'subLabel') || getWeatherName(getProp(weather_dict[0],'type')) }}</span>
+        <div class="primary-tempature">
+          {{ getTemperature(weather_dict[0]) }}
+        </div>
+        <div class="primary-subtitle">
+          {{
+            getProp(weather_dict[0], "subLabel") ||
+              getWeatherName(getProp(weather_dict[0], "type"))
+          }}
+        </div>
       </el-col>
       <el-col class="primary-title" :span="8">
-        <span>{{ getProp(weather_dict[0],'label') }}</span>
+        <span>{{ getProp(weather_dict[0], "label") }}</span>
       </el-col>
     </el-row>
     <el-row>
-      <el-col v-for="(i,index) in ['今天','明天','后天']" :key="index" :span="8">
+      <el-col
+        v-for="(i, index) in ['今天', '明天', '后天']"
+        :key="index"
+        :span="8"
+      >
         <div v-if="weather_dict[index]">
           <el-row class="secondary-title">
             <span>{{ i }}</span>
@@ -30,7 +41,10 @@
             />
           </el-row>
           <el-row class="secondary-subtitle">
-            <span>{{ (index>0 && getProp(weather_dict[index],'subLabel')) || getTemperatureRange(weather_dict[index]) }}</span>
+            <span>{{
+              (index > 0 && getProp(weather_dict[index], "subLabel")) ||
+                getTemperatureRange(weather_dict[index])
+            }}</span>
           </el-row>
         </div>
         <NoData v-else :size="0.5" />
@@ -48,7 +62,7 @@ export default {
   name: 'Weather',
   components: {
     LottieIcon: () => import('@/components/LottieIcon'),
-    NoData: () => import('@/views/Loading/NoData'),
+    NoData: () => import('@/views/Loading/NoData')
   },
   model: {
     prop: 'data',
@@ -97,27 +111,29 @@ export default {
   },
   methods: {
     getProp,
-    getSingle (weather) {
+    getSingle(weather) {
       const n = weather.name || this.getWeatherName(weather.type)
       let v = weatherData[n]
       if (!v) v = weatherData['无']
       v = v()
       return Object.assign({ data: v }, weather)
     },
-    getTemperatureRange (w) {
+    getTemperatureRange(w) {
       const max = getProp(w, ['temperature', 'max'])
       const min = getProp(w, ['temperature', 'min'])
       if (max === null || min === null) return '-'
       return `${min}-${max}℃`
     },
-    getTemperature (w) {
+    getTemperature(w) {
       const max = getProp(w, ['temperature', 'max'])
       const min = getProp(w, ['temperature', 'min'])
       if (max === null || min === null) return '-'
-      const v = min + (max - min) * weatherData.temperatureMockDict[new Date().getHours()]
+      const v =
+        min +
+        (max - min) * weatherData.temperatureMockDict[new Date().getHours()]
       return `${Math.round(v)}℃`
     },
-    getWeatherName (type) {
+    getWeatherName(type) {
       return weatherData.weatherDict[type] || '未知'
     },
     initWeatherData() {
@@ -149,8 +165,11 @@ export default {
             if (diff > 3) return
             v[diff] = i
           })
-          if (!v[0].label) { // 填充地理位置
-            v.map(i => { if (i.label) v[0].label = i.label })
+          if (!v[0].label) {
+            // 填充地理位置
+            v.map(i => {
+              if (i.label) v[0].label = i.label
+            })
             v[0].label = `${district}(无)`
           }
           this.weather_dict = v.map(i => this.getSingle(i) || {})
@@ -164,32 +183,39 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.secondary-subtitle{
+.secondary-subtitle {
   justify-content: center;
   text-align: center;
   font-size: 0.8rem;
 }
-.secondary-icon{
+.secondary-icon {
   text-align: center;
-  width:50%;
+  width: 50%;
   margin: auto;
 }
-.secondary-title{
+.secondary-title {
   justify-content: center;
   text-align: center;
 }
-.primary-title{
+.primary-title {
   justify-content: center;
   text-align: right;
+  color: #ffffffb6;
+  font-size: 1.2rem;
 }
-.primary-subtitle{
+.primary-subtitle {
   justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-clamp: 2;
+  width: 200%;
 }
-.primary-tempature{
+.primary-tempature {
   justify-content: center;
-
+  font-size: 2rem;
 }
-.primary-icon{
+.primary-icon {
   justify-content: center;
 }
 </style>
