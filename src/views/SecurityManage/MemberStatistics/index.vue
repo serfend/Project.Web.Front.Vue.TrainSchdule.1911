@@ -1,9 +1,10 @@
 <template>
-  <div style="display:flex">
+  <div v-loading="loading" style="display:flex">
     <SingleCard v-for="(i,index) in data" :key="index" class="single-card" v-bind="i" />
   </div>
 </template>
 <script>
+import { getConfig } from '@/api/common/general_config'
 export default {
   name: 'MemberStatistic',
   components: {
@@ -11,15 +12,33 @@ export default {
   },
   props: {},
   data: () => ({
-    data: [
-      { digital: 2439, title: '人员情况', progressTitle: '在位率', progress: 92 },
-      { digital: 295, title: '车辆情况', progressTitle: '出车率', progress: 24 },
-      { digital: 15251, title: '设备情况', progressTitle: '在线率', progress: 98 },
-    ]
+    data: [],
+    loading: false,
+    refresher: null
   }),
   computed: {},
-  mounted() {},
-  methods: {}
+  mounted () {
+    this.refresher = setInterval(this.refresh, 60e3)
+    this.refresh()
+  },
+  destroyed() {
+    clearInterval(this.refresher)
+  },
+  methods: {
+    refresh () {
+      const name = 'global.sec.member-statistics'
+      this.loading = true
+      getConfig({ name }).then(data => {
+        try {
+          this.data = JSON.parse(data.model.data)
+        } catch {
+          return this.$message.error(`人员情况数据获取失败:${name}`)
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

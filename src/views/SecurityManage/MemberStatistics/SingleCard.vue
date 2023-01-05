@@ -31,6 +31,7 @@ export default {
   margin-top: 1rem;
   font-size: 4rem;
   color: #25f0f0;
+  text-shadow: #21f0ff 0 0 0.5rem;
 }
 .title {
   font-size: 1.5rem;
@@ -42,5 +43,6 @@ export default {
 .card-container {
   display: inline-block;
   text-align: center;
+  border-radius: 0.4rem;
 }
 </style>
