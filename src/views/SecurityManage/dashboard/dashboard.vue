@@ -9,7 +9,9 @@
         <el-row class="row">
           <Square style="height:16rem">
             <div slot="title">人员情况</div>
-            <div slot="chart">人员情况</div>
+            <div slot="chart" style="height: 100%;display: flex;align-items: center;justify-content: center;">
+              <MemberStatistics />
+            </div>
           </Square>
         </el-row>
         <el-row class="row">
@@ -73,6 +75,7 @@ export default {
     EventRate: () => import('../EventRate'),
     WeatherCard: () => import('../WeatherCard'),
     Indicator: () => import('../indicator'),
+    MemberStatistics: () => import('../MemberStatistics'),
     Loading: () => import('@/views/Loading')
   },
   data: () => ({
