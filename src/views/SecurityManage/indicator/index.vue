@@ -1,5 +1,5 @@
 <template>
-  <div class="indicator-container">
+  <div class="indicator-container" @mouseenter="onmouseenter" @mouseleave="onmouseleave">
     <transition-group
       name="slide-fade"
       tag="ul"
@@ -69,6 +69,7 @@ export default {
     indicator_anicache: {},
     current_group: -1,
     group_player: null,
+    mouseenter: false,
     last_active: null,
     last_active_index: null
   }),
@@ -102,6 +103,12 @@ export default {
     clearInterval(this.group_player)
   },
   methods: {
+    onmouseenter () {
+      this.mouseenter = true
+    },
+    onmouseleave () {
+      this.mouseenter = false
+    },
     getDelay(el) {
       const item = Number(el.getAttribute('item'))
       const sindex = Number(el.getAttribute('sindex'))
@@ -187,7 +194,7 @@ export default {
         if (i && i.active) return
         this.last_active_index = null
       }
-      if (this.last_active && new Date() - this.last_active < 8e3) return next_round()
+      if (this.mouseenter || (this.last_active && new Date() - this.last_active < 8e3)) return next_round()
       this.refresh()
         .then(() => {})
         .finally(() => {
