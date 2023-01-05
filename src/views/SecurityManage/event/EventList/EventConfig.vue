@@ -76,7 +76,7 @@ export default {
     inner_show: false,
     inner_data: null,
     securityEventTypes: [
-      { value: 0, alias: '默认(今天)' },
+      { value: 0, alias: '默认(本月)' }, // value=3
       { value: 1, alias: '今天' },
       { value: 2, alias: '本周' },
       { value: 3, alias: '本月' },
@@ -116,7 +116,9 @@ export default {
     },
     inner_data: {
       handler (val) {
-        this.$emit('change', Object.assign(val, { databaseName: this.name }))
+        const data = Object.assign(val, { databaseName: this.name })
+        if (!data.securityEventType)data.securityEventType = 3
+        this.$emit('change', data)
         localStorage.setItem(this.key, JSON.stringify(val))
       },
       deep: true
