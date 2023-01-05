@@ -180,7 +180,6 @@ export default {
         const s = series[0]
         if (s) {
           s.data = series.map(i => ({ name: i.name, value: i.data }))
-          s.roseType = 'area'
           s.label = { show: false }
           s.emphasis = { label: {
             show: true,
