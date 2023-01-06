@@ -1,13 +1,18 @@
 <template>
-  <transition v-if="current" name="slideCard">
-    <div :key="current.title" class="card-container">
+  <div v-if="current">
+    <div class="card-container">
       <el-row class="data">{{ current.digital }}</el-row>
       <el-row class="title">{{ current.title }}</el-row>
-      <div class="progress">
-        <LinearProgress :data="current.progress" :height="2.2" :color="['#40a5e8','#94f4fb']" :title="current.progressTitle" />
+      <div class="progress" :style="{ width: `${width}rem` }">
+        <LinearProgress
+          :data="current.progress"
+          :height="2.2"
+          :color="['#40a5e8', '#94f4fb']"
+          :title="current.progressTitle"
+        />
       </div>
     </div>
-  </transition>
+  </div>
 </template>
 <script>
 export default {
@@ -21,7 +26,8 @@ export default {
     // title: { type: String, default: '无标题' },
     // progress: { type: Number, default: 70 },
     data: {
-      type: Array, default: () => [
+      type: Array,
+      default: () => [
         {
           progressTitle: 'XXX率',
           digital: 15259,
@@ -30,7 +36,9 @@ export default {
         }
       ]
     },
-    index: { type: Number, default: 0 }
+    index: { type: Number, default: 0 },
+    width: { type: Number, default: 16 },
+    currentFocus: { type: String, default: null }
   },
   data: () => ({
     current: null,
@@ -38,25 +46,25 @@ export default {
     refresher: null
   }),
   computed: {},
-  mounted () {
+  mounted() {
     setTimeout(() => {
       this.refresher = setInterval(this.refresh, 5e3)
       this.refresh()
-    }, this.index * 3e2)
+    }, this.index * 5e2)
   },
   destroyed() {
     clearInterval(this.refresher)
   },
   methods: {
-    refresh () {
+    refresh() {
       const { data } = this
       if (!data) return
       if (this.currentIndex >= data.length - 1) {
         this.currentIndex = -1
       }
       this.currentIndex++
-
       this.current = this.data[this.currentIndex]
+      this.$emit('update:currentFocus', this.current.title)
     }
   }
 }
@@ -80,14 +88,4 @@ export default {
   text-align: center;
   border-radius: 0.4rem;
 }
-
-.slideCard-enter-active {
-  transition: opacity 1.5s;
-}
-
-.slideCard-enter,
-.slideCard-leave-to {
-  opacity: 0;
-}
-
 </style>
