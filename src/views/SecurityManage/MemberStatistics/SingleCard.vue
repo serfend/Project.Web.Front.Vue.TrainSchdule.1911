@@ -1,6 +1,6 @@
 <template>
-  <div v-if="current">
-    <div class="card-container">
+  <transition v-if="current" name="slideCard" class="single-card">
+    <div :key="current.title" class="card-container">
       <el-row class="data">{{ current.digital }}</el-row>
       <el-row class="title">{{ current.title }}</el-row>
       <div class="progress" :style="{ width: `${width}rem` }">
@@ -12,7 +12,7 @@
         />
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 <script>
 export default {
@@ -87,5 +87,28 @@ export default {
   display: inline-block;
   text-align: center;
   border-radius: 0.4rem;
+}
+.single-card {
+  transition: all ease 1s;
+}
+.slideCard-enter {
+  opacity: 0;
+  transform: translateY(2rem);
+}
+
+.slideCard-enter-to {
+  transform: translateY(0rem);
+  opacity: 1;
+}
+
+.slideCard-leave {
+  transform: translateY(0rem);
+  opacity: 1;
+  position: absolute;
+}
+.slideCard-leave-to {
+  transform: translateY(-10rem);
+  opacity: 0;
+  position: absolute;
 }
 </style>

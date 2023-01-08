@@ -1,8 +1,6 @@
 <template>
   <div v-loading="loading">
-    <transition-group name="slideCard" style="display:flex">
-      <SingleCard v-for="(i,index) in data" :key="currentFocus[index] || (i[0] && i[0].title || index)" :current-focus.sync="currentFocus[index]" class="single-card" :data="i" :index="data.length-index" />
-    </transition-group>
+    <SingleCard v-for="(i,index) in data" :key="index" class="single-card" :data="i" :index="data.length-index" />
   </div>
 </template>
 <script>
@@ -51,7 +49,7 @@ export default {
 
   display: flex;
   justify-content: center;
-  box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0.1rem 0.1rem 0.3rem 0.2rem #0000003f;
   background-color: #ffffff3f;
   height: 12rem;
   width: 15rem;
@@ -60,14 +58,4 @@ export default {
   border-radius: 0.8rem;
 }
 
-.slideCard-enter-active {
-  opacity: 0;
-  transform: translateY(2rem);
-}
-
-.slideCard-enter,
-.slideCard-leave-to {
-  transform: translateY(0);
-  opacity: 0;
-}
 </style>

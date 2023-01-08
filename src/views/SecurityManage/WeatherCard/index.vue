@@ -51,6 +51,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .weather-card {
+  margin: 1rem 0;
   padding: 1rem 0.5rem;
   height: 10rem;
 }
