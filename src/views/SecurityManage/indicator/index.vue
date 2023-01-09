@@ -191,7 +191,7 @@ export default {
       if (this.last_active_index !== null) {
         // 检查是否对象已释放
         const i = this.indicators[this.last_active_index]
-        if (i && i.active) return
+        if (i && i.active) return next_round()
         this.last_active_index = null
       }
       if (this.mouseenter || (this.last_active && new Date() - this.last_active < 8e3)) return next_round()
@@ -256,6 +256,7 @@ export default {
               range: [currentConfig.min, currentConfig.max],
               ranges: currentConfig.range,
               exceedingUsers: currentData.exceedingUsers,
+              exceedingUserType: currentData.exceedingUserType,
               valid: !!(currentData.name)
             }
             Object.assign(indicators[index], mapped_item)
