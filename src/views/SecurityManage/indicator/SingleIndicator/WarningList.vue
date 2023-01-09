@@ -26,7 +26,7 @@
             v-for="i in data.exceedingUsers[key].item1 &&
               data.exceedingUsers[key].item1.slice(0, 3)"
             :key="i"
-            :userid="i"
+            v-bind="calculateAttr(componentType.component.user,i)"
             @requireEdit="showDetail(i)"
           />
           <span>总数{{ data.exceedingUsers[key].item2 }}</span>
@@ -42,7 +42,7 @@
         <!-- 单个用户的详细记录 -->
         <el-dialog :visible.sync="showDetailDialog" append-to-body>
           <div>
-            <h2>{{ showDetailDialogId }}详细记录</h2>
+            <h2>详细{{ componentType.component.records.alias }}记录</h2>
             <component
               :is="componentType.component.records.name"
               v-if="showDetailDialog"
@@ -68,6 +68,7 @@ export default {
     Vehicle: () => import('@/components/Vehicle'),
     TravelList: () => import('@/components/Vehicle/TravelList'),
     VehicleFormItem: () => import('@/components/Vehicle/VehicleFormItem'),
+    TravelFormItem: () => import('@/components/Vehicle/TravelFormItem'),
     AppliesList: () => import('@/views/Apply/MyApply/components/AppliesList'),
     UserList: () => import('./UserList')
   },
@@ -80,38 +81,19 @@ export default {
     key_type_dict,
     showDetailDialog: false,
     showDetailDialogId: null,
-    listFormItemDict: {
-      user: { name: 'UserFormItem', id: 'userid' },
-      car: { name: 'VehicleFormItem', id: 'id' }
-    },
-    listUserDetailDict: {
-      'inday-apply': {
-        name: 'AppliesList',
-        id: self => self.showDetailDialogId,
-        entityType: 'inday',
-        hideAddBtn: true
-      },
-      'vac-apply': {
-        name: 'AppliesList',
-        id: self => self.showDetailDialogId,
-        entityType: 'inday',
-        hideAddBtn: true
-      },
-      travelInfo: {
-        name: 'TravelList',
-        id: self => self.showDetailDialogId
-      }
-    }
+    listFormItemDict: null,
+    listUserDetailDict: null
   }),
   computed: {
-    componentType() {
+    componentType () {
+      if (!this.listFormItemDict) return null
       const { exceedingUserType } = this.data
       if (!exceedingUserType) return null
       const result = {
         component: {},
         params: null
       }
-      const r = exceedingUserType.split('##')
+      const r = exceedingUserType.split('##').filter(x => x)
       const i = r[0].split('@')
       result.component = {
         user: this.listFormItemDict[i[0]],
@@ -134,6 +116,9 @@ export default {
       immediate: true
     }
   },
+  mounted() {
+    this.initDict()
+  },
   methods: {
     showDetail(id) {
       if (!this.componentType.component.records) {
@@ -143,19 +128,53 @@ export default {
       this.showDetailDialogId = id
       this.showDetailDialog = true
     },
-    calculateAttr(attrConfig) {
+    calculateAttr(attrConfig, item) {
       const r = {}
       Object.keys(attrConfig)
-        .map(i => {
-          const t = attrConfig[i]
+        .map(key => {
+          const t = attrConfig[key]
           const isFunc =
             Object.prototype.toString.call(t) === '[object Function]'
-          return { i, r: isFunc ? t(this) : t }
-        })
-        .map(i => {
-          r[i.i] = i.r
+          const tmp = { key, val: isFunc ? t(this, item) : t }
+          r[tmp.key] = tmp.val
         })
       return r
+    },
+    initDict () {
+      const m = (g, x) => this.getItem(x)
+      this.listFormItemDict = {
+        user: { name: 'UserFormItem', id: m, userid: m },
+        car: { name: 'VehicleFormItem', id: m, userid: m },
+        travel: { name: 'TravelFormItem', id: m, userid: m }
+      }
+
+      this.listUserDetailDict = {
+        'inday-apply': {
+          name: 'AppliesList',
+          alias: '请假',
+          id: self => self.showDetailDialogId,
+          entityType: 'inday',
+          hideAddBtn: true
+        },
+        'vac-apply': {
+          name: 'AppliesList',
+          alias: '休假',
+          id: self => self.showDetailDialogId,
+          entityType: 'vacation',
+          hideAddBtn: true
+        },
+        travelInfo: {
+          name: 'TravelList',
+          alias: '出车',
+          id: self => self.showDetailDialogId
+        }
+      }
+    },
+    getItem (item) {
+      const { componentType } = this
+      const { params } = componentType
+      if (!params) return item // 无参数，则直接返回id
+      return item.split('##').filter(x => x)[0]
     }
   }
 }

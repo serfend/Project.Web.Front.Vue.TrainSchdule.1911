@@ -21,10 +21,19 @@ export function getVehicle(id, ignoreErr) {
   ) : action()
 }
 
-export function getTravelList ({ driverId, vehicleIdentity, page }) {
+export function getTravelList ({ id, driverId, vehicleIdentity, page }) {
   return request.post(`${api}/travelList`, {
+    id: form.toQueryValue(id),
     driverId: form.toQueryValue(driverId),
     vehicleIdentity: form.toQueryValue(vehicleIdentity),
     page
+  })
+}
+
+export function getTravel (id) {
+  return new Promise((res, rej) => {
+    getTravelList({ id }).then(data => {
+      res(data.list && data.list[0])
+    })
   })
 }
