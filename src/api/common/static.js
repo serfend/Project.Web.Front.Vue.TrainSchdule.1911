@@ -72,6 +72,10 @@ export function location(code) {
   })
 }
 
+export function locations (codes) {
+  if (Object.prototype.toString.call(codes) === '[object Array]')codes = codes.join('##')
+  return request.get(`/static/locations?codes=${codes}`)
+}
 /**
  * 获取中心时间配置
  *
