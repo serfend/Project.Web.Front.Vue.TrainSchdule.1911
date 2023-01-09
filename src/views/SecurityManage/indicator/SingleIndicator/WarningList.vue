@@ -26,7 +26,7 @@
             v-for="i in data.exceedingUsers[key].item1 &&
               data.exceedingUsers[key].item1.slice(0, 3)"
             :key="i"
-            v-bind="calculateAttr(componentType.component.user,i)"
+            v-bind="calculateAttr(componentType.component,'user',i)"
             @requireEdit="showDetail(i)"
           />
           <span>总数{{ data.exceedingUsers[key].item2 }}</span>
@@ -46,7 +46,7 @@
             <component
               :is="componentType.component.records.name"
               v-if="showDetailDialog"
-              v-bind="calculateAttr(componentType.component.records)"
+              v-bind="calculateAttr(componentType.component,'records')"
             />
           </div>
         </el-dialog>
@@ -97,7 +97,8 @@ export default {
       const i = r[0].split('@')
       result.component = {
         user: this.listFormItemDict[i[0]],
-        records: this.listUserDetailDict[i[1]]
+        records: this.listUserDetailDict[i[1]],
+        key: i,
       }
       if (r.length > 1) {
         result.params = r
@@ -128,7 +129,10 @@ export default {
       this.showDetailDialogId = id
       this.showDetailDialog = true
     },
-    calculateAttr(attrConfig, item) {
+    calculateAttr (attrConfig, key, item) {
+      const keyInfo = attrConfig.key
+      attrConfig = attrConfig[key]
+      if (attrConfig.alias)attrConfig = attrConfig[keyInfo[0]] // 如果为详细列表，则获取目标
       const r = {}
       Object.keys(attrConfig)
         .map(key => {
@@ -152,21 +156,30 @@ export default {
         'inday-apply': {
           name: 'AppliesList',
           alias: '请假',
-          id: self => self.showDetailDialogId,
-          entityType: 'inday',
-          hideAddBtn: true
+          user: {
+            id: self => self.showDetailDialogId,
+            entityType: 'inday',
+            hideAddBtn: true,
+          },
         },
         'vac-apply': {
           name: 'AppliesList',
           alias: '休假',
-          id: self => self.showDetailDialogId,
-          entityType: 'vacation',
-          hideAddBtn: true
+          user: {
+            id: self => self.showDetailDialogId,
+            entityType: 'vacation',
+            hideAddBtn: true
+          },
         },
         travelInfo: {
           name: 'TravelList',
           alias: '出车',
-          id: self => self.showDetailDialogId
+          user: {
+            userid: self => self.showDetailDialogId,
+          },
+          car: {
+            identity: self => self.showDetailDialogId,
+          },
         }
       }
     },

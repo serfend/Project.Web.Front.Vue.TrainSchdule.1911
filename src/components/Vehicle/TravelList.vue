@@ -89,7 +89,8 @@ export default {
     VehicleFormItem: () => import('./VehicleFormItem'),
   },
   props: {
-    id: { type: String, required: true }
+    id: { type: String, default: null },
+    userid: { type: String, default: null },
   },
   data: () => ({
     loading: false,
@@ -104,7 +105,13 @@ export default {
         this.refresh()
       },
       immediate: true
-    }
+    },
+    userid: {
+      handler(v) {
+        this.refresh()
+      },
+      immediate: true
+    },
   },
   mounted() {},
   methods: {
@@ -114,7 +121,8 @@ export default {
     },
     refresh() {
       this.loading = true
-      getTravelList({})
+      const { id, userid } = this
+      getTravelList({ id, driverId: userid })
         .then(data => {
           this.innerList = data.list
           this.pageTotalCount = data.totalCount
