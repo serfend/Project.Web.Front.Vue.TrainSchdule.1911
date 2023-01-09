@@ -24,7 +24,7 @@ export function eventList ({ databaseName, title, detail, summary, tag, time, fi
     securityEventPeriod: form.toQueryStartEndByArray(securityEventPeriod),
     type: form.toQueryStartEndByArray(eventType),
     eventTag: form.toQueryValue(eventTag),
-    company: form.toQueryArrays(eventCompany),
+    company: (eventCompany && eventCompany.length) ? form.toQueryArrays(eventCompany) : null,
     title: form.toQueryValue(title),
     detail: form.toQueryValue(detail),
     summary: form.toQueryValue(summary),
