@@ -60,35 +60,16 @@
           </div>
         </div>
       </el-form>
-      <div v-if="data.exceedingUsers && Object.keys(data.exceedingUsers).length">
-        <el-divider />
-        <h2>人员名单</h2>
-        <el-collapse style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-          <el-collapse-item v-for="key in Object.keys(data.exceedingUsers)" :key="key" title="授权人">
-            <template slot="title">
-              <el-tag type="danger">{{ key_type_dict[key] && key_type_dict[key].name || key }}</el-tag>
-              <UserFormItem v-for="i in (data.exceedingUsers[key].item1 && data.exceedingUsers[key].item1.slice(0,3))" :key="i" :userid="i" />
-              <span>共{{ data.exceedingUsers[key].item2 }}人</span>
-            </template>
-            <ExceedingUsers :name="key" :data="data.exceedingUsers[key]" />
-          </el-collapse-item>
-        </el-collapse>
-      </div>
+      <WarningList :data="data" />
     </el-dialog>
   </el-card>
 </template>
 <script>
-const key_type_dict = {
-  'MAX': { name: '达到上限' },
-  'MIN': { name: '达到下限' },
-  'RNG': { name: '不在合理范围内' },
-}
 import { getColorByPercentage } from '@/utils'
 export default {
   name: 'SingleIndicator',
   components: {
-    ExceedingUsers: () => import('./ExceedingUsers'),
-    UserFormItem: () => import('@/components/User/UserFormItem')
+    WarningList: () => import('./WarningList')
   },
   props: {
     data: { type: Object, required: true },
@@ -96,7 +77,6 @@ export default {
   },
   data: () => ({
     inner_focus: false,
-    key_type_dict
   }),
   computed: {
     is_normal() {
