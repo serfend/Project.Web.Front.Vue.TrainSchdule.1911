@@ -9,11 +9,7 @@ export default {
   name: 'LottieIcon',
   props: {
     animationData: { type: Object, default: null },
-    path: {
-      type: String,
-      default: null,
-      require: true
-    },
+    path: { type: String, default: null },
     loop: { type: Boolean, default: true },
     animateSpeed: { type: Number, default: 1 }
   },
@@ -76,12 +72,14 @@ export default {
 
     isLottieFinish() {
       // this.lottie.removeEventListener('data_ready', this.isLottieFinish)
-      if (this.path) { local_cache[this.path] = this.lottie.animationData }
+      if (this.path) {
+        local_cache[this.path] = this.lottie.animationData
+      }
       this.onSpeedChange()
       this.$emit('isLottieFinish', true)
     },
 
-    initLottie () {
+    initLottie() {
       const { animationData, path, loop } = this
       const animationDataLoad = local_cache[this.path] || animationData
       const pathLoad = local_cache[this.path] ? null : path

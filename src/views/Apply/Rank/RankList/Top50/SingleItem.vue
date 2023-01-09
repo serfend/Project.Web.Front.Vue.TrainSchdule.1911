@@ -36,8 +36,8 @@ export default {
     UserAvatar: () => import('@/components/User/UserAvatar')
   },
   props: {
-    index: { type: Number, default: 0, require: true },
-    data: { type: Object, default: null, require: true }
+    index: { type: Number, required: true },
+    data: { type: Object, required: true }
   },
   computed: {
     formatIndex() {

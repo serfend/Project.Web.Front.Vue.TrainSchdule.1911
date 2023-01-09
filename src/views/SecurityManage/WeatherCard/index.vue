@@ -17,7 +17,7 @@ export default {
     WeatherGroup: () => import('@/components/Weather/WeatherGroup')
   },
   props: {
-    configId: { type: String, require: true, default: null }
+    configId: { type: String, required: true }
   },
   data: () => ({
     district: []

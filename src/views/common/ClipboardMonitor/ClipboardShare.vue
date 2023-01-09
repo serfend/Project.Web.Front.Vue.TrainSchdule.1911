@@ -44,8 +44,7 @@ export default {
   props: {
     defaultContent: {
       type: String,
-      default: null,
-      require: true
+      required: true
     },
     shareUrl: {
       type: String,

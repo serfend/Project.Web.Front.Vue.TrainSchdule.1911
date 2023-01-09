@@ -29,7 +29,7 @@ export default {
   },
   props: {
     id: { type: String, default: null },
-    entityType: { type: String, require: true, default: null }
+    entityType: { type: String, required: true }
   },
   data: () => ({
     loading: false,

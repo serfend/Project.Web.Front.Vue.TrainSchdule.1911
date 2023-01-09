@@ -35,7 +35,7 @@ export default {
   },
   props: {
     index: { type: Number, default: 1 },
-    data: { type: Object, default: null, require: true }
+    data: { type: Object, required: true }
   }
 }
 </script>
