@@ -41,11 +41,14 @@
 
         <!-- 单个用户的详细记录 -->
         <el-dialog :visible.sync="showDetailDialog" append-to-body>
-          <component
-            :is="componentType.component.records.name"
-            v-if="showDetailDialog"
-            v-bind="calculateAttr(componentType.component.records)"
-          />
+          <div>
+            <h2>{{ showDetailDialogId }}详细记录</h2>
+            <component
+              :is="componentType.component.records.name"
+              v-if="showDetailDialog"
+              v-bind="calculateAttr(componentType.component.records)"
+            />
+          </div>
         </el-dialog>
       </el-collapse-item>
     </el-collapse>
