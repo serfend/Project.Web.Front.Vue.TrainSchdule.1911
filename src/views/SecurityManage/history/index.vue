@@ -19,8 +19,10 @@
         <el-form-item>
           <h3>{{ detail.type }}</h3>
         </el-form-item>
-        <el-form-item v-if="detail.tags&&detail.tags.length">
-          <el-tag v-for="t,index in detail.tags" :key="index">{{ t }}</el-tag>
+        <el-form-item v-if="detail.tags && detail.tags.length">
+          <el-tag v-for="(t, index) in detail.tags" :key="index">{{
+            t
+          }}</el-tag>
         </el-form-item>
         <el-form-item label="标题">
           <span>{{ detail.title }}</span>
@@ -31,6 +33,19 @@
         <el-form-item label="内容">
           <span>{{ detail.detail }}</span>
         </el-form-item>
+        <el-divider />
+        <div style="width:100%;text-align: center;">
+          <div v-if="!detail.analysis">暂无分析</div>
+          <el-button
+            v-else-if="!showAnalysis"
+            type="text"
+            @click="showAnalysis = true"
+          >查看分析</el-button>
+          <el-dialog :visible.sync="showAnalysis" append-to-body>
+            <h2 slot="title">{{ detail.title }} 案例分析</h2>
+            <div style="font-size:1.2rem">{{ detail.analysis }}</div>
+          </el-dialog>
+        </div>
       </el-form>
     </el-dialog>
   </div>
@@ -49,15 +64,16 @@ export default {
   },
   data: () => ({
     showDialog: false,
-    detail: null
+    detail: null,
+    showAnalysis: false
   }),
   methods: {
     formatTime,
-    handlerDetail (v) {
+    handlerDetail(v) {
       this.detail = v
       this.showDialog = true
     }
-  },
+  }
 }
 </script>
 <style lang="scss" scoped>
