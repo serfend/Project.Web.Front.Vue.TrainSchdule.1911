@@ -24,7 +24,7 @@ export function eventList ({ databaseName, title, detail, summary, tag, time, fi
     securityEventPeriod: form.toQueryStartEndByArray(securityEventPeriod),
     type: form.toQueryStartEndByArray(eventType),
     eventTag: form.toQueryValue(eventTag),
-    company: form.toQueryValue(eventCompany),
+    company: form.toQueryArrays(eventCompany),
     title: form.toQueryValue(title),
     detail: form.toQueryValue(detail),
     summary: form.toQueryValue(summary),
@@ -37,4 +37,15 @@ export function eventList ({ databaseName, title, detail, summary, tag, time, fi
 }
 export function dictionary () {
   return request.get(`${api}/types`)
+}
+
+/**
+ * 获取单位标签
+ *
+ * @export
+ * @param {*} company
+ * @return {*}
+ */
+export function eventCompany (company) {
+  return request.get(`${api}/eventCompany?company=${company}`)
 }
