@@ -30,6 +30,25 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="所属单位">
+        <el-select
+          v-model="inner_data.eventCompany"
+          clearable
+          multiple
+          filterable
+          remote
+          reserve-keyword
+          placeholder="输入查询"
+          :remote-method="loadEventCompany"
+        >
+          <el-option
+            v-for="item,index in Object.values(eventCompanyList)"
+            :key="index"
+            :value="item"
+            :label="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="查询日期">
         <el-switch
           v-model="is_today"
@@ -49,6 +68,7 @@
     </el-form>
     <div class="footer">
       <div class="footer-buttons">
+        <el-button type="success" icon="el-icon-check" @click="inner_show=false">确定</el-button>
         <el-button type="info" icon="el-icon-setting" @click="reset_setting">重置</el-button>
       </div>
     </div>
@@ -56,6 +76,7 @@
 </template>
 <script>
 import localeConfig from '@/lang/locale-config'
+import { eventCompany } from '@/api/securityManage/security-event/event'
 export default {
   name: 'EventConfig',
   components: {
@@ -83,7 +104,8 @@ export default {
       { value: 4, alias: '本季度' },
       { value: 5, alias: '本年度' }
     ],
-    is_today: true
+    is_today: true,
+    eventCompanyList: []
   }),
   computed: {
     dict() {
@@ -134,6 +156,8 @@ export default {
     const jData = JSON.parse(data)
     this.is_today = !jData.filterDate
     this.inner_data = jData
+
+    this.loadEventCompany(null)
   },
   methods: {
     reset_setting () {
@@ -141,6 +165,11 @@ export default {
         localStorage.removeItem(this.key)
         this.inner_data = {}
         this.$message.success('已重置配置')
+      })
+    },
+    loadEventCompany (v) {
+      eventCompany(v).then(data => {
+        this.eventCompanyList = data.list
       })
     }
   }
