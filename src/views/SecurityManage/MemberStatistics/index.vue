@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <SingleCard v-for="(i,index) in data" :key="index" class="single-card" :data="i" :index="data.length-index" />
+    <SingleCard v-for="(i,index) in data" :key="index" class="single-card" :data="i" :index="index" />
   </div>
 </template>
 <script>

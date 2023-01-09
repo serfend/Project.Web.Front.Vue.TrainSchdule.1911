@@ -50,7 +50,7 @@ export default {
     setTimeout(() => {
       this.refresher = setInterval(this.refresh, 5e3)
       this.refresh()
-    }, this.index * 5e2)
+    }, this.index * 2e2)
   },
   destroyed() {
     clearInterval(this.refresher)
@@ -89,7 +89,7 @@ export default {
   border-radius: 0.4rem;
 }
 .single-card {
-  transition: all ease 1s;
+  transition: all ease-out 1s;
 }
 .slideCard-enter {
   opacity: 0;
