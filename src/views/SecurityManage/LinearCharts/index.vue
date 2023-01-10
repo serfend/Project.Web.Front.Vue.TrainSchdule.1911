@@ -19,13 +19,12 @@
       <Square>
         <div slot="title">{{ data[1].name }}</div>
         <div slot="chart" :style="{ height: `${height / 2}rem` }">
-          <BaseChart
+          <Bar3DChart
             slot="chart"
-            type="line"
             :data="data[1].data"
             :height="`${height / 2}rem`"
             :width="width"
-            :color="color"
+            :axis="data[1].axis"
           />
         </div>
       </Square>
@@ -37,7 +36,8 @@ export default {
   name: 'SingleCard',
   components: {
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
-    BaseChart: () => import('../EventRate/BaseChart')
+    BaseChart: () => import('../EventRate/BaseChart'),
+    Bar3DChart: () => import('./Bar3DChart')
   },
   props: {
     width: { type: String, default: '100%' },
