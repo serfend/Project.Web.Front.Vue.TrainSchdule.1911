@@ -3,14 +3,17 @@
     <div :key="current.title" class="card-container">
       <el-row class="data">{{ current.digital }}</el-row>
       <el-row class="title">{{ current.title }}</el-row>
-      <div class="progress" :style="{ width: `${width}rem` }">
-        <LinearProgress
-          :data="current.progress"
-          :height="2.2"
-          :color="['#40a5e8', '#94f4fb']"
-          :title="current.progressTitle"
-        />
-      </div>
+      <el-tooltip :content="current.description || '无描述'">
+        <div class="progress" :style="{ width: `${width}rem` }">
+          <LinearProgress
+            :data="current.progress"
+            :height="2.2"
+            :color="['#40a5e8', '#94f4fb']"
+            :title="current.progressTitle"
+          />
+        </div>
+      </el-tooltip>
+
     </div>
   </transition>
 </template>
@@ -32,7 +35,8 @@ export default {
           progressTitle: 'XXX率',
           digital: 15259,
           title: '标题',
-          progress: 70
+          progress: 70,
+          enable: true
         }
       ]
     },
@@ -45,7 +49,13 @@ export default {
     currentIndex: -1,
     refresher: null
   }),
-  computed: {},
+  computed: {
+    innerData() {
+      const { data } = this
+      if (!data) return []
+      return data.filter(i => i && i.enable)
+    }
+  },
   mounted() {
     setTimeout(() => {
       this.refresher = setInterval(this.refresh, 5e3)
@@ -57,13 +67,14 @@ export default {
   },
   methods: {
     refresh() {
-      const { data } = this
-      if (!data) return
-      if (this.currentIndex >= data.length - 1) {
+      const { innerData } = this
+      if (!innerData) return
+      if (this.currentIndex >= innerData.length - 1) {
         this.currentIndex = -1
       }
       this.currentIndex++
-      this.current = this.data[this.currentIndex]
+      if (this.currentIndex >= this.innerData.length) return
+      this.current = this.innerData[this.currentIndex]
       this.$emit('update:currentFocus', this.current.title)
     }
   }
