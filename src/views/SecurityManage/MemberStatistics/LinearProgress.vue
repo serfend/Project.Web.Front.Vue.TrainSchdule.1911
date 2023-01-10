@@ -56,9 +56,16 @@ export default {
 }
 .title {
   color: rgb(0, 28, 184);
-  margin-left: 1rem;
+  width: 100%;
+  text-align: left;
+  padding-left: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.6rem;
 }
 .percentage {
   color: #ffffff;
+  font-size: 1.4rem;
 }
 </style>
