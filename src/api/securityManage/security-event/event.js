@@ -17,14 +17,34 @@ const api = 'securityManageEvent'
       page 分页
  * @return {*}
  */
-export function eventList ({ databaseName, title, detail, summary, tag, time, filterDate, securityEventType, securityEventPeriod, eventType, eventTag, eventCompany, page }) {
+export function eventList({
+  databaseName,
+  title,
+  detail,
+  summary,
+  tag,
+  time,
+  filterDate,
+  securityEventType,
+  securityEventPeriod,
+  eventType,
+  eventTag,
+  eventCompany,
+  page
+}) {
   const data = {
     databaseName: form.toQueryValue(databaseName),
-    securityEventType: form.toQueryStartEndByArray(securityEventType),
+    securityEventType: form.toQueryStartEndByArray([
+      securityEventType,
+      securityEventType
+    ]),
     securityEventPeriod: form.toQueryStartEndByArray(securityEventPeriod),
-    type: form.toQueryStartEndByArray(eventType),
+    type: form.toQueryStartEndByArray([eventType, eventType]),
     eventTag: form.toQueryValue(eventTag),
-    company: (eventCompany && eventCompany.length) ? form.toQueryArrays(eventCompany) : null,
+    company:
+      eventCompany && eventCompany.length
+        ? form.toQueryArrays(eventCompany)
+        : null,
     title: form.toQueryValue(title),
     detail: form.toQueryValue(detail),
     summary: form.toQueryValue(summary),
@@ -35,7 +55,7 @@ export function eventList ({ databaseName, title, detail, summary, tag, time, fi
   }
   return request.post(`${api}/list`, data)
 }
-export function dictionary () {
+export function dictionary() {
   return request.get(`${api}/types`)
 }
 
@@ -46,6 +66,6 @@ export function dictionary () {
  * @param {*} company
  * @return {*}
  */
-export function eventCompany (company) {
+export function eventCompany(company) {
   return request.get(`${api}/eventCompany?company=${company}`)
 }

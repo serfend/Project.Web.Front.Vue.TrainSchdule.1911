@@ -264,6 +264,25 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    onEventListSelect (x) {
+      this.loading = true
+      setTimeout(() => {
+        const eventType = x.seriesName
+        const { dict } = this
+        Object.keys(dict).find(k => {
+          if (!dict[k]) return false
+          if (dict[k].fullName === eventType) {
+            console.log(eventType, k)
+            const new_key = parseInt(k)
+            this.loading = false
+            this.$set(this.searchSetting, 'eventType', new_key)
+            this.$message.success(`事件列表已切换到:${eventType}`)
+            return true
+          }
+          return false
+        })
+      }, 1e3)
     }
   }
 }

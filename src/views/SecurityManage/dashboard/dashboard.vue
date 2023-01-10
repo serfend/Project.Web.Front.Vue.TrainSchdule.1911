@@ -30,7 +30,7 @@
             <Square>
               <div slot="title">各类事件概率</div>
               <div slot="chart">
-                <EventRate v-model="event_list" height="22rem" />
+                <EventRate v-model="event_list" height="22rem" @chartClick="onEventListSelect" />
               </div>
             </Square>
           </el-col>
@@ -46,7 +46,7 @@
         <el-row>
           <el-col :span="12">
             <Square>
-              <History slot="chart" height="33rem" :size="0.6" @change="data_arrived" />
+              <History ref="history" slot="chart" height="33rem" :size="0.6" @change="data_arrived" />
             </Square>
           </el-col>
           <el-col :span="12">
@@ -93,6 +93,10 @@ export default {
     this.initComponents()
   },
   methods: {
+    onEventListSelect (x) {
+      const h = this.$refs.history
+      h && h.onEventListSelect(x)
+    },
     data_arrived (v) {
       this.event_list = v
     },

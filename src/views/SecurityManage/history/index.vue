@@ -3,6 +3,7 @@
     <el-row :gutter="20" class="row">
       <el-col :span="24" :style="{ height: `${size * 55}rem` }">
         <EventList
+          ref="eventList"
           :size="size"
           title="安全保密警钟长鸣"
           database="security_event"
@@ -69,6 +70,10 @@ export default {
   }),
   methods: {
     formatTime,
+    onEventListSelect (x) {
+      const e = this.$refs.eventList
+      e && e.onEventListSelect(x)
+    },
     handlerDetail(v) {
       this.detail = v
       this.showDialog = true
