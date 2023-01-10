@@ -32,7 +32,7 @@ export default {
         ['A单位', 'B单位', 'C单位'],
         ['7日', '8日', '9日', '10日', '11日', '12日']
       ]
-    }
+    },
   },
   data: () => ({
     chart: null,
@@ -71,8 +71,19 @@ export default {
         color: '#ffffff',
         borderColor: '#ffffff',
       }
+      const axis = this.axis
       const option = {
-        tooltip: {},
+        tooltip: {
+          formatter: function (series, ticket, callback) {
+            const result = []
+            const { value } = series
+            if (!value || !value.length) return '未知数据'
+            const v = [axis[0][value[0]], axis[1][value[1]], value[2]]
+            result.push(series.marker)
+            result.push(`<span style="font-size:1rem">${v[0]}${v[1]} : ${v[2]}</span>`)
+            return result.join('')
+          },
+        },
         darkMode: true,
         visualMap: {
           min: minmax.min,
@@ -83,12 +94,12 @@ export default {
         },
         xAxis3D: {
           type: 'category', // 日期
-          data: this.axis[0],
+          data: axis[0],
           nameTextStyle,
         },
         yAxis3D: {
           type: 'category', // 单位
-          data: this.axis[1],
+          data: axis[1],
           nameTextStyle,
         },
         zAxis3D: {
