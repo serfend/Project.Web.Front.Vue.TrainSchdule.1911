@@ -175,27 +175,6 @@ export default {
           }
         }
       }
-      if (this.type === 'pie') {
-        // 饼状图只支持一个系列
-        const s = series[0]
-        if (s) {
-          s.data = series.map(i => ({ name: i.name, value: i.data }))
-          s.label = { show: false }
-          s.emphasis = { label: {
-            show: true,
-            fontSize: 10,
-            fontWeight: 'bold'
-          }}
-          series = [s]
-        }
-        option.coordinateSystem = 'calendar'
-        delete option.legend
-      } else {
-        series.map(i => {
-          if (Object.prototype.toString.call(i.data) === '[object Array]') return
-          i.data = [i.data]
-        })
-      }
 
       if (this.type === 'line') {
         option.xAxis = {
@@ -211,6 +190,33 @@ export default {
             return [parseTime(new Date(date), '{d}日'), x]
           })
         })
+      } else {
+        series.map(x => {
+          x.itemStyle = {
+            shadowBlur: 200,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        })
+      }
+
+      if (this.type === 'pie') {
+        option.radius = '80%'
+        option.tooltip = {
+          trigger: 'item'
+        }
+        // 饼状图只支持一个系列
+        const s = series[0]
+        if (s) {
+          s.data = series.map(i => ({ name: i.name, value: i.data }))
+          s.label = { show: false }
+          series = [s]
+        }
+        delete option.legend
+      } else {
+        series.map(i => {
+          if (Object.prototype.toString.call(i.data) === '[object Array]') return
+          i.data = [i.data]
+        })
       }
 
       option.series = series
@@ -221,6 +227,7 @@ export default {
       if (!el) return
       if (this.chart) this.chart.dispose()
       this.chart = echarts.init(el)
+      this.chart.on('click', x => this.$emit('chartClick', x))
       this.initChartSkeleton()
       this.nextShowOfData()
     },

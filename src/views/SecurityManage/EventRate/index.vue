@@ -1,10 +1,24 @@
 <template>
   <el-row>
     <el-col :span="10">
-      <BaseChart type="pie" :data="data" :height="height" :width="width" :color="color" />
+      <BaseChart
+        type="pie"
+        :data="data"
+        :height="height"
+        :width="width"
+        :color="color"
+        @chartClick="v => $emit('chartClick', v)"
+      />
     </el-col>
     <el-col :span="14">
-      <BaseChart type="bar" :data="data" :height="height" :width="width" :color="color" />
+      <BaseChart
+        type="bar"
+        :data="data"
+        :height="height"
+        :width="width"
+        :color="color"
+        @chartClick="v => $emit('chartClick', v)"
+      />
     </el-col>
   </el-row>
 </template>
@@ -16,7 +30,7 @@ import { getConfig } from '@/api/common/general_config'
 export default {
   name: 'EventRate',
   components: {
-    BaseChart: () => import('./BaseChart'),
+    BaseChart: () => import('./BaseChart')
   },
   model: {
     prop: 'list',
@@ -28,18 +42,31 @@ export default {
     list: { type: Array, default: () => [] }
   },
   data: () => ({
-    color: ['#ff6f4f', '#71ff80', '#3581ff', '#cc337f', '#71ccb0', '#f581cc'],
+    color: [
+      '#01579b',
+      '#1565c0',
+      '#1976d2',
+      '#1e88e5',
+      '#2196f3',
+      '#42a5f5',
+      '#64b5f6',
+      '#bbdefb',
+      '#e3f2fd'
+    ]
   }),
   computed: {
-    data () {
+    data() {
       const { list } = this
       const group = groupByFiled(list, 'type')
-      const result = Object.keys(group).map(i => ({ name: i, data: group[i].length }))
+      const result = Object.keys(group).map(i => ({
+        name: i,
+        data: group[i].length
+      }))
       return [result]
     }
   },
   methods: {
-    loadConfig () {
+    loadConfig() {
       getConfig({ name: 'global.sec.chart.color' }).then(data => {
         if (!data.model || !data.model.data) return
         this.color = data.model.data
