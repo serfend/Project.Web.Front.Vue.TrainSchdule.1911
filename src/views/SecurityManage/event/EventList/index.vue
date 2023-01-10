@@ -153,7 +153,7 @@ export default {
       handler (val) {
         const { searchSetting } = this
         if (!searchSetting) return
-        searchSetting.databaseName = val
+        this.$set(searchSetting, 'databaseName', val)
       },
       immediate: true
     },
@@ -173,7 +173,7 @@ export default {
   mounted() {
     this.auto_loader = setInterval(this.requireRefresh, 5e3)
     this.auto_reload = setInterval(this.reload, 3600e3)
-    this.reload()
+    setTimeout(this.reload, 1e3)
     this.next_play_top()
     this.focusNext()
 
@@ -238,7 +238,8 @@ export default {
       return item
     },
     refresh() {
-      if (this.loading || !this.haveNext || !this.dict) return
+      if (this.loading || !this.dict) return
+      if (!this.haveNext) return
       this.loading = true
       const { searchSetting, page } = this
       eventList(Object.assign({ page }, searchSetting))
