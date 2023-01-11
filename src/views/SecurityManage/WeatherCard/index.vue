@@ -17,7 +17,8 @@ export default {
     WeatherGroup: () => import('@/components/Weather/WeatherGroup')
   },
   props: {
-    configId: { type: String, required: true }
+    configId: { type: String, required: true },
+    list: { type: Array, default: () => [] }
   },
   data: () => ({
     district: []
@@ -41,6 +42,7 @@ export default {
       getConfig({ name: configId }).then(data => {
         try {
           this.district = distinct(JSON.parse(data.model.data), x => x)
+          this.$emit('update:list', this.district)
         } catch (e) {
           this.$message.error(`未配置有效天气数据:${configId}`)
         }

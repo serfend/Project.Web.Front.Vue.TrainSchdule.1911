@@ -8,6 +8,7 @@
       <el-col :span="11">
         <el-row class="row">
           <Square style="height:18rem">
+            <div slot="title">总体数据联动</div>
             <div slot="chart" style="height: 100%;display: flex;align-items: center;justify-content: center;">
               <MemberStatistics />
             </div>
@@ -36,9 +37,9 @@
           </el-col>
           <el-col :span="8">
             <Square>
-              <div slot="title">天气轮询</div>
+              <div slot="title">天气轮询（共监测{{ weather_list.length }}地）</div>
               <div slot="chart" style="height:22rem">
-                <WeatherCard config-id="global.sec.weather-card" />
+                <WeatherCard :list.sync="weather_list" config-id="global.sec.weather-card" />
               </div>
             </Square>
           </el-col>
@@ -87,7 +88,8 @@ export default {
   data: () => ({
     componentLoaded: false,
     event_list: [],
-    name
+    name,
+    weather_list: []
   }),
   mounted() {
     this.initComponents()
