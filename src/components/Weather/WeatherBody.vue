@@ -1,5 +1,5 @@
 <template>
-  <div v-if="weather_dict && weather_dict[0]">
+  <div v-if="weather_dict && weather_dict[0]" v-loading="loading">
     <el-row>
       <el-col class="primary-icon" :span="7">
         <LottieIcon
@@ -21,6 +21,19 @@
       </el-col>
       <el-col class="primary-title" :span="8">
         <span>{{ getProp(weather_dict[0], "label") }}</span>
+        <el-button
+          type="text"
+          class="primary-btn"
+          @click="move_date(-1)"
+        >&lt;-</el-button>
+        <span
+          class="primary-title-date"
+        >{{ new Date(datestart.getTime() + 86400e3).getDate() }}日</span>
+        <el-button
+          type="text"
+          class="primary-btn"
+          @click="move_date(1)"
+        >-&gt;</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -79,18 +92,15 @@ export default {
         children: [
           {
             name: '晴',
-            temperature: { min: 4, max: 17 },
-            label: '今天'
+            temperature: { min: 4, max: 17 }
           },
           {
             name: '多云',
-            temperature: { min: 3, max: 15 },
-            label: '明天'
+            temperature: { min: 3, max: 15 }
           },
           {
             name: '阴',
-            temperature: { min: 3, max: 16 },
-            label: '后天'
+            temperature: { min: 3, max: 16 }
           }
         ]
       })
@@ -99,7 +109,8 @@ export default {
   },
   data: () => ({
     weather_dict: [],
-    loading: false
+    loading: false,
+    datestart: new Date()
   }),
   watch: {
     data: {
@@ -136,6 +147,12 @@ export default {
     getWeatherName(type) {
       return weatherData.weatherDict[type] || '未知'
     },
+    move_date(count_day) {
+      const d = this.datestart
+      d.setDate(d.getDate() + count_day)
+      this.datestart = d
+      this.initWeatherData()
+    },
     initWeatherData() {
       const { data } = this
       if (!data) return
@@ -152,7 +169,7 @@ export default {
       }
 
       // 否则从远程获取
-      const datestart = new Date()
+      const { datestart } = this
       const dateend = new Date(datestart.getTime() + 86400e3 * 3)
       const district = data
       this.loading = true
@@ -202,6 +219,9 @@ export default {
   text-align: right;
   color: #ffffffb6;
   font-size: 1.2rem;
+}
+.primary-title-date {
+  font-size: 0.8rem;
 }
 .primary-subtitle {
   justify-content: center;
