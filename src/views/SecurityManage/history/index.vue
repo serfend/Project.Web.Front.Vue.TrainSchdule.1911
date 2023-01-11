@@ -44,7 +44,26 @@
           >查看分析</el-button>
           <el-dialog :visible.sync="showAnalysis" append-to-body>
             <h2 slot="title">{{ detail.title }} 案例分析</h2>
-            <div style="font-size:1.2rem">{{ detail.analysis }}</div>
+            <el-card>
+              <p
+                v-for="(x, index) in analysis"
+                :key="index"
+                style="font-size:1.2rem"
+              >
+                {{ x }}
+              </p>
+            </el-card>
+            <el-button
+              v-if="!showComment"
+              type="text"
+              style="color:#fefefe"
+              @click="showComment = true"
+            >查看评论</el-button>
+            <BiliComment
+              v-if="showAnalysis && showComment"
+              :id="detail.id"
+              :config="{ title: '提醒', allowAdd: true }"
+            />
           </el-dialog>
         </div>
       </el-form>
@@ -57,7 +76,8 @@ import { formatTime } from '@/utils'
 export default {
   name: 'SecurityManage',
   components: {
-    EventList: () => import('../event/EventList')
+    EventList: () => import('../event/EventList'),
+    BiliComment: () => import('@/components/BiliComment')
   },
   props: {
     height: { type: String, default: '1080px' },
@@ -66,11 +86,26 @@ export default {
   data: () => ({
     showDialog: false,
     detail: null,
-    showAnalysis: false
+    showAnalysis: false,
+    showComment: false,
   }),
+  computed: {
+    analysis() {
+      const analysis = this.detail && this.detail.analysis
+      if (!analysis) return []
+      return analysis.split('\n')
+    }
+  },
+  watch: {
+    showAnalysis: {
+      handler (v) {
+        this.showComment = false
+      }
+    }
+  },
   methods: {
     formatTime,
-    onEventListSelect (x) {
+    onEventListSelect(x) {
       const e = this.$refs.eventList
       e && e.onEventListSelect(x)
     },
