@@ -1,6 +1,6 @@
 <template>
   <transition v-if="current" name="slideCard" class="single-card">
-    <div :key="current.title" class="card-container">
+    <div :key="current.title" class="card-container" @click="onClick">
       <el-row class="data">{{ current.digital }}</el-row>
       <el-row class="title">{{ current.title }}</el-row>
       <el-tooltip :content="current.description || '无描述'">
@@ -13,7 +13,6 @@
           />
         </div>
       </el-tooltip>
-
     </div>
   </transition>
 </template>
@@ -47,7 +46,8 @@ export default {
   data: () => ({
     current: null,
     currentIndex: -1,
-    refresher: null
+    refresher: null,
+    canRefreshTime: new Date()
   }),
   computed: {
     innerData() {
@@ -66,14 +66,24 @@ export default {
     clearInterval(this.refresher)
   },
   methods: {
-    refresh() {
+    onClick () {
+      const d = new Date().getTime() + 20e3
+      this.canRefreshTime = new Date(d)
+      this.refresh(true)
+    },
+    refresh (direct_refresh = false) {
+      if (!direct_refresh && new Date() < this.canRefreshTime) return
       const { innerData } = this
       if (!innerData) return
+      const lastIndex = this.currentIndex
       if (this.currentIndex >= innerData.length - 1) {
         this.currentIndex = -1
       }
       this.currentIndex++
-      if (this.currentIndex >= this.innerData.length) return
+      if (lastIndex === this.currentIndex || this.currentIndex >= this.innerData.length) {
+        if (direct_refresh) return this.$message.warning('无更多数据可用')
+        return
+      }
       this.current = this.innerData[this.currentIndex]
       this.$emit('update:currentFocus', this.current.title)
     }
@@ -95,12 +105,15 @@ export default {
   margin-top: 1rem;
 }
 .card-container {
+  transition: all ease-out 1s;
   display: inline-block;
   text-align: center;
   border-radius: 0.4rem;
-}
-.single-card {
-  transition: all ease-out 1s;
+  user-select: none;
+  cursor: pointer;
+  &:hover{
+    background-color: #21f0ff9f;
+  }
 }
 .slideCard-enter {
   opacity: 0;
