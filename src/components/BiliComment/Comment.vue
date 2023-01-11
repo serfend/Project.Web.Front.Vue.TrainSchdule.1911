@@ -1,8 +1,10 @@
 <template>
   <div v-if="id" v-infinite-scroll="load_page" v-loading="loading_whole">
-    <slot v-if="$slots.sender" name="sender" />
-    <CommentSender v-show="!$slots.sender" :id="id" ref="default_sender" @newContent="newContent" />
-    <el-divider />
+    <div v-if="config.allowAdd">
+      <slot v-if="$slots.sender" name="sender" />
+      <CommentSender v-show="!$slots.sender" :id="id" ref="default_sender" @newContent="newContent" />
+      <el-divider />
+    </div>
     <SingleComment
       v-for="(i,index) in list"
       :key="i.id"
@@ -18,7 +20,7 @@
         @click="load_page(false)"
       >{{ hasNextPage?'查看更多':'没有更多啦~' }}</el-button>
     </div>
-    <div v-if="list.length>10">
+    <div v-if="config.allowAdd && list.length>10">
       <slot v-if="$slots.sender" name="sender" />
       <CommentSender v-else :id="id" @newContent="newContent" />
     </div>
@@ -26,25 +28,18 @@
 </template>
 
 <script>
-import CommentSender from './CommentSender'
-import SingleComment from './SingleComment'
 import { getComments } from '@/api/apply/attach_info'
 export default {
   name: 'BiliComment',
-  components: { SingleComment, CommentSender },
+  components: {
+    CommentSender: () => import('./CommentSender'),
+    SingleComment: () => import('./SingleComment'),
+  },
   props: {
-    id: {
-      type: String,
-      default: null
-    },
-    totalCount: {
-      type: [Number, String],
-      default: null
-    },
-    order: {
-      type: String,
-      default: null
-    }
+    id: { type: String, default: null },
+    totalCount: { type: [Number, String], default: null },
+    order: { type: String, default: null },
+    config: { type: Object, default: () => ({ allowAdd: true }) }
   },
   data: () => ({
     loading_whole: false,
