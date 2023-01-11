@@ -28,7 +28,7 @@
         <el-row class="row" :gutter="10">
           <el-col :span="16">
             <Square>
-              <div slot="title">各类事件概率</div>
+              <div slot="title">各类事件概率（共{{ event_list.length }}件）</div>
               <div slot="chart">
                 <EventRate v-model="event_list" height="22rem" @chartClick="onEventListSelect" />
               </div>
