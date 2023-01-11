@@ -4,7 +4,7 @@
       <Square>
         <div slot="title">{{ data[0].name }}</div>
         <div slot="chart" :style="{ height: `${height / 2}rem` }">
-          <BaseChart
+          <LineChartDigger
             slot="chart"
             type="line"
             :data="data[0].data"
@@ -32,12 +32,13 @@
   </div>
 </template>
 <script>
+
 export default {
   name: 'SingleCard',
   components: {
     Square: () => import('@/views/dashboard/Statistics/components/Square'),
-    BaseChart: () => import('../EventRate/BaseChart'),
-    Bar3DChart: () => import('./Bar3DChart')
+    Bar3DChart: () => import('./Bar3DChart'),
+    LineChartDigger: () => import('./LineChartDigger')
   },
   props: {
     width: { type: String, default: '100%' },
