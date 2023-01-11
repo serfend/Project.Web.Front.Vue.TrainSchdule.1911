@@ -5,7 +5,7 @@
         <LottieIcon
           :animation-data="weather_dict[0].data"
           :animate-speed="0.5"
-          style="width:90%;margin: auto;color:#fff"
+          style="width:70%;margin: auto;color:#fff"
         />
       </el-col>
       <el-col :span="8">
@@ -38,13 +38,13 @@
     </el-row>
     <el-row>
       <el-col
-        v-for="(i, index) in ['今天', '明天', '后天']"
+        v-for="(i, index) in new Array(3).fill(0)"
         :key="index"
         :span="8"
       >
         <div v-if="weather_dict[index]">
           <el-row class="secondary-title">
-            <span>{{ i }}</span>
+            <span>{{ new Date(new Date().getTime() + index * 86400e3).getDate() }}日({{ ['今天','明天','后天'][index] }})</span>
           </el-row>
           <el-row class="secondary-icon">
             <LottieIcon
@@ -110,7 +110,7 @@ export default {
   data: () => ({
     weather_dict: [],
     loading: false,
-    datestart: new Date()
+    datestart: new Date(),
   }),
   watch: {
     data: {
@@ -152,6 +152,7 @@ export default {
       d.setDate(d.getDate() + count_day)
       this.datestart = d
       this.initWeatherData()
+      this.$emit('dateChange')
     },
     initWeatherData() {
       const { data } = this

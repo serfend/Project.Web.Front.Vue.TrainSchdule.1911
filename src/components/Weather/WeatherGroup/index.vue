@@ -1,5 +1,5 @@
 <template>
-  <Weather v-model="currentWeather" />
+  <Weather v-model="currentWeather" @dateChange="dateChange" />
 </template>
 <script>
 export default {
@@ -10,12 +10,13 @@ export default {
   props: {
     district: { type: Array, default: null },
     weatherData: { type: Array, default: null }, // 与district 2选1
-    interval: { type: Number, default: 10000 }
+    interval: { type: Number, default: 5000 }
   },
   data: () => ({
     current: 0,
     group: [],
-    switchTimer: null
+    switchTimer: null,
+    canUpdateTime: new Date()
   }),
   computed: {
     currentWeather () {
@@ -50,11 +51,16 @@ export default {
     resetTimer (removeTimerOnly) {
       clearInterval(this.switchTimer)
       if (removeTimerOnly) return
-      this.switchTimer = setInterval(() => {
-        this.current++
-        if (this.current >= this.group.length) this.current = 0
-      }, this.interval + 500 * Math.random())
-    }
+      this.switchTimer = setInterval(this.refresh, this.interval + 500 * Math.random())
+    },
+    dateChange () {
+      this.canUpdateTime = new Date(new Date().getTime() + 5e3)
+    },
+    refresh () {
+      if (this.canUpdateTime > new Date()) return
+      this.current++
+      if (this.current >= this.group.length) this.current = 0
+    },
   },
 }
 </script>

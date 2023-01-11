@@ -1,7 +1,7 @@
 <template>
   <Flip v-model="flip_front" width="100%" height="100%">
     <template #front>
-      <WeatherBody v-model="innerData" :weather-data.sync="weatherData" />
+      <WeatherBody v-model="innerData" :weather-data.sync="weatherData" @dateChange="dateChange" />
     </template>
     <template #back>
       <el-card class="weather-back">
@@ -79,7 +79,7 @@ export default {
     }
   },
   mounted() {
-    this.flip_counter = setInterval(this.doFlip, 5e3)
+    this.flip_counter = setInterval(this.doFlip, 2.5e3)
   },
   destroyed() {
     clearInterval(this.flip_counter)
@@ -87,8 +87,12 @@ export default {
   methods: {
     parseTime,
     doFlip() {
-      if (!this.hasBack || new Date() - this.flip_last < 1e3) return
+      if (!this.hasBack || ((new Date() - this.flip_last) < 1e3)) return
       this.flip_front = !this.flip_front
+    },
+    dateChange () {
+      this.flip_last = new Date(new Date().getTime(2e3)) // 2秒后再开始显示
+      this.$emit('dateChange')
     }
   }
 }
