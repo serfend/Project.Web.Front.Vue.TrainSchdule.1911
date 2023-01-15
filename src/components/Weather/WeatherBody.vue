@@ -20,7 +20,7 @@
         </div>
       </el-col>
       <el-col class="primary-title" :span="8">
-        <span>{{ getProp(weather_dict[0], "label") }}</span>
+        <div>{{ getProp(weather_dict[0], "label") }}</div>
         <el-button
           type="text"
           class="primary-btn"
