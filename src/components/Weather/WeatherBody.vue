@@ -44,7 +44,7 @@
       >
         <div v-if="weather_dict[index]">
           <el-row class="secondary-title">
-            <span>{{ new Date(new Date().getTime() + index * 86400e3).getDate() }}日({{ ['今天','明天','后天'][index] }})</span>
+            <span>{{ dateConvert(index) }}</span>
           </el-row>
           <el-row class="secondary-icon">
             <LottieIcon
@@ -196,6 +196,15 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    dateConvert (index) {
+      const r = []
+      const date = new Date(new Date(this.datestart).getTime() + index * 86400e3).getDate()
+      r.push(date)
+      const a = new Date(this.datestart).getTime() % 86400e3
+      const b = new Date().getTime() % 86400e3
+      if (a === b) r.push(['今天', '明天', '后天'][index]) // 日期不同则不返回相对时间
+      return r.join('')
     }
   }
 }
