@@ -40,6 +40,18 @@
               <template slot-scope="{ row }">{{ row.summary }}</template>
             </el-table-column>
           </el-table>
+          <el-button type="text" style="width:100%;margin:auto">全部标记为已读</el-button>
+          <el-row style="text-align:center">
+            <Pagination
+              class="styled-primary-pagination"
+              :pagesetting.sync="pages"
+              :total-count="pageTotalCount"
+              layout="total,prev,pager,next,jumper"
+              small
+              background
+              hide-on-single-page
+            />
+          </el-row>
         </el-card>
       </el-dialog>
       <el-dialog
@@ -68,11 +80,6 @@
                 </div>
               </div>
             </el-form-item>
-            <el-button
-              type="primary"
-              :disabled="isRead(cur_event)"
-              @click="onMarkAsReadItem()"
-            >已读</el-button>
             <el-button type="danger" @click="onDeleteItem">删除</el-button>
             <el-button
               type="info"
@@ -92,7 +99,9 @@ import {
 import { parseTime } from '@/utils'
 export default {
   name: 'SecurityWarning',
-  components: {},
+  components: {
+    Pagination: () => import('@/components/Pagination'),
+  },
   data: () => ({
     loading: false,
     failLoad: null,
@@ -151,10 +160,15 @@ export default {
     onEventClick(row, column, event) {
       this.cur_event = row
       this.showDetailDialog = true
+      this.$nextTick(() => {
+        this.onMarkAsReadItem()
+      })
     },
     onDeleteItem() {
       this.cur_event.isRemoved = true
-      this.onMarkAsReadItem()
+      this.onMarkAsReadItem().then(() => {
+        this.$message.success('已处理')
+      })
     },
     onMarkAsReadItem(isFetch, isMarkAll) {
       this.loading = true
@@ -172,9 +186,8 @@ export default {
       }
       const v = (isFetch ? 1 : 0) + (isMarkAll ? 2 : 0)
       const query = dict[v]()
-      markAsRead({ items: query })
+      return markAsRead({ items: query })
         .then(data => {
-          this.$message.success('已处理')
           this.refresh()
         })
         .finally(() => {
