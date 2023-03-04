@@ -2,16 +2,45 @@
   background-color: #1a237e3f !important;
   color: $color !important;
 }
+@mixin hover_highlight(){
+  &:hover{
+    background-color: #ffffff8f;
+  }
+}
 .styled-primary-card {
   position: relative;
   @include common();
-  :hover {
+  &:hover {
     .right-button {
       right: 0.5rem;
     }
   }
 }
-
+.styled-primary-dialog {
+  .el-dialog {
+    background-color: #1a237eff !important;
+  }
+  .el-dialog__body {
+    @include common();
+  }
+  .el-dialog__header {
+    @include common();
+  }
+}
+.styled-primary-table{
+  .el-table{
+    background-color: #1a237eff !important;
+  }
+  &.el-table tr{
+    background-color: #1a237eff !important;
+  }
+  .el-table__cell{
+    @include common();
+  }
+  .el-table__expanded-cell{
+    @include common();
+  }
+}
 .styled-primary-pagination {
   .el-pagination {
     span {

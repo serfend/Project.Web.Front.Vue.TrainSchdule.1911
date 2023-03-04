@@ -3,13 +3,17 @@
     <el-row class="row">
       <Loading v-if="!componentLoaded" />
       <component :is="name" v-else />
+      <SecurityWarning />
     </el-row>
     <el-row class="row" :gutter="20">
       <el-col :span="11">
         <el-row class="row">
           <Square style="height:18rem">
             <div slot="title">总体数据联动</div>
-            <div slot="chart" style="height: 100%;display: flex;align-items: center;justify-content: center;">
+            <div
+              slot="chart"
+              style="height: 100%;display: flex;align-items: center;justify-content: center;"
+            >
               <MemberStatistics />
             </div>
           </Square>
@@ -29,17 +33,28 @@
         <el-row class="row" :gutter="10">
           <el-col :span="16">
             <Square>
-              <div slot="title">各类事件概率（共{{ event_list.length }}件）</div>
+              <div slot="title">
+                各类事件概率（共{{ event_list.length }}件）
+              </div>
               <div slot="chart">
-                <EventRate v-model="event_list" height="22rem" @chartClick="onEventListSelect" />
+                <EventRate
+                  v-model="event_list"
+                  height="22rem"
+                  @chartClick="onEventListSelect"
+                />
               </div>
             </Square>
           </el-col>
           <el-col :span="8">
             <Square>
-              <div slot="title">天气轮询（共监测{{ weather_list.length }}地）</div>
+              <div slot="title">
+                天气轮询（共监测{{ weather_list.length }}地）
+              </div>
               <div slot="chart" style="height:22rem">
-                <WeatherCard :list.sync="weather_list" config-id="global.sec.weather-card" />
+                <WeatherCard
+                  :list.sync="weather_list"
+                  config-id="global.sec.weather-card"
+                />
               </div>
             </Square>
           </el-col>
@@ -47,7 +62,13 @@
         <el-row>
           <el-col :span="12">
             <Square>
-              <History ref="history" slot="chart" height="33rem" :size="0.6" @change="data_arrived" />
+              <History
+                ref="history"
+                slot="chart"
+                height="33rem"
+                :size="0.6"
+                @change="data_arrived"
+              />
             </Square>
           </el-col>
           <el-col :span="12">
@@ -83,7 +104,8 @@ export default {
     Indicator: () => import('../indicator'),
     MemberStatistics: () => import('../MemberStatistics'),
     LinearChartsDefault: () => import('../LinearCharts/LinearChartsDefault'),
-    Loading: () => import('@/views/Loading')
+    Loading: () => import('@/views/Loading'),
+    SecurityWarning: () => import('../SecurityWarning')
   },
   data: () => ({
     componentLoaded: false,
@@ -95,15 +117,15 @@ export default {
     this.initComponents()
   },
   methods: {
-    onEventListSelect (x) {
+    onEventListSelect(x) {
       const h = this.$refs.history
       h && h.onEventListSelect(x)
     },
-    data_arrived (v) {
+    data_arrived(v) {
       this.event_list = v
     },
-    initComponents () {
-      getConfig({ name }).then((data) => {
+    initComponents() {
+      getConfig({ name }).then(data => {
         if (!data.model) return this.$message.error(`未定义组件:${name}`)
 
         loader(data.model.data).then(component => {
@@ -127,10 +149,10 @@ export default {
 }
 </style>
 <style lang="scss">
-.el-card.is-always-shadow{
-  box-shadow: 0 2px 12px  #0000007f;
+.el-card.is-always-shadow {
+  box-shadow: 0 2px 12px #0000007f;
 }
-.el-card{
-  border:1px solid #000;
+.el-card {
+  border: 1px solid #000;
 }
 </style>
