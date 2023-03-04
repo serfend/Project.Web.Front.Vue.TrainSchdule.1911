@@ -40,7 +40,7 @@
               <template slot-scope="{ row }">{{ row.summary }}</template>
             </el-table-column>
           </el-table>
-          <el-button type="text" style="width:100%;margin:auto">全部标记为已读</el-button>
+          <el-button type="text" style="width:100%;margin:auto" @click="onMarkAllAsRead">全部标记为已读</el-button>
           <el-row style="text-align:center">
             <Pagination
               class="styled-primary-pagination"
@@ -106,6 +106,7 @@ export default {
   data: () => ({
     loading: false,
     failLoad: null,
+    lastRead: null,
     events: [],
     cur_event: null,
     showDetailDialog: false,
@@ -130,7 +131,10 @@ export default {
     parseTime,
     isRead(row) {
       if (!row) return true
-      return new Date(row.lastRead) > new Date(row.create)
+      const create = new Date(row.create)
+      if (new Date(row.lastRead) > create) return true // 单个已读
+      if (new Date(this.lastRead) > create) return true // 全局已读
+      return false
     },
     tableRowClassName({ row, rowIndex }) {
       const v = this.isRead(row) ? 'row-read' : 'row-unread'
@@ -142,6 +146,7 @@ export default {
       securityWarnings(query)
         .then(data => {
           const model = data.model
+          this.lastRead = new Date(model.lastRead)
           this.pageTotalCount = model.totalCount
           this.pageUnreadCount = model.unreadCount
           this.events = model.list
@@ -174,6 +179,10 @@ export default {
         this.$message.success('已处理')
       })
     },
+    onMarkAllAsRead () {
+      this.onMarkAsReadItem(false, true).then(() => {
+      })
+    },
     onMarkAsReadItem(isFetch, isMarkAll) {
       this.loading = true
       const { cur_event } = this
@@ -185,7 +194,7 @@ export default {
           }
         ],
         1: () => [], // 获取数据
-        2: () => null, // 全局标记
+        2: () => [null], // 全局标记
         3: () => [] // 无效
       }
       const v = (isFetch ? 1 : 0) + (isMarkAll ? 2 : 0)
