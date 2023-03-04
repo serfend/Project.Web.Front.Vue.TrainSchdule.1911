@@ -93,7 +93,7 @@ export default {
       if (Object.prototype.toString.call(total_value) === '[object String]')total_value = -1 // 当计算失败时将总数作废
       const percent = (v) => {
         const r = Math.floor(10000 * (((v.data && v.data.value || v.data) || v.value) / total_value)) / 100
-        return total_value < 0 ? '' : `(${r}%)`
+        return [r, total_value < 0 ? '' : `(${r}%)`]
       }
 
       const option = {
@@ -102,9 +102,11 @@ export default {
           show: true,
           formatter: (v) => {
             const p = percent(v)
+            if (p[0] < 30) return '' // 过短时不显示
             const d = v.data
-            if (d && d.name) return `${d.name}:${d.value} ${p}`
-            return `${v.seriesName} ${v.value}${p}`
+            if (d && d.name) return `${d.name}:${d.value} ${p[1]}`
+            const raw = `${v.seriesName} ${v.value}${p[1]}`
+            return raw
           }
         },
         tooltip: {
@@ -116,7 +118,7 @@ export default {
           formatter: (data) => {
             const result = []
             data.map(v => {
-              result.push(`${v.marker}${v.seriesName}:${v.data}${percent(v)}`)
+              result.push(`${v.marker}${v.seriesName}:${v.data}${percent(v)[1]}`)
             })
             return result.join('<br>')
           }
