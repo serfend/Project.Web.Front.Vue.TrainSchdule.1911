@@ -4,7 +4,7 @@
       :type="pageUnreadCount ? 'danger' : 'info'"
       effect="dark"
       :class="[
-        pageUnreadCount ? 'warning-light' : 'warning-normal',
+        (pageUnreadCount || failLoad) ? 'warning-light' : 'warning-normal',
         failLoad ? 'warning-disabled' : 'warning-item'
       ]"
       @click="onShowDetail"
@@ -80,6 +80,7 @@
                 </div>
               </div>
             </el-form-item>
+            <el-button type="primary" :disabled="!cur_event.reference" @click="onShowReference">查看详情</el-button>
             <el-button type="danger" @click="onDeleteItem">删除</el-button>
             <el-button
               type="info"
@@ -148,6 +149,9 @@ export default {
         })
         .catch(e => {
           this.failLoad = e
+          this.events = []
+          this.pageTotalCount = 0
+          this.pageUnreadCount = 0
         })
         .finally(() => {
           this.loading = false
@@ -193,6 +197,10 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    onShowReference () {
+      const { cur_event } = this
+      window.open(cur_event.reference)
     }
   }
 }
