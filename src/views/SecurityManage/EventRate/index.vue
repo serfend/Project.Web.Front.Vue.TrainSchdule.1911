@@ -69,7 +69,8 @@ export default {
       '#bbdefb',
       '#e3f2fd'
     ],
-    flip_front: false
+    flip_front: false,
+    flip_front_refresher: null
   }),
   computed: {
     data() {
@@ -81,6 +82,12 @@ export default {
       }))
       return [result]
     }
+  },
+  mounted() {
+    this.flip_front_refresher = setInterval(this.onColClick, 10e3)
+  },
+  destroyed() {
+    clearInterval(this.flip_front_refresher)
   },
   methods: {
     onColClick() {
