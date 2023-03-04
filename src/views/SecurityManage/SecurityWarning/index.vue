@@ -5,12 +5,13 @@
       effect="dark"
       :class="[
         pageUnreadCount ? 'warning-light' : 'warning-normal',
-        'warning-item'
+        failLoad ? 'warning-disabled' : 'warning-item'
       ]"
       @click="onShowDetail"
     >
       <el-badge :value="pageUnreadCount" :hidden="!pageUnreadCount" :max="99">
         <span>告警事件</span>
+        <span v-if="failLoad">({{ failLoad.message }})</span>
       </el-badge>
       <el-dialog
         :visible.sync="showDialog"
@@ -94,6 +95,7 @@ export default {
   components: {},
   data: () => ({
     loading: false,
+    failLoad: null,
     events: [],
     cur_event: null,
     showDetailDialog: false,
@@ -116,7 +118,7 @@ export default {
   },
   methods: {
     parseTime,
-    isRead (row) {
+    isRead(row) {
       if (!row) return true
       return new Date(row.lastRead) > new Date(row.create)
     },
@@ -133,12 +135,17 @@ export default {
           this.pageTotalCount = model.totalCount
           this.pageUnreadCount = model.unreadCount
           this.events = model.list
+          this.failLoad = null
+        })
+        .catch(e => {
+          this.failLoad = e
         })
         .finally(() => {
           this.loading = false
         })
     },
-    onShowDetail() {
+    onShowDetail () {
+      if (this.failLoad) return this.$message.warning(`无法查看,因为${this.failLoad.message}`)
       this.showDialog = true
     },
     onEventClick(row, column, event) {
@@ -201,6 +208,10 @@ export default {
   right: 1rem;
   top: 5rem;
   color: #ffffff;
+}
+.warning-disabled {
+  cursor: not-allowed;
+  background-color: #808080;
 }
 .warning-item {
   cursor: pointer;
