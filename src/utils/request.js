@@ -100,6 +100,10 @@ service.interceptors.response.use(
     // if (axios.isCancel(error)) {
     //   return extract_result(error.message, false)
     // }
+    if (error.code === 'ERR_BAD_RESPONSE') {
+      const status = error.response.status
+      error.message = `服务器返回错误代码:${status}，请联系管理员。`
+    }
     Message({
       message: error.message,
       type: 'error',
