@@ -28,6 +28,9 @@
         <el-form-item label="标题">
           <span>{{ detail.title }}</span>
         </el-form-item>
+        <el-form-item label="单位">
+          <el-tag v-for="c in (detail.company && (distinct(detail.company))) || []" :key="c">{{ c }}</el-tag>
+        </el-form-item>
         <el-form-item label="时间">
           <span>{{ formatTime(detail.date) }}</span>
         </el-form-item>
@@ -71,7 +74,7 @@
   </div>
 </template>
 <script>
-import { formatTime } from '@/utils'
+import { formatTime, distinct } from '@/utils'
 
 export default {
   name: 'SecurityManage',
@@ -104,7 +107,7 @@ export default {
     }
   },
   methods: {
-    formatTime,
+    formatTime, distinct,
     onEventListSelect(x) {
       const e = this.$refs.eventList
       e && e.onEventListSelect(x)
