@@ -100,10 +100,17 @@ service.interceptors.response.use(
     // if (axios.isCancel(error)) {
     //   return extract_result(error.message, false)
     // }
-    if (error.code === 'ERR_BAD_RESPONSE') {
-      const status = error.response.status
-      error.message = `服务器返回错误代码:${status}，请联系管理员。`
+    const rs_dict = {
+      'ERR_BAD_RESPONSE': () => {
+        const status = error.response.status
+        error.message = `服务器返回错误代码:${status}，请联系管理员。`
+      },
+      'ERR_BAD_REQUEST': () => {
+        const status = error.response.status
+        error.message = `客户端请求发生错误代码:${status}，请联系管理员。`
+      }
     }
+    rs_dict[error.code] && rs_dict[error.code]()
     Message({
       message: error.message,
       type: 'error',
