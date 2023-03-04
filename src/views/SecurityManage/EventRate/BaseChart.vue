@@ -195,7 +195,7 @@ export default {
         })
       } else if (this.type === 'radar') {
         series = series
-          .sort((a, b) => a.data - b.data)
+          .sort((a, b) => b.data - a.data)
           .slice(0, 6)
         if (series.length < 6)series = series.concat(new Array(6 - series.length).fill(0).map(i => ({ name: '无数据', data: 0 })))
         const max_value = series.reduce((prev, cur, cur_index) => prev < cur.data ? cur.data : prev, 0) * 1.2 + 1
