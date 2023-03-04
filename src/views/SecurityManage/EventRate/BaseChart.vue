@@ -98,6 +98,7 @@ export default {
 
       const option = {
         color: this.color,
+
         label: {
           show: true,
           formatter: (v) => {
@@ -192,6 +193,22 @@ export default {
             return [parseTime(new Date(date), '{d}日'), x]
           })
         })
+      } else if (this.type === 'radar') {
+        series = series
+          .sort((a, b) => a.data - b.data)
+          .slice(0, 6)
+        if (series.length < 6)series = series.concat(new Array(6 - series.length).fill(0).map(i => ({ name: '无数据', data: 0 })))
+        const max_value = series.reduce((prev, cur, cur_index) => prev < cur.data ? cur.data : prev, 0) * 1.2 + 1
+        const data = {
+          data: [{ value: series.map(i => i.data), name: '事件占比' }],
+          name: '占比',
+          type: 'radar'
+        }
+        option.label = { show: false }
+        option.radar = {
+          indicator: series.map(i => ({ name: i.name, max: max_value }))
+        }
+        series = [data]
       } else {
         series.map(x => {
           x.itemStyle = {
@@ -214,6 +231,10 @@ export default {
           series = [s]
         }
         delete option.legend
+      } else if (this.type === 'radar') {
+        option.tooltip = {
+          trigger: 'item'
+        }
       } else {
         series.map(i => {
           if (Object.prototype.toString.call(i.data) === '[object Array]') return

@@ -1,14 +1,29 @@
 <template>
   <el-row>
     <el-col :span="10">
-      <BaseChart
-        type="pie"
-        :data="data"
-        :height="height"
-        :width="width"
-        :color="color"
-        @chartClick="v => $emit('chartClick', v)"
-      />
+      <div style=" display: inline-block; height: 100%;  width: 100%;" @click.capture="onColClick">
+        <Flip v-model="flip_front" width="100%" height="100%">
+          <template #front>
+            <BaseChart
+              type="pie"
+              :data="data"
+              :height="height"
+              :width="width"
+              :color="color"
+              @chartClick="v => $emit('chartClick', v)"
+            />
+          </template>
+          <template #back>
+            <BaseChart
+              type="radar"
+              :data="data"
+              :height="height"
+              :width="width"
+              :color="color"
+            />
+          </template>
+        </Flip>
+      </div>
     </el-col>
     <el-col :span="14">
       <BaseChart
@@ -30,7 +45,8 @@ import { getConfig } from '@/api/common/general_config'
 export default {
   name: 'EventRate',
   components: {
-    BaseChart: () => import('./BaseChart')
+    BaseChart: () => import('./BaseChart'),
+    Flip: () => import('vue-flip')
   },
   model: {
     prop: 'list',
@@ -52,7 +68,8 @@ export default {
       '#64b5f6',
       '#bbdefb',
       '#e3f2fd'
-    ]
+    ],
+    flip_front: false
   }),
   computed: {
     data() {
@@ -66,6 +83,9 @@ export default {
     }
   },
   methods: {
+    onColClick() {
+      this.flip_front = !this.flip_front
+    },
     loadConfig() {
       getConfig({ name: 'global.sec.chart.color' }).then(data => {
         if (!data.model || !data.model.data) return
