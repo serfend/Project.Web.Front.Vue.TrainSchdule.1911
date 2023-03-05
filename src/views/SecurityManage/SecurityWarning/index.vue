@@ -12,6 +12,7 @@
       <el-badge :value="pageUnreadCount" :hidden="!pageUnreadCount" :max="99">
         <span>告警事件</span>
         <span v-if="failLoad">({{ failLoad.message }})</span>
+        <span v-else-if="pageUnreadCount">[{{ firstEventMessage }}]</span>
       </el-badge>
       <el-dialog
         :visible.sync="showDialog"
@@ -120,6 +121,13 @@ export default {
     pageUnreadCount: 0,
     showDialog: false
   }),
+  computed: {
+    firstEventMessage () {
+      const unread = this.events.find(x => !this.isRead(x))
+      if (!unread) return null
+      return `${unread.title} ${unread.summary}`
+    }
+  },
   mounted() {
     this.refresher = setInterval(this.refresh, 60e3)
     this.refresh()
