@@ -94,7 +94,7 @@
 
       </el-tag>
     </div>
-    <FullScreenWarning v-if="showWarningDialog" :description="firstEvent.detail" @onClose="onFSWarningClose" @onDetail="onFSWarningDetail" @onIgnore="onFSWarningIgnore" />
+    <FullScreenWarning v-if="showWarningDialog" :description="(firstEvent.detail || failLoad && failLoad.message) || '无告警内容'" :buttons="btn_config" @onClose="onFSWarningClose" @onDetail="onFSWarningDetail" @onIgnore="onFSWarningIgnore" />
   </div>
 </template>
 <script>
@@ -135,6 +135,27 @@ export default {
       const unread = this.events.find(x => !this.isRead(x))
       if (!unread) return {}
       return Object.assign({ msg: `${unread.title} ${unread.summary}` }, unread)
+    },
+    btn_config () {
+      const v = [
+        {
+          name: '关闭',
+          event: 'onClose',
+          attrs: { color: 'info', background: '#888888' }
+        },
+        {
+          name: '查看详情',
+          event: 'onDetail',
+          attrs: { color: 'primary' }
+        },
+        {
+          name: '忽略',
+          event: 'onIgnore',
+          attrs: { color: 'danger' }
+        }
+      ]
+      if (this.firstEvent && this.firstEvent.detail) return v
+      return [v[0]] // 否则仅显示关闭按钮
     }
   },
   watch: {
