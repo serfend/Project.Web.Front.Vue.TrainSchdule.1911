@@ -94,7 +94,7 @@
 
       </el-tag>
     </div>
-    <FullScreenWarning v-if="showWarningDialog" :description="(firstEvent.detail || failLoad && failLoad.message) || '无告警内容'" :buttons="btn_config" @onClose="onFSWarningClose" @onDetail="onFSWarningDetail" @onIgnore="onFSWarningIgnore" />
+    <FullScreenWarning v-if="showWarningDialog" :description="warning_description" :buttons="btn_config" @onClose="onFSWarningClose" @onDetail="onFSWarningDetail" @onIgnore="onFSWarningIgnore" />
   </div>
 </template>
 <script>
@@ -128,6 +128,13 @@ export default {
     showWarningDialog: false
   }),
   computed: {
+    warning_description () {
+      const { firstEvent, failLoad } = this
+      if (firstEvent.detail) return `来源:${firstEvent.title}\n时间:${parseTime(firstEvent.create)}\n内容:${firstEvent.detail}`
+      const fail_msg = failLoad && failLoad.message
+      if (fail_msg) return fail_msg
+      return '无告警内容'
+    },
     alerting () {
       return this.pageUnreadCount || this.failLoad
     },
@@ -164,10 +171,15 @@ export default {
         if (!val) return
         this.showWarningDialog = true
       }
+    },
+    pages: {
+      handler (v) {
+        this.refresh()
+      }
     }
   },
   mounted() {
-    this.refresher = setInterval(this.refresh, 60e3)
+    this.refresher = setInterval(this.refresh, 15e3)
     this.refresh()
   },
   destroyed() {
