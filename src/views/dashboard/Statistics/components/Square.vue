@@ -17,6 +17,7 @@ export default {
 <style lang="scss" scoped>
 @import "../style";
 .h2-title {
+  z-index: 999;
   position: absolute;
   left: 0;
   top: 0;

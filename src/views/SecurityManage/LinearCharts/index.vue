@@ -2,7 +2,14 @@
   <div class="chart-container">
     <el-row>
       <Square>
-        <div slot="title">{{ data[0].name }}</div>
+        <div slot="title">
+          <span>{{ data[0].name }}</span>
+          <el-link
+            v-show="data[0].reference"
+            type="success"
+            @click="onReference(data[0].reference)"
+          >详情</el-link>
+        </div>
         <div slot="chart" :style="{ height: `${height / 2}rem` }">
           <LineChartDigger
             slot="chart"
@@ -17,7 +24,14 @@
     </el-row>
     <el-row>
       <Square>
-        <div slot="title">{{ data[1].name }}</div>
+        <div slot="title">
+          <span>{{ data[1].name }}</span>
+          <el-link
+            v-show="data[1].reference"
+            type="success"
+            @click="onReference(data[1].reference)"
+          >详情</el-link>
+        </div>
         <div slot="chart" :style="{ height: `${height / 2}rem` }">
           <Bar3DChart
             slot="chart"
@@ -32,7 +46,6 @@
   </div>
 </template>
 <script>
-
 export default {
   name: 'SingleCard',
   components: {
@@ -44,7 +57,7 @@ export default {
     width: { type: String, default: '100%' },
     height: { type: Number, default: 34 },
     chartData1: { type: Object, default: null }, // 图表1的数据
-    chartData2: { type: Object, default: null },
+    chartData2: { type: Object, default: null }
   },
   data: () => ({
     color: ['#ff6f4f', '#71ff80', '#3581ff', '#cc337f', '#71ccb0', '#f581cc']
@@ -58,7 +71,11 @@ export default {
     }
   },
   mounted() {},
-  methods: {}
+  methods: {
+    onReference(url) {
+      window.open(url)
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
