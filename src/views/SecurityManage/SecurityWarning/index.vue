@@ -13,7 +13,7 @@
         <el-badge :value="pageUnreadCount" :hidden="!pageUnreadCount" :max="99">
           <span>告警事件</span>
           <span v-if="failLoad">({{ failLoad.message }})</span>
-          <span v-else-if="pageUnreadCount">[{{ firstEventMessage }}]</span>
+          <span v-else-if="pageUnreadCount">[{{ firstEvent.msg }}]</span>
         </el-badge>
         <el-dialog
           :visible.sync="showDialog"
@@ -94,7 +94,7 @@
 
       </el-tag>
     </div>
-    <FullScreenWarning v-if="showWarningDialog" />
+    <FullScreenWarning v-if="showWarningDialog" :description="firstEvent.detail" @onClose="onFSWarningClose" @onDetail="onFSWarningDetail" @onIgnore="onFSWarningIgnore" />
   </div>
 </template>
 <script>
@@ -131,10 +131,10 @@ export default {
     alerting () {
       return this.pageUnreadCount || this.failLoad
     },
-    firstEventMessage () {
+    firstEvent () {
       const unread = this.events.find(x => !this.isRead(x))
-      if (!unread) return null
-      return `${unread.title} ${unread.summary}`
+      if (!unread) return {}
+      return Object.assign({ msg: `${unread.title} ${unread.summary}` }, unread)
     }
   },
   watch: {
@@ -165,6 +165,16 @@ export default {
       const v = this.isRead(row) ? 'row-read' : 'row-unread'
       return [v, 'row-common']
     },
+    onFSWarningIgnore () {
+      this.onMarkAllAsRead()
+      this.onFSWarningClose()
+    },
+    onFSWarningDetail () {
+      this.onEventClick(this.firstEvent)
+    },
+    onFSWarningClose () {
+      this.showWarningDialog = false
+    },
     refresh() {
       this.loading = true
       const query = Object.assign({}, this.pages)
@@ -193,6 +203,7 @@ export default {
     },
     onEventClick(row, column, event) {
       this.cur_event = row
+      this.showDialog = true
       this.showDetailDialog = true
       this.$nextTick(() => {
         this.onMarkAsReadItem()
