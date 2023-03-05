@@ -1,20 +1,29 @@
 <template>
-  <div style="background:#001c79;height:100%">
+  <div class="modal">
     <div class="alert-box">
       <AleretStripe style="position:absolute;top:0" />
       <div class="alert-header">{{ title }}</div>
       <el-row class="alert-body">
-        <el-col :span="4">
-          <div>logo</div>
+        <el-col :span="6">
+          <div style="width:6rem">
+            <LottieIcon
+              path="/assets/lottie/lottie.warning.json"
+              :animate-speed="0.5"
+              style="width:6rem;margin: auto;"
+            />
+          </div>
         </el-col>
-        <el-col :span="20">
+        <el-col :span="18">
           <div v-for="(des, index) in descriptions" :key="index">{{ des }}</div>
         </el-col>
       </el-row>
       <el-row class="btn-group">
-        <CyberBtn v-for="btn in buttons" :key="btn.name" v-bind="btn.attrs" @click="onUserClick(btn)">{{
-          btn.name
-        }}</CyberBtn>
+        <CyberBtn
+          v-for="btn in buttons"
+          :key="btn.name"
+          v-bind="btn.attrs"
+          @click="onUserClick(btn)"
+        >{{ btn.name }}</CyberBtn>
       </el-row>
       <AleretStripe style="position:absolute;bottom:0" :direction="true" />
     </div>
@@ -25,7 +34,8 @@ export default {
   name: 'FullScreenWarning',
   components: {
     AleretStripe: () => import('./AlertStripe'),
-    CyberBtn: () => import('./CyberBtn')
+    CyberBtn: () => import('./CyberBtn'),
+    LottieIcon: () => import('@/components/LottieIcon')
   },
   props: {
     title: { type: String, default: 'Warning 安全告警' },
@@ -61,7 +71,8 @@ export default {
   mounted() {},
   methods: {
     onUserClick(btn) {
-      const isFunc = Object.prototype.toString.call(btn.event) === '[object Function]'
+      const isFunc =
+        Object.prototype.toString.call(btn.event) === '[object Function]'
       if (isFunc) return btn.event()
       return this.$emit(btn.event)
     }
@@ -69,6 +80,25 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+$--background: #000d38e8;
+.modal {
+  position: fixed;
+  z-index: 9999;
+  background: $--background;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  animation: modal-start linear 0.5s;
+}
+@keyframes modal-start {
+  0% {
+    background: #001c7900;
+  }
+  100% {
+    background: $--background;
+  }
+}
 .btn-group {
   width: 100%;
   display: flex;
@@ -85,6 +115,7 @@ export default {
 }
 .alert-body {
   width: 100%;
+  height: 9rem;
   padding: 1rem;
 }
 .alert-box {
@@ -100,7 +131,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 30rem;
-  height: 15rem;
+  height: 20rem;
   padding: 0.5rem;
   background-color: #ffffff20;
   box-shadow: 0 0 0.5rem #000000;
