@@ -10,17 +10,17 @@
         ]"
         @click="onShowDetail"
       >
-        <el-badge :value="pageUnreadCount" :hidden="!pageUnreadCount" :max="99">
-          <span>告警事件</span>
-          <span v-if="failLoad">({{ failLoad.message }})</span>
-          <span v-else-if="pageUnreadCount">[{{ firstEvent.msg }}]</span>
-        </el-badge>
+        <el-tooltip :content="failLoad?failLoad.message:(pageUnreadCount?firstEvent.msg:'未知')">
+          <el-badge :value="pageUnreadCount" :hidden="!pageUnreadCount" :max="99">
+            <span>告警事件</span>
+          </el-badge>
+        </el-tooltip>
         <el-dialog
           :visible.sync="showDialog"
           append-to-body
           class="styled-primary-dialog"
         >
-          <el-card class="styled-primary-card">
+          <el-card v-loading="loading" class="styled-primary-card">
             <template #header>
               <h2>告警事件</h2>
             </template>
