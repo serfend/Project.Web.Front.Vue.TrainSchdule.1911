@@ -4,7 +4,7 @@
       <el-row class="data">{{ current.digital }}</el-row>
       <el-row class="title">{{ current.title }}</el-row>
       <el-tooltip :content="current.description || '无描述'">
-        <div class="progress" :style="{ width: `${width}rem` }">
+        <div class="progress">
           <LinearProgress
             :data="current.progress"
             :height="2.2"
@@ -13,6 +13,12 @@
           />
         </div>
       </el-tooltip>
+      <el-button
+        :style="{visibility:current.url?'visible':'hidden'}"
+        class="reference"
+        type="text"
+        @click="onEnterReference"
+      >查看详情</el-button>
     </div>
   </transition>
 </template>
@@ -40,7 +46,6 @@ export default {
       ]
     },
     index: { type: Number, default: 0 },
-    width: { type: Number, default: 16 },
     currentFocus: { type: String, default: null }
   },
   data: () => ({
@@ -66,12 +71,15 @@ export default {
     clearInterval(this.refresher)
   },
   methods: {
-    onClick () {
+    onEnterReference () {
+      window.open(this.current.url)
+    },
+    onClick() {
       const d = new Date().getTime() + 20e3
       this.canRefreshTime = new Date(d)
       this.refresh(true)
     },
-    refresh (direct_refresh = false) {
+    refresh(direct_refresh = false) {
       if (!direct_refresh && new Date() < this.canRefreshTime) return
       const { innerData } = this
       if (!innerData) return
@@ -80,7 +88,10 @@ export default {
         this.currentIndex = -1
       }
       this.currentIndex++
-      if (lastIndex === this.currentIndex || this.currentIndex >= this.innerData.length) {
+      if (
+        lastIndex === this.currentIndex ||
+        this.currentIndex >= this.innerData.length
+      ) {
         if (direct_refresh) return this.$message.warning('无更多数据可用')
         return
       }
@@ -111,8 +122,12 @@ export default {
   border-radius: 0.4rem;
   user-select: none;
   cursor: pointer;
-  &:hover{
+  &:hover {
     background-color: #21f0ff9f;
+    .reference {
+      opacity: 1;
+      transform: translateY(-0.5rem);
+    }
   }
 }
 .slideCard-enter {
@@ -134,5 +149,10 @@ export default {
   transform: translateY(-10rem);
   opacity: 0;
   position: absolute;
+}
+.reference {
+  color: #ffffff;
+  opacity: 0;
+      transform: translateY(0.5rem);
 }
 </style>
