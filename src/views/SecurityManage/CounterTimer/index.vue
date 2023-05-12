@@ -74,7 +74,7 @@ const DateIntervalOption = {
   dayWithObject: (s, e) => {
     let r = getTimeDelta(s, e, 1000)
     const day = Math.floor(r / 86400)
-    r = (r - day * 86400)
+    r = r - day * 86400
     const hour = Math.floor(r / 3600)
     r = r - hour * 3600
     const minute = Math.floor(r / 60)
@@ -118,7 +118,7 @@ function relativeDate(d, compareTo) {
   const sameYear = nowY === dY ? '' : `${dY}年`
   const same = !sameYear && nowM === dM
   const sameMonth = same ? '' : `${dM}月`
-  const sameDay = (!sameMonth && nowD === dD) ? '' : `${dD}日`
+  const sameDay = !sameMonth && nowD === dD ? '' : `${dD}日`
   const result = `${sameYear}${sameMonth}${sameDay}`
   return result || compareTo || '今天'
 }
@@ -158,7 +158,7 @@ function parseTime(time, cFormat) {
   })
   return time_str
 }
-function sci_str (data, length = 2, padding = '0', prefix_or_append = true) {
+function sci_str(data, length = 2, padding = '0', prefix_or_append = true) {
   data = `${data}`
   const l = length - data.length
   if (l <= 0) return data
@@ -179,10 +179,10 @@ function toDate(time) {
   if (typeof time === 'object') {
     return time
   } else {
-    if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
+    if (typeof time === 'string' && /^[0-9]+$/.test(time)) {
       time = parseInt(time)
     }
-    if ((typeof time === 'number') && (time.toString().length === 10)) {
+    if (typeof time === 'number' && time.toString().length === 10) {
       time = time * 1000
     }
     return new Date(time)
@@ -262,6 +262,9 @@ module.exports = {
     }, 5e2)
   },
   methods: {
+    getTimeDesc,
+    formatTime,
+    relativeDate,
     parseTime,
     sci_str,
     showBtn() {
@@ -369,7 +372,7 @@ module.exports = {
 .counter-timer-primary {
   @include common();
   text-shadow: 1px 0px 100px #ffffffc2;
-  color:#25ffed;
+  color: #25ffed;
   background: url(~@/assets/dashboard/images/head_bg.png) no-repeat;
   background-size: 100% 13.5rem;
 }

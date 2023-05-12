@@ -1,3 +1,4 @@
+/* eslint-disable */
 const obj = {};
 (function umd (root, factory) {
   if (typeof module === 'object' && typeof exports === 'object') { module.exports = factory() } else if (typeof define === 'function' && define.amd) { define([], factory) } else { root.vueLoader = factory() }
