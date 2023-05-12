@@ -6,7 +6,12 @@
           <div v-if="innerData">
             <div class="action-row">
               <el-button type="primary" plain @click="openDetail(innerData.id)">查看详情</el-button>
-              <ActionUser btn-type="danger" :row="innerData" @updated="userUpdate" />
+              <ActionUser
+                btn-type="danger"
+                :entity-type="entityType"
+                :row="innerData"
+                @updated="userUpdate"
+              />
             </div>
             <el-progress :percentage="percent" :format="formatPercent" :stroke-width="24" text-inside />
             <div style="display:flex">

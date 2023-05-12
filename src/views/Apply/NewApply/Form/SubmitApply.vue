@@ -217,6 +217,7 @@ export default {
         })
         .catch(e => {
           switch (e.status) {
+            // 处理发布频繁倒计时
             case 43310: {
               this.next_permit_submit =
                 new Date() - 0 + Number(e.message.replace(/[^0-9]/gi, '')) * 1e3
