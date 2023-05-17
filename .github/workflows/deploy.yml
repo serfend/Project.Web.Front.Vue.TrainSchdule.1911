@@ -9,7 +9,7 @@ env:
   NODE_VERSION: "10.x" # custom arg of node.js's version
 jobs:
   build:
-    name: 构建,发布
+    name: Build and Publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 # here are some step followed , each step must have `uses` or `run` key , for CI to run
@@ -32,7 +32,7 @@ jobs:
           npm run lint
           npm run build:stage
 
-      - name: 静态发布到ftp # i use `SamKirkland/FTP-Deploy-Action@4.0.0` for ftp deploy
+      - name: push to ftp server # i use `SamKirkland/FTP-Deploy-Action@4.0.0` for ftp deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4 # you can referer to github.com/SamKirkland/FTP-Deploy-Action for more infomation
         with:
           server: ${{ secrets.FTP_HOST }} # `${{arg}}` is a template from which you set in `secrets` menu
@@ -41,5 +41,5 @@ jobs:
           local-dir: ./dist/
           server-dir: /xjxt/wwwroot/
 
-      - name: 完成
+      - name: complete
         run: echo deploy by ftp
