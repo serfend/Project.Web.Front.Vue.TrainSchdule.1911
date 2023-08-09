@@ -17,6 +17,10 @@ export function upload({ data, file }) {
           'Content-Type': 'multipart/form-data'
         }
       }).then(data => {
+        if (new Date().getTime() - new Date(data.model.create) > 300e3) {
+          // 之前已创建过
+          return rej('文件已存在，无需上传，以秒传方式完成。')
+        }
         res(data)
       }).catch(e => rej(e))
     }).catch(e => rej(e))
