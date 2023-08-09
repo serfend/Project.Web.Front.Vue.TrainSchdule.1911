@@ -64,6 +64,7 @@
               <el-form-item label="原因">{{ detail.request.reason ? detail.request.reason : '未填写' }}</el-form-item>
               <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
               <el-form-item label="假期天数">
+                <span>共{{ total }}天 | </span>
                 <span>{{ `净假期${detail.request.vacationLength}天 在途${detail.request.onTripLength}天` }}</span>
                 <el-tooltip
                   v-for="a in detail.request.additialVacations"
@@ -89,6 +90,8 @@
                 <TransportationType v-model="detail.request.byTransportation" />
               </el-form-item>
             </el-form>
+            <el-progress :percentage="percent" :format="formatPercent" :stroke-width="24" text-inside />
+
           </el-col>
           <el-col :xl="8" :lg="8" hidden-md-only hidden-sm-only :xs="24">
             <el-form label-width="8rem">
@@ -162,7 +165,26 @@ export default {
     },
     settle() {
       return this.detail.social.settle
-    }
+    },
+
+    percent () {
+      const total = this.total
+      const spent = this.spent
+      if (total === 0) return 10
+      if (spent < 0) return 0
+      if (spent > total) return 100
+      return (spent / total) * 100
+    },
+    total () {
+      const request = this.detail.request
+      if (!request) return 1
+      return 1 + datedifference(request.stampReturn, request.stampLeave)
+    },
+    spent () {
+      const request = this.detail.request
+      if (!request) return 0
+      return 1 + datedifference(new Date(), request.stampLeave)
+    },
   },
   watch: {
     focusId: {
@@ -244,7 +266,12 @@ export default {
       loadDetail.finally(() => {
         this.loading = false
       })
-    }
+    },
+    formatPercent (val) {
+      if (this.spent <= 0) return '未开始'
+      if (val >= 100) return '已结束'
+      return `${this.spent}/${this.total}天`
+    },
   }
 }
 </script>

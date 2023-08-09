@@ -44,3 +44,15 @@ export function get_item_type(i) {
   }
   return result
 }
+const defaultExecuteStatusDict = {
+  1: '已归队',
+  2: '已召回',
+  4: '推迟归队'
+}
+export function indayApplyExecuteStatusDesc (executeStatus, executeStatusDict = null) {
+  if (!executeStatusDict)executeStatusDict = defaultExecuteStatusDict
+  const desc = Object.keys(executeStatusDict).map(v => {
+    if (executeStatus & Number(v)) return executeStatusDict[v]
+  }).filter(x => x)
+  return (desc && desc.length) ? desc.join('\n') : '未确认'
+}
