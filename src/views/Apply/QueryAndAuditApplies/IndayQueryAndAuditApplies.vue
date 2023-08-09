@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { exportMultiApplies } from '@/api/common/static'
+import { dataToStandard } from '@/utils/form'
+import { indayApplyExecuteStatusDesc } from '@/utils/vacation'
 export default {
   name: 'QueryAndAuditApplies',
   components: {
@@ -54,7 +55,7 @@ export default {
       pageIndex: 0
     },
     pagesTotalCount: 0,
-    fullSearchUI: false
+    fullSearchUI: false,
   }),
   computed: {
     currentUser() {
@@ -83,18 +84,28 @@ export default {
           this.$message.success('加载全部请假申请中')
           const fn = this.$refs.queryAppliesForm.searchData
           const callback = data => {
-            expFn(data.list.map(i => i.id))
+            expFn(data.list)
           }
-          fn(true, callback, { pageIndex: 0, pageSize: total }, true)
-        } else expFn(this.appliesList.map(i => i.id))
+          fn(true, callback, { pageIndex: 0, pageSize: total })
+        } else expFn(this.appliesList)
       })
     },
-    exportAppliesDirect(ids) {
+    exportAppliesDirect(list) {
       this.loading = true
       this.$message.success('导出申请中')
-      exportMultiApplies('请假人员统计表.xlsx', ids).finally(() => {
-        this.loading = false
+      list.map(x => {
+        x.executeStatusDesc = indayApplyExecuteStatusDesc(x.executeStatus)
       })
+      const data = dataToStandard({ list })
+      const filename = '请假人员统计表'
+      this.$store
+        .dispatch('template/download_xlsx', {
+          templateName: `${filename}模板.xlsx`, data,
+          filename: `当前选中数据 - ${filename}.xlsx`
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     detailUrl(id) {
       var t = `/#/apply/${this.entityType}/applydetail?id=${id}`

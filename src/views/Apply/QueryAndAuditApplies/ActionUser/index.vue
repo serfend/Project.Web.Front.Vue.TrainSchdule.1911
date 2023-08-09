@@ -48,10 +48,9 @@
 </template>
 
 <script>
-import { MessageBox } from 'element-ui'
-import { exportApplyDetail } from '@/api/common/static'
 import { doAction } from '@/api/audit/handle'
 import { deleteApply } from '@/api/apply/handle'
+import { datedifference } from '@/utils'
 export default {
   name: 'ActionUser',
   components: {
@@ -82,7 +81,6 @@ export default {
     }
   },
   methods: {
-    exportApplyDetail,
     handle_action(item, row) {
       const action = this.actionDic[item]
       if (!action) return
@@ -136,37 +134,22 @@ export default {
         this.$emit('updated')
       })
     },
-    exportApply(row) {
-      if (this.entityType !== 'vacation') {
-        this.$message.warning('未配置申请单模板')
-        return
-      }
-      const decider = {
-        confirm: 0,
-        cancel: 1,
-        close: -1
-      }
-      // TODO 此处应根据人员类别直接选取
-      // TODO 允许用户选取自定义任意导出模板
-      const opt = {
-        message: '选择是否下载干部类型',
-        type: 'info',
-        title: '导出',
-        confirmButtonText: '干部',
-        cancelButtonText: '其他人员',
-        distinguishCancelAndClose: true,
-        showCancelButton: true,
-        callback: action => {
-          const dutiesType = decider[action]
-          if (dutiesType === -1) return
-          const applyId = row.id
-          this.loading = true
-          exportApplyDetail(dutiesType, applyId).finally(() => {
-            this.loading = false
-          })
-        }
-      }
-      MessageBox(opt)
+    exportApply(data) {
+      const r = data.requestInfo
+      r.totalLength = datedifference(r.stampReturn, r.stampLeave) + 1
+      r.totalLengthHour = datedifference(r.stampReturn, r.stampLeave, 'hour') + 1
+      const filename = {
+        vacation: '休假单',
+        inday: '请假单',
+      }[this.entityType] || '请假单'
+      this.$store
+        .dispatch('template/download_xlsx', {
+          templateName: `${filename}模板.xlsx`, data,
+          filename: `当前选中数据 - ${filename}.xlsx`
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }

@@ -90,12 +90,12 @@
 </template>
 
 <script>
-import { formatTime } from '@/utils'
+import { formatTime, datedifference } from '@/utils'
 import { querySelf, detail } from '@/api/apply/query'
 import { get_item_summary } from '@/utils/vacation'
 import { tag_single_item } from '@/utils/timeline-handler'
-import { exportUserApplies } from '@/api/common/static'
-
+import { getUserAllInfo } from '@/api/user/usercompany'
+import { indayApplyExecuteStatusDesc } from '@/utils/vacation'
 export default {
   name: 'AppliesList',
   components: {
@@ -177,12 +177,41 @@ export default {
   methods: {
     get_item_summary,
     downloadUserApplies() {
-      const dutiesRawType = confirm('选择是否下载干部类型') ? 0 : 1 // TODO 后期需要修改此处以保证下载正确
       const his = this.iList
       if (!his || his.length === 0) {
         return this.$message.warning('当前无申请可导出')
       }
-      exportUserApplies(dutiesRawType, his.map(i => i.id))
+      this.$message.info('开始导出')
+      const user_id = his[0].base.userId
+      getUserAllInfo(user_id).then((user) => {
+        const data = {
+          user,
+          list: his.map(x => {
+            const r = x.request
+            if (r) {
+              r.totalLength = datedifference(r.stampReturn, r.stampLeave) + 1
+              r.totalLengthHour = datedifference(r.stampReturn, r.stampLeave, 'hour') + 1
+            }
+
+            x.statusDesc = this.statusDic[x.status].desc
+
+            x.executeStatusDesc = indayApplyExecuteStatusDesc(x.executeStatus)
+            return x
+          })
+        }
+        const filename = {
+          vacation: '休假登记卡',
+          inday: '请假登记卡',
+        }[this.entityType] || '休假登记卡'
+        this.$store
+          .dispatch('template/download_xlsx', {
+            templateName: `${filename}模板.xlsx`, data: { data },
+            filename: `${user.base.base.realName}_${filename}(${his.length}条).xlsx`
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      })
     },
     format(val) {
       return formatTime(val)
