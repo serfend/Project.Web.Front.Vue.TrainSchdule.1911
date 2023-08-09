@@ -17,6 +17,7 @@
               :before-upload="beforeAvatarUpload"
               :http-request="upload"
               :on-success="onUploadSuccess"
+              :on-error="onUploadError"
               :action="''"
               :data="file"
             >
@@ -170,7 +171,6 @@ export default {
   },
   methods: {
     upload(data) {
-      debugger
       const f = { anonymous: this.queryForm.anonymous }
       data.data = Object.assign(f, data.data)
       return upload(data)
@@ -197,7 +197,9 @@ export default {
     deleteFile(filepath, filename, clientKey) {
       const { userid } = this
       deleteFile({ userid, filepath, filename, clientKey }).then(() => {
-        this.$message.success('删除成功')
+        this.$message.success(`${filepath}:${filename}已删除`)
+      }).finally(() => {
+        this.refreshStatus()
       })
     },
     downloadUrl(fileId) {
@@ -238,12 +240,14 @@ export default {
       })
     },
     onUploadSuccess(data, status, arr) {
-      this.$message.success(`${status.name}上传成功`)
+      this.$message.success(`[${status.name}]已上传`)
       this.refreshStatus()
       this.file.fileName = ''
     },
+    onUploadError (data, status, arr) {
+      this.$message.warning(`[${status.name}]${data}`)
+    },
     beforeAvatarUpload(file) {
-      debugger
       const form = this.file
       if (!form.filePath) this.file.filePath = 'client-sfvue'
       form.fileName = file.name
