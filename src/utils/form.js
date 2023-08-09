@@ -1,8 +1,8 @@
 import { Notification } from 'element-ui'
 export function FormRecorder(key, defaultItem) {
   this.key = `formRecorder.${key}`
-  this.setRecord = (query) => {
-    if (Object.prototype.toString.call(query) !== '[object String]"') query = JSON.stringify(query)
+  this.setRecord = query => {
+    if (Object.prototype.toString.call(query) !== '[object String]"') { query = JSON.stringify(query) }
     localStorage.setItem(this.key, query)
   }
   this.getRecord = () => {
@@ -11,7 +11,8 @@ export function FormRecorder(key, defaultItem) {
       if (!s._version || s._version < defaultItem._version) {
         Notification({
           title: '存储器更新',
-          message: `${key}因版本更新已清空其存储的数据。版本由[${s._version || '无版本'}]更新为[${defaultItem._version}]。`,
+          message: `${key}因版本更新已清空其存储的数据。版本由[${s._version ||
+            '无版本'}]更新为[${defaultItem._version}]。`,
           duration: 10e3
         })
         this.setRecord(defaultItem)
@@ -22,7 +23,7 @@ export function FormRecorder(key, defaultItem) {
   }
 }
 
-export function toQueryStartEndByArray (datetime) {
+export function toQueryStartEndByArray(datetime) {
   if (!datetime) return null
   if (Object.prototype.toString.call(datetime) !== '[object Array]') {
     datetime = [datetime]
@@ -34,7 +35,10 @@ export function toQueryStartEndByArray (datetime) {
 }
 
 export function toQueryValue(value, build_object_event_is_null) {
-  if (build_object_event_is_null || value !== null && value !== undefined && value !== '') {
+  if (
+    build_object_event_is_null ||
+    (value !== null && value !== undefined && value !== '')
+  ) {
     return {
       value
     }
@@ -52,31 +56,31 @@ export function toQueryArrays(arr) {
     arrays: Array.isArray(arr) ? arr : [arr]
   }
 }
-const today = (startTime) => {
+const today = startTime => {
   const nowday = getTimeInDay(new Date())
   const t = nowday >= startTime
-  const to_last_day = (t ? 0 : 86400e3)
+  const to_last_day = t ? 0 : 86400e3
   const now = new Date(new Date().toLocaleDateString()).getTime()
   return new Date(now - to_last_day + startTime)
 }
-const first_day_of_month = (t) => {
+const first_day_of_month = t => {
   const s = new Date(today(t))
   s.setDate(1)
   return s
 }
-const first_day_of_last_month = (t) => {
+const first_day_of_last_month = t => {
   const s = new Date(today(t))
   s.setDate(1)
   s.setMonth(s.getMonth() - 1)
   return s
 }
-const first_day_of_next_month = (t) => {
+const first_day_of_next_month = t => {
   const s = new Date(today(t))
   s.setDate(1)
   s.setMonth(s.getMonth() + 1)
   return s
 }
-const getChinaDay = (date) => {
+const getChinaDay = date => {
   const s = new Date().getDay()
   if (s === 0) return 7
   return s
@@ -87,7 +91,10 @@ export function datetime_shortcuts(s) {
     {
       text: '今天',
       onClick(picker) {
-        picker.$emit('pick', [new Date(today(s)), new Date(today(s).getTime() + 86400e3)])
+        picker.$emit('pick', [
+          new Date(today(s)),
+          new Date(today(s).getTime() + 86400e3)
+        ])
       }
     },
     {
@@ -103,10 +110,7 @@ export function datetime_shortcuts(s) {
       text: '本周',
       onClick(picker) {
         const start = today(s) - (getChinaDay(new Date()) - 1) * 86400e3
-        picker.$emit('pick', [
-          new Date(start),
-          new Date(start + 7 * 86400e3)
-        ])
+        picker.$emit('pick', [new Date(start), new Date(start + 7 * 86400e3)])
       }
     },
     {
@@ -152,7 +156,27 @@ export function datetime_shortcuts(s) {
 }
 export function getTimeInDay(date) {
   date = new Date(date)
-  return date.getHours() * 3600e3 + date.getMinutes() * 60e3 + date.getSeconds() * 1e3
+  return (
+    date.getHours() * 3600e3 +
+    date.getMinutes() * 60e3 +
+    date.getSeconds() * 1e3
+  )
+}
+import { formatTime } from '@/utils'
+export function dataToStandard(data) {
+  const m = new Date().getMonth() + 1
+  data.createDate = `${m}月`
+  data.exportDate = `${m}月${new Date().getDate()}日`
+  data.list = data.list.map((i, index) => {
+    i.index = index + 1
+    const u = i.user || i.base || i.userBase
+    if (!u) return i
+    const f = formatTime(u.userTitleDate, '{y}.{m}')
+    u.titleAndDate = `${u.userTitle}\n${f}`
+    u.companyAndDuty = `${u.companyName}${u.dutiesName}`
+    return i
+  })
+  return data
 }
 export default {
   toQueryArrays,
