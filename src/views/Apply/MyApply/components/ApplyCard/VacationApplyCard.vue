@@ -27,6 +27,7 @@
                 </el-form-item>
                 <el-form-item v-if="innerData.status!==20" label="休假原因">{{ innerData.request.reason?innerData.request.reason:'未填写' }}</el-form-item>
                 <el-form-item v-if="innerData.status!==20" label="假期天数">
+                  <span>共{{ total }}天 | </span>
                   <span>{{ `净假期${innerData.request.vacationLength}天 在途${innerData.request.onTripLength}天` }}</span>
                   <el-tooltip v-for="a in innerData.request.additialVacations" :key="a.id" :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`">
                     <el-tag style="margin:10px">{{ `${a.length}天${a.name}` }}</el-tag>
