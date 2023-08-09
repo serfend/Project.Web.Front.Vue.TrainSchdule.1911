@@ -87,7 +87,7 @@
     "vuex": "3.6.2",
     "webpack-bundle-analyzer": "^4.4.2",
     "xlsx": "0.18.5",
-    "xlsx-template": "^1.4.0"
+    "xlsx-template": "^1.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
