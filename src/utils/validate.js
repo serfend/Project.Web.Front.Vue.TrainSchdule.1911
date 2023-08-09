@@ -158,3 +158,50 @@ export function isArray(arg) {
   }
   return Array.isArray(arg)
 }
+
+/**
+ *
+ *
+ * @export
+ * @param {Object} arg
+ * @returns {Boolean}
+ */
+export function isObject (arg) {
+  return Object.prototype.toString.call(arg) === '[object Object]'
+}
+
+/**
+ *
+ *
+ * @export
+ * @param {*} arg
+ * @returns {Boolean}
+ */
+export function isNumber (arg) {
+  return typeof arg === 'number'
+}
+const date_re_exp = '(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2][0-9]|3[0-1]))|(?:(?:0[1-9]|1[0-2])\/(?:0[1-9]|[1-2][0-9]|3[0-1])\/(?:[0-9]{2})?(?:[0-9]{2})?))'
+const date_re = new RegExp(`^${date_re_exp}$`)
+const datetime_re_exp = '([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])'
+const datetime_re = new RegExp(`^(${date_re_exp})(|( ${datetime_re_exp}))$`)
+/**
+ *
+ *
+ * @export
+ * @param {*} arg
+ * @returns {Boolean}
+ */
+export function strIsDatetime (arg) {
+  return !!datetime_re.exec(arg)
+}
+
+/**
+ *
+ *
+ * @export
+ * @param {*} arg
+ * @returns {Boolean}
+ */
+export function strIsDate (arg) {
+  return !!date_re.exec(arg)
+}
