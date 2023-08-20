@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { cached_data } from '@/utils/cache'
 /**
  * 获取菜单
  *
@@ -20,7 +21,15 @@ export function getMenu(menuName) {
  * @return {*}
  */
 export function postMenu({ name, alias, description, icon, parent, svg, url }) {
-  return request.post('navigation/info', { name, alias, description, icon, parent, svg, url })
+  return request.post('navigation/info', {
+    name,
+    alias,
+    description,
+    icon,
+    parent,
+    svg,
+    url
+  })
 }
 /**
  * 刷新验证码
@@ -46,13 +55,12 @@ export function verify() {
  *      {int} list[i].code:110101
  */
 export function locationChildren(code) {
-  return request({
-    url: '/static/locationChildren',
-    method: 'get',
-    params: {
-      code
-    }
-  })
+  const url = '/static/locationChildren'
+  const action = () =>
+    request.get(url, {
+      params: { code }
+    })
+  return code !== undefined ? cached_data(`${url}/${code}`, action) : action()
 }
 
 /**
@@ -72,8 +80,8 @@ export function location(code) {
   })
 }
 
-export function locations (codes) {
-  if (Object.prototype.toString.call(codes) === '[object Array]')codes = codes.join('##')
+export function locations(codes) {
+  if (Object.prototype.toString.call(codes) === '[object Array]') { codes = codes.join('##') }
   return request.get(`/static/locations?codes=${codes}`)
 }
 /**
