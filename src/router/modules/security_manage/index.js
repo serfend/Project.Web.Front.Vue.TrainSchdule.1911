@@ -26,6 +26,14 @@ const router = {
       },
       children: [
         {
+          path: 'face-device',
+          component: () => import('@/views/FaceDevice'),
+          meta: {
+            ctitle: '门禁设备管理',
+            icon: 'face-detect',
+          },
+        },
+        {
           path: 'weather',
           component: () => import('@/views/SecurityManage/Configuration/Weather'),
           meta: {
