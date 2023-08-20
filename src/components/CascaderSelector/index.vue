@@ -8,6 +8,7 @@
     :class="['card',data&&data.length?'active':'inactive']"
     clearable
     :disabled="disabled"
+    :style="{width}"
     @change="handleItemChange"
   />
 </template>
@@ -28,7 +29,8 @@ export default {
     labelName: { type: String, default: 'label' },
     multiple: { type: Boolean, default: false },
     childGetterMethod: { type: Function, default: () => () => {} },
-    place: { type: String, default: null }
+    place: { type: String, default: null },
+    width: { type: String, default: null }
   },
   data() {
     return {
