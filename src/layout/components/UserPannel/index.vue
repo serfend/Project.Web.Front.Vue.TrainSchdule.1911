@@ -109,7 +109,7 @@ export default {
     isUserLogout() {
       return this.currentUser.isUserLogout
     },
-    currentUser() {
+    currentUser () {
       return this.$store.state.user
     }
   },

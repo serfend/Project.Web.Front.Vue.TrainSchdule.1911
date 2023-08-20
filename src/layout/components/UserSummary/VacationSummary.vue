@@ -42,11 +42,12 @@ export default {
       handler(val) {
         if (val && val.yearlyLength) {
           var v = val
-          this.form.days = `${v.comsumeLength}/${v.nowTimes}`
+          const consume_length = v.yearlyLength - v.leftLength
+          this.form.days = `${consume_length}/${v.nowTimes}`
           this.form.rate =
             v.yearlyLength === 0
               ? 0
-              : Math.round((v.comsumeLength / v.yearlyLength) * 10000) / 100
+              : Math.round((consume_length / v.yearlyLength) * 10000) / 100
           this.form.times = `${v.onTripTimes}/${v.maxTripTimes}`
         }
       },
