@@ -1,6 +1,6 @@
 <template>
   <el-popover
-    v-if="inner_id||(data&&data.code)"
+    v-if="inner_id || (data && data.code)"
     v-loading="loading"
     placement="right"
     trigger="hover"
@@ -41,10 +41,7 @@ export default {
         realName: 'null'
       })
     },
-    id: {
-      type: String,
-      default: null
-    }
+    id: { type: String, default: null }
   },
   data: () => ({
     form: null,
