@@ -22,57 +22,87 @@ const router = {
       component: () => import('@/layout'),
       meta: {
         ctitle: '安全管理配置',
-        icon: 'security-configuration',
+        icon: 'security-configuration'
       },
       children: [
         {
-          path: 'face-device',
-          component: () => import('@/views/FaceDevice'),
-          meta: {
-            ctitle: '门禁设备管理',
-            icon: 'face-detect',
-          },
-        },
-        {
           path: 'weather',
-          component: () => import('@/views/SecurityManage/Configuration/Weather'),
+          component: () =>
+            import('@/views/SecurityManage/Configuration/Weather'),
           meta: {
             ctitle: '天气配置',
-            icon: 'weather',
-          },
+            icon: 'weather'
+          }
         },
         {
           path: 'event',
           component: () => import('@/views/SecurityManage/Configuration/Event'),
           meta: {
             ctitle: '事件配置',
-            icon: 'sec-event',
-          },
+            icon: 'sec-event'
+          }
         },
         {
           path: 'statistics',
-          component: () => import('@/views/SecurityManage/Configuration/MemberStatistics'),
+          component: () =>
+            import('@/views/SecurityManage/Configuration/MemberStatistics'),
           meta: {
             ctitle: '数据统计配置',
-            icon: 'card-statistics',
-          },
+            icon: 'card-statistics'
+          }
         },
         {
           path: 'indicator',
-          component: () => import('@/views/SecurityManage/Configuration/Indicator'),
+          component: () =>
+            import('@/views/SecurityManage/Configuration/Indicator'),
           meta: {
             ctitle: '指标配置',
-            icon: 'indicator-radar',
-          },
+            icon: 'indicator-radar'
+          }
         },
         {
           path: 'global-config',
-          component: () => import('@/views/SecurityManage/Configuration/GlobalConfig'),
+          component: () =>
+            import('@/views/SecurityManage/Configuration/GlobalConfig'),
           meta: {
             ctitle: '全局配置',
-            icon: 'security-configuration',
-          },
+            icon: 'security-configuration'
+          }
+        }
+      ]
+    },
+    {
+      path: 'face-device',
+      component: () => import('@/layout'),
+      meta: {
+        ctitle: '门禁管理',
+        icon: 'face-detect'
+      },
+      children: [
+        {
+          path: 'devices',
+          component: () => import('@/views/FaceDevice'),
+          meta: {
+            ctitle: '设备管理',
+            icon: 'face-detect'
+          }
         },
+        {
+          path: 'face-records',
+          component: () => import('@/views/FaceDevice/FaceRecord'),
+          meta: {
+            ctitle: '设备日志',
+            icon: 'face-detect'
+          }
+        },
+        {
+          path: 'permit-records',
+          component: () => import('@/views/FaceDevice/DeviceRecord'),
+          meta: {
+            ctitle: '策略日志',
+            icon: 'face-detect'
+          }
+        }
       ]
     }
   ]

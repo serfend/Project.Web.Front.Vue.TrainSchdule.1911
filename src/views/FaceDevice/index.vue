@@ -11,8 +11,8 @@
         <CompaniesSelector ref="companiesSelector" v-model="search.companies" />
       </el-form-item>
       <el-form-item label="操作">
-        <el-button type="success" @click="onEdit">添加</el-button>
-        <el-button type="success" @click="refresh">刷新</el-button>
+        <el-button type="success" @click="onEdit({})">添加</el-button>
+        <el-button type="success" @click="refresh()">刷新</el-button>
       </el-form-item>
     </el-form>
 
@@ -22,15 +22,29 @@
           {{ data["$index"] + 1 }}
         </template>
       </el-table-column>
+      <el-table-column label="是否启用" min-width="60">
+        <template slot-scope="{ row }">
+          <el-switch v-model="row.enabled" @change="onEnable(row)" />
+        </template>
+      </el-table-column>
       <el-table-column label="是否入口" min-width="60">
         <template slot-scope="{ row }">
-          <el-switch v-model="row.isEntrence" />
+          <el-switch v-model="row.isEntrence" disabled />
         </template>
       </el-table-column>
 
-      <el-table-column label="设备名称" min-width="150">
+      <el-table-column label="昵称" min-width="150">
         <template slot-scope="{ row }">
-          {{ row.name }}
+          <el-tooltip :content="row.offlineReason" placement="right">
+            <el-tag :type="row.isAlived ? 'success' : 'danger'">
+              {{ row.name || '正常运行' }}</el-tag>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column label="设备名称" min-width="150">
+        <template
+          slot-scope="{ row }"
+        >{{ row.deviceName }}
         </template>
       </el-table-column>
       <el-table-column label="ip" width="150">
@@ -147,7 +161,7 @@ export default {
     }
   },
   watch: {
-    search_name (v) {
+    search_name(v) {
       let call_count = 0
       let totalCount = 0
       const result = {}
@@ -192,7 +206,7 @@ export default {
         this.requireRefresh()
       },
       deep: true
-    },
+    }
   },
   mounted() {
     this.requireRefresh()
@@ -209,23 +223,29 @@ export default {
       batchDevice({
         data: data_list,
         auth
-      }).finally(() => {
-        this.requireRefresh()
-        this.loading = false
       })
+        .then(() => {
+          this.$message.success('已保存')
+        })
+        .finally(() => {
+          this.requireRefresh()
+          this.loading = false
+        })
     },
     refresh(callback, search) {
       this.loading = true
-      if (!callback)callback = (data) => new Promise((res, rej) => res(data))
+      if (!callback) callback = data => new Promise((res, rej) => res(data))
       search = Object.assign({}, search || this.search)
       const { pagesetting } = this
-      search_devices(Object.assign(search, {
-        company: search && search.companies.map(x => x.code),
-        page: pagesetting
-      }))
+      search_devices(
+        Object.assign(search, {
+          company: search && search.companies.map(x => x.code),
+          page: pagesetting
+        })
+      )
         .then(data => {
           callback(data).then(data => {
-            this.devices = data.list
+            this.devices = data.list.map(x => (Object.assign({ enabled: !x.disabled }, x)))
             this.pagesTotalCount = data.totalCount
           })
         })
@@ -236,6 +256,10 @@ export default {
     onEdit(row) {
       this.current_device = row || {}
       this.show_add_dialog = true
+    },
+    onEnable(row) {
+      row.disabled = !row.enabled
+      this.edit(row)
     },
     async onRemove(row) {
       const confirmed = await this.$confirm('确定删除吗')
