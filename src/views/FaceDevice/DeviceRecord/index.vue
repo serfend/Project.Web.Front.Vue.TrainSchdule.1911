@@ -143,7 +143,7 @@ export default {
     parseTime,
     formatTime,
     refresh () {
-      const page = Object.assign({}, this.pagesetting)
+      const page = Object.assign({}, { page: this.pagesetting })
       const payload = Object.assign(page, this.search)
       payload.company = payload.company && payload.company.code
       this.loading = true
