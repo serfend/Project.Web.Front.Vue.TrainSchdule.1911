@@ -11,7 +11,7 @@
         <CompaniesSelector ref="companiesSelector" v-model="search.companies" />
       </el-form-item>
       <el-form-item label="操作">
-        <el-button type="success" @click="onEdit({})">添加</el-button>
+        <el-button type="success" @click="onEdit({},true)">添加</el-button>
         <el-button type="success" @click="refresh()">刷新</el-button>
       </el-form-item>
     </el-form>
@@ -37,7 +37,7 @@
         <template slot-scope="{ row }">
           <el-tooltip :content="row.offlineReason" placement="right">
             <el-tag :type="row.isAlived ? 'success' : 'danger'">
-              {{ row.name || '正常运行' }}</el-tag>
+              {{ row.name || "正常运行" }}</el-tag>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -107,9 +107,13 @@
       :total-count="pagesTotalCount"
     />
     <el-dialog :visible.sync="show_add_dialog" width="80%" append-to-body>
+      <template #header>
+        <h2>{{ dialog_is_add ? "新增" : "编辑" }}设备</h2>
+      </template>
       <DeviceForm
         v-if="show_add_dialog"
         v-model="current_device"
+        :is-add="dialog_is_add"
         :is-show.sync="show_add_dialog"
         @requireUpdate="edit"
       />
@@ -133,6 +137,7 @@ export default {
   },
   data: () => ({
     show_add_dialog: false,
+    dialog_is_add: false,
     current_device: {},
     search_name: null,
     search: {
@@ -245,7 +250,9 @@ export default {
       )
         .then(data => {
           callback(data).then(data => {
-            this.devices = data.list.map(x => (Object.assign({ enabled: !x.disabled }, x)))
+            this.devices = data.list.map(x =>
+              Object.assign({ enabled: !x.disabled }, x)
+            )
             this.pagesTotalCount = data.totalCount
           })
         })
@@ -253,9 +260,10 @@ export default {
           this.loading = false
         })
     },
-    onEdit(row) {
+    onEdit(row, is_add = false) {
       this.current_device = row || {}
       this.show_add_dialog = true
+      this.dialog_is_add = is_add
     },
     onEnable(row) {
       row.disabled = !row.enabled

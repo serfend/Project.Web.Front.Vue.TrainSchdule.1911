@@ -37,7 +37,7 @@
       </el-form-item>
     </el-form>
     <el-button type="success" @click="confirm_and_exit">确定</el-button>
-    <el-button type="success" @click="confirm">保存</el-button>
+    <el-button v-show="!isAdd" type="success" @click="confirm">保存</el-button>
     <el-button type="info" @click="exit">取消</el-button>
   </el-card>
 </template>
@@ -56,7 +56,8 @@ export default {
   },
   props: {
     data: { type: Object, default: () => ({}) },
-    isShow: { type: Boolean, default: false }
+    isShow: { type: Boolean, default: false },
+    isAdd: { type: Boolean, default: false },
   },
   data: () => ({
     inner_data: {}
