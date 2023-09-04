@@ -29,7 +29,7 @@
       </el-table-column>
       <el-table-column label="是否入口" min-width="60">
         <template slot-scope="{ row }">
-          <el-switch v-model="row.isEntrence" disabled />
+          <el-switch :value="!!(row.options & 1)" disabled />
         </template>
       </el-table-column>
 
@@ -77,11 +77,7 @@
       <el-table-column label="账号">
         <template slot-scope="{ row }">
           {{ row.userName }}
-        </template>
-      </el-table-column>
-      <el-table-column label="密码">
-        <template slot-scope="{ row }">
-          {{ row.password ? "******" : "无密码" }}
+          {{ row.password?'':'(无密码)' }}
         </template>
       </el-table-column>
       <el-table-column label="创建时间">
@@ -251,7 +247,7 @@ export default {
         .then(data => {
           callback(data).then(data => {
             this.devices = data.list.map(x =>
-              Object.assign({ enabled: !x.disabled }, x)
+              Object.assign({ enabled: !(x.options & 16) }, x)
             )
             this.pagesTotalCount = data.totalCount
           })
@@ -265,8 +261,9 @@ export default {
       this.show_add_dialog = true
       this.dialog_is_add = is_add
     },
-    onEnable(row) {
-      row.disabled = !row.enabled
+    onEnable (row) {
+      row.options |= 16
+      if (row.enabled) row.options -= 16
       this.edit(row)
     },
     async onRemove(row) {

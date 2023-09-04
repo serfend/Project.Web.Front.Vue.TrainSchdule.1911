@@ -26,7 +26,7 @@
           clearable
         />
       </el-form-item>
-      <el-form-item label="归属单位">
+      <el-form-item label="单位">
         <CompanySelector ref="companiesSelector" v-model="search.company" />
       </el-form-item>
     </el-form>
@@ -52,13 +52,18 @@
           <UserFormItem v-if="row.user" :userid="row.user" />
         </template>
       </el-table-column>
+      <el-table-column label="单位" min-width="150">
+        <template slot-scope="{ row }">
+          <CompanyFormItem v-if="row.company" :id="row.company" />
+        </template>
+      </el-table-column>
       <el-table-column label="设备名称" min-width="150">
         <template
           slot-scope="{ row }"
         >{{ row.device && row.device.name }}
         </template>
       </el-table-column>
-      <el-table-column label="归属" min-width="150">
+      <el-table-column label="设备归属" min-width="150">
         <template slot-scope="{ row }">
           <CompanyFormItem v-if="row.device" :id="row.device.company" />
         </template>
