@@ -33,6 +33,9 @@
       <el-form-item label="归属单位">
         <CompanySelector ref="companiesSelector" v-model="search.company" />
       </el-form-item>
+      <el-form-item label="操作">
+        <el-button type="success" @click="requireRefresh()">刷新</el-button>
+      </el-form-item>
     </el-form>
 
     <el-table v-if="datas && datas.length" v-loading="loading" :data="datas">
@@ -98,6 +101,7 @@ export default {
     NoData: () => import('@/views/Loading/NoData')
   },
   data: () => ({
+    refresher: null,
     search: {
       device: null,
       user: null,
@@ -135,8 +139,14 @@ export default {
       deep: true
     }
   },
-  mounted() {
+  created() {
     this.requireRefresh()
+    this.refresher = setInterval(() => {
+      this.requireRefresh()
+    }, 10e3)
+  },
+  destroyed() {
+    clearInterval(this.refresher)
   },
   methods: {
     locationChildren,
