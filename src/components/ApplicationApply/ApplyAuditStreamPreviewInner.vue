@@ -152,10 +152,10 @@ export default {
         const index = streams[i].index
         if (!this.userStatus[index]) this.userStatus[index] = {}
         const dic = this.userStatus[index]
-        Object.keys(streams[i].membersFitToAudit).map(u => {
+        streams[i].membersFitToAudit.map(u => {
           dic[u] = 'primary'
         })
-        Object.keys(streams[i].membersAcceptToAudit).map(u => {
+        streams[i].membersAcceptToAudit.map(u => {
           dic[u] = 'success'
         })
       }
