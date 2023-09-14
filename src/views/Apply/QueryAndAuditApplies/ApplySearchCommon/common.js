@@ -57,7 +57,7 @@ export default {
       pageSize: 20
     },
     adminQuery: false, // 管理人员查询，默认将仅查询本人可审批的人
-    isFlip: false,
+    isFlip: true,
     panel_right: '0',
     panel_should_out: false,
     checker: null,
@@ -66,7 +66,7 @@ export default {
     classItem: 'float-panel flashing',
     btnExitTransform: null,
     is_panel_active: false, // 判断当前面板是否激活
-
+    flip_run_timer: null, // 定时翻转面板
   }),
   computed: {
     nowCountsMax() {
@@ -190,9 +190,10 @@ export default {
       this.isFlip = true
       this.panel_out(true)
       this.panel_out(false, 10e3)
-      setTimeout(() => {
+      clearTimeout(this.flip_run_timer)
+      this.flip_run_timer = setTimeout(() => {
         this.isFlip = false
-      }, 5e3)
+      }, 15e3)
     },
     panelMouseLeave() {
       this.panel_out(false, 2e3)

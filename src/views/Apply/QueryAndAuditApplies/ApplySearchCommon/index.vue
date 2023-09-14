@@ -249,22 +249,23 @@
       <template #back>
         <el-card style="width:35rem">
           <div style="text-align:center;height:10rem">
-            <span style="font-size:24px;font-weight:600;">切换到{{ adminQuery?'管理查询':'一般查询' }}</span>
+            <span style="font-size:24px;font-weight:600;">当前为{{ adminQuery?'管理查询':'一般查询' }}</span>
             <el-divider />
             <el-button
               type="text"
-              style="position: absolute;left: 0.5rem;top: 0;"
+              style="position: absolute;left: 0.5rem;top: 0;font-size:1.2rem;"
               @click="isFlip=false"
             >返回查询</el-button>
             <div v-if="adminQuery">
               <p>包含多个条件筛选的选项卡，您可以在其中设置不同的查询条件</p>
               <p>
                 注意即使页面被关闭，搜索条件也将会被保存。如需重新选择筛选条件，可点击
-                <el-button type="text" @click="clearForm">清空搜索</el-button>按钮
+                <el-button type="success" @click="clearForm">清空搜索</el-button>按钮
               </p>
             </div>
             <span v-else>
               <p>您可查询您本人相关的申请审批</p>
+              <p>如果您需要查询更多内容，可以切换到管理查询</p>
             </span>
           </div>
         </el-card>
