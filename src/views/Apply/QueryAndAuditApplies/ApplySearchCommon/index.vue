@@ -259,8 +259,8 @@
             <div v-if="adminQuery">
               <p>包含多个条件筛选的选项卡，您可以在其中设置不同的查询条件</p>
               <p>
-                注意即使页面被关闭，搜索条件也将会被保存。如需重新选择筛选条件，可点击
-                <el-button type="success" @click="clearForm">清空搜索</el-button>按钮
+                注意即使页面被关闭，搜索条件也将会被保存。如需重新选择筛选条件，可点击左下角的
+                <el-button type="info" @click="clearForm">清空查询</el-button>按钮
               </p>
             </div>
             <span v-else>
