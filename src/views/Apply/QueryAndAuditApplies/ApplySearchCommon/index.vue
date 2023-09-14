@@ -3,7 +3,8 @@
     v-if="queryForm"
     :class="classItem"
     :style="{right:panel_right,cursor:panel_should_out?'':'pointer'}"
-    @mousedown.native="panelMouseEnter"
+    @mouseenter.native="panelMouseEnter"
+    @mousedown.native="panelMouseActive"
     @mouseleave.native="panelMouseLeave"
   >
     <Flip v-model="isFlip" width="100%" height="100%">

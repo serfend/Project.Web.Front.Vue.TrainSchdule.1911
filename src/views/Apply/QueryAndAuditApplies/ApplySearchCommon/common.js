@@ -64,7 +64,9 @@ export default {
     active_pane: '0',
     driver: null,
     classItem: 'float-panel flashing',
-    btnExitTransform: null
+    btnExitTransform: null,
+    is_panel_active: false, // 判断当前面板是否激活
+
   }),
   computed: {
     nowCountsMax() {
@@ -172,9 +174,11 @@ export default {
       }
       this.panel_right = '-30rem'
       this.btnExitTransform = 'translateY(2rem) scale(0.5)'
+      this.is_panel_active = false
     },
     panel_out(out, delay) {
       this.panel_should_out = !!out
+      console.log(this.panel_should_out)
       if (!delay) return this.checkPanelStatus()
       if (!out && this.settings.manual_close_pannel) return
       if (this.checker) clearTimeout(this.checker)
@@ -193,7 +197,12 @@ export default {
     panelMouseLeave() {
       this.panel_out(false, 2e3)
     },
+    panelMouseActive () {
+      this.is_panel_active = true
+      this.panelMouseEnter()
+    },
     panelMouseEnter() {
+      if (!this.is_panel_active) return
       this.removeFlashing()
       this.panel_out(true)
     },
