@@ -97,7 +97,10 @@ export function exportXlsByTemplate(data, model, option) {
 }
 function check_string_format (raw) {
   if (!strIsDatetime(raw)) return raw
-  return new Date(Date.parse(raw))
+  // return new Date(Date.parse(raw))
+  const raw_stamp = Date.parse('2023-12-1 16:00')
+  const offset = new Date().getTimezoneOffset() * 60e3
+  return new Date(raw_stamp - offset) // convert to absolute time
 }
 
 /**
