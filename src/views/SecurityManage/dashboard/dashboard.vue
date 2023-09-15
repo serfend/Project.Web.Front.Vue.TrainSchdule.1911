@@ -67,6 +67,7 @@
                 slot="chart"
                 height="33rem"
                 :size="0.6"
+                :page-setting="{pageSize:1000,pageIndex:0}"
                 @change="data_arrived"
               />
             </Square>

@@ -7,6 +7,7 @@
           :size="size"
           title="安全保密警钟长鸣"
           database="security_event"
+          :page-setting="pageSetting"
           @change="v => $emit('change', v)"
           @requireDetail="handlerDetail"
         />
@@ -84,7 +85,14 @@ export default {
   },
   props: {
     height: { type: String, default: '1080px' },
-    size: { type: Number, default: 1 }
+    size: { type: Number, default: 1 },
+    pageSetting: {
+      type: Object,
+      default: () => ({
+        pageIndex: 0,
+        pageSize: 10
+      })
+    }
   },
   data: () => ({
     showDialog: false,

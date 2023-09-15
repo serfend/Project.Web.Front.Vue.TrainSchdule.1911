@@ -5,7 +5,12 @@
       type="text"
       @click="showSetting = true"
     >设置</el-button>
-    <EventConfig v-model="searchSetting" :show.sync="showSetting" :name="database" :key-name="title" />
+    <EventConfig
+      v-model="searchSetting"
+      :show.sync="showSetting"
+      :name="database"
+      :key-name="title"
+    />
     <div v-if="!engineOnly">
       <h2
         :style="{
@@ -79,7 +84,14 @@ export default {
     type: { type: Number, default: 0 },
     size: { type: Number, default: 1 },
     engineOnly: { type: Boolean, default: false },
-    defaultConfig: { type: Object, default: null }
+    defaultConfig: { type: Object, default: null },
+    pageSetting: {
+      type: Object,
+      default: () => ({
+        pageIndex: 0,
+        pageSize: 10
+      })
+    }
   },
   data: () => ({
     loading: false,
@@ -110,7 +122,7 @@ export default {
       type: null,
       tag: null,
       time: null,
-      filterDate: null,
+      filterDate: null
     }
   }),
   computed: {
@@ -142,15 +154,22 @@ export default {
     }
   },
   watch: {
+    pageSetting: {
+      handler(val) {
+        this.page = val
+      },
+      deep: true,
+      immediate: true
+    },
     defaultConfig: {
-      handler (v) {
+      handler(v) {
         this.searchSetting = v
       },
       deep: true,
       immediate: true
     },
     database: {
-      handler (val) {
+      handler(val) {
         const { searchSetting } = this
         if (!searchSetting) return
         this.$set(searchSetting, 'databaseName', val)
@@ -164,7 +183,7 @@ export default {
       immediate: true
     },
     searchSetting: {
-      handler (val) {
+      handler(val) {
         this.reload()
       },
       deep: true
@@ -192,8 +211,7 @@ export default {
         this.auto_play_top = 0
       }
       const time = 3e3 + Math.random() * 2e3
-      this.auto_play_top_player = setTimeout(this.next_play_top, time
-      )
+      this.auto_play_top_player = setTimeout(this.next_play_top, time)
     },
     focusNext() {
       this.focusIndex += 1
@@ -233,8 +251,12 @@ export default {
         desc: null
       }
       item.content =
-        item.summary || item.detail && `${item.detail.substring(0, 50)}${item.detail.length > 50 ? '...' : ''}`
-      if (!item.content)item.content = '无内容'
+        item.summary ||
+        (item.detail &&
+          `${item.detail.substring(0, 50)}${
+            item.detail.length > 50 ? '...' : ''
+          }`)
+      if (!item.content) item.content = '无内容'
       return item
     },
     refresh() {
@@ -266,7 +288,7 @@ export default {
           this.loading = false
         })
     },
-    onEventListSelect (x) {
+    onEventListSelect(x) {
       this.loading = true
       setTimeout(() => {
         const eventType = x.seriesName
