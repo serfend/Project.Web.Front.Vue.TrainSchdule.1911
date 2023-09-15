@@ -138,10 +138,9 @@ export default {
       }, 1e2)
     },
     haveNext() {
-      const { page } = this
       const total = this.totalCount
-      const current = page.pageIndex * page.pageSize
-      return total === -1 || current <= total
+      const current = (this.innerList && this.innerList.length) || 0
+      return total === -1 || current < total
     },
     innerList: {
       get() {
