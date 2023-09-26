@@ -33,6 +33,9 @@
       <el-form-item label="归属单位">
         <CompanySelector ref="companiesSelector" v-model="search.company" />
       </el-form-item>
+      <el-form-item label="原因">
+        <el-input v-model="search.reason" />
+      </el-form-item>
       <el-form-item label="操作">
         <el-button type="success" @click="requireRefresh()">刷新</el-button>
       </el-form-item>
@@ -46,20 +49,22 @@
       </el-table-column>
       <el-table-column label="创建时间">
         <template slot-scope="{ row }">
-          <div style="text-wrap:nowrap">{{ formatTime(row.created) }}</div>
+          <el-tooltip :content="parseTime(row.created)">
+            <div style="text-wrap:nowrap">{{ formatTime(row.created) }}</div>
+          </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="授权">
+      <el-table-column label="授权" min-width="30">
         <template slot-scope="{ row }">
           {{ row.is_Open?'允许':'禁止' }}
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="150">
+      <el-table-column label="单位" min-width="100">
         <template slot-scope="{ row }">
           <CompanyFormItem :id="row.companyCode" />
         </template>
       </el-table-column>
-      <el-table-column label="用户" min-width="150">
+      <el-table-column label="用户" min-width="100">
         <template slot-scope="{ row }">
           <UserFormItem :userid="row.userId" />
         </template>
@@ -75,6 +80,21 @@
         <template slot-scope="{ row }">
           <el-tooltip :content="parseTime(row.time_End)">
             <div style="text-wrap:nowrap">{{ formatTime(row.time_End) }}</div>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column label="原因">
+        <template slot-scope="{ row }">
+          <el-tooltip v-if="row.reason">
+            <div>
+              <div v-if="!(row.reason.length > 20)" style="text-wrap:nowrap">{{ row.reason }}</div>
+              <el-link v-else>查看详情</el-link>
+            </div>
+            <template #content>
+              <div style="width:15rem">
+                <p>{{ row.reason }}</p>
+              </div>
+            </template>
           </el-tooltip>
         </template>
       </el-table-column>
