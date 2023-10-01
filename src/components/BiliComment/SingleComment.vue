@@ -46,7 +46,6 @@
             <span>{{ like_count }}</span>
           </span>
           <span
-            v-if="currentUser === data.from && data.from.id"
             class="like"
             @click="handle_delete"
           >
