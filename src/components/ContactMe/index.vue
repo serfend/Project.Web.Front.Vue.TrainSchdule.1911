@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="innerUrl && showQr">
+    <div v-if="innerUrl && !disableQRCode">
       <el-row>
         <QrCodeGenerate
           ref="qrCode"
@@ -14,7 +14,7 @@
       </el-row>
       <el-row style="font-size:12px;text-align:center;margin-top:5px">{{ description }}</el-row>
     </div>
-    <div v-else-if="!showQr">二维码已禁用</div>
+    <div v-else-if="disableQRCode">{{ disableQRCode }}</div>
     <div v-else style="width:200px;height:200px;text-align:center;line-height:200px">加载中</div>
   </div>
 </template>
@@ -43,8 +43,8 @@ export default {
     }
   },
   computed: {
-    showQr() {
-      return process.env.showQRCode
+    disableQRCode() {
+      return process.env.disableQRCode
     }
   },
   watch: {
