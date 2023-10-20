@@ -84,6 +84,9 @@
       <div class="content-card">
         <AuditStatus :loading="loading" :data="detail" />
       </div>
+      <div v-if="detail && detail.id" class="content-card">
+        <ApplyExecuteRecords :id="detail.id" />
+      </div>
       <div v-if="showComment && detail && detail.id" class="content-card">
         <ApplyComments :id="detail.id" />
       </div>
@@ -109,7 +112,8 @@ export default {
     TransportationType: () =>
       import('@/components/Vacation/TransportationType'),
     IndayApplyProgress: () =>
-      import('@/views/Apply/MyApply/components/ApplyCard/IndayApplyProgress')
+      import('@/views/Apply/MyApply/components/ApplyCard/IndayApplyProgress'),
+    ApplyExecuteRecords: () => import('../ApplyExecuteRecords')
   },
   props: {
     showUser: { type: Boolean, default: true },
