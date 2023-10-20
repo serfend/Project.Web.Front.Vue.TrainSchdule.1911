@@ -35,10 +35,11 @@ export function faceRecords({
  * @param {*} { user, company, timeStart, timeEnd, page }
  * @return {*}
  */
-export function faceLockRecords({ user, company, timeStart, timeEnd, page }) {
+export function faceLockRecords({ user, company, timeStart, timeEnd, page, reason }) {
   return request.post(`${api}/faceLockStatus`, {
     user: form.toQueryValue(user),
     company: form.toQueryValue(company),
+    reason: form.toQueryValue(reason),
     timeStart: form.toQueryStartEndByArray(timeStart),
     timeEnd: form.toQueryStartEndByArray(timeEnd),
     page

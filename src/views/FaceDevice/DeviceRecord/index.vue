@@ -128,6 +128,7 @@ export default {
       company: null,
       created: null,
       description: null,
+      reason: null,
     },
     pagesetting: {
       pageIndex: 0,
