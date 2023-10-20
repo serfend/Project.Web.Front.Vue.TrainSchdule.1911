@@ -14,7 +14,7 @@
       <template slot="header">
         <span>用户当前</span>
         <el-button :disabled="!socialModefied" type="success" @click="submitNewSettle">保存修改</el-button>
-        <el-button type="info" @click="refreshSocial">取消</el-button>
+        <el-button type="info" @click="refresh">刷新</el-button>
       </template>
       <el-form>
         <UserSocial :form="social" />
@@ -28,16 +28,13 @@
         <el-button type="success" icon="el-icon-refresh" circle @click="refreshRecord" />
       </template>
       <el-table :data="records">
-        <el-table-column label="ID" width="50rem">
-          <template slot-scope="scope">{{ scope.row.code }}</template>
-        </el-table-column>
         <el-table-column label="说明">
           <template slot-scope="scope">
             <el-popover
               v-if="scope.row.description&&scope.row.description.length>30"
               trigger="hover"
             >
-              <el-input v-model="scope.row.description" type="textarea" autosize />
+              <el-input v-model="scope.row.description" style="width:20rem" type="textarea" :rows="5" />
               <el-link slot="reference" type="primary">查看详情</el-link>
             </el-popover>
             <el-input v-else v-model="scope.row.description" type="textarea" />
@@ -201,6 +198,7 @@ export default {
       getUsersVacationLimit({ userid }).then(data => {
         this.vacation = data
       })
+      setTimeout(() => { this.refreshRecord() }, 1e3)
     }
   }
 }

@@ -45,6 +45,8 @@
 
 <script>
 const benefitList = () => [
+  { value: '独生子女赡养父母假', length: 5, description: '父/母XXX满足政策条件' },
+  { value: '子女抚养假', length: 5, description: '子/女XXX满足政策条件' },
   {
     value: '婚假',
     length: 10,
