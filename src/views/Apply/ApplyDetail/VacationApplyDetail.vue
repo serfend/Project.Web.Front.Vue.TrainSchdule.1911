@@ -113,6 +113,9 @@
       <div class="content-card">
         <AuditStatus :loading="loading" :data="detail" />
       </div>
+      <div v-if="detail && detail.id" class="content-card">
+        <ApplyExecuteRecords :id="detail.id" />
+      </div>
       <div v-if="showComment && detail && detail.id" class="content-card">
         <ApplyComments :id="detail.id" />
       </div>
@@ -136,7 +139,8 @@ export default {
       import('@/views/common/ClipboardMonitor/ClipboardShare'),
     ApplyComments: () => import('@/components/BiliComment'),
     UserFormItem: () => import('@/components/User/UserFormItem'),
-    TransportationType: () => import('@/components/Vacation/TransportationType')
+    TransportationType: () => import('@/components/Vacation/TransportationType'),
+    ApplyExecuteRecords: () => import('../ApplyExecuteRecords'),
   },
   props: {
     showUser: { type: Boolean, default: true },

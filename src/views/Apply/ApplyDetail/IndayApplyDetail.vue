@@ -113,7 +113,7 @@ export default {
       import('@/components/Vacation/TransportationType'),
     IndayApplyProgress: () =>
       import('@/views/Apply/MyApply/components/ApplyCard/IndayApplyProgress'),
-    ApplyExecuteRecords: () => import('../ApplyExecuteRecords')
+    ApplyExecuteRecords: () => import('../ApplyExecuteRecords'),
   },
   props: {
     showUser: { type: Boolean, default: true },
