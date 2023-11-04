@@ -18,12 +18,12 @@
             <el-row :gutter="20">
               <el-col :lg="8" :md="12" :sm="24">
                 <el-card header="找回账号 - 通过姓名">
-                  <FindUserByRealName />
+                  <FindUserByRealName :with-removed="true" />
                 </el-card>
               </el-col>
               <el-col :lg="8" :md="12" :sm="24">
                 <el-card header="找回账号 - 通过单位">
-                  <FindUserByCompany />
+                  <FindUserByCompany :with-removed="true" />
                 </el-card>
               </el-col>
             </el-row>

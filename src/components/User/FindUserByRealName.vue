@@ -44,7 +44,8 @@ export default {
     event: 'change'
   }, // TODO support auto load user from father-component
   props: {
-    code: { type: String, default: null }
+    code: { type: String, default: null },
+    withRemoved: { type: Boolean, default: false },
   },
   data: () => ({
     loading: false,
@@ -99,7 +100,8 @@ export default {
         realName,
         pageIndex: this.nowIndex++,
         pageSize: 10,
-        fuzz: true
+        fuzz: true,
+        withRemoved: this.withRemoved
       }
       getUserIdByRealName(item)
         .then(data => {

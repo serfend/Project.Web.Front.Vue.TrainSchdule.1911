@@ -77,13 +77,15 @@ export function companiesManagers(ids) {
 export function getMembers({
   code,
   userCompanyType,
+  withRemoved,
   pageIndex,
-  pageSize
+  pageSize,
 }) {
   return request.get('/company/members', {
     params: {
       code,
       userCompanyType,
+      withRemoved,
       page: pageIndex,
       pageSize
     }

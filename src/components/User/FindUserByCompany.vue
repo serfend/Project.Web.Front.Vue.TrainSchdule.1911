@@ -35,6 +35,9 @@ import { getMembers } from '@/api/company'
 export default {
   name: 'FindUserByCompany',
   components: { CompanySelector, User },
+  props: {
+    withRemoved: { type: Boolean, deafult: false },
+  },
   data: () => ({
     loading: false,
     company: null,
@@ -64,9 +67,9 @@ export default {
   methods: {
     nextPage() {
       const code = this.company && this.company.code
-      const { asManage } = this
+      const { asManage, withRemoved } = this
       if (this.loading || !code || !this.hasNextPage) return
-      const item = { code, asManage }
+      const item = { code, asManage, withRemoved }
       this.pages.pageIndex++
       const query = Object.assign(this.pages, item)
       this.loading = true
