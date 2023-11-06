@@ -14,7 +14,7 @@
       <CascaderSelector
         :child-getter-method="locationChildren"
         :value-name="'code'"
-        :label-name="'name'"
+        :label-name="'fullName'"
         :place.sync="innerForm.hometown"
         :placeholder="innerForm.hometown"
         class="normal-form-item"
