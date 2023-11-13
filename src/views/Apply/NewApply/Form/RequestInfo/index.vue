@@ -1,5 +1,9 @@
 <template>
-  <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
+  <div
+    :style="{ transition: 'all 0.5s' }"
+    @mouseenter="isHover = true"
+    @mouseleave="leaveCard"
+  >
     <el-card
       v-loading="loading"
       header="休假信息"
@@ -15,30 +19,41 @@
             <el-radio v-model="main_type" :label="2" border>计划报假</el-radio>
           </el-tooltip>
         </el-form-item>
-        <el-form-item v-show="main_type==0" label="选择计划">
-          <el-tooltip content="【开发中】您可以从之前填报的计划中直接选取作为正式填报项提交">
+        <el-form-item v-show="main_type == 0" label="选择计划">
+          <el-tooltip
+            content="【开发中】您可以从之前填报的计划中直接选取作为正式填报项提交"
+          >
             <el-select v-model="direct_select_apply" disabled>
               <el-option value="1" label="8月1日正休15天" />
             </el-select>
           </el-tooltip>
         </el-form-item>
       </el-form>
-      <el-container v-show="main_type>-1">
-        <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
+      <el-container v-show="main_type > -1">
+        <el-main :style="{ filter: hideDetail ? 'blur(0.2rem)' : '' }">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
-            <template slot="content">鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
+            <template
+              slot="content"
+            >鼠标移到休假进度条上可查看年度休假情况，有误请联系业务口。</template>
           </CardTooltipAlert>
           <el-alert
             v-if="formApply && formApply.isArchitect"
             center
             type="error"
           >补充申请 申请将会被标记为【补充记录】</el-alert>
-          <el-form v-if="formApply" ref="formApply" :model="formApply" label-width="6rem">
+          <el-form
+            v-if="formApply"
+            ref="formApply"
+            :model="formApply"
+            label-width="6rem"
+          >
             <el-form-item label="年休假率">
               <VacationDescription
-                v-if="nowVacationType&&usersvacation"
+                v-if="nowVacationType && usersvacation"
                 :users-vacation="usersvacation"
-                :this-time-vacation-length="nowVacationType.primary?formApply.vacationLength:0"
+                :this-time-vacation-length="
+                  nowVacationType.primary ? formApply.vacationLength : 0
+                "
               />
             </el-form-item>
             <el-form-item label="休假类型">
@@ -66,27 +81,47 @@
                 show-input
                 :max="maxVacationLength"
                 :min="0"
-                :format-tooltip="v=>`${v}/${maxVacationLength}天`"
+                :format-tooltip="v => `${v}/${maxVacationLength}天`"
                 @input="updateChange"
               />
             </el-form-item>
-            <el-form-item v-if="nowVacationType && nowVacationType.canUseOnTrip" label="路途天数">
-              <el-slider
-                v-model="formApply.OnTripLength"
-                show-input
-                :max="14"
-                :min="0"
-                :format-tooltip="v=>`${v}/14天`"
-                @input="updateChange"
-              />
+            <el-form-item
+              v-if="nowVacationType && nowVacationType.canUseOnTrip"
+              label="路途天数"
+            >
+              <el-tooltip content="基础路途">
+                <el-input-number
+                  v-model="formApply.OnTripLengthBase"
+                  :min="0"
+                  :max="2"
+                  @input="updateChange"
+                />
+              </el-tooltip>
+              <el-tooltip :content="TipTripAdvance">
+                <el-input-number
+                  v-model="formApply.OnTripLengthAdvance"
+                  :min="0"
+                  :max="14"
+                  @input="updateChange"
+                />
+              </el-tooltip>
             </el-form-item>
-            <el-form-item v-if="nowVacationType &&nowVacationType.caculateBenefit" label="其他假">
+            <el-form-item
+              v-if="nowVacationType && nowVacationType.caculateBenefit"
+              label="其他假"
+            >
               <BenefitVacation v-model="benefitList" @change="updateChange" />
             </el-form-item>
             <el-form-item
               label="离队时间"
               prop="StampLeave"
-              :rules="[{required:true,validator:stampLeaveRuleCheck,trigger:'blur'}]"
+              :rules="[
+                {
+                  required: true,
+                  validator: stampLeaveRuleCheck,
+                  trigger: 'blur'
+                }
+              ]"
             >
               <div style="display:flex">
                 <DatetimePicker
@@ -110,8 +145,13 @@
                 />
               </div>
             </el-form-item>
-            <el-form-item v-if="nowVacationType &&nowVacationType.caculateBenefit">
-              <el-collapse-transition v-for="(item,i) in lawVacations" :key="item.id">
+            <el-form-item
+              v-if="nowVacationType && nowVacationType.caculateBenefit"
+            >
+              <el-collapse-transition
+                v-for="(item, i) in lawVacations"
+                :key="item.id"
+              >
                 <LawVacation
                   v-model="lawVacations[i].useLength"
                   :max-length="item.length"
@@ -121,21 +161,35 @@
                 />
               </el-collapse-transition>
             </el-form-item>
-            <el-form-item label="目的地" :rules="[{required:true,trigger:'blur'}]">
+            <el-form-item
+              label="目的地"
+              :rules="[{ required: true, trigger: 'blur' }]"
+            >
               <CascaderSelector
                 v-model="formApply.vacationPlace"
                 :child-getter-method="locationChildren"
                 :value-name="'code'"
                 :label-name="'name'"
-                :placeholder="vacationPlaceDefault&&vacationPlaceDefault.code==formApply.vacationPlace.code?vacationPlaceDefault.name:''"
+                :placeholder="
+                  vacationPlaceDefault &&
+                    vacationPlaceDefault.code == formApply.vacationPlace.code
+                    ? vacationPlaceDefault.name
+                    : ''
+                "
                 style="width:30rem"
               />
             </el-form-item>
             <el-form-item label="详细地址">
-              <el-input v-model="formApply.vacationPlaceName" style="width:30rem" />
+              <el-input
+                v-model="formApply.vacationPlaceName"
+                style="width:30rem"
+              />
             </el-form-item>
             <el-form-item label="交通工具">
-              <el-select v-model="formApply.ByTransportation" placeholder="火车">
+              <el-select
+                v-model="formApply.ByTransportation"
+                placeholder="火车"
+              >
                 <el-option label="火车" :value="0" />
                 <!-- <el-option label="飞机" value="1" /> -->
                 <el-option label="汽车" :value="2" />
@@ -150,10 +204,17 @@
         >
           <div
             class="mask"
-            :style="{filter:hideDetail?'':'blur(30px)',background:hideDetail?'#ffffff8f':''}"
+            :style="{
+              filter: hideDetail ? '' : 'blur(30px)',
+              background: hideDetail ? '#ffffff8f' : ''
+            }"
           >
             <svg-icon
-              :style="{transition:'all 0.5s',opacity:hideDetail?1:0,transform:hideDetail?'rotate(-360deg)':''}"
+              :style="{
+                transition: 'all 0.5s',
+                opacity: hideDetail ? 1 : 0,
+                transform: hideDetail ? 'rotate(-360deg)' : ''
+              }"
               icon-class="certification_f"
               style-normal="width:5em;height:5em;fill:#67C23A;color:#67C23A"
             />
@@ -192,7 +253,7 @@ export default {
   data: () => ({
     localeConfig,
     loading: false,
-    formApply: {},
+    formApply: {}, // 通过Create创建
     vacationPlaceDefault: null,
     vacationTypes: null,
     usersvacation: {
@@ -202,6 +263,8 @@ export default {
       onTripTimes: 0,
       maxTripTimes: 0
     },
+    TipTripAdvance:
+      '额外路途（以实际乘坐的车次所耗时间为准，不再取最慢车次时间，故一般为0天），需报业务部门审批通过后再行添加。',
     benefitList: [],
     lawVacations: [],
     submitId: null,
@@ -217,14 +280,19 @@ export default {
     },
     nowVacationType() {
       const type = this.formApply && this.formApply.vacationType
-      return this.vacationTypes && this.vacationTypes.find(v => v.name === type)
+      return (
+        this.vacationTypes && this.vacationTypes.find(v => v.name === type)
+      )
     },
     // above 3 computed should remove in the future
     maxVacationLength() {
       const type = this.nowVacationType
       if (!type) return 0
       const isPrimary = type.primary
-      const leftLength = Math.min(this.usersvacation.leftLength, type.maxLength)
+      const leftLength = Math.min(
+        this.usersvacation.leftLength,
+        type.maxLength
+      )
       return isPrimary ? leftLength : this.nowMaxLength
     },
     hideDetail() {
@@ -286,6 +354,12 @@ export default {
         this.$emit('vacationTypeUpdate', val)
       }
     },
+    'formApply.OnTripLengthBase': {
+      handler(v) { this.onTripLengthChanged() }
+    },
+    'formApply.OnTripLengthAdvance': {
+      handler(v) { this.onTripLengthChanged() }
+    },
     selfSettle: {
       handler(val) {
         this.resetSettle(val)
@@ -298,6 +372,29 @@ export default {
   },
   methods: {
     locationChildren,
+    beforeSubmitApply() {
+      this.checkTripAdvance(false)
+    },
+    onTripLengthChanged() {
+      const form = this.formApply
+      this.checkTripAdvance()
+      form.OnTripLength = form.OnTripLengthBase + form.OnTripLengthAdvance
+    },
+    checkTripAdvance(ignore = true) {
+      const form = this.formApply
+      ignore = this.OnTripLengthAdvanceConfirmed && ignore
+      if (form.OnTripLengthAdvance > 0 && !ignore) {
+        this.$confirm(this.TipTripAdvance, {
+          type: 'warning',
+          title: '注意',
+          confirmButtonText: '已联系并通过业务部门审批',
+        }).then(() => {
+          this.OnTripLengthAdvanceConfirmed = true
+        }).catch(e => {
+          form.OnTripLengthAdvance = 0
+        })
+      }
+    },
     updatedApply() {
       this.anyChanged = true
       this.submitId = null
@@ -371,7 +468,9 @@ export default {
         StampLeave: parseTime(+new Date() + 86400e3, '{y}-{m}-{d}'),
         StampReturn: '',
         vacationLength: 0,
-        OnTripLength: 0,
+        OnTripLengthAdvance: 0,
+        OnTripLengthAdvanceConfirmed: false,
+        OnTripLengthBase: 0,
         vacationType: types ? types[0].name : '',
         vacationPlace: {},
         vacationPlaceName: '',
@@ -388,7 +487,8 @@ export default {
         !params.vacationPlace.code ||
         params.vacationPlace.code.length < 6
       const stamp =
-        !params.StampLeave || new Date(params.StampLeave) < new Date('2000-1-1')
+        !params.StampLeave ||
+        new Date(params.StampLeave) < new Date('2000-1-1')
       const result = []
       if (id) result.push('基础信息未成功提交')
       if (place) {
@@ -455,8 +555,7 @@ export default {
         if (!data) return
         this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
         const des = data.descriptions ? data.descriptions : []
-        const t1 =
-          lawVacations.length !== des.length
+        const t1 = lawVacations.length !== des.length
         const t2 = des.find(i => {
           const item = lawVacations.find(l => i.id === l.id)
           return !item || item.length !== i.length
@@ -491,5 +590,5 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/styles/animation';
+@import "@/styles/animation";
 </style>

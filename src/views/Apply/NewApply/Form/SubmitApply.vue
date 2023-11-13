@@ -1,52 +1,110 @@
 <template>
   <transition>
     <div v-show="!iDisabled" id="submit-form" v-loading="onLoading">
-      <div :style="{'background-color':theme,'z-index':3}" :class="navClass">
+      <div
+        :style="{ 'background-color': theme, 'z-index': 3 }"
+        :class="navClass"
+      >
         <slot />
-        <span v-if="next_permit_submit<=new Date()">
-          <el-button :disabled="iDisabled" type="success" style="width:100%" @click="submitApply(2)">发 布</el-button>
+        <span v-if="next_permit_submit <= new Date()">
+          <el-button
+            :disabled="iDisabled"
+            type="success"
+            style="width:100%"
+            @click="submitApply(2)"
+          >发 布</el-button>
           <div style="margin:0.5rem 0">
             <el-popover placement="top-start" trigger="hover">
               <div>
                 <h2>提交、保存、发布是什么</h2>
                 <el-divider />
-                <p>
-                  <b>提交</b>任何人都可以操作，但24小时后仍未保存则会被删除
-                </p>
+                <p><b>提交</b>任何人都可以操作，但24小时后仍未保存则会被删除</p>
                 <p>
                   <b>保存</b>仅本人及上级操作，将会使申请进入草稿状态，随时可发布
                 </p>
-                <p>
-                  <b>发布</b>仅本人及上级操作，将会使申请进入审核中状态
-                </p>
+                <p><b>发布</b>仅本人及上级操作，将会使申请进入审核中状态</p>
                 <div>
-                  <el-button :disabled="iDisabled" type="success" @click="submitApply(0)">提交</el-button>
-                  <el-button :disabled="iDisabled" type="success" @click="submitApply(1)">保存</el-button>
+                  <el-button
+                    :disabled="iDisabled"
+                    type="success"
+                    @click="submitApply(0)"
+                  >提交</el-button>
+                  <el-button
+                    :disabled="iDisabled"
+                    type="success"
+                    @click="submitApply(1)"
+                  >保存</el-button>
                 </div>
               </div>
-              <i slot="reference" class="el-icon-more-outline" style="color:#fff" />
+              <i
+                slot="reference"
+                class="el-icon-more-outline"
+                style="color:#fff"
+              />
             </el-popover>
-            <el-button type="info" size="mini" @click="createNew">新建申请</el-button>
-            <el-button v-show="submitId" size="mini" type="success" @click="skimDetail">查 看 详 情</el-button>
+            <el-button
+              type="info"
+              size="mini"
+              @click="createNew"
+            >新建申请</el-button>
+            <el-button
+              v-show="submitId"
+              size="mini"
+              type="success"
+              @click="skimDetail"
+            >查 看 详 情</el-button>
           </div>
         </span>
-        <el-progress v-else :percentage="percent" status="exception" :text-inside="true" :stroke-width="25" :format="formatPercent" />
+        <el-progress
+          v-else
+          :percentage="percent"
+          status="exception"
+          :text-inside="true"
+          :stroke-width="25"
+          :format="formatPercent"
+        />
 
         <el-dialog :visible.sync="showSuccessDialog" append-to-body>
           <div v-if="!errorMsg">
             <div style="display:flex;justify-content:center">
-              <LottieIcon path="/assets/lottie/lottie.success.json" :animate-speed="0.5" style="width:15rem" />
+              <LottieIcon
+                path="/assets/lottie/lottie.success.json"
+                :animate-speed="0.5"
+                style="width:15rem"
+              />
             </div>
-            <div class="item-put-center" style="margin:3rem 0 2rem 0;font-size:2rem">申 请 提 交 成 功</div>
+            <div
+              class="item-put-center"
+              style="margin:3rem 0 2rem 0;font-size:2rem"
+            >
+              申 请 提 交 成 功
+            </div>
           </div>
           <div v-else>
             <div style="display:flex;justify-content:center">
-              <LottieIcon path="/assets/lottie/lottie.fail.json" :animate-speed="0.5" style="width:15rem" />
+              <LottieIcon
+                path="/assets/lottie/lottie.fail.json"
+                :animate-speed="0.5"
+                style="width:15rem"
+              />
             </div>
-            <el-alert v-if="errorMsg" type="error" center effect="dark" show-icon closable>{{ errorMsg }}</el-alert>
+            <el-alert
+              v-if="errorMsg"
+              type="error"
+              center
+              effect="dark"
+              show-icon
+              closable
+            >{{ errorMsg }}</el-alert>
           </div>
           <div class="item-put-center">
-            <el-popover v-for="(i,index) in errorList" :key="i.id" trigger="hover" placement="top" @show="i.can_show=true">
+            <el-popover
+              v-for="(i, index) in errorList"
+              :key="i.id"
+              trigger="hover"
+              placement="top"
+              @show="i.can_show = true"
+            >
               <component
                 :is="`${entityType}ApplyDetail`"
                 :can-show="i.can_show"
@@ -56,15 +114,27 @@
                 style="width:80rem"
               />
               <template #reference>
-                <el-button style="cursor:pointer;margin-left:0.3rem" type="text" @click="show_detail(i)">第{{ index+1 }}项</el-button>
+                <el-button
+                  style="cursor:pointer;margin-left:0.3rem"
+                  type="text"
+                  @click="show_detail(i)"
+                >点击查看[第{{ index + 1 }}个]发生冲突的申请</el-button>
               </template>
             </el-popover>
           </div>
           <div class="item-put-center">
-            <el-button type="success" style="width:60%" @click="skimDetail">查看本次提交的详情</el-button>
+            <el-button
+              type="success"
+              style="width:60%"
+              @click="skimDetail"
+            >查看本次提交的详情</el-button>
           </div>
           <div class="item-put-center">
-            <el-button type="info" style="width:60%" @click="showSuccessDialog=false">关 闭</el-button>
+            <el-button
+              type="info"
+              style="width:60%"
+              @click="showSuccessDialog = false"
+            >关 闭</el-button>
           </div>
         </el-dialog>
       </div>
@@ -108,33 +178,32 @@ export default {
     caculateParent: ''
   }),
   computed: {
-    navClass () {
+    navClass() {
       const i = this.isFlashing ? ' flashing' : ''
       return `footer-nav${i}`
     },
-    iDisabled () {
+    iDisabled() {
       return this.disabled || !this.baseInfoId || !this.requestId
     },
-    theme () {
+    theme() {
       return this.$store.state.settings.theme
     },
-    applyDetailUrl () {
+    applyDetailUrl() {
       return `#/apply/${this.entityType}/applydetail?id=${this.submitId}`
     }
   },
   watch: {
     disabled: {
-      handler (val) {
-      },
+      handler(val) {},
       immediate: true
     },
     submitId: {
-      handler (val) {
+      handler(val) {
         if (val) this.showSuccessDialog = true
       }
     }
   },
-  mounted () {
+  mounted() {
     clearInterval(this.time_updator)
     this.time_updator = setInterval(() => {
       if (!this.next_permit_submit) return
@@ -146,26 +215,24 @@ export default {
       this.percent = 100 - Math.floor((spent / total) * 1e4) / 1e2
     }, 5e2)
   },
-  destroyed () {
+  destroyed() {
     clearInterval(this.time_updator)
   },
   methods: {
     getTimeDesc,
-    formatPercent (v) {
+    formatPercent(v) {
       return this.time_desc
     },
-    skimDetail () {
+    skimDetail() {
       const url = this.applyDetailUrl
       window.open(url)
     },
-    show_detail (id) { },
+    show_detail(id) {},
     /**
      * 提交申请 0:仅提交，1:提交并保存，2:提交并发布
      */
-    submitApply (actionStatus) {
-      if (this.onLoading === true) {
-        return this.$message.info('提交中，请等待')
-      }
+    submitApply(actionStatus) {
+      if (this.onLoading) return this.$message.info('提交中，请等待')
       this.errorMsg = null
       const BaseId = this.baseInfoId
       const RequestId = this.requestId
@@ -220,7 +287,9 @@ export default {
             // 处理发布频繁倒计时
             case 43310: {
               this.next_permit_submit =
-                new Date() - 0 + Number(e.message.replace(/[^0-9]/gi, '')) * 1e3
+                new Date() -
+                0 +
+                Number(e.message.replace(/[^0-9]/gi, '')) * 1e3
               this.next_permit_begin = new Date()
               break
             }
@@ -233,7 +302,7 @@ export default {
     /**
      * 创建新的申请
      */
-    createNew () {
+    createNew() {
       this.$confirm('此操作将清空并重新填写, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -257,7 +326,7 @@ export default {
     opacity: 1;
   }
 }
-@import '@/styles/animation';
+@import "@/styles/animation";
 
 .item-put-center {
   margin-top: 1rem;
