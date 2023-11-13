@@ -44,17 +44,7 @@
 </template>
 
 <script>
-const benefitList = () => [
-  { value: '独生子女赡养父母假', length: 5, description: '父/母XXX满足政策条件' },
-  { value: '子女抚养假', length: 5, description: '子/女XXX满足政策条件' },
-  {
-    value: '婚假',
-    length: 10,
-    description: '于今年x月结婚，已提交相关证明材料'
-  },
-  { value: '护理假', length: 30, description: '于今年x月结婚,...' },
-  { value: '产假', length: 188, description: '于今年x月结婚,...' }
-]
+import { benefitList } from '@/api/apply'
 export default {
   name: 'BenefitVacation',
   model: {
@@ -62,17 +52,21 @@ export default {
     event: 'change'
   },
   props: {
-    list: {
-      type: Array,
-      default: () => []
-    }
+    vacationType: { type: String, default: null },
+    list: { type: Array, default: () => [] }
   },
   data: () => ({
-    benefitList: benefitList(),
+    benefitList: [],
     nowIndex: -1,
     innerList: []
   }),
   watch: {
+    vacationType: {
+      handler(val) {
+        this.updateBenefit()
+      },
+      immediate: true
+    },
     list: {
       handler(val) {
         this.innerList = val
@@ -88,7 +82,19 @@ export default {
       deep: true
     }
   },
+  mounted() {
+    this.updateBenefit()
+  },
   methods: {
+    updateBenefit() {
+      benefitList(this.vacationType).then((data) => {
+        this.benefitList = data.list.map(x => ({
+          value: x.name,
+          length: x.length,
+          description: x.description
+        }))
+      })
+    },
     querySearch(key, cb) {
       if (!key) return cb(this.benefitList)
       var results = this.benefitList
