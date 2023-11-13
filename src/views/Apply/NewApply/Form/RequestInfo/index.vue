@@ -134,14 +134,32 @@
                   :locale-config="localeConfig"
                   @change="updateChange"
                 />
-                <span style="margin-left:1rem">预计归队</span>
-                <el-date-picker
-                  v-model="formApply.StampReturn"
-                  disabled
-                  placeholder="自动计算"
-                  type="date"
-                  format="yyyy年MM月dd日"
-                  value-format="yyyy-MM-dd"
+                <span>
+
+                  <span style="margin-left:1rem">预计归队</span>
+                  <el-date-picker
+                    v-if="!show_detail_date"
+                    v-model="formApply.StampReturn"
+                    disabled
+                    placeholder="自动计算"
+                    type="date"
+                    format="yyyy年MM月dd日"
+                    value-format="yyyy-MM-dd"
+                  />
+                </span>
+              </div>
+            </el-form-item>
+            <el-form-item v-if="show_detail_date" label="预计归队">
+              <div :style="{ width: '35rem' }">
+                <CNCalendar
+                  :params="{
+                    chooseDayTextStart: formApply.StampLeave,
+                    chooseDayTextEnd: formApply.StampReturn
+                    // minDate: '2019-10-1',
+                    // maxDate: '2020-1-1',
+                  }"
+                  type="rangeDay"
+                  :activity-data="dataForCalendar"
                 />
               </div>
             </el-form-item>
@@ -243,7 +261,8 @@ export default {
     CascaderSelector: () => import('@/components/CascaderSelector'),
     BenefitVacation: () => import('./BenefitVacation'),
     LawVacation: () => import('./LawVacation'),
-    DatetimePicker: () => import('vue-persian-datetime-picker')
+    DatetimePicker: () => import('vue-persian-datetime-picker'),
+    CNCalendar: () => import('@/components/CNCalendar')
   },
   props: {
     userid: { type: String, default: null },
@@ -252,6 +271,8 @@ export default {
   },
   data: () => ({
     localeConfig,
+    dataForCalendar: {},
+    show_detail_date: false,
     loading: false,
     formApply: {}, // 通过Create创建
     vacationPlaceDefault: null,
@@ -355,10 +376,14 @@ export default {
       }
     },
     'formApply.OnTripLengthBase': {
-      handler(v) { this.onTripLengthChanged() }
+      handler(v) {
+        this.onTripLengthChanged()
+      }
     },
     'formApply.OnTripLengthAdvance': {
-      handler(v) { this.onTripLengthChanged() }
+      handler(v) {
+        this.onTripLengthChanged()
+      }
     },
     selfSettle: {
       handler(val) {
@@ -387,12 +412,14 @@ export default {
         this.$confirm(this.TipTripAdvance, {
           type: 'warning',
           title: '注意',
-          confirmButtonText: '已联系并通过业务部门审批',
-        }).then(() => {
-          this.OnTripLengthAdvanceConfirmed = true
-        }).catch(e => {
-          form.OnTripLengthAdvance = 0
+          confirmButtonText: '已联系并通过业务部门审批'
         })
+          .then(() => {
+            this.OnTripLengthAdvanceConfirmed = true
+          })
+          .catch(e => {
+            form.OnTripLengthAdvance = 0
+          })
       }
     },
     updatedApply() {
@@ -561,6 +588,11 @@ export default {
           return !item || item.length !== i.length
         })
         if (t1 || t2) this.lawVacations = des
+        this.show_detail_date = true
+        clearTimeout(this.show_detail_dater)
+        this.show_detail_dater = setTimeout(() => {
+          this.show_detail_date = false
+        }, 10e3)
       })
     },
     caculaingDate() {
