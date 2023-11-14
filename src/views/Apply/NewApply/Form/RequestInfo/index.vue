@@ -148,20 +148,6 @@
                 </span>
               </div>
             </el-form-item>
-            <el-form-item v-if="show_detail_date" label="预计归队">
-              <div :style="{ width: '35rem' }">
-                <CNCalendar
-                  :params="{
-                    chooseDayTextStart: formApply.StampLeave,
-                    chooseDayTextEnd: formApply.StampReturn
-                    // minDate: '2019-10-1',
-                    // maxDate: '2020-1-1',
-                  }"
-                  type="rangeDay"
-                  :activity-data="dataForCalendar"
-                />
-              </div>
-            </el-form-item>
             <el-form-item
               v-if="nowVacationType && nowVacationType.caculateBenefit"
             >
@@ -177,6 +163,20 @@
                   style="margin:0.2rem"
                 />
               </el-collapse-transition>
+            </el-form-item>
+            <el-form-item v-if="show_detail_date" label="预计归队">
+              <div :style="{ width: '35rem' }" @mousemove="reset_detail_dater">
+                <CNCalendar
+                  :params="{
+                    chooseDayTextStart: formApply.StampLeave,
+                    chooseDayTextEnd: formApply.StampReturn
+                    // minDate: '2019-10-1',
+                    // maxDate: '2020-1-1',
+                  }"
+                  type="rangeDay"
+                  :activity-data="dataForCalendar"
+                />
+              </div>
             </el-form-item>
             <el-form-item
               label="目的地"
@@ -588,11 +588,14 @@ export default {
         })
         if (t1 || t2) this.lawVacations = des
         this.show_detail_date = true
-        clearTimeout(this.show_detail_dater)
-        this.show_detail_dater = setTimeout(() => {
-          this.show_detail_date = false
-        }, 10e3)
+        this.reset_detail_dater()
       })
+    },
+    reset_detail_dater() {
+      clearTimeout(this.show_detail_dater)
+      this.show_detail_dater = setTimeout(() => {
+        this.show_detail_date = false
+      }, 10e3)
     },
     caculaingDate() {
       if (!this.formApply.StampLeave) return {}
