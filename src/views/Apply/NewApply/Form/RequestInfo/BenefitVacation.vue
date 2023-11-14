@@ -5,7 +5,7 @@
         <el-collapse-item v-for="(item, index) in innerList" :key="index" :name="index">
           <template slot="title">
             <span v-if="item.name && item.length">{{ item.name }} {{ item.length }}天</span>
-            <span v-else>无效的信息</span>
+            <span v-else>请点击并填写其他假信息</span>
           </template>
           <el-form label-width="6rem">
             <el-form-item label="其他假">

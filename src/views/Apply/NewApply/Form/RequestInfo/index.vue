@@ -138,7 +138,6 @@
 
                   <span style="margin-left:1rem">预计归队</span>
                   <el-date-picker
-                    v-if="!show_detail_date"
                     v-model="formApply.StampReturn"
                     disabled
                     placeholder="自动计算"
@@ -537,7 +536,7 @@ export default {
       this.$emit('update:submitId', null)
 
       const caculaingDate = this.caculaingDate()
-      if (caculaingDate.length < 0) return
+      if (caculaingDate.total <= 0) return
 
       let s = Object.assign({ id: this.userid }, this.formApply)
 
@@ -573,7 +572,7 @@ export default {
     updateChange() {
       const caculaingDate = this.caculaingDate()
       this.refreshVacation()
-      if (caculaingDate.length < 0) return
+      if (caculaingDate.total <= 0) return
       this.formApply.isArchitect = new Date(caculaingDate.start) <= new Date()
       let s = Object.assign({}, caculaingDate)
       const lawVacations = this.lawVacations
@@ -610,11 +609,12 @@ export default {
       const onTrip = parseInt(this.formApply.OnTripLength)
       let total = primary
       if (trip) total += onTrip
-      // if (benefit) total += benefits // 福利假不可累积法定节假日
+      if (benefit) total += benefits
       return {
         start: this.formApply.StampLeave,
-        length: total,
+        length: primary + onTrip, // 福利假不可累积法定节假日，只计算正休和路途
         benefits,
+        total,
         caculateLawvacation: benefit
       }
     }
