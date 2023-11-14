@@ -135,7 +135,6 @@
                   @change="updateChange"
                 />
                 <span>
-
                   <span style="margin-left:1rem">预计归队</span>
                   <el-date-picker
                     v-model="formApply.StampReturn"
@@ -151,18 +150,20 @@
             <el-form-item
               v-if="nowVacationType && nowVacationType.caculateBenefit"
             >
-              <el-collapse-transition
-                v-for="(item, i) in lawVacations"
-                :key="item.id"
-              >
-                <LawVacation
-                  v-model="lawVacations[i].useLength"
-                  :max-length="item.length"
-                  :name="item.name"
-                  :start="item.start"
-                  style="margin:0.2rem"
-                />
-              </el-collapse-transition>
+              <div style="display:flex">
+                <el-collapse-transition
+                  v-for="(item, i) in lawVacations"
+                  :key="item.id"
+                >
+                  <LawVacation
+                    v-model="lawVacations[i].useLength"
+                    :max-length="item.length"
+                    :name="item.name"
+                    :start="item.start"
+                    style="margin:0.2rem"
+                  />
+                </el-collapse-transition>
+              </div>
             </el-form-item>
             <el-form-item v-if="show_detail_date" label="预计归队">
               <div :style="{ width: '35rem' }" @mousemove="reset_detail_dater">

@@ -3,7 +3,7 @@
     <span style="font-weight:600">{{ name }}:{{ parseTime(start) }}</span>
     <span>
       <span>
-        <span v-if="length!==maxLength">当前为 {{ length }} 天 /</span>
+        <span v-if="length !== maxLength">当前为 {{ length }} 天 /</span>
         {{ maxLength }}天
       </span>
     </span>
@@ -59,10 +59,12 @@ export default {
 }
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 .mini-card {
   .el-card__body {
     padding: 0.5rem !important;
   }
+  width: 20rem;
+  height: 6rem;
 }
 </style>
