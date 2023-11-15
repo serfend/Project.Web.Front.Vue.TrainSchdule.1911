@@ -144,14 +144,7 @@
                 v-show="row.request.additialVacations.length > 0"
                 :key="i"
               >
-                <el-tooltip
-                  :content="
-                    v.officialAdditionId
-                      ? v.description
-                      : `用户个人创建(非法定节假日)，原因:${v.description}`
-                  "
-                  placement="left"
-                >
+                <el-tooltip :content="getAddiDesc(v)" placement="left">
                   <el-tag
                     :type="v.officialAdditionId ? 'primary' : 'warning'"
                   >{{ v.name }} {{ v.length }}天</el-tag>
@@ -314,6 +307,11 @@ export default {
     parseTime,
     relativeDate,
     datedifference,
+    getAddiDesc(v) {
+      let result = v.description
+      if (!v.officialAdditionId) result = `用户个人创建(非法定节假日):${result}`
+      return result
+    },
     check_has_additional(row) {
       if (!row) return false
       const { request } = row

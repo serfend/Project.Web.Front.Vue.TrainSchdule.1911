@@ -23,23 +23,35 @@
       </li>
       <li>
         <b>备注：</b>
-        <span>{{ innerData.description || '暂无' }}</span>
+        <span>{{ innerData.description || "暂无" }}</span>
       </li>
       <li>
         <b>其他假期：</b>
         <el-tooltip
-          v-if="innerData.additionals&&innerData.additionals.length>0"
+          v-if="innerData.additionals && innerData.additionals.length > 0"
           effect="light"
           placement="right"
         >
           <div slot="content">
-            <div
-              v-for="(v,i) in innerData.additionals"
-              :key="i"
-              :style="{color:v.description=='法定节假日'?'#13ce66':'#ff4949'}"
-            >{{ parseTime(v.start) }}:{{ v.name }} {{ v.length }}天</div>
+            <div v-for="(v, i) in innerData.additionals" :key="i">
+              <el-tooltip placement="right">
+                <template #content>
+                  <span v-if="!isOfficial(v)">用户个人创建</span>
+                  <span>{{ v.description }}</span>
+                </template>
+                <div :style="{ color: isOfficial(v) ? '#13ce66' : '#ff4949' }">
+                  <span>{{ parseTime(v.start) }}</span>
+                  <span>:</span>
+                  <span>{{ v.name }}</span>
+                  <span>{{ v.length }}</span>
+                  <span>天</span>
+                </div>
+              </el-tooltip>
+            </div>
           </div>
-          <span>{{ innerData.additionals.reduce((prev,cur)=>prev+cur.length,0) }}天</span>
+          <span>{{
+            innerData.additionals.reduce((prev, cur) => prev + cur.length, 0)
+          }}天</span>
         </el-tooltip>
         <span v-else>无</span>
       </li>
@@ -85,6 +97,9 @@ export default {
     }
   },
   methods: {
+    isOfficial(v) {
+      return v.officialAdditionId
+    },
     refresh() {
       const { userid } = this
       if (!userid) {
@@ -112,7 +127,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/styles/element-variables';
+@import "@/styles/element-variables";
 .tooltip-vacation {
   width: 260px;
   ul,
