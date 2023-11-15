@@ -1,16 +1,32 @@
 <template>
   <div>
-    <div v-if="currentUser&&currentUser.id">
+    <div v-if="currentUser && currentUser.id">
       <el-card>
         <el-card>
           <el-form>
             <el-form-item label="选择成员">
-              <UserSelector :code.sync="nowSelectRealName" default-info="未选择" style="display: inline; margin: 0 1rem 0 0" @change="handleCurrentChange" />
+              <UserSelector
+                :code.sync="nowSelectRealName"
+                default-info="未选择"
+                style="display: inline; margin: 0 1rem 0 0"
+                @change="handleCurrentChange"
+              />
             </el-form-item>
             <el-form-item label="选择单位">
-              <CompanySelector v-model="nowSelectCompany" placeholder="选择需要检查的单位" style="width: 40%" />
+              <CompanySelector
+                v-model="nowSelectCompany"
+                placeholder="选择需要检查的单位"
+                style="width: 40%"
+              />
             </el-form-item>
-            <el-button type="primary" :loading="loading" @click="requireLoadWaitToAuthRegisterUsers">刷新</el-button>
+            <el-form-item label="统计年份">
+              <el-date-picker v-model="vacationYear" type="year" />
+            </el-form-item>
+            <el-button
+              type="primary"
+              :loading="loading"
+              @click="requireLoadWaitToAuthRegisterUsers"
+            >刷新</el-button>
             <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
           </el-form>
         </el-card>
@@ -32,23 +48,48 @@
           <el-table-column type="selection" width="55" />
           <el-table-column label="姓名" width="100">
             <template slot-scope="scope">
-              <el-popover placement="right-start" trigger="hover" @show="scope.row.userHasShow = true">
-                <User :data="scope.row" :can-load-avatar="scope.row.userHasShow" />
+              <el-popover
+                placement="right-start"
+                trigger="hover"
+                @show="scope.row.userHasShow = true"
+              >
+                <User
+                  :data="scope.row"
+                  :can-load-avatar="scope.row.userHasShow"
+                />
                 <span slot="reference">{{ scope.row.realName }}</span>
               </el-popover>
             </template>
           </el-table-column>
           <el-table-column prop="dutiesName" label="职务" width="150" />
           <el-table-column label="全年假" width="70">
-            <template slot-scope="scope">{{ scope.row.vacation.yearlyLength }}天</template>
+            <template
+              slot-scope="scope"
+            >{{ scope.row.vacation.yearlyLength }}天</template>
           </el-table-column>
           <el-table-column label="路途" width="50">
-            <template slot-scope="scope">{{ scope.row.vacation.maxTripTimes }}次</template>
+            <template
+              slot-scope="scope"
+            >{{ scope.row.vacation.maxTripTimes }}次</template>
           </el-table-column>
           <el-table-column prop="accountAuthStatus" label="状态" width="100">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.accountAuthStatus == 1?'success': scope.row.accountAuthStatus == 0?'info':'danger'">
-                {{ scope.row.accountAuthStatus == 1 ? '已认证' : scope.row.accountAuthStatus == 0 ? '待认证' : '已退回' }}</el-tag>
+              <el-tag
+                :type="
+                  scope.row.accountAuthStatus == 1
+                    ? 'success'
+                    : scope.row.accountAuthStatus == 0
+                      ? 'info'
+                      : 'danger'
+                "
+              >
+                {{
+                  scope.row.accountAuthStatus == 1
+                    ? "已认证"
+                    : scope.row.accountAuthStatus == 0
+                      ? "待认证"
+                      : "已退回"
+                }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="vacation.description" label="休假详情描述">
@@ -62,7 +103,10 @@
             </template>
           </el-table-column>
         </el-table>
-        <Pagination :pagesetting.sync="MembersQuery.page" :total-count="MembersQueryTotalCount" />
+        <Pagination
+          :pagesetting.sync="MembersQuery.page"
+          :total-count="MembersQueryTotalCount"
+        />
       </el-card>
     </div>
 
@@ -71,17 +115,20 @@
       <el-tabs v-model="detail_pane">
         <el-tab-pane label="基本信息">
           <Register
-            v-if="detail_pane=='0'"
+            v-if="detail_pane == '0'"
             :user-info="current_select_id"
             @requireUpdate="requireLoadWaitToAuthRegisterUsers"
             @requireHide="approve_show = false"
           />
         </el-tab-pane>
         <el-tab-pane label="权限管理">
-          <UserPermission v-if="detail_pane=='1'" :user-id="current_select_id&&current_select_id.id" />
+          <UserPermission
+            v-if="detail_pane == '1'"
+            :user-id="current_select_id && current_select_id.id"
+          />
         </el-tab-pane>
         <el-tab-pane label="操作日志">
-          <div v-if="detail_pane=='2'">
+          <div v-if="detail_pane == '2'">
             <Loading />
           </div>
         </el-tab-pane>
@@ -101,7 +148,8 @@ export default {
   components: {
     UserSelector: () => import('@/components/User/UserSelector'),
     CompanySelector: () => import('@/components/Company/CompanySelector'),
-    VacationDescription: () => import('@/components/Vacation/VacationDescription'),
+    VacationDescription: () =>
+      import('@/components/Vacation/VacationDescription'),
     Pagination: () => import('@/components/Pagination'),
     Login: () => import('@/views/login'),
     User: () => import('@/components/User'),
@@ -127,25 +175,26 @@ export default {
     nowSelectCompany: null,
     loading: false,
     detail_pane: '',
-    currentFocusUsers: []
+    currentFocusUsers: [],
+    vacationYear: new Date() // 统计的年份
   }),
   computed: {
-    currentUser () {
+    currentUser() {
       return this.$store.state.user.data
     },
-    currentCmp () {
+    currentCmp() {
       return this.$store.state.user.companyid
     },
-    requireLoadWaitToAuthRegisterUsers () {
+    requireLoadWaitToAuthRegisterUsers() {
       return debounce(() => {
         this.loadWaitToAuthRegisterUsers()
       }, 500)
     },
     approve_show: {
-      get () {
+      get() {
         return this.current_select_id !== null
       },
-      set (val) {
+      set(val) {
         if (!val) {
           this.current_select_id = null
         }
@@ -154,7 +203,7 @@ export default {
   },
   watch: {
     currentCmp: {
-      handler (val) {
+      handler(val) {
         this.nowSelectCompany = {
           code: val
         }
@@ -162,8 +211,13 @@ export default {
       },
       immediate: true
     },
+    vacationYear: {
+      handler(v) {
+        this.requireLoadWaitToAuthRegisterUsers()
+      }
+    },
     nowSelectCompany: {
-      handler (val) {
+      handler(val) {
         if (val) {
           this.MembersQuery.page.pageIndex = 0
           this.requireLoadWaitToAuthRegisterUsers()
@@ -172,7 +226,7 @@ export default {
       immediate: true
     },
     MembersQuery: {
-      handler (val) {
+      handler(val) {
         if (val) {
           this.requireLoadWaitToAuthRegisterUsers()
         }
@@ -181,23 +235,27 @@ export default {
     }
   },
   methods: {
-    handleSelectionChange (v) {
+    handleSelectionChange(v) {
       this.currentFocusUsers = v
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       // console.log('approve user change to', val)
       if (!val) return
       this.current_select_id = val
     },
-    async loadSingleUser () {
+    async loadSingleUser() {
       const fn = []
+      const { vacationYear } = this
       for (let i = 0; i < this.waitToAuthRegisterUsers.length; i++) {
         fn.push(
           new Promise((resolve, reject) => {
             const item = this.waitToAuthRegisterUsers[i]
             return Promise.all([
               getUserAvatar(item.id),
-              getUsersVacationLimit({ userid: item.id })
+              getUsersVacationLimit({
+                userid: item.id,
+                vacationYear: vacationYear.getFullYear()
+              })
             ])
               .then(([avatar, vacation]) => {
                 item.avatar = avatar.url
@@ -210,7 +268,7 @@ export default {
       }
       await Promise.all(fn)
     },
-    loadUserList (list) {
+    loadUserList(list) {
       const result = list.map(item => {
         const obj = {
           userHasShow: false,
@@ -223,7 +281,7 @@ export default {
       return result
     },
     // 刷新待认证人员列表
-    async loadWaitToAuthRegisterUsers () {
+    async loadWaitToAuthRegisterUsers() {
       this.loading = true
       const code = this.nowSelectCompany.code
       const { MembersQuery } = this
@@ -245,5 +303,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/animation.scss';
+@import "@/styles/animation.scss";
 </style>
