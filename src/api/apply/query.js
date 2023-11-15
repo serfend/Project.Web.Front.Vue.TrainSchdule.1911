@@ -35,7 +35,7 @@ const getRankFunc = (api, g) => {
  */
 export function getRankType() {
   const url = `${apiRank}/rankTypes`
-  return cached_data(url, (e) => request.get(url), null)
+  return cached_data(url, e => request.get(url), null)
 }
 
 /**
@@ -110,18 +110,18 @@ export function createQueryApplyModel({ data, pages, entityType }) {
     pages: Object.assign({}, pages),
     entityType
   }
-  const userStatus =
-    (data.isMarried ? 1 : 0) |
-    (data.isApart ? 2 : 0)
+  const userStatus = (data.isMarried ? 1 : 0) | (data.isApart ? 2 : 0)
   if (userStatus) f.userStatus = form.toQueryArrays([userStatus])
-  const companyStatus =
-    (data.isRemote ? 1 : 0)
+  const companyStatus = data.isRemote ? 1 : 0
   if (companyStatus) f.companyStatus = form.toQueryArrays([companyStatus])
   f.create = form.toQueryStartEndByArray(data.createTime)
   f.stampLeave = form.toQueryStartEndByArray(data.stampLeaveTime)
   f.stampReturn = form.toQueryStartEndByArray(data.stampReturnTime)
   f.status = form.toQueryArrays(data.status)
-  f.mainStatus = (undefined === data.mainStatus || data.mainStatus < 0) ? null : { start: data.mainStatus }
+  f.mainStatus =
+    undefined === data.mainStatus || data.mainStatus < 0
+      ? null
+      : { start: data.mainStatus }
   f.executeStatus = form.toQueryValue(data.executeStatus)
   f.auditBy = form.toQueryValue(data.auditBy)
   f.nowAuditBy = form.toQueryValue(data.nowAuditBy)
@@ -131,7 +131,10 @@ export function createQueryApplyModel({ data, pages, entityType }) {
     f.companyType = form.toQueryArrays(data.companyType)
   }
   f.createFor = form.toQueryValue(data.createFor)
-  f.vacationAdminDivision = form.toQueryStartEndByArray([data.vacationAdminDivision && data.vacationAdminDivision.code, 0])
+  f.vacationAdminDivision = form.toQueryStartEndByArray([
+    data.vacationAdminDivision && data.vacationAdminDivision.code,
+    0
+  ])
   f.requestCounts = form.toQueryStartEndByArray(data.requestCounts)
   f.auth = data.auth
   return f
@@ -146,7 +149,13 @@ export function createQueryApplyModel({ data, pages, entityType }) {
  * @param {String} actionStatus 我的状态：accept,deny,unreceive,received,null
  * @param {int} executeStatus 落实状态
  */
-export function queryMyAudit({ pages, status, actionStatus, executeStatus, entityType }) {
+export function queryMyAudit({
+  pages,
+  status,
+  actionStatus,
+  executeStatus,
+  entityType
+}) {
   pages = pages || {
     pageIndex: 0,
     pageSize: 20
@@ -174,10 +183,12 @@ export function queryMyAudit({ pages, status, actionStatus, executeStatus, entit
  * @param {String} entityType 申请类型/应用名称
  */
 export function querySelf({ pages, id, start, end, entityType }) {
-  pages = (!pages) ? {
-    pageIndex: 0,
-    pageSize: 20
-  } : pages
+  pages = !pages
+    ? {
+      pageIndex: 0,
+      pageSize: 20
+    }
+    : pages
   return request.get(`/apply/listOfSelf/${entityType}`, {
     params: {
       id,
@@ -203,11 +214,21 @@ export function detail({ id, ignoreError, entityType }) {
         id
       },
       ignoreError
-    }).then(data => {
-      const model = data.model || {}
-      if (!model.requestInfo) model.requestInfo = {}
-      model.requestInfo.additialVacations = model.requestAdditional
-      res(model)
-    }).catch(e => rej(e))
+    })
+      .then(data => {
+        const model = data.model || {}
+        if (!model.requestInfo) model.requestInfo = {}
+        model.requestInfo.additialVacations = model.requestAdditional
+        res(model)
+      })
+      .catch(e => rej(e))
+  })
+}
+
+export function get_apply_additional({ requestId, entityType }) {
+  return request.get(`/apply/applyAdditional/${entityType}`, {
+    params: {
+      id: requestId
+    }
   })
 }

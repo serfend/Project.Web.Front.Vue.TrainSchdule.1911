@@ -9,13 +9,16 @@
       stripe
       header-align="center"
       :span-method="arraySpanMethod"
-      :cell-style="{padding:0}"
+      :cell-style="{ padding: 0 }"
       @row-dblclick="showDetail"
     >
       <el-table-column type="selection" />
       <el-table-column label="基本" width="140rem">
         <template slot-scope="{ row }">
-          <component :is="!rowCanShow(row) ? 'ElTooltip' : 'div'" effect="light">
+          <component
+            :is="!rowCanShow(row) ? 'ElTooltip' : 'div'"
+            effect="light"
+          >
             <div slot="content">
               <VacationType
                 v-if="rowCanShow(row)"
@@ -35,7 +38,9 @@
                 letter-spacing: 1rem;
                 text-align: center;
               "
-            >申请已被撤回</div>
+            >
+              申请已被撤回
+            </div>
           </component>
         </template>
       </el-table-column>
@@ -44,22 +49,42 @@
           <ApplyCompany :data="row.base" />
         </template>
       </el-table-column>
-      <el-table-column header-align="center" align="center" label="创建时间" width="150rem">
+      <el-table-column
+        header-align="center"
+        align="center"
+        label="创建时间"
+        width="150rem"
+      >
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <el-tooltip effect="light" :content="`创建于:${row.create}`">
             <span style="font-size:0.6rem">{{ formatTime(row.create) }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column header-align="center" align="center" label="休假时间" width="220rem">
+      <el-table-column
+        header-align="center"
+        align="center"
+        label="休假时间"
+        width="220rem"
+      >
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <span>
-            <el-tooltip effect="light" :content="`离队时间:${parseTime(row.stampLeave)}`">
-              <span style="font-size:0.6rem">{{ relativeDate(row.stampLeave,null,true) }}</span>
+            <el-tooltip
+              effect="light"
+              :content="`离队时间:${parseTime(row.stampLeave)}`"
+            >
+              <span style="font-size:0.6rem">{{
+                relativeDate(row.stampLeave, null, true)
+              }}</span>
             </el-tooltip>
             <span>-</span>
-            <el-tooltip effect="light" :content="`归队时间:${parseTime(row.stampReturn)}`">
-              <span style="font-size:0.6rem">{{ relativeDate(row.stampReturn,null,true) }}</span>
+            <el-tooltip
+              effect="light"
+              :content="`归队时间:${parseTime(row.stampReturn)}`"
+            >
+              <span style="font-size:0.6rem">{{
+                relativeDate(row.stampReturn, null, true)
+              }}</span>
             </el-tooltip>
           </span>
         </template>
@@ -70,7 +95,9 @@
             <div slot="content">
               <div v-if="row.request.vacationPlaceName">
                 <b>详细地址</b>
-                <span style="width:10rem">{{ row.request.vacationPlaceName }}</span>
+                <span style="width:10rem">{{
+                  row.request.vacationPlaceName
+                }}</span>
               </div>
               <div v-if="row.request.reason">
                 <b>休假原因</b>
@@ -85,23 +112,23 @@
                 <p style="width:10rem">{{ row.request.vacationDescription }}</p>
               </div>
             </div>
-            <span>{{ row.request.vacationPlace ? row.request.vacationPlace.name : '未选择' }}</span>
+            <span>{{
+              row.request.vacationPlace
+                ? row.request.vacationPlace.name
+                : "未选择"
+            }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column align="center" label="休假总天数" width="120rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <el-dropdown>
+          <el-dropdown @mouseenter.native="onLoadAdditional(row)">
             <span class="el-dropdown-link">
               <span
                 :style="{
-                  color:
-                    row.request.additialVacations &&
-                    row.request.additialVacations.length > 0
-                      ? '#3a3'
-                      : '#333',
+                  color: check_has_additional(row) ? '#3a3' : '#333'
                 }"
-              >{{ datedifference( row.request.stampReturn, row.request.stampLeave ) + 1 }}天</span>
+              >{{ check_total_length(row) }}天</span>
               <i class="el-icon-arrow-down el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -119,16 +146,14 @@
               >
                 <el-tooltip
                   :content="
-                    v.description == '法定节假日'
+                    v.officialAdditionId
                       ? v.description
                       : `用户个人创建(非法定节假日)，原因:${v.description}`
                   "
                   placement="left"
                 >
                   <el-tag
-                    :type="
-                      v.description == '法定节假日' ? 'primary' : 'warning'
-                    "
+                    :type="v.officialAdditionId ? 'primary' : 'warning'"
                   >{{ v.name }} {{ v.length }}天</el-tag>
                 </el-tooltip>
               </el-dropdown-item>
@@ -165,7 +190,12 @@
                 class="white--text"
               >补充申请</el-tag>
             </el-tooltip>
-            <el-tag v-if="row.type.isPlan" size="mini" color="#cccccc" class="white--text">计划</el-tag>
+            <el-tag
+              v-if="row.type.isPlan"
+              size="mini"
+              color="#cccccc"
+              class="white--text"
+            >计划</el-tag>
             <slot :row="row" name="action" />
           </span>
         </template>
@@ -190,7 +220,10 @@
     />
     <el-dialog :visible.sync="apply_detail_focus" width="80%">
       <h1 slot="title" style="text-align:center">详细信息</h1>
-      <component :is="`${entityType}ApplyDetail`" :focus-id="apply_detail_focus_id" />
+      <component
+        :is="`${entityType}ApplyDetail`"
+        :focus-id="apply_detail_focus_id"
+      />
     </el-dialog>
     <div style="height:3rem" />
   </div>
@@ -199,6 +232,7 @@
 <script>
 import { formatTime, relativeDate, parseTime, datedifference } from '@/utils'
 import { get_item_type } from '@/utils/vacation'
+import { get_apply_additional } from '@/api/apply/query'
 export default {
   name: 'ApplicationList',
   components: {
@@ -211,7 +245,8 @@ export default {
       import('@/views/Apply/ApplyDetail/VacationApplyDetail'),
     indayApplyDetail: () =>
       import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
-    TransportationType: () => import('@/components/Vacation/TransportationType'),
+    TransportationType: () =>
+      import('@/components/Vacation/TransportationType'),
     ApplyCompany: () => import('../../CommonComponents/ApplyCompany')
   },
   props: {
@@ -279,6 +314,31 @@ export default {
     parseTime,
     relativeDate,
     datedifference,
+    check_has_additional(row) {
+      if (!row) return false
+      const { request } = row
+      if (!request) return false
+      const { onTripLength, vacationLength } = request
+      const total = this.check_total_length(row)
+      return onTripLength + vacationLength < total
+    },
+    check_total_length(row) {
+      if (!row) return 0
+      const { request } = row
+      if (!request) return 0
+      return datedifference(request.stampReturn, request.stampLeave) + 1
+    },
+    onLoadAdditional(item) {
+      if (!item) return false
+      const { request } = item
+      if (!request) return
+      get_apply_additional({
+        requestId: request.id,
+        entityType: this.entityType
+      }).then(data => {
+        this.$set(item.request, 'additialVacations', data.list)
+      })
+    },
     requireUpdate(selections) {
       this.$emit('updated', selections)
     },
@@ -351,5 +411,4 @@ export default {
 }
 </script>
 
-<style lang='scss'>
-</style>
+<style lang="scss"></style>
