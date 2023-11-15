@@ -19,8 +19,7 @@ export function getUserSummary(id, ignoreErr) {
       ignoreError: ignoreErr
     })
 
-  return id ? cached_data(`${urlGetUserSummary}/${id}`, action
-  ) : action()
+  return id ? cached_data(`${urlGetUserSummary}/${id}`, action) : action()
 }
 const urlGetUserBase = `${api}/base`
 /**
@@ -161,7 +160,14 @@ export function getUserIdByCid(cid, ignoreErr) {
  * @param {Boolean} fuzz
  * @returns
  */
-export function getUserIdByRealName({ realName, pageIndex, pageSize, ignoreErr, fuzz, withRemoved }) {
+export function getUserIdByRealName({
+  realName,
+  pageIndex,
+  pageSize,
+  ignoreErr,
+  fuzz,
+  withRemoved
+}) {
   return request.get('/account/GetUserIdByRealName', {
     params: {
       realName,
@@ -173,22 +179,48 @@ export function getUserIdByRealName({ realName, pageIndex, pageSize, ignoreErr, 
     ignoreError: ignoreErr
   })
 }
-const url_getUsersVacationLimit = `${api}/vacation`
+const url_getUsersVacationLimit = `${api}/vacationAddtional`
 /**
  * 获取用户休假限制时长和次数
  * @param {*} userid 用户名
  * @param {*} vacationYear 休假年度
  */
-export function getUsersVacationLimit({ userid, vacationYear, isPlan, ignoreErr }) {
-  return cached_data(`${url_getUsersVacationLimit}/${userid}/${vacationYear}/${isPlan}`, () =>
-    request.get(url_getUsersVacationLimit, {
-      params: {
-        id: userid,
-        vacationYear,
-        isPlan
-      },
-      ignoreError: ignoreErr
-    })
+export function getUsersVacationLimit({
+  userid,
+  vacationYear,
+  isPlan,
+  ignoreErr
+}) {
+  return cached_data(
+    `${url_getUsersVacationLimit}/${userid}/${vacationYear}/${isPlan}`,
+    () =>
+      new Promise((res, rej) => {
+        request
+          .get(url_getUsersVacationLimit, {
+            params: {
+              id: userid,
+              vacationYear,
+              isPlan
+            },
+            ignoreError: ignoreErr
+          })
+          .then(data => {
+            const model = data.model || {}
+            const result = {
+              yearlyLength: 0,
+              nowTimes: 0,
+              leftLength: 0,
+              onTripTimes: 0,
+              maxTripTimes: 0,
+              ...model.vacationInfo,
+              additionals: model.additionals
+            }
+            res(result)
+          })
+          .catch(e => {
+            rej(e)
+          })
+      })
   )
 }
 const url_getUserAvatar = `${api}/avatar`
@@ -219,11 +251,15 @@ export function getUserAvatar(id, avatarId, ignoreErr) {
  * @returns
  */
 export function postUserAvatar(newAvatar, ignoreErr) {
-  return request.post('/users/avatar', {
-    url: newAvatar
-  }, {
-    ignoreError: ignoreErr
-  })
+  return request.post(
+    '/users/avatar',
+    {
+      url: newAvatar
+    },
+    {
+      ignoreError: ignoreErr
+    }
+  )
 }
 
 /**

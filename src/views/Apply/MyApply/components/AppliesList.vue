@@ -230,11 +230,11 @@ export default {
     applyUpdate(index, id) {
       detail({ id, ignoreError: true, entityType: this.entityType })
         .then(data => {
-          if (!data || !data.model) return
-          data.model.show = false
+          if (!data) return
+          data.show = false
           this.innerList[index] = Object.assign(
             this.innerList[index],
-            data.model
+            data
           )
           setTimeout(() => {
             this.innerList[index].show = true

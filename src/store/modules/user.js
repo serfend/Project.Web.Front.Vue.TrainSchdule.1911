@@ -175,14 +175,7 @@ const actions = {
   }) {
     return new Promise((resolve, reject) => {
       getUsersVacationLimit({ ignoreErr: true }).then(data => {
-        commit('SET_VACA', {
-          yearlyLength: 0,
-          nowTimes: 0,
-          leftLength: 0,
-          onTripTimes: 0,
-          maxTripTimes: 0,
-          ...data
-        })
+        commit('SET_VACA', data)
         return resolve()
       }).catch(() => {
         return reject()

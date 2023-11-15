@@ -197,10 +197,17 @@ export function querySelf({ pages, id, start, end, entityType }) {
  * @returns
  */
 export function detail({ id, ignoreError, entityType }) {
-  return request(`/apply/detail/${entityType}`, {
-    params: {
-      id
-    },
-    ignoreError
+  return new Promise((res, rej) => {
+    request(`/apply/detail/${entityType}`, {
+      params: {
+        id
+      },
+      ignoreError
+    }).then(data => {
+      const model = data.model || {}
+      if (!model.requestInfo) model.requestInfo = {}
+      model.requestInfo.additialVacations = model.requestAdditional
+      res(model)
+    }).catch(e => rej(e))
   })
 }

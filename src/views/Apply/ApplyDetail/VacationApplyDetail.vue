@@ -256,8 +256,6 @@ export default {
       this.detail = null
       const entityType = this.entityType
       const loadDetail = detail({ id, entityType }).then(data => {
-        data = data.model
-        if (!data.requestInfo) data.requestInfo = {}
         data.request = data.requestInfo
         if (data.request) {
           data.stampReturn = new Date(data.request.stampReturn)

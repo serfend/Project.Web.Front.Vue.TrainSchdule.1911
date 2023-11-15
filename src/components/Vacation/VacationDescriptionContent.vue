@@ -93,14 +93,7 @@ export default {
       this.loading = true
       getUsersVacationLimit({ userid })
         .then(data => {
-          this.innerData = {
-            yearlyLength: 0,
-            nowTimes: 0,
-            leftLength: 0,
-            onTripTimes: 0,
-            maxTripTimes: 0,
-            ...data
-          }
+          this.innerData = data
           this.loading_result = null
           this.$emit('update:usersVacation', this.innerData)
         })

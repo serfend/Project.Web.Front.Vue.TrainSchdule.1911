@@ -74,7 +74,7 @@ export default {
       this.loading = true
       detail({ id, entityType })
         .then(d => {
-          this.data = d.model
+          this.data = d
         })
         .finally(() => {
           this.loading = false
