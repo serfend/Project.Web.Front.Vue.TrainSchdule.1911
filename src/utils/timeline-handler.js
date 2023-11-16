@@ -25,14 +25,15 @@ export function put_label(item, from_now) {
 }
 
 /**
- * 获取一个列表的按日期排序
+ * 获取一个列表的按日期归类
  * 着重各月份之间的间隔（朋友圈样式）
+ * 如果需要调整列表各项的顺序，需要使用tag_all_item
  * @export
  * @param {*} list 列表
  * @param {*} index 目标项
  * @param {*} item_time_getter 如何获取每项的时间
  */
-export function tag_single_item(list, index, item_time_getter) {
+export function tag_single_item (list, index, item_time_getter) {
   if (!item_time_getter) item_time_getter = i => new Date((i.request && i.request.stampLeave) || i.create)
   const item = list[index]
   if (item.tag && item.tag.labeled) return
@@ -43,7 +44,7 @@ export function tag_single_item(list, index, item_time_getter) {
 }
 
 /**
- * 对一个列表实施按日期排序，见
+ * 对一个列表实施按日期归类，见
  * tag_single_item
  *
  * @export
@@ -53,6 +54,7 @@ export function tag_single_item(list, index, item_time_getter) {
  */
 export function tag_all_item(list, item_time_getter) {
   if (!item_time_getter) item_time_getter = i => new Date((i.request && i.request.stampLeave) || i.create)
+  list.sort((a, b) => item_time_getter(b) - item_time_getter(a))
   list.forEach((v, i) => tag_single_item(list, i, item_time_getter))
   return list
 }

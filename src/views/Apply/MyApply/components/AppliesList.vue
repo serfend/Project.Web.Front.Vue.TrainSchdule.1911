@@ -93,7 +93,7 @@
 import { formatTime, datedifference } from '@/utils'
 import { querySelf, detail } from '@/api/apply/query'
 import { get_item_summary } from '@/utils/vacation'
-import { tag_single_item } from '@/utils/timeline-handler'
+import { tag_all_item } from '@/utils/timeline-handler'
 import { getUserAllInfo } from '@/api/user/usercompany'
 import { indayApplyExecuteStatusDesc } from '@/utils/vacation'
 export default {
@@ -256,7 +256,7 @@ export default {
             v.show = false
             return v
           })
-          newList.map((v, i) => tag_single_item(newList, i))
+          tag_all_item(newList)
           this.iList = this.iList.concat(newList)
           if (data.list.length < pages.pageSize) {
             this.haveNext = false
