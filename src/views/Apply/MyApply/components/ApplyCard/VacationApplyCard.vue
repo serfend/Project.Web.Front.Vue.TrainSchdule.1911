@@ -51,7 +51,7 @@
 
 <script>
 import { parseTime, formatTime, datedifference } from '@/utils'
-
+import { get_apply_additional } from '@/api/apply/query'
 export default {
   name: 'ApplyCard',
   components: {
@@ -70,7 +70,7 @@ export default {
   data: () => ({
     entityType: 'vacation',
     innerData: null,
-    firstShow: true
+    firstShow: true,
   }),
   computed: {
     percent () {
@@ -105,7 +105,7 @@ export default {
     show: {
       handler (val) {
         if (val) {
-          this.firstShow = false
+          this.onFocus()
         }
       },
       immediate: true
@@ -113,6 +113,22 @@ export default {
   },
   methods: {
     datedifference,
+    onFocus() {
+      if (!this.firstShow) return
+      this.firstShow = false
+      this.onLoadAdditional(this.innerData)
+    },
+    onLoadAdditional(item) {
+      if (!item) return false
+      const { request } = item
+      if (!request) return
+      get_apply_additional({
+        requestId: request.id,
+        entityType: this.entityType
+      }).then(data => {
+        this.$set(item.request, 'additialVacations', data.list)
+      })
+    },
     openDetail(id) {
       const { applyDetailUrl } = this
       window.open(applyDetailUrl(id))
