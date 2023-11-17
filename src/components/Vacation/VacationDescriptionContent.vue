@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading">
+  <div v-loading="loading" :class="smaller ? 'smaller-card' : ''">
     <ul v-if="!loading_result" class="tooltip-vacation">
       <li>
         <b>全年假期天数：</b>
@@ -67,14 +67,10 @@ export default {
   name: 'VacationDescriptionContent',
   components: {},
   props: {
-    usersVacation: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
+    usersVacation: { type: Object, default: () => ({}) },
     userid: { type: String, default: null },
-    loadingResult: { type: String, default: null }
+    loadingResult: { type: String, default: null },
+    smaller: { type: Boolean, default: true }
   },
   data: () => ({
     loading: false,
@@ -138,5 +134,9 @@ export default {
       color: $--color-primary;
     }
   }
+}
+.smaller-card {
+  font-size: 12px;
+  line-height: 18px;
 }
 </style>
