@@ -1,11 +1,26 @@
 <template>
   <div style="padding: 10px">
     <div v-if="detail && detail.id">
-      <el-dialog :visible.sync="show_share" title="分享休假申请详情" append-to-body>
-        <ClipboardShare default-content="我把我的休假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。" />
+      <el-dialog
+        :visible.sync="show_share"
+        title="分享休假申请详情"
+        append-to-body
+      >
+        <ClipboardShare
+          default-content="我把我的休假申请发给你啦~复制本段${key}打开系统查看。或点击链接${url} 到浏览器。"
+        />
       </el-dialog>
-      <el-button v-if="route_id" type="text" icon="el-icon-share" @click="show_share=true">分享此休假详情</el-button>
-      <el-button icon="el-icon-date" type="text" @click="showMyApplies = true">查看历史记录</el-button>
+      <el-button
+        v-if="route_id"
+        type="text"
+        icon="el-icon-share"
+        @click="show_share = true"
+      >分享此休假详情</el-button>
+      <el-button
+        icon="el-icon-date"
+        type="text"
+        @click="showMyApplies = true"
+      >查看历史记录</el-button>
       <ActionExamine
         :entity-type="entityType"
         :row="detail"
@@ -19,7 +34,12 @@
         @updated="updateDetail"
       />
     </div>
-    <el-drawer :visible.sync="showMyApplies" append-to-body size="80rem" direction="rtl">
+    <el-drawer
+      :visible.sync="showMyApplies"
+      append-to-body
+      size="80rem"
+      direction="rtl"
+    >
       <MyApply
         v-if="showMyApplies"
         :id="detail.base.id"
@@ -38,19 +58,34 @@
                 <el-tag
                   v-if="detail.request.vacationType"
                   effect="dark"
-                  :type="detail.request.vacationType === '正休'? 'primary': 'danger'"
+                  :type="
+                    detail.request.vacationType === '正休'
+                      ? 'primary'
+                      : 'danger'
+                  "
                 >{{ detail.request.vacationType }}</el-tag>
-                <el-tag v-if="detail.type.isPlan" color="#cccccc" class="white--text">计划</el-tag>
+                <el-tag
+                  v-if="detail.type.isPlan"
+                  color="#cccccc"
+                  class="white--text"
+                >计划</el-tag>
                 <div v-if="staticData.vacationStart">
                   <el-tooltip effect="light">
                     <template slot="content">
-                      <span>{{ staticData.vacationSpent }}/{{ staticData.vacationLength }}天</span>
+                      <span>{{ staticData.vacationSpent }}/{{
+                        staticData.vacationLength
+                      }}天</span>
                     </template>
-                    <el-col v-if="staticData.vacationSpent >= 0" :lg="6" :md="12" :sm="24">
-                      <el-progress :width="100" :percentage="staticData.vacationProgress" />
+                    <el-col
+                      v-if="staticData.vacationSpent >= 0"
+                      style="width:80%"
+                    >
+                      <el-progress :percentage="percent" />
                     </el-col>
 
-                    <span v-else>距离离队时间:{{ -staticData.vacationSpent }}天</span>
+                    <span
+                      v-else
+                    >距离离队时间:{{ -staticData.vacationSpent }}天</span>
                   </el-tooltip>
                 </div>
                 <span v-else>
@@ -61,17 +96,29 @@
                   >{{ statusDic[detail.status].desc }}</el-tag>
                 </span>
               </el-form-item>
-              <el-form-item label="原因">{{ detail.request.reason ? detail.request.reason : '未填写' }}</el-form-item>
+              <el-form-item label="原因">{{
+                detail.request.reason ? detail.request.reason : "未填写"
+              }}</el-form-item>
               <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
               <el-form-item label="假期天数">
                 <span>共{{ total }}天 | </span>
-                <span>{{ `净假期${detail.request.vacationLength}天 在途${detail.request.onTripLength}天` }}</span>
+                <span>{{
+                  `净假期${detail.request.vacationLength}天 在途${
+                    detail.request.onTripLength
+                  }天`
+                }}</span>
                 <el-tooltip
                   v-for="a in detail.request.additialVacations"
                   :key="a.id"
-                  :content="`开始于${parseTime(a.start)}的${a.length}天${a.name},${a.description}`"
+                  :content="
+                    `开始于${parseTime(a.start)}的${a.length}天${a.name},${
+                      a.description
+                    }`
+                  "
                 >
-                  <el-tag style="margin-left: 10px">{{ `${a.length}天${a.name}` }}</el-tag>
+                  <el-tag style="margin-left: 10px">{{
+                    `${a.length}天${a.name}`
+                  }}</el-tag>
                 </el-tooltip>
               </el-form-item>
               <el-form-item label="休假日期">
@@ -81,24 +128,41 @@
                 </span>
               </el-form-item>
               <el-form-item label="休假地点">
-                <span>{{ detail.request.vacationPlace && detail.request.vacationPlace.name }}</span>
-                <span
-                  v-if="detail.request.vacationPlaceName"
-                >{{ `(${detail.request.vacationPlaceName})` }}</span>
+                <span>{{
+                  detail.request.vacationPlace &&
+                    detail.request.vacationPlace.name
+                }}</span>
+                <span v-if="detail.request.vacationPlaceName">{{
+                  `(${detail.request.vacationPlaceName})`
+                }}</span>
               </el-form-item>
               <el-form-item label="交通工具">
                 <TransportationType v-model="detail.request.byTransportation" />
               </el-form-item>
             </el-form>
-            <el-progress :percentage="percent" :format="formatPercent" :stroke-width="24" text-inside />
-
           </el-col>
           <el-col :xl="8" :lg="8" hidden-md-only hidden-sm-only :xs="24">
             <el-form label-width="8rem">
-              <SettleFormItem :form.sync="settle.self" disabled label="本人所在地" />
-              <SettleFormItem :form.sync="settle.lover" disabled label="配偶所在地" />
-              <SettleFormItem :form.sync="settle.parent" disabled label="父母所在地" />
-              <SettleFormItem :form.sync="settle.loversParent" disabled label="配偶父母所在地" />
+              <SettleFormItem
+                :form.sync="settle.self"
+                disabled
+                label="本人所在地"
+              />
+              <SettleFormItem
+                :form.sync="settle.lover"
+                disabled
+                label="配偶所在地"
+              />
+              <SettleFormItem
+                :form.sync="settle.parent"
+                disabled
+                label="父母所在地"
+              />
+              <SettleFormItem
+                :form.sync="settle.loversParent"
+                disabled
+                label="配偶父母所在地"
+              />
             </el-form>
           </el-col>
           <el-col :xl="8" :lg="6" :md="4" :sm="12" :xs="24">
@@ -106,7 +170,23 @@
               :userid="detail.base.id"
               :direct-show-card="true"
               :can-load-avatar="true"
+              @expandChange="onFormExpand"
             />
+            <el-collapse-transition>
+              <el-card
+                v-if="detail && show_previous"
+                shadow="never"
+                style="width:350px;margin-top:0.5rem"
+                class="ribbon-container"
+              >
+                <div class="ribbon-entity">
+                  <span>历史休假状态</span>
+                </div>
+                <VacationDescriptionContent
+                  :users-vacation="detail.userVacationDescription"
+                />
+              </el-card>
+            </el-collapse-transition>
           </el-col>
         </el-row>
       </el-card>
@@ -139,8 +219,11 @@ export default {
       import('@/views/common/ClipboardMonitor/ClipboardShare'),
     ApplyComments: () => import('@/components/BiliComment'),
     UserFormItem: () => import('@/components/User/UserFormItem'),
-    TransportationType: () => import('@/components/Vacation/TransportationType'),
+    TransportationType: () =>
+      import('@/components/Vacation/TransportationType'),
     ApplyExecuteRecords: () => import('../ApplyExecuteRecords'),
+    VacationDescriptionContent: () =>
+      import('@/components/Vacation/VacationDescriptionContent')
   },
   props: {
     showUser: { type: Boolean, default: true },
@@ -156,6 +239,7 @@ export default {
     show_share: false,
     loading: false,
     showMyApplies: false,
+    show_previous: true,
     staticData: {
       vacationLength: 0,
       vacationSpent: 0,
@@ -171,24 +255,24 @@ export default {
       return this.detail.social.settle
     },
 
-    percent () {
+    percent() {
       const total = this.total
       const spent = this.spent
       if (total === 0) return 10
       if (spent < 0) return 0
       if (spent > total) return 100
-      return (spent / total) * 100
+      return Math.floor((spent / total) * 1e4) / 1e2
     },
-    total () {
+    total() {
       const request = this.detail.request
       if (!request) return 1
       return 1 + datedifference(request.stampReturn, request.stampLeave)
     },
-    spent () {
+    spent() {
       const request = this.detail.request
       if (!request) return 0
       return 1 + datedifference(new Date(), request.stampLeave)
-    },
+    }
   },
   watch: {
     focusId: {
@@ -220,6 +304,9 @@ export default {
     this.route_id = this.$route.query.id
   },
   methods: {
+    onFormExpand(v) {
+      this.show_previous = !v
+    },
     parseTime(date) {
       return parseTime(new Date(date), '{y}年{m}月{d}日')
     },
@@ -268,12 +355,7 @@ export default {
       loadDetail.finally(() => {
         this.loading = false
       })
-    },
-    formatPercent (val) {
-      if (this.spent <= 0) return '未开始'
-      if (val >= 100) return '已结束'
-      return `${this.spent}/${this.total}天`
-    },
+    }
   }
 }
 </script>
@@ -308,5 +390,32 @@ export default {
 
 .pull-right {
   float: right !important;
+}
+</style>
+<style scoped lang="scss">
+.ribbon-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.ribbon-entity {
+  right: -3rem;
+  top: 2rem;
+  background-color: #5bb1f9;
+  overflow: hidden;
+  white-space: nowrap;
+  box-shadow: 0 0 10px #999999;
+  position: absolute;
+  transform: rotate(45deg);
+}
+
+.ribbon-entity span {
+  border: 1px solid #5ea3f7;
+  text-align: center;
+  color: #fff;
+  display: block;
+  text-shadow: 0 0 5px #555555;
+  margin: 1px 0;
+  padding: 5px 50px;
 }
 </style>
