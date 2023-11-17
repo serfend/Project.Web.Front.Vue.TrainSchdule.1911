@@ -49,8 +49,19 @@
       />
     </el-drawer>
     <div style="padding-top: 0.5rem">
-      <el-card v-loading="loading" shadow="hover" class="content-card">
-        <h3 slot="header">本次休假</h3>
+      <el-card v-loading="loading" shadow="hover" class="content-card-first">
+        <h3 slot="header" style="display:flex">
+          <span style="margin-right:1rem">本次休假</span>
+          <span v-if="true||detail&&detail.baseInfo.createBy!=detail.baseInfo.userId" style="display:flex">
+            <span>代创建的申请，代理人：</span>
+            <UserFormItem
+              :userid="detail.baseInfo.createBy"
+              :direct-show-card="false"
+              :can-load-avatar="false"
+              type="warning"
+            />
+          </span>
+        </h3>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
           <el-col :xl="8" :lg="10" :md="12" :sm="12" :xs="24">
             <el-form v-if="detail.id" label-width="8rem">
@@ -137,7 +148,10 @@
                 }}</span>
               </el-form-item>
               <el-form-item label="出行方式">
-                <TransportationType v-model="detail.request.byTransportation" show-text />
+                <TransportationType
+                  v-model="detail.request.byTransportation"
+                  show-text
+                />
               </el-form-item>
             </el-form>
           </el-col>
@@ -361,10 +375,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.content-card {
-  padding-top: 20px;
+@mixin content-card-base() {
+
+}
+.content-card-first {
+  @include content-card-base;
 }
 
+.content-card {
+  margin-top: 20px;
+  @include content-card-base;
+}
 .audit-process- {
   &card {
     background: white;

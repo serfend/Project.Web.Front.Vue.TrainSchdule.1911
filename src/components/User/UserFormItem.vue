@@ -3,7 +3,7 @@
     <User v-if="directShowCard" ref="card" :data="innerData" :can-load-avatar="true" @expandChange="v=>$emit('expandChange',v)" />
     <el-popover v-else :placement="placement" width="200" trigger="hover" @show="isActive=true">
       <User v-if="isActive" ref="card" :data="innerData" :can-load-avatar="isActive" @expandChange="v=>$emit('expandChange',v)" />
-      <el-tag slot="reference" class="user-item" v-bind="$attrs">
+      <el-tag slot="reference" class="user-item" :type="type" v-bind="$attrs">
         <i class="el-icon-user-solid" />
         <span v-if="innerData">{{ innerData.realName }}</span>
         <span v-else>
@@ -26,7 +26,8 @@ export default {
     data: { type: Object, default: () => ({ realName: null }) },
     userid: { type: String, default: null },
     placement: { type: String, default: 'right' },
-    directShowCard: { type: Boolean, default: false }
+    directShowCard: { type: Boolean, default: false },
+    type: { type: String, default: 'primary' },
   },
   data: () => ({
     isActive: false,
