@@ -40,16 +40,18 @@
       </el-col>
     </el-row>
     <div v-else style="color:#888888;font-size:1em">加载中...</div>
-    <div v-if="!isHover" style="text-align:center;height:1rem">
-      <el-button type="text" @click="mouseEnter">展开更多</el-button>
-    </div>
-    <div v-else>
-      <el-divider />
-      <VacationDescriptionContent :userid="userid" style="font-size:12px;line-height:18px" />
-      <div style="text-align:center">
-        <el-button type="text" @click="mouseLeave">关闭</el-button>
+    <el-collapse-transition>
+      <div v-if="!isHover" key="1" style="text-align:center;height:1rem">
+        <el-button type="text" @click="switchExpand(true)">展开更多</el-button>
       </div>
-    </div>
+      <div v-else key="2">
+        <el-divider />
+        <VacationDescriptionContent :userid="userid" />
+        <div style="text-align:center">
+          <el-button type="text" @click="switchExpand(false)">关闭</el-button>
+        </div>
+      </div>
+    </el-collapse-transition>
   </el-card>
 </template>
 
@@ -66,7 +68,7 @@ export default {
     data: { type: Object, default: () => ({}) },
     canLoadAvatar: { type: Boolean, default: false },
     direction: { type: String, default: 'top' },
-    width: { type: String, default: '350px' }
+    width: { type: String, default: '350px' },
   },
   data: () => ({
     loading: false,
@@ -104,17 +106,15 @@ export default {
         this.refreshAvatar()
       },
       immediate: true
-    }
+    },
   },
   mounted() {
     this.refreshAvatar()
   },
   methods: {
-    mouseEnter() {
-      this.isHover = true
-    },
-    mouseLeave() {
-      this.isHover = false
+    switchExpand(expand = true) {
+      this.isHover = expand
+      this.$emit('expandChange', expand)
     },
     loadContactMe() {
       if (this.contactMeHasShow) return
