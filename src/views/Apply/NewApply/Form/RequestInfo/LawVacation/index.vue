@@ -65,6 +65,6 @@ export default {
     padding: 0.5rem !important;
   }
   width: 20rem;
-  height: 6rem;
+  height: 7rem;
 }
 </style>
