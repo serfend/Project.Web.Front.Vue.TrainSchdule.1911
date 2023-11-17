@@ -52,7 +52,7 @@
       <el-card v-loading="loading" shadow="hover" class="content-card-first">
         <h3 slot="header" style="display:flex">
           <span style="margin-right:1rem">本次休假</span>
-          <span v-if="true||detail&&detail.baseInfo.createBy!=detail.baseInfo.userId" style="display:flex">
+          <span v-if="detail&&detail.baseInfo.createBy!=detail.baseInfo.userId" style="display:flex">
             <span>代创建的申请，代理人：</span>
             <UserFormItem
               :userid="detail.baseInfo.createBy"

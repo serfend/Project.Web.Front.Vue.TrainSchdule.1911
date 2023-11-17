@@ -29,8 +29,17 @@
       />
     </el-drawer>
     <div style="padding-top: 0.5rem">
-      <el-card v-loading="loading" class="content-card" shadow="hover">
-        <h3 slot="header">本次请假</h3>
+      <el-card v-loading="loading" class="content-card-first" shadow="hover">
+        <span style="margin-right:1rem">本次请假</span>
+        <span v-if="detail&&detail.baseInfo.createBy!=detail.baseInfo.userId" style="display:flex">
+          <span>代创建的申请，代理人：</span>
+          <UserFormItem
+            :userid="detail.baseInfo.createBy"
+            :direct-show-card="false"
+            :can-load-avatar="false"
+            type="warning"
+          />
+        </span>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
           <el-col :xl="18" :lg="16" :md="14" :sm="12" :xs="24">
             <el-form label-width="8rem">
@@ -199,8 +208,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@mixin content-card-base() {
+
+}
+.content-card-first {
+  @include content-card-base;
+}
+
 .content-card {
-  padding-top: 20px;
+  margin-top: 20px;
+  @include content-card-base;
 }
 
 .audit-process- {
