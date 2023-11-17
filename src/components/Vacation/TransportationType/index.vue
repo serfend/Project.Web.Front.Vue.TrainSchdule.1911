@@ -1,7 +1,13 @@
 <template>
-  <el-tooltip :content="description">
-    <SvgIcon :icon-class="iconClass" />
-  </el-tooltip>
+  <span>
+    <el-tooltip v-if="!showText" :content="description">
+      <SvgIcon :icon-class="iconClass" />
+    </el-tooltip>
+    <span v-else>
+      <SvgIcon :icon-class="iconClass" />
+      <span>{{ description }}</span>
+    </span>
+  </span>
 </template>
 
 <script>
@@ -9,12 +15,10 @@ import transportationType from './types.js'
 export default {
   name: 'TransportationType',
   components: { SvgIcon: () => import('@/components/SvgIcon') },
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
+  model: { prop: 'value', event: 'change' },
   props: {
-    value: { type: Number, default: 0 }
+    value: { type: Number, default: 0 },
+    showText: { type: Boolean, default: false },
   },
   computed: {
     type() {

@@ -203,7 +203,7 @@
                 style="width:30rem"
               />
             </el-form-item>
-            <el-form-item label="交通工具">
+            <el-form-item label="出行方式">
               <el-select
                 v-model="formApply.ByTransportation"
                 placeholder="火车"

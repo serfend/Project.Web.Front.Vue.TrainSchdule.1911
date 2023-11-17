@@ -66,7 +66,7 @@
             <el-form-item label="详细地址">
               <el-input v-model="formApply.vacationPlaceName" style="width:30rem" />
             </el-form-item>
-            <el-form-item label="交通工具">
+            <el-form-item label="出行方式">
               <el-select v-model="formApply.ByTransportation">
                 <el-option
                   v-for="i in Object.keys(transportationTypes).filter(t=>t!=='default')"

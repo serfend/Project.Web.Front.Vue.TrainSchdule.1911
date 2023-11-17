@@ -136,8 +136,8 @@
                   `(${detail.request.vacationPlaceName})`
                 }}</span>
               </el-form-item>
-              <el-form-item label="交通工具">
-                <TransportationType v-model="detail.request.byTransportation" />
+              <el-form-item label="出行方式">
+                <TransportationType v-model="detail.request.byTransportation" show-text />
               </el-form-item>
             </el-form>
           </el-col>
