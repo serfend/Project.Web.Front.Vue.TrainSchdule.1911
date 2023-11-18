@@ -39,29 +39,6 @@
       </SubmitApply>
 
     </el-row>
-    <el-row>
-      <el-collapse v-show="nowStep>=1" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-        <el-collapse-item title="授权人">
-          <template slot="title">
-            <h2>历史记录</h2>
-          </template>
-          <div class="card-column">
-
-            <MyApply
-              v-if="userid"
-              :id="userid"
-              :entity-type="entityType"
-              :hide-user-card="true"
-              :hide-add-btn="true"
-            >
-              <template #inner>
-                <span />
-              </template>
-            </MyApply>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </el-row>
     <el-backtop
       target="#app"
       :bottom="100"
@@ -79,7 +56,6 @@ export default {
     RequestInfo: () => import('./Form/RequestIndayInfo'),
     VacationPreview: () => import('@/components/Vacation/VacationPreview'),
     SubmitApply: () => import('./Form/SubmitApply'),
-    MyApply: () => import('@/views/Apply/MyApply')
   },
   props: {
     defaultId: { type: String, default: null },
