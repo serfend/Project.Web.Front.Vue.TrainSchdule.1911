@@ -23,16 +23,18 @@
             </el-tooltip>
           </template>
           <template slot="description">
-            <div v-for="u in s.membersFitToAudit" :key="u">
-              <span v-if="user_should_show(u,s)">
+            <div v-if="userStatus">
+              <div v-for="u in s.membersFitToAudit" :key="u">
+                <span v-if="user_should_show(u,s)">
+                  <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
+                </span>
+              </div>
+              <div
+                v-for="u in s.membersAcceptToAudit.filter(i=>!s.membersFitToAudit.find(j=>j==i))"
+                :key="u"
+              >
                 <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
-              </span>
-            </div>
-            <div
-              v-for="u in s.membersAcceptToAudit.filter(i=>!s.membersFitToAudit.find(j=>j==i))"
-              :key="u"
-            >
-              <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
+              </div>
             </div>
           </template>
         </el-step>
@@ -63,7 +65,7 @@ export default {
     solutionName: null,
     streams: [],
     managers: {},
-    userStatus: []
+    userStatus: {}
   }),
   computed: {
     validateInfoInner: {
@@ -126,8 +128,7 @@ export default {
       })
     },
     user_should_show(u, s) {
-      const managers = this.managers
-      const userStatus = this.userStatus
+      const { managers, userStatus } = this
       const env_init = managers[s.firstMemberCompanyCode] && userStatus[s.index]
       if (!env_init) return false
       const is_manager = managers[s.firstMemberCompanyCode].indexOf(u) > -1
@@ -146,28 +147,27 @@ export default {
       this.initCompanyManager()
     },
     initUserStatus() {
-      this.userStatus = []
-      const streams = this.streams
-      for (let i = 0; i < streams.length; i++) {
-        const index = streams[i].index
+      this.userStatus = {}
+      this.streams.map((x, i) => {
+        const index = x.index
         if (!this.userStatus[index]) this.userStatus[index] = {}
         const dic = this.userStatus[index]
-        streams[i].membersFitToAudit.map(u => {
+        x.membersFitToAudit.map(u => {
           dic[u] = 'primary'
         })
-        streams[i].membersAcceptToAudit.map(u => {
+        x.membersAcceptToAudit.map(u => {
           dic[u] = 'success'
         })
-      }
+      })
     },
     initCompanyManagerDirect() {
-      const waitToLoad = []
-      const streams = this.streams
-      for (let i = 0; i < streams.length; i++) {
-        const mCode = streams[i].firstMemberCompanyCode
-        if (waitToLoad.indexOf(mCode) === -1) waitToLoad.push(mCode)
-      }
-      companiesManagers(waitToLoad).then(data => {
+      const waitToLoad = {}
+      this.streams.map(x => {
+        const mCode = x.firstMemberCompanyCode
+        if (!waitToLoad[mCode]) waitToLoad[mCode] = true
+      })
+      this.loading = true
+      companiesManagers(Object.keys(waitToLoad)).then(data => {
         Object.keys(data.companies).map(c => {
           if (!data.companies[c].list) {
             this.managers[c] = {}
@@ -183,27 +183,21 @@ export default {
       })
     },
     async initCompanyManager() {
-      const streams = this.streams
       const loadUserCompanyCodeActions = []
       const loadUserCompanyCodeActionsIndex = []
-      for (let i = 0; i < streams.length; i++) {
-        const s = streams[i]
-        if (!s.firstMemberCompanyCode && s.membersFitToAudit.length > 0) {
-          loadUserCompanyCodeActions.push(
-            getUserCompany(s.membersFitToAudit[0], true)
-          )
-          loadUserCompanyCodeActionsIndex.push(i)
-        }
-      }
-      if (loadUserCompanyCodeActions.length > 0) {
-        const datas = await Promise.all(loadUserCompanyCodeActions)
-        for (let i = 0; i < datas.length; i++) {
-          streams[loadUserCompanyCodeActionsIndex[i]].firstMemberCompanyCode =
-            datas[i].company.code
-        }
-      } else {
-        this.initCompanyManagerDirect()
-      }
+      this.streams.map((x, i) => {
+        if (x.firstMemberCompanyCode) return
+        if (!x.membersFitToAudit.length) return
+        const user_company = getUserCompany(x.membersFitToAudit[0], true)
+        loadUserCompanyCodeActions.push(user_company)
+        loadUserCompanyCodeActionsIndex.push(i)
+      })
+      if (!loadUserCompanyCodeActions.length) return this.initCompanyManagerDirect()
+      const datas = await Promise.all(loadUserCompanyCodeActions)
+      datas.map((x, i) => {
+        const index = loadUserCompanyCodeActionsIndex[i]
+        this.streams[index].firstMemberCompanyCode = datas[i].company.code
+      })
     }
   }
 }

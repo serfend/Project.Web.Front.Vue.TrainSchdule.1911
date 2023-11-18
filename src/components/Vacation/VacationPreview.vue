@@ -20,10 +20,11 @@
 </template>
 
 <script>
-import ApplyAuditStreamPreview from '@/components/ApplicationApply/ApplyAuditStreamPreview'
 export default {
   name: 'VacationPreview',
-  components: { ApplyAuditStreamPreview },
+  components: {
+    ApplyAuditStreamPreview: () => import('@/components/ApplicationApply/ApplyAuditStreamPreview')
+  },
   props: {
     userid: { type: String, default: null },
     entityType: { type: String, default: 'vacation' },
