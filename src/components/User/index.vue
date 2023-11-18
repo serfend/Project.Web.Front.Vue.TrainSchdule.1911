@@ -27,7 +27,7 @@
           :content="x[0]"
           placement="right"
         >
-          <span><i :class="x[1]" @click="onHandleAction(x[2])" /></span>
+          <span><i :class="x[1]" @click="onHandleAction(x)" /></span>
         </el-tooltip>
       </div>
       <el-dialog
@@ -81,9 +81,9 @@ export default {
     isOpened: false, // 是否展开了功能按钮
     actions: [
       ['与此人联系', 'el-icon-phone-outline', 'handleContact'],
-      ['管理个人信息', 'el-icon-setting', 'handleMgrProfile'],
-      ['历史休假记录', 'el-icon-s-check', 'handleHistoryVacation'],
-      ['历史请假记录', 'el-icon-coordinate', 'handleHistoryInday'],
+      ['管理个人信息', 'el-icon-setting', 'handleMgrProfile', '/settings/application-manage/user-manager'],
+      ['历史休假记录', 'el-icon-s-check', 'handleHistoryVacation', '/apply/vacation/myApply'],
+      ['历史请假记录', 'el-icon-coordinate', 'handleHistoryInday', '/apply/inday/myApply'],
       ['查看休假描述', 'el-icon-s-management', 'handleShowVacDesc']
     ]
   }),
@@ -96,10 +96,11 @@ export default {
     btn_actions() {
       const r = []
       const { actions } = this
+      const { path } = this.$route
       if (!this.contactMeHasShow) r.push(actions[0])
-      if (this.userid) r.push(actions[1])
-      if (this.userid) r.push(actions[2])
-      if (this.userid) r.push(actions[3])
+      if (path !== actions[1][3]) r.push(actions[1])
+      if (path !== actions[2][3]) r.push(actions[2])
+      if (path !== actions[3][3]) r.push(actions[3])
       if (!this.isHover) r.push(actions[4])
       return r
     }
@@ -133,20 +134,19 @@ export default {
     onHandleAction(action) {
       this.isOpened = false
       const { userid } = this
-      const short_action = {
-        handleShowVacDesc: () => this.switchExpand(!this.isHover),
-        handleContact: () => this.loadContactMe(),
-        handleHistoryInday: () =>
-          this.$router.push(`/apply/inday/myApply?userid=${userid}`),
-        handleHistoryVacation: () =>
-          this.$router.push(`/apply/vacation/myApply?userid=${userid}`),
-        handleMgrProfile: () =>
-          this.$router.push(
-            `/settings/application-manage/user-manager?userid=${userid}`
-          )
+      const goto_url = (url) => {
+        const target = `${url}?userid=${userid}`
+        this.$router.push(target)
       }
-      const f = short_action[action]
-      if (f) return f()
+      const short_action = {
+        handleShowVacDesc: (x) => this.switchExpand(!this.isHover),
+        handleContact: (x) => this.loadContactMe(),
+        handleHistoryInday: (x) => goto_url(x[3]),
+        handleHistoryVacation: (x) => goto_url(x[3]),
+        handleMgrProfile: (x) => goto_url(x[3]),
+      }
+      const f = short_action[action[2]]
+      if (f) return f(action)
       return this.$message.error(`非法的动作:${action}`)
     },
     switchExpand(expand = true) {
