@@ -203,6 +203,9 @@ export default {
 }
 </style>
 <style scoped lang="scss">
+@mixin common-shadow {
+  box-shadow: 2px 0px 5px rgba(180, 177, 184, 0.5);
+}
 .shell {
   border-radius: 5px;
   box-shadow: 0 0 0.5rem #babbbc;
@@ -261,19 +264,24 @@ export default {
   z-index: -1;
   transform: translate(-1rem, -2rem) rotate(-8deg);
   background-image: linear-gradient(to top, #38a9ff 0%, #ffb0f6 100%);
+  @include common-shadow;
 }
 @mixin text-decorate {
   font-weight: normal;
   margin-left: 3rem;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  line-height: 1rem;
 }
 .content .text {
+  width: 15rem;
+  overflow: hidden;
   z-index: 2;
   position: absolute;
   margin-top: 0.5rem;
   .header {
     @include text-decorate;
+    line-height: 1.8rem;
     font-size: 1.8rem;
     color: #ffffff;
   }
@@ -284,6 +292,8 @@ export default {
   }
   .description {
     @include text-decorate;
+    white-space: inactive; // 允许换行
+    height: 3rem; // 最多3行
     color: #e7eaef;
   }
 }
@@ -293,7 +303,7 @@ export default {
   position: absolute;
   transform: translateY(-1.2rem);
   font-size: 0.8rem;
-  color: #eaeaea;
+  color: #a3a3a3;
 }
 .content .btn {
   background-color: rgb(106, 106, 245);
@@ -324,7 +334,7 @@ export default {
 }
 
 .content .btn:hover {
-  box-shadow: 0 0 0 5px rgba(180, 177, 184, 0.5);
+  @include common-shadow;
 }
 
 .content .btn span {
@@ -390,7 +400,6 @@ export default {
     transform: translateY(-50%) rotate(180deg);
   }
 }
-
 .box {
   opacity: 0;
   border-radius: 50%;
@@ -431,7 +440,7 @@ export default {
   font-size: 2rem;
   text-align: center;
 
-  box-shadow: 2px 0px 5px rgba(180, 177, 184, 0.5);
+  @include common-shadow;
   color: rgb(106, 106, 245);
   background-color: #fff;
   transition-duration: 0.3s;
@@ -439,7 +448,7 @@ export default {
 
 .box i:hover {
   transition-delay: initial !important;
-  box-shadow: 2px 0px 5px rgba(180, 177, 184, 0.5);
+  @include common-shadow;
   background-color: rgb(106, 106, 245);
   color: #fff;
   cursor: pointer;
