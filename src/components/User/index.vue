@@ -81,9 +81,24 @@ export default {
     isOpened: false, // 是否展开了功能按钮
     actions: [
       ['与此人联系', 'el-icon-phone-outline', 'handleContact'],
-      ['管理个人信息', 'el-icon-setting', 'handleMgrProfile', '/settings/application-manage/user-manager'],
-      ['历史休假记录', 'el-icon-s-check', 'handleHistoryVacation', '/apply/vacation/myApply'],
-      ['历史请假记录', 'el-icon-coordinate', 'handleHistoryInday', '/apply/inday/myApply'],
+      [
+        '管理个人信息',
+        'el-icon-setting',
+        'handleMgrProfile',
+        '/settings/application-manage/user-manager'
+      ],
+      [
+        '历史休假记录',
+        'el-icon-s-check',
+        'handleHistoryVacation',
+        '/apply/vacation/myApply'
+      ],
+      [
+        '历史请假记录',
+        'el-icon-coordinate',
+        'handleHistoryInday',
+        '/apply/inday/myApply'
+      ],
       ['查看休假描述', 'el-icon-s-management', 'handleShowVacDesc']
     ]
   }),
@@ -134,16 +149,16 @@ export default {
     onHandleAction(action) {
       this.isOpened = false
       const { userid } = this
-      const goto_url = (url) => {
+      const goto_url = url => {
         const target = `${url}?userid=${userid}`
         this.$router.push(target)
       }
       const short_action = {
-        handleShowVacDesc: (x) => this.switchExpand(!this.isHover),
-        handleContact: (x) => this.loadContactMe(),
-        handleHistoryInday: (x) => goto_url(x[3]),
-        handleHistoryVacation: (x) => goto_url(x[3]),
-        handleMgrProfile: (x) => goto_url(x[3]),
+        handleShowVacDesc: x => this.switchExpand(!this.isHover),
+        handleContact: x => this.loadContactMe(),
+        handleHistoryInday: x => goto_url(x[3]),
+        handleHistoryVacation: x => goto_url(x[3]),
+        handleMgrProfile: x => goto_url(x[3])
       }
       const f = short_action[action[2]]
       if (f) return f(action)
@@ -182,6 +197,7 @@ export default {
 
 <style lang="scss" scoped>
 .card-item {
+  margin-left: 3rem;
   transition: all ease 0.5s;
   position: relative; // 独立布局本组件
 }
