@@ -52,8 +52,11 @@
       <el-card v-loading="loading" shadow="hover" class="content-card-first">
         <h3 slot="header" style="display:flex">
           <span style="margin-right:1rem">本次休假</span>
-          <span v-if="detail&&detail.baseInfo.createBy!=detail.baseInfo.userId" style="display:flex">
-            <span>代创建的申请，代理人：</span>
+          <span
+            v-if="detail && detail.baseInfo.createBy != detail.baseInfo.userId"
+            style="display:flex"
+          >
+            <span>（代创建）代理人：</span>
             <UserFormItem
               :userid="detail.baseInfo.createBy"
               :direct-show-card="false"
@@ -190,8 +193,7 @@
               <el-card
                 v-if="detail && show_previous"
                 shadow="never"
-                style="width:350px;margin-top:0.5rem"
-                class="ribbon-container"
+                class="ribbon-container description-layout"
               >
                 <div class="ribbon-entity">
                   <span>历史休假状态</span>
@@ -375,8 +377,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.description-layout {
+  width: 350px;
+  margin-top: 0.5rem;
+  margin-left: 3rem;
+}
 @mixin content-card-base() {
-
 }
 .content-card-first {
   @include content-card-base;
