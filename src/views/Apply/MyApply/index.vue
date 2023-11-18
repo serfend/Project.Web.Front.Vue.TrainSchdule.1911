@@ -118,6 +118,12 @@ export default {
       }
     }
   },
+  mounted() {
+    const { query } = this.$route
+    const usr = query && query.userid
+    if (!usr) return
+    this.iId = usr
+  },
   destroyed() {},
   methods: {
     reload() {
