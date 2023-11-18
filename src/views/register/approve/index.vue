@@ -125,7 +125,7 @@
         <el-tab-pane label="基本信息">
           <Register
             v-if="detail_pane == '0'"
-            :user-info="current_select_id"
+            :user-info="current_user_entity"
             @requireUpdate="requireLoadWaitToAuthRegisterUsers"
             @requireHide="approve_show = false"
           />
@@ -133,7 +133,7 @@
         <el-tab-pane label="权限管理">
           <UserPermission
             v-if="detail_pane == '1'"
-            :user-id="current_select_id && current_select_id.id"
+            :user-id="current_user_entity && current_user_entity.id"
           />
         </el-tab-pane>
         <el-tab-pane label="操作日志">
@@ -148,7 +148,7 @@
 
 <script>
 import { getMembers } from '@/api/company'
-import { getUsersVacationLimit, getUserAvatar } from '@/api/user/userinfo'
+import { getUsersVacationLimit, getUserAvatar, getUserSummary } from '@/api/user/userinfo'
 import { checkUserValid } from '@/utils/validate'
 import { debounce } from '@/utils'
 import { companyTypes } from '../components/dictionary'
@@ -181,12 +181,12 @@ export default {
     nowSelectRealName: '', // 通过姓名选择器选中的人员
     MembersQueryTotalCount: 0,
     waitToAuthRegisterUsers: [],
-    current_select_id: null,
+    current_user_entity: null,
     nowSelectCompany: null,
     loading: false,
     detail_pane: '',
     currentFocusUsers: [],
-    vacationYear: new Date(), // 统计的年份
+    vacationYear: new Date() // 统计的年份
   }),
   computed: {
     currentUser() {
@@ -202,11 +202,11 @@ export default {
     },
     approve_show: {
       get() {
-        return this.current_select_id !== null
+        return this.current_user_entity !== null
       },
       set(val) {
         if (!val) {
-          this.current_select_id = null
+          this.current_user_entity = null
         }
       }
     }
@@ -249,6 +249,21 @@ export default {
       deep: true
     }
   },
+  mounted() {
+    const { query } = this.$route
+    const usr = query && query.userid
+    if (!usr) return
+    const f = async () => {
+      const user_entity = await getUserSummary(usr)
+      // const users = [user_entity]
+      // await this.loadSingleUser(users)
+      this.handleCurrentChange(user_entity)
+      this.nowSelectCompany = {
+        code: user_entity.companyCode
+      }
+    }
+    f()
+  },
   methods: {
     handleSelectionChange(v) {
       this.currentFocusUsers = v
@@ -256,15 +271,15 @@ export default {
     handleCurrentChange(val) {
       // console.log('approve user change to', val)
       if (!val) return
-      this.current_select_id = val
+      this.current_user_entity = val
     },
-    async loadSingleUser() {
+    async loadSingleUser(targets) {
       const fn = []
       const { vacationYear } = this
-      for (let i = 0; i < this.waitToAuthRegisterUsers.length; i++) {
+      for (let i = 0; i < targets.length; i++) {
         fn.push(
           new Promise((resolve, reject) => {
-            const item = this.waitToAuthRegisterUsers[i]
+            const item = targets[i]
             return Promise.all([
               getUserAvatar(item.id),
               getUsersVacationLimit({
@@ -307,7 +322,7 @@ export default {
         .then(async data => {
           this.MembersQueryTotalCount = data.totalCount
           this.waitToAuthRegisterUsers = this.loadUserList(data.list)
-          await this.loadSingleUser()
+          await this.loadSingleUser(this.waitToAuthRegisterUsers)
         })
         .finally(() => {
           this.loading = false
