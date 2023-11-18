@@ -1,26 +1,43 @@
 <template>
   <div>
-    <el-tooltip>
-      <template slot="content">
-        <span>点击链接选择成员</span>
-        <span style="cursor:pointer" @click="clearSelect">清空</span>
-      </template>
-      <el-link type="info" @click="dialogVisible=true">
-        <span
-          v-loading="loading"
-          :class="[code?'active':'inactive']"
-          @mouseenter="forgetHasShow=true"
-        >{{ userRealName?userRealName:`${defaultInfo} ${code?code:''}` }}</span>
-      </el-link>
-    </el-tooltip>
-    <el-dialog v-if="forgetHasShow" title="搜索成员" :visible.sync="dialogVisible" append-to-body>
+    <span
+      style="cursor: pointer;display: flex;"
+      @click="dialogVisible = true"
+      @mouseenter="forgetHasShow = true"
+    >
+      <span style="line-height:2rem;">当前选中：</span>
+      <UserFormItem v-if="code" :userid="code" />
+      <span v-else :class="[code ? 'active' : 'inactive', 'sel-btn']">{{
+        `${defaultInfo} ${code ? code : ""}`
+      }}</span>
+    </span>
+    <el-dialog
+      v-if="forgetHasShow"
+      title="搜索成员"
+      :visible.sync="dialogVisible"
+      append-to-body
+    >
       <div>
         <el-tooltip content="选择后所有的成员选择器都将在选中人员后被关闭">
-          <el-switch v-model="closeOnSelectGlobal" active-text="全局选择后关闭" />
+          <el-switch
+            v-model="closeOnSelectGlobal"
+            active-text="全局选择后关闭"
+          />
         </el-tooltip>
-        <el-tooltip :content="current_selector_autoclose_desc" style="margin-left:1rem">
-          <el-switch v-model="closeOnSelectCurrent" :disabled="!selectName" active-text="此位置选择后关闭" />
+        <el-tooltip
+          :content="current_selector_autoclose_desc"
+          style="margin-left:1rem"
+        >
+          <el-switch
+            v-model="closeOnSelectCurrent"
+            :disabled="!selectName"
+            active-text="此位置选择后关闭"
+          />
         </el-tooltip>
+        <div v-if="code">
+          <span>当前选中:{{ userRealName || code }}</span>
+          <el-button type="text" @click="clearSelect">清除选中</el-button>
+        </div>
       </div>
       <el-divider />
       <FindUserByRealName
@@ -38,7 +55,8 @@ import { getUserBase } from '@/api/user/userinfo'
 export default {
   name: 'UserSelector',
   components: {
-    FindUserByRealName: () => import('@/components/User/FindUserByRealName')
+    FindUserByRealName: () => import('./FindUserByRealName'),
+    UserFormItem: () => import('./UserFormItem')
   },
   model: {
     prop: 'code',
@@ -148,7 +166,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/styles/element-variables';
+@import "@/styles/element-variables";
+.sel-btn {
+  text-decorate: underline;
+}
 .active {
   color: $--color-primary;
 }
