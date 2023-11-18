@@ -3,7 +3,15 @@
     <div v-if="currentUser && currentUser.id">
       <el-card>
         <el-card>
-          <el-form>
+          <el-form inline>
+            <el-form-item>
+              <el-button
+                type="primary"
+                :loading="loading"
+                @click="requireLoadWaitToAuthRegisterUsers"
+              >刷新</el-button>
+              <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
+            </el-form-item>
             <el-form-item label="选择成员">
               <UserSelector
                 :code.sync="nowSelectRealName"
@@ -12,22 +20,23 @@
                 @change="handleCurrentChange"
               />
             </el-form-item>
+            <el-form-item label="统计年份">
+              <el-date-picker
+                v-model="vacationYear"
+                type="year"
+                style="width: 7rem"
+              />
+            </el-form-item>
+            <el-form-item label="包含下级单位">
+              <el-switch v-model="MembersQuery.includeChild" />
+            </el-form-item>
             <el-form-item label="选择单位">
               <CompanySelector
                 v-model="nowSelectCompany"
                 placeholder="选择需要检查的单位"
-                style="width: 40%"
+                style="width: 20rem"
               />
             </el-form-item>
-            <el-form-item label="统计年份">
-              <el-date-picker v-model="vacationYear" type="year" />
-            </el-form-item>
-            <el-button
-              type="primary"
-              :loading="loading"
-              @click="requireLoadWaitToAuthRegisterUsers"
-            >刷新</el-button>
-            <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
           </el-form>
         </el-card>
         <BatchOperation
@@ -162,6 +171,7 @@ export default {
   data: () => ({
     MembersQuery: {
       userCompanyType: 0,
+      includeChild: false,
       page: {
         pageIndex: 0,
         pageSize: 10
@@ -176,7 +186,7 @@ export default {
     loading: false,
     detail_pane: '',
     currentFocusUsers: [],
-    vacationYear: new Date() // 统计的年份
+    vacationYear: new Date(), // 统计的年份
   }),
   computed: {
     currentUser() {
@@ -212,6 +222,11 @@ export default {
       immediate: true
     },
     vacationYear: {
+      handler(v) {
+        this.requireLoadWaitToAuthRegisterUsers()
+      }
+    },
+    includeChild: {
       handler(v) {
         this.requireLoadWaitToAuthRegisterUsers()
       }

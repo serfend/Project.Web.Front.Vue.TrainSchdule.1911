@@ -77,6 +77,7 @@ export function companiesManagers(ids) {
 export function getMembers({
   code,
   userCompanyType,
+  includeChild,
   withRemoved,
   pageIndex,
   pageSize,
@@ -85,6 +86,7 @@ export function getMembers({
     params: {
       code,
       userCompanyType,
+      includeChild,
       withRemoved,
       page: pageIndex,
       pageSize
