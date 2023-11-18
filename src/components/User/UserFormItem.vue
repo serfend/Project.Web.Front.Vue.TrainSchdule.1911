@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading">
     <User v-if="directShowCard" ref="card" :data="innerData" :can-load-avatar="true" @expandChange="v=>$emit('expandChange',v)" />
-    <el-popover v-else :placement="placement" width="200" trigger="hover" @show="isActive=true">
+    <el-popover v-else :placement="placement" trigger="hover" @show="isActive=true">
       <User v-if="isActive" ref="card" :data="innerData" :can-load-avatar="isActive" @expandChange="v=>$emit('expandChange',v)" />
       <el-tag slot="reference" class="user-item" :type="type" v-bind="$attrs">
         <i class="el-icon-user-solid" />
