@@ -169,6 +169,7 @@ export default {
     CompanyTypeSelector: () => import('../components/CompanyTypeSelector')
   },
   data: () => ({
+    isFromUrl: false,
     MembersQuery: {
       userCompanyType: 0,
       includeChild: false,
@@ -214,6 +215,7 @@ export default {
   watch: {
     currentCmp: {
       handler(val) {
+        if (this.isFromUrl) return
         this.nowSelectCompany = {
           code: val
         }
@@ -233,10 +235,9 @@ export default {
     },
     nowSelectCompany: {
       handler(val) {
-        if (val) {
-          this.MembersQuery.page.pageIndex = 0
-          this.requireLoadWaitToAuthRegisterUsers()
-        }
+        if (!val) return
+        this.MembersQuery.page.pageIndex = 0
+        this.requireLoadWaitToAuthRegisterUsers()
       },
       immediate: true
     },
@@ -253,10 +254,9 @@ export default {
     const { query } = this.$route
     const usr = query && query.userid
     if (!usr) return
+    this.isFromUrl = true
     const f = async () => {
       const user_entity = await getUserSummary(usr)
-      // const users = [user_entity]
-      // await this.loadSingleUser(users)
       this.handleCurrentChange(user_entity)
       this.nowSelectCompany = {
         code: user_entity.companyCode
