@@ -1,8 +1,27 @@
 <template>
   <span v-loading="loading">
-    <User v-if="directShowCard" ref="card" :data="innerData" :can-load-avatar="true" @expandChange="v=>$emit('expandChange',v)" />
-    <el-popover v-else :placement="placement" trigger="hover" @show="isActive=true">
-      <User v-if="isActive" ref="card" :data="innerData" :can-load-avatar="isActive" @expandChange="v=>$emit('expandChange',v)" />
+    <User
+      v-if="directShowCard"
+      ref="card"
+      :data="innerData"
+      :can-load-avatar="true"
+      :direct-expand-description="directExpandDescription"
+      @expandChange="v => $emit('expandChange', v)"
+    />
+    <el-popover
+      v-else
+      :placement="placement"
+      trigger="hover"
+      @show="isActive = true"
+    >
+      <User
+        v-if="isActive"
+        ref="card"
+        :data="innerData"
+        :can-load-avatar="isActive"
+        :direct-expand-description="directExpandDescription"
+        @expandChange="v => $emit('expandChange', v)"
+      />
       <el-tag slot="reference" class="user-item" :type="type" v-bind="$attrs">
         <i class="el-icon-user-solid" />
         <span v-if="innerData">{{ innerData.realName }}</span>
@@ -27,7 +46,8 @@ export default {
     userid: { type: String, default: null },
     placement: { type: String, default: 'right' },
     directShowCard: { type: Boolean, default: false },
-    type: { type: String, default: 'primary' },
+    directExpandDescription: { type: Boolean, default: false }, // 直接展开休假描述
+    type: { type: String, default: 'primary' }
   },
   data: () => ({
     isActive: false,

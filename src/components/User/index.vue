@@ -68,7 +68,8 @@ export default {
     data: { type: Object, default: () => ({}) },
     canLoadAvatar: { type: Boolean, default: false },
     direction: { type: String, default: 'top' },
-    width: { type: String, default: '350px' }
+    width: { type: String, default: '350px' },
+    directExpandDescription: { type: Boolean, default: false } // 直接展开休假描述
   },
   data: () => ({
     loading: false,
@@ -144,6 +145,11 @@ export default {
   },
   mounted() {
     this.refreshAvatar()
+    if (this.directExpandDescription) {
+      setTimeout(() => {
+        this.switchExpand(true)
+      }, 1e3)
+    }
   },
   methods: {
     onHandleAction(action) {
