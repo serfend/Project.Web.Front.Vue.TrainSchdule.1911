@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <span>
     <span
       style="cursor: pointer;display: flex;"
       @click="dialogVisible = true"
@@ -47,7 +47,7 @@
         @change="selectUserChanged"
       />
     </el-dialog>
-  </div>
+  </span>
 </template>
 
 <script>

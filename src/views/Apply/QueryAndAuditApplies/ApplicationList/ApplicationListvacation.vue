@@ -44,7 +44,7 @@
           </component>
         </template>
       </el-table-column>
-      <el-table-column header-align="center" label="部职别">
+      <el-table-column header-align="center" label="单位职务">
         <template slot-scope="{ row }">
           <ApplyCompany :data="row.base" />
         </template>

@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading">
+  <span v-loading="loading">
     <User v-if="directShowCard" ref="card" :data="innerData" :can-load-avatar="true" @expandChange="v=>$emit('expandChange',v)" />
     <el-popover v-else :placement="placement" trigger="hover" @show="isActive=true">
       <User v-if="isActive" ref="card" :data="innerData" :can-load-avatar="isActive" @expandChange="v=>$emit('expandChange',v)" />
@@ -13,7 +13,7 @@
         </span>
       </el-tag>
     </el-popover>
-  </div>
+  </span>
 </template>
 
 <script>
