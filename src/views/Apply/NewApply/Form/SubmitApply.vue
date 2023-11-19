@@ -99,7 +99,7 @@
           </div>
           <div class="item-put-center">
             <el-popover
-              v-for="(i, index) in errorList"
+              v-for="i in errorList"
               :key="i.id"
               trigger="hover"
               placement="top"
@@ -110,15 +110,14 @@
                 :can-show="i.can_show"
                 :show-user="false"
                 :show-comment="false"
-                :focus-id="i.id"
-                style="width:80rem"
+                :focus-id="conflict_detail(i).id"
+                style="width:120rem"
               />
               <template #reference>
                 <el-button
                   style="cursor:pointer;margin-left:0.3rem"
                   type="text"
-                  @click="show_detail(i)"
-                >点击查看[第{{ index + 1 }}个]发生冲突的申请</el-button>
+                >{{ conflict_detail(i).description }}</el-button>
               </template>
             </el-popover>
           </div>
@@ -227,7 +226,16 @@ export default {
       const url = this.applyDetailUrl
       window.open(url)
     },
-    show_detail(id) {},
+    conflict_detail(conflict) {
+      const c_con = conflict.apply || conflict.applyInday
+      const r = {
+        description: `冲突时间区间：${conflict.stampStart}到${
+          conflict.stampEnd
+        }`,
+        id: c_con.id
+      }
+      return r
+    },
     /**
      * 提交申请 0:仅提交，1:提交并保存，2:提交并发布
      */
@@ -246,10 +254,9 @@ export default {
           this.$emit('complete', true)
           return
         }
-        this.errorList = data.list.map(i => ({
-          id: i,
-          can_show: true
-        }))
+        this.errorList = data.list.map(i =>
+          Object.assign({ can_show: true }, i)
+        )
         this.$emit('complete', false)
         const count = this.errorList.length
         this.errorMsg = `存在${count}条与本次提交的离队时间或归队时间冲突的申请`
