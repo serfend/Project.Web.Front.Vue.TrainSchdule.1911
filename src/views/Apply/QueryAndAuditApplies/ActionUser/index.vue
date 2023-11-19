@@ -5,25 +5,37 @@
         <AuthCode :form.sync="authForm.auth" select-name="用户操作" />
         <el-form-item>
           <el-button-group style="width:100%">
-            <el-button type="info" style="width:50%" @click=" authFormShow = false ">取消</el-button>
+            <el-button
+              type="info"
+              style="width:50%"
+              @click="authFormShow = false"
+            >取消</el-button>
             <el-button
               type="success"
               style="width:50%"
-              @click="hendleExecute(authForm.method,row)"
+              @click="hendleExecute(authForm.method, row)"
             >确认</el-button>
           </el-button-group>
         </el-form-item>
       </el-form>
     </el-dialog>
     <el-dropdown
-      v-if="statusDic&&statusDic[row.status]&&statusDic[row.status].acessable.length>0"
+      v-if="
+        statusDic &&
+          statusDic[row.status] &&
+          statusDic[row.status].acessable.length > 0
+      "
       v-loading="loading"
       trigger="click"
       size="mini"
-      :style="{width:btnType?'100%':null}"
-      @command="c=>handle_action(c,row)"
+      :style="{ width: btnType ? '100%' : null }"
+      @command="c => handle_action(c, row)"
     >
-      <el-button :type="btnType||'text'" :plain="!!btnType" :style="{width:btnType?'100%':null}">操作</el-button>
+      <el-button
+        :type="btnType || 'text'"
+        :plain="!!btnType"
+        :style="{ width: btnType ? '100%' : null }"
+      >操作</el-button>
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item
@@ -39,7 +51,21 @@
             <span v-else>未知操作选项:{{ item }}</span>
           </el-dropdown-item>
           <el-dropdown-item>
-            <el-button v-loading="loading" type="text" @click="exportApply(row)">下载</el-button>
+            <el-button
+              v-loading="loading"
+              type="text"
+              @click="exportApply(row)"
+            >下载</el-button>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <el-button
+              v-loading="loading"
+              type="text"
+              @click="showContact(row)"
+            >获取联系方式</el-button>
+            <el-dialog :visible.sync="currentUserShow" append-to-body>
+              <UserBaseInfoCard v-model="currentUser" />
+            </el-dialog>
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -54,22 +80,30 @@ import { datedifference } from '@/utils'
 export default {
   name: 'ActionUser',
   components: {
-    AuthCode: () => import('@/components/AuthCode')
+    AuthCode: () => import('@/components/AuthCode'),
+    UserBaseInfoCard: () => import('./UserBaseInfoCard')
   },
   props: {
     row: { type: Object, default: () => ({}) },
     entityType: { type: String, default: 'vacation' },
     btnType: { type: String, default: null }
   },
-  data() {
-    return {
-      loading: false,
-      activeName: '',
-      authForm: {},
-      authFormShow: false
-    }
-  },
+  data: () => ({
+    loading: false,
+    activeName: '',
+    authForm: {},
+    authFormShow: false,
+    currentUser: null
+  }),
   computed: {
+    currentUserShow: {
+      set(v) {
+        this.currentUser = null
+      },
+      get() {
+        return !!this.currentUser
+      }
+    },
     sensitiveAction() {
       return '敏感操作'
     },
@@ -81,6 +115,9 @@ export default {
     }
   },
   methods: {
+    showContact(row) {
+      this.currentUser = row.base
+    },
     handle_action(item, row) {
       const action = this.actionDic[item]
       if (!action) return
@@ -137,14 +174,17 @@ export default {
     exportApply(data) {
       const r = data.requestInfo
       r.totalLength = datedifference(r.stampReturn, r.stampLeave) + 1
-      r.totalLengthHour = datedifference(r.stampReturn, r.stampLeave, 'hour') + 1
-      const filename = {
-        vacation: '休假单',
-        inday: '请假单',
-      }[this.entityType] || '请假单'
+      r.totalLengthHour =
+        datedifference(r.stampReturn, r.stampLeave, 'hour') + 1
+      const filename =
+        {
+          vacation: '休假单',
+          inday: '请假单'
+        }[this.entityType] || '请假单'
       this.$store
         .dispatch('template/download_xlsx', {
-          templateName: `${filename}模板.xlsx`, data,
+          templateName: `${filename}模板.xlsx`,
+          data,
           filename: `当前选中数据 - ${filename}.xlsx`
         })
         .finally(() => {
@@ -155,5 +195,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>
