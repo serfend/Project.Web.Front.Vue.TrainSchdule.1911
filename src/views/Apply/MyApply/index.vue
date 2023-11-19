@@ -127,7 +127,9 @@ export default {
   destroyed() {},
   methods: {
     reload() {
-      this.$refs.AppliesList.reload()
+      const c = this.$refs.AppliesList
+      if (!c || !c.reload) return
+      c.reload()
     }
   }
 }

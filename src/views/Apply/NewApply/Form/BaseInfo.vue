@@ -1,43 +1,70 @@
 <template>
-  <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
+  <div
+    v-if="form"
+    :style="{ transition: 'all 0.5s' }"
+    @mouseenter="isHover = true"
+    @mouseleave="leaveCard"
+  >
     <el-card v-loading="loading" header="基本信息" style="position:relative">
       <el-container>
-        <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
+        <el-main :style="{ filter: hideDetail ? 'blur(0.2rem)' : '' }">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
-            <template slot="content">若有误（含信息有变化），请到审核注册页面修改信息</template>
+            <template
+              slot="content"
+            >若有误（含信息有变化），请到审核注册页面修改信息</template>
           </CardTooltipAlert>
           <el-form ref="form" :model="form" label-width="8rem">
             <el-form-item label="申请人">
-              <UserSelector
-                ref="user-selector"
-                :code.sync="form.id"
-                :default-info="form&&form.realName?form.realName:'未登录,请选择'"
-                select-name="发布申请.基本信息"
-                style="display:inline"
-              />
-              <span v-if="currentUser&&form.id!=currentUser.id">
-                <el-link @click="setCurrentUser">使用当前登录</el-link>
-                <el-tooltip content="当替小伙伴提交申请时可能只能保存，不能发布哦~">
-                  <i class="el-icon-question blue--text" />
-                </el-tooltip>
-              </span>
+              <div style="display:flex">
+                <UserSelector
+                  ref="user-selector"
+                  :code.sync="form.id"
+                  :default-info="(form && form.realName) || '未登录,请选择'"
+                  select-name="发布申请.基本信息"
+                  style="display:inline"
+                />
+                <span v-if="currentUser && form.id != currentUser.id">
+                  <el-link @click="setCurrentUser">使用当前登录</el-link>
+                  <el-tooltip content="代理他人提交申请">
+                    <i class="el-icon-question blue--text" />
+                  </el-tooltip>
+                </span>
+              </div>
             </el-form-item>
-            <el-form-item label="部职别">
+            <el-form-item label="单位职务">
               <ApplyCompany :data="form.company" />
             </el-form-item>
             <el-form-item
               label="联系方式"
               prop="Phone"
               inline-message
-              :rules="[{required:true,validator:phoneRoleCheck,trigger:'blur'}]"
+              :rules="[
+                { required: true, validator: phoneRoleCheck, trigger: 'blur' }
+              ]"
             >
               <el-input v-model="form.Phone" />
             </el-form-item>
 
-            <SettleFormItem :form.sync="form.Settle.self" disabled label="本人所在地" />
-            <SettleFormItem :form.sync="form.Settle.lover" disabled label="配偶所在地" />
-            <SettleFormItem :form.sync="form.Settle.parent" disabled label="父母所在地" />
-            <SettleFormItem :form.sync="form.Settle.loversParent" disabled label="配偶父母所在地" />
+            <SettleFormItem
+              :form.sync="form.Settle.self"
+              disabled
+              label="本人所在地"
+            />
+            <SettleFormItem
+              :form.sync="form.Settle.lover"
+              disabled
+              label="配偶所在地"
+            />
+            <SettleFormItem
+              :form.sync="form.Settle.parent"
+              disabled
+              label="父母所在地"
+            />
+            <SettleFormItem
+              :form.sync="form.Settle.loversParent"
+              disabled
+              label="配偶父母所在地"
+            />
           </el-form>
         </el-main>
         <el-aside
@@ -46,10 +73,17 @@
         >
           <div
             class="mask"
-            :style="{filter:hideDetail?'':'blur(1rem)',background:hideDetail?'#ffffff8f':''}"
+            :style="{
+              filter: hideDetail ? '' : 'blur(1rem)',
+              background: hideDetail ? '#ffffff8f' : ''
+            }"
           >
             <svg-icon
-              :style="{transition:'all 0.5s',opacity:hideDetail?1:0,transform:hideDetail?'rotate(-360deg)':''}"
+              :style="{
+                transition: 'all 0.5s',
+                opacity: hideDetail ? 1 : 0,
+                transform: hideDetail ? 'rotate(-360deg)' : ''
+              }"
               icon-class="certification_f"
               style-normal="width:5rem;height:5rem;fill:#67C23A;color:#67C23A"
             />
@@ -77,10 +111,10 @@ export default {
     ApplyCompany: () => import('@/views/Apply/CommonComponents/ApplyCompany')
   },
   props: {
-    defailtId: { type: String, default: null },
     userid: { type: String, default: null }
   },
   data() {
+    // 只能使用该方法创建，否则无法获取到this上下文
     return {
       loading: false,
       onSvgSelected: false,
@@ -99,33 +133,42 @@ export default {
       return this.$store.state.user.data
     },
     userSelectId() {
-      return this.userid || (this.currentUser && this.currentUser.id)
+      const current = this.currentUser
+      return this.userid || (current && current.id)
     }
   },
   watch: {
     userSelectId: {
       handler(val) {
         this.form.id = val
+        if (!this.user_already_set) return
+        this.fetchUserInfoesDerect() // 当前用户变化，更新
       },
       immediate: true
     },
     form: {
       handler(val) {
-        if (val && !this.loading) {
-          this.anyChanged = true
-          this.submitId = null
-        }
+        if (!val) return
+        if (this.loading) return
+        this.anyChanged = true
+        this.submitId = null
       },
       deep: true
     },
     'form.id': {
       handler(val) {
-        if (val) {
-          this.fetchUserInfoesDerect()
-        }
+        if (!val) return
+        if (this.user_already_set) return
+        this.fetchUserInfoesDerect()
       },
       immediate: true
     }
+  },
+  mounted() {
+    this.user_already_set = !!this.userid
+    setTimeout(() => {
+      this.user_already_set = false
+    }, 5e3) // 若有传入值，则5秒后方可允许修改
   },
   methods: {
     phoneRoleCheck(filed, invalidVal, cb) {
@@ -141,6 +184,7 @@ export default {
       this.anyChanged = false
     },
     leaveCard() {
+      console.log('leaveCard')
       this.isHover = false
       if (this.anyChanged) {
         this.anyChanged = false
@@ -167,8 +211,10 @@ export default {
       this.form.id = this.currentUser && this.currentUser.id
     },
     fetchUserInfoesDerect() {
+      if (this.loading) return
       this.loading = true
       const id = this.form.id
+      console.log(`fetchUserInfoesDerect?id=${id}`)
       return getUserAllInfo(id)
         .then(data => {
           const { base, company, duties, social } = data
@@ -200,7 +246,7 @@ export default {
     },
     // 提交基础信息
     submitBaseInfo() {
-      console.log('baseinfo submit?' + !this.loading)
+      console.log(`baseinfo submit?id=${this.form.id}&loading=${this.loading}`)
       if (this.loading) return console.warn('baseinfo is loading')
       const { id, Phone } = this.form
       if (!id || !Phone) {

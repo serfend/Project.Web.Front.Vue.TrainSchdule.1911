@@ -10,7 +10,7 @@
         @submited="baseInfoSubmit"
       />
       <RequestInfo
-        v-show="nowStep>=1"
+        v-show="nowStep >= 1"
         ref="RequestInfo"
         :submit-id.sync="formFinal.RequestId"
         :main-type.sync="formFinal.mainType"
@@ -26,7 +26,7 @@
         :base-info-id="formFinal.BaseInfoId"
         :main-type="formFinal.mainType"
         :entity-type="entityType"
-        :disabled="nowStep<2||childOnLoading"
+        :disabled="nowStep < 2 || childOnLoading"
         class="card-column"
         @reset="createNewDirect"
         @submit="userSubmit"
@@ -56,7 +56,7 @@ export default {
     BaseInfo: () => import('./Form/BaseInfo'),
     RequestInfo: () => import('./Form/RequestInfo'),
     VacationPreview: () => import('@/components/Vacation/VacationPreview'),
-    SubmitApply: () => import('./Form/SubmitApply'),
+    SubmitApply: () => import('./Form/SubmitApply')
   },
   props: {
     defaultId: { type: String, default: null },
@@ -76,8 +76,13 @@ export default {
       mainType: -1
     }
   }),
-  mounted() {
-    this.userid = this.defaultId
+  watch: {
+    defaultId: {
+      handler(val) {
+        this.userid = val
+      },
+      immediate: true
+    }
   },
   methods: {
     vacationTypeUpdate(val) {
