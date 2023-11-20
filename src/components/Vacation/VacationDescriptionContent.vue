@@ -56,7 +56,13 @@
         <span v-else>无</span>
       </li>
     </ul>
-    <div v-else>{{ loading_result }}</div>
+    <div v-else>
+      <h2>{{ loading_result }}</h2>
+      <div>以下原因可能导致出现该情况：</div>
+      <div>· 用户提交时个人信息不完善。</div>
+      <div>· 过于久远，数据缺失。</div>
+      <div>· 数据存在异常，尝试联系管理员。</div>
+    </div>
   </div>
 </template>
 
@@ -80,7 +86,7 @@ export default {
   watch: {
     usersVacation: {
       handler(val) {
-        this.innerData = val
+        this.updateVacation(val)
       },
       immediate: true,
       deep: true
@@ -96,6 +102,10 @@ export default {
     isOfficial(v) {
       return v.officialAdditionId
     },
+    updateVacation(data) {
+      this.innerData = data
+      this.loading_result = data ? null : '无休假信息相关记录'
+    },
     refresh() {
       const { userid } = this
       if (!userid) {
@@ -104,8 +114,7 @@ export default {
       this.loading = true
       getUsersVacationLimit({ userid })
         .then(data => {
-          this.innerData = data
-          this.loading_result = null
+          this.updateVacation(data)
           this.$emit('update:usersVacation', this.innerData)
         })
         .catch(e => {
