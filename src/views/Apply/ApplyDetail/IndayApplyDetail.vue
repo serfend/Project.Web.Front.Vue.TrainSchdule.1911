@@ -30,16 +30,18 @@
     </el-drawer>
     <div style="padding-top: 0.5rem">
       <el-card v-loading="loading" class="content-card-first" shadow="hover">
-        <span style="margin-right:1rem">本次请假</span>
-        <span v-if="detail&&detail.baseInfo.createBy!=detail.baseInfo.userId" style="display:flex">
-          <span>代创建的申请，代理人：</span>
-          <UserFormItem
-            :userid="detail.baseInfo.createBy"
-            :direct-show-card="false"
-            :can-load-avatar="false"
-            type="warning"
-          />
-        </span>
+        <h3 v-if="detail && detail.baseInfo" slot="header" style="display:flex">
+          <span style="margin-right:1rem">本次请假</span>
+          <span v-if="detail&&detail.baseInfo.createBy!=detail.baseInfo.userId" style="display:flex">
+            <span>代创建的申请，代理人：</span>
+            <UserFormItem
+              :userid="detail.baseInfo.createBy"
+              :direct-show-card="false"
+              :can-load-avatar="false"
+              type="warning"
+            />
+          </span>
+        </h3>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
           <el-col :xl="8" :lg="10" :md="24" :sm="24" :xs="24">
             <el-form label-width="8rem">
