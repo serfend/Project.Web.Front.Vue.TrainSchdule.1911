@@ -2,7 +2,7 @@
   <div v-loading="loading">
     <div v-if="solutionName && !validateInfoInner && userStatus && managers">
       <el-steps
-        :active="nowStep || (innerAuditStatus && length.length) || 0"
+        :active="nowStep || (innerAuditStatus && innerAuditStatus.length) || 0"
         :finish-status="nowStep >= 0 ? 'success' : 'finish'"
         align-center
       >
