@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="id||(currentUser&&currentUser.id)">
+    <div v-if="iId||(currentUser&&currentUser.id)">
       <div v-if="!hideUserCard">
         <div v-if="!$slots.inner">
           <el-row class="row">
@@ -114,7 +114,9 @@ export default {
     },
     inner_id: {
       handler(val) {
-        this.reload()
+        setTimeout(() => {
+          this.reload()
+        }, 1e3)
       }
     }
   },

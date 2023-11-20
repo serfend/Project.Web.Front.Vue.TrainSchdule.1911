@@ -268,26 +268,25 @@ export default {
           }
         }
       }
-      if (this.haveNext) {
-        this.loading = true
-        querySelf({
-          pages,
-          id: this.inner_id,
-          start: this.vacaStart,
-          end: this.vacaEnd,
-          entityType: this.entityType
+      if (!this.haveNext) return
+      this.loading = true
+      querySelf({
+        pages,
+        id: this.inner_id,
+        start: this.vacaStart,
+        end: this.vacaEnd,
+        entityType: this.entityType
+      })
+        .then(cb)
+        .catch(e => {
+          this.errorMsg = e.message
         })
-          .then(cb)
-          .catch(e => {
-            this.errorMsg = e.message
-          })
-          .finally(() => {
-            // avoid load next page trice
-            setTimeout(() => {
-              this.loading = false
-            }, 500)
-          })
-      }
+        .finally(() => {
+          // avoid load next page trice
+          setTimeout(() => {
+            this.loading = false
+          }, 500)
+        })
     },
     user_add_new_item() {
       this.$emit('update:showApplyNew', true)
