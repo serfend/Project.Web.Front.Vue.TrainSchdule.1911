@@ -41,7 +41,7 @@
           />
         </span>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
-          <el-col :xl="18" :lg="16" :md="14" :sm="12" :xs="24">
+          <el-col :xl="8" :lg="10" :md="24" :sm="24" :xs="24">
             <el-form label-width="8rem">
               <el-form-item label="基本">
                 <el-tag
@@ -80,7 +80,7 @@
             </el-form>
           </el-col>
 
-          <el-col :xl="6" :lg="8" :md="10" :sm="12" :xs="24">
+          <el-col :xl="16" :lg="14" :md="24" :sm="24" :xs="24">
             <UserFormItem
               :userid="detail.base.id"
               :direct-show-card="true"
