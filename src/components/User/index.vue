@@ -1,6 +1,6 @@
 <template>
   <div class="card-item" :style="{ width }">
-    <div v-if="innerData && innerData.id" class="shell" :style="{ width }">
+    <div v-if="currentUser" class="shell" :style="{ width }">
       <div class="photo">
         <el-image :src="avatar" :preview-src-list="[avatar]" />
       </div>
@@ -19,7 +19,7 @@
           <span />
         </div>
       </div>
-      <div class="footer">{{ innerData.id }}</div>
+      <div class="footer">{{ currentUser }}</div>
       <div :class="['box', isOpened ? 'open' : '']">
         <el-tooltip
           v-for="x in btn_actions"
@@ -38,9 +38,7 @@
         <ContactMe
           v-if="contactMeHasShow"
           :content="contactUrl"
-          :description="
-            `微信或手机通讯录扫码，获取${innerData.realName}的联系方式`
-          "
+          :description="`微信或手机通讯录扫码，获取${realName}的联系方式`"
         />
       </el-dialog>
     </div>
@@ -105,18 +103,29 @@ export default {
   }),
   computed: {
     contactUrl() {
-      return `MECARD:TEL:${this.phone};N:${this.innerData.realName};EMAIL:${
-        this.innerData.id
-      }@xjxt.mtn;NOTE:${this.innerData.about};`
+      const r = [
+        `MECARD:TEL:${this.phone};N:${this.realName};EMAIL:${this.currentUser}`,
+        `@xjxt.mtn;NOTE:${this.innerData.about};`
+      ]
+      return r.join()
+    },
+    realName() {
+      const { innerData } = this
+      return innerData && innerData.realName
+    },
+    currentUser() {
+      const { innerData } = this
+      return innerData && innerData.id
     },
     btn_actions() {
       const r = []
       const { actions } = this
-      const { path } = this.$route
+      const { path, query } = this.$route
+      const not_same_usr = query.userid !== this.currentUser
       if (!this.contactMeHasShow) r.push(actions[0])
-      if (path !== actions[1][3]) r.push(actions[1])
-      if (path !== actions[2][3]) r.push(actions[2])
-      if (path !== actions[3][3]) r.push(actions[3])
+      if (not_same_usr || path !== actions[1][3]) r.push(actions[1])
+      if (not_same_usr || path !== actions[2][3]) r.push(actions[2])
+      if (not_same_usr || path !== actions[3][3]) r.push(actions[3])
       if (!this.isHover) r.push(actions[4])
       return r
     }
