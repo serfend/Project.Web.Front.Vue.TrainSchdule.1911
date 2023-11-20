@@ -1,9 +1,9 @@
 <template>
   <div v-loading="loading">
-    <div v-if="solutionName&&!validateInfoInner">
+    <div v-if="solutionName && !validateInfoInner">
       <el-steps
-        :active="nowStep>=0?nowStep:(streams?streams.length:0)"
-        :finish-status="nowStep>=0?'success':'finish'"
+        :active="nowStep >= 0 ? nowStep : streams ? streams.length : 0"
+        :finish-status="nowStep >= 0 ? 'success' : 'finish'"
         align-center
       >
         <el-step v-for="s in streams" :key="s.index">
@@ -13,27 +13,38 @@
               <template #content>
                 <h3>{{ title }}</h3>
                 <div style="font-size:18px;color:#ccc">{{ s.name }}</div>
-                <div
-                  style="font-size:14px"
-                >{{ `需要[${s.firstMemberCompanyName}]${getNeedAudit(s.requireMembersAcceptCount)}进行审批` }}</div>
+                <div style="font-size:14px">
+                  {{
+                    `需要[${s.firstMemberCompanyName}]${getNeedAudit(
+                      s.requireMembersAcceptCount
+                    )}进行审批`
+                  }}
+                </div>
               </template>
-              <div
-                style="white-space:nowrap"
-              >{{ s.firstMemberCompanyName }}({{ getNeedAudit(s.requireMembersAcceptCount) }})</div>
+              <div style="white-space:nowrap">
+                {{ s.firstMemberCompanyName }}({{
+                  getNeedAudit(s.requireMembersAcceptCount)
+                }})
+              </div>
             </el-tooltip>
           </template>
           <template slot="description">
-            <div v-if="userStatus">
-              <div v-for="u in s.membersFitToAudit" :key="u">
-                <span v-if="user_should_show(u,s)">
-                  <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
+            <div v-if="userStatus && managers">
+              <div v-for="u in s.membersFitToAudit" :key="`fit_${u}`">
+                <span v-if="user_should_show(u, s)">
+                  <UserFormItem
+                    :userid="u"
+                    :type="userStatus[s.index][u]"
+                    style="margin-top:0.5rem"
+                  />
                 </span>
               </div>
-              <div
-                v-for="u in s.membersAcceptToAudit.filter(i=>!s.membersFitToAudit.find(j=>j==i))"
-                :key="u"
-              >
-                <UserFormItem :userid="u" :type="userStatus[s.index][u]" style="margin-top:0.5rem" />
+              <div v-for="u in s.additionalAccept" :key="`add_${u}`">
+                <UserFormItem
+                  :userid="u"
+                  :type="userStatus[s.index][u]"
+                  style="margin-top:0.5rem"
+                />
               </div>
             </div>
           </template>
@@ -69,7 +80,9 @@ export default {
   }),
   computed: {
     validateInfoInner: {
-      get() { return this.validateInfo },
+      get() {
+        return this.validateInfo
+      },
       set(v) {
         this.$emit('update:validateInfo', v)
       }
@@ -115,22 +128,21 @@ export default {
     refresh() {
       this.loading = true
       this.solutionName = null
-      auditStream(this.userid, this.entityTypeDesc || this.entityType).then(
-        data => {
+      auditStream(this.userid, this.entityTypeDesc || this.entityType)
+        .then(data => {
           this.solutionName = data.solutionName
-          this.streams = data.steps
+          this.$set(this, 'streams', data.steps)
           this.validateInfoInner = null
-        }
-      ).catch(e => {
-        this.validateInfoInner = (e && e.message) || '未知原因'
-      }).finally(() => {
-        this.loading = false
-      })
+        })
+        .catch(e => {
+          this.validateInfoInner = (e && e.message) || '未知原因'
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     user_should_show(u, s) {
       const { managers, userStatus } = this
-      const env_init = managers[s.firstMemberCompanyCode] && userStatus[s.index]
-      if (!env_init) return false
       const is_manager = managers[s.firstMemberCompanyCode].indexOf(u) > -1
       const status = userStatus[s.index][u]
       const is_handled = status === 'success' || status === 'danger'
@@ -158,6 +170,17 @@ export default {
         x.membersAcceptToAudit.map(u => {
           dic[u] = 'success'
         })
+        const fit_dict = Object.keys(x.membersFitToAudit)
+        this.$set(
+          x,
+          'membersAcceptToAudit',
+          x.membersAcceptToAudit.filter(x => fit_dict[x])
+        )
+
+        const additionalAccept = x.membersAcceptToAudit.filter(
+          x => !fit_dict[x]
+        )
+        this.$set(x, 'additionalAccept', additionalAccept)
       })
     },
     initCompanyManagerDirect() {
@@ -167,20 +190,19 @@ export default {
         if (!waitToLoad[mCode]) waitToLoad[mCode] = true
       })
       this.loading = true
-      companiesManagers(Object.keys(waitToLoad)).then(data => {
-        Object.keys(data.companies).map(c => {
-          if (!data.companies[c].list) {
-            this.managers[c] = {}
-            return
-          }
-          this.managers[c] = data
-            .companies[c]
-            .list
-            .map(item => item.id)
+      companiesManagers(Object.keys(waitToLoad))
+        .then(data => {
+          Object.keys(data.companies).map(c => {
+            if (!data.companies[c].list) {
+              this.managers[c] = {}
+              return
+            }
+            this.managers[c] = data.companies[c].list.map(item => item.id)
+          })
         })
-      }).finally(() => {
-        this.loading = false
-      })
+        .finally(() => {
+          this.loading = false
+        })
     },
     async initCompanyManager() {
       const loadUserCompanyCodeActions = []
@@ -192,7 +214,9 @@ export default {
         loadUserCompanyCodeActions.push(user_company)
         loadUserCompanyCodeActionsIndex.push(i)
       })
-      if (!loadUserCompanyCodeActions.length) return this.initCompanyManagerDirect()
+      if (!loadUserCompanyCodeActions.length) {
+        return this.initCompanyManagerDirect()
+      }
       const datas = await Promise.all(loadUserCompanyCodeActions)
       datas.map((x, i) => {
         const index = loadUserCompanyCodeActionsIndex[i]
@@ -203,5 +227,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>
