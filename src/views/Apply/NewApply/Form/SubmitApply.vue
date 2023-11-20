@@ -101,7 +101,7 @@
             <el-popover
               v-for="i in errorList"
               :key="i.id"
-              trigger="hover"
+              trigger="click"
               placement="top"
               @show="i.can_show = true"
             >
@@ -111,13 +111,12 @@
                 :show-user="false"
                 :show-comment="false"
                 :focus-id="conflict_detail(i).id"
-                style="width:120rem"
+                style="width:90rem"
               />
               <template #reference>
-                <el-button
-                  style="cursor:pointer;margin-left:0.3rem"
-                  type="text"
-                >{{ conflict_detail(i).description }}</el-button>
+                <div>
+                  <el-link>{{ conflict_detail(i).description }}</el-link>
+                </div>
               </template>
             </el-popover>
           </div>
