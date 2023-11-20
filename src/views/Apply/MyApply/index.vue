@@ -111,13 +111,6 @@ export default {
         this.iId = val
       },
       immediate: true
-    },
-    inner_id: {
-      handler(val) {
-        setTimeout(() => {
-          this.reload()
-        }, 1e3)
-      }
     }
   },
   mounted() {

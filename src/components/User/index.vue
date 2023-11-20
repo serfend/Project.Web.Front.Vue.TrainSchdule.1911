@@ -1,8 +1,9 @@
 <template>
   <div class="card-item" :style="{ width }">
     <div v-if="currentUser" class="shell" :style="{ width }">
-      <div class="photo">
-        <el-image :src="avatar" :preview-src-list="[avatar]" />
+      <div v-loading="loading" class="photo">
+        <!-- 当在加载则说明需要更换头像 -->
+        <el-image v-if="!loading" :src="avatar" :preview-src-list="[avatar]" />
       </div>
       <div class="content">
         <div class="text">
