@@ -2,18 +2,18 @@
   <ApplyAuditStreamPreviewInner
     v-if="showDetail"
     :userid="userid"
-    :audit-status="auditStatus"
+    :audit-status.sync="innerAuditStatus"
     :now-step="nowStep"
     :entity-type="entityType"
     :entity-type-desc="entityTypeDesc"
     :solution-name.sync="solutionName"
     :validate-info.sync="validateInfoInner"
   />
-  <el-popover v-else trigger="hover" @show="userHasHover=true">
+  <el-popover v-else trigger="hover" @show="userHasHover = true">
     <ApplyAuditStreamPreviewInner
       v-if="userHasHover"
       :userid="userid"
-      :audit-status="auditStatus"
+      :audit-status.sync="innerAuditStatus"
       :now-step="nowStep"
       :entity-type="entityType"
       :entity-type-desc="entityTypeDesc"
@@ -21,7 +21,9 @@
       :title="title"
       :validate-info.sync="validateInfoInner"
     />
-    <span v-if="!$slots.content" slot="reference" class="preview-btn">{{ title }}</span>
+    <span v-if="!$slots.content" slot="reference" class="preview-btn">{{
+      title
+    }}</span>
     <slot v-else slot="reference" style="display:flex" name="content" />
   </el-popover>
 </template>
@@ -43,17 +45,35 @@ export default {
   },
   data: () => ({
     solutionName: null,
-    userHasHover: false
+    userHasHover: false,
+    p_auditStatus: null
   }),
   computed: {
+    innerAuditStatus: {
+      get() {
+        return this.p_auditStatus
+      },
+      set(v) {
+        this.p_auditStatus = v
+        return this.$emit('update:innerAuditStatus', v)
+      }
+    },
     validateInfoInner: {
-      get() { return this.validateInfo },
+      get() {
+        return this.validateInfo
+      },
       set(v) {
         this.$emit('update:validateInfo', v)
       }
     }
   },
   watch: {
+    auditStatus: {
+      handler(val) {
+        this.p_auditStatus = val
+      },
+      deep: true, immediate: true
+    },
     solutionName: {
       handler(val) {
         this.$emit('update:solutionName', val)
@@ -65,7 +85,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/element-variables';
+@import "@/styles/element-variables";
 .preview-btn {
   text-decoration: underline;
   transition: all 0.2s ease;
