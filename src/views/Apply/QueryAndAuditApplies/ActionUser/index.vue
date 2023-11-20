@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     showContact(row) {
-      this.currentUser = row.base
+      this.currentUser = row.baseInfo || row.base
     },
     handle_action(item, row) {
       const action = this.actionDic[item]
@@ -182,7 +182,7 @@ export default {
       })
     },
     exportApply(data) {
-      const r = data.requestInfo
+      const r = data.request || data.requestInfo
       r.totalLength = datedifference(r.stampReturn, r.stampLeave) + 1
       r.totalLengthHour =
         datedifference(r.stampReturn, r.stampLeave, 'hour') + 1
