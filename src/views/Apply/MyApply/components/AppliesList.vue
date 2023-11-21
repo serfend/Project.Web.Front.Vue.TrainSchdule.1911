@@ -172,7 +172,9 @@ export default {
     }
   },
   mounted() {
-    this.load()
+    setTimeout(() => {
+      this.reload()
+    }, 5e2) // 若未实施则尝试加载
   },
   methods: {
     get_item_summary,
@@ -217,6 +219,7 @@ export default {
       return formatTime(val)
     },
     reload() {
+      if (this.loading) return
       this.clear_data()
       this.$nextTick(() => {
         this.load()
