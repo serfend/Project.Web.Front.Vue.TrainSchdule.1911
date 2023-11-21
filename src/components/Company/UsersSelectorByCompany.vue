@@ -1,37 +1,46 @@
 <template>
-  <el-form inline>
-    <el-form-item>
-      <el-button
-        type="primary"
-        :loading="loading"
-        @click="requireLoadWaitToAuthRegisterUsers"
-      >刷新</el-button>
-      <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
-    </el-form-item>
-    <el-form-item label="选择成员">
-      <UserSelector
-        default-info="未选择"
-        @change="handleCurrentUserChange"
-      />
-    </el-form-item>
-    <el-form-item label="统计年份">
-      <el-date-picker
-        v-model="vacationYear"
-        type="year"
-        style="width: 7rem"
-      />
-    </el-form-item>
-    <el-form-item label="包含下级单位">
-      <el-switch v-model="MembersQuery.includeChild" />
-    </el-form-item>
-    <el-form-item label="选择单位">
-      <CompanySelector
-        v-model="iNowSelectCompany"
-        placeholder="选择需要检查的单位"
-        style="width: 20rem"
-      />
-    </el-form-item>
-  </el-form>
+  <div>
+    <el-button
+      v-if="hide_pannel"
+      type="text"
+      style="position:absolute;"
+      @click="() => (hide_pannel = false)"
+    >展开查询</el-button>
+    <el-form v-else inline>
+      <el-form-item>
+        <el-button
+          type="primary"
+          :loading="loading"
+          @click="requireLoadWaitToAuthRegisterUsers"
+        >刷新</el-button>
+        <el-button
+          type="info"
+          @click="() => (hide_pannel = true)"
+        >隐藏</el-button>
+        <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
+      </el-form-item>
+      <el-form-item label="选择成员">
+        <UserSelector default-info="未选择" @change="handleCurrentUserChange" />
+      </el-form-item>
+      <el-form-item label="统计年份">
+        <el-date-picker
+          v-model="vacationYear"
+          type="year"
+          style="width: 7rem"
+        />
+      </el-form-item>
+      <el-form-item label="包含下级单位">
+        <el-switch v-model="MembersQuery.includeChild" />
+      </el-form-item>
+      <el-form-item label="选择单位">
+        <CompanySelector
+          v-model="iNowSelectCompany"
+          placeholder="选择需要检查的单位"
+          style="width: 20rem"
+        />
+      </el-form-item>
+    </el-form>
+  </div>
 </template>
 
 <script>
@@ -44,7 +53,8 @@ export default {
   components: {
     UserSelector: () => import('@/components/User/UserSelector'),
     CompanySelector: () => import('@/components/Company/CompanySelector'),
-    CompanyTypeSelector: () => import('@/components/Company/CompanyTypeSelector')
+    CompanyTypeSelector: () =>
+      import('@/components/Company/CompanyTypeSelector')
   },
   props: {
     membersQuery: {
@@ -64,6 +74,7 @@ export default {
     list: { type: Array, default: null }
   },
   data: () => ({
+    hide_pannel: false,
     inner_loading: false,
     innerNowSelectCompany: null,
     innerMembersQuery: {
@@ -154,8 +165,12 @@ export default {
       handler(v) {
         // 此处不应该跟踪到单位，而是等到用户主动操作
         // this.handleCurrentUserChange(v, false)
-      }, immediate: true
+      },
+      immediate: true
     }
+  },
+  mounted() {
+    this.requireLoadWaitToAuthRegisterUsers()
   },
   methods: {
     handleCurrentUserChange(v, raise_event = true) {

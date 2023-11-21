@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card class="mini-card">
     <UsersSelectorByCompany
       ref="UsersSelectorByCompany"
       :total-count.sync="membersCount"
@@ -70,5 +70,11 @@ export default {
 .status-pannel {
   display: flex;
   line-height: 2rem;
+}
+
+.mini-card {
+  .el-card__body {
+    padding: 0.5rem !important;
+  }
 }
 </style>
