@@ -7,13 +7,12 @@
  */
 export function groupByFiled(list, name) {
   return list.reduce((obj, item) => {
-    const key = item[name]
-    if (!obj[key]) {
-      obj[key] = []
+    let keys = item[name]
+    if (!Array.isArray(keys))keys = [keys]
+    keys.map(key => {
+      if (!obj[key]) { obj[key] = [] }
       obj[key].push(item)
-    } else {
-      obj[key].push(item)
-    }
+    })
     return obj
   }, {})
 }
