@@ -7,7 +7,8 @@ const route = {
     ctitle: '数据管理',
     icon: 'task_done'
   },
-  children: [Export,
+  children: [
+    Export,
     {
       path: 'dashboard',
       component: () => import('@/views/dashboard/redirect'),
@@ -17,6 +18,16 @@ const route = {
         icon: 'chart',
         hide_footer: true
       }
-    }]
+    },
+    {
+      path: 'statistics-vacation',
+      component: () => import('@/views/statistics/vacation'),
+      name: 'StatisticsVacation',
+      meta: {
+        ctitle: '休假统计',
+        icon: 'chart'
+      }
+    }
+  ]
 }
 export default route

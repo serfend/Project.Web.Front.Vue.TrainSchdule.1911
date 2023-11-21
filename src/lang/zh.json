@@ -64,13 +64,13 @@
           "title": "评比情况"
         }
       },
-      "securityManage":{
-        "title":"安全管理",
-        "history":{
-          "title":"历史事件"
+      "securityManage": {
+        "title": "安全管理",
+        "history": {
+          "title": "历史事件"
         },
-        "indicator":{
-          "title":"指标"
+        "indicator": {
+          "title": "指标"
         }
       }
     },
@@ -112,10 +112,12 @@
     "my": "我的假期",
     "setting": {
       "title": "管理",
+      "data-manage": "休假申请",
       "application": {
         "title": "休假申请",
         "auditStream": "审批流",
-        "exportXls": "Excel模板"
+        "exportXls": "Excel模板",
+        "statisticsVacation": "休假统计"
       },
       "users": {
         "title": "用户管理",

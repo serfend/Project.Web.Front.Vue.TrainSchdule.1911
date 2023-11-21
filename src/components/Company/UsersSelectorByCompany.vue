@@ -1,40 +1,37 @@
 <template>
-  <el-card>
-    <el-form inline>
-      <el-form-item>
-        <el-button
-          type="primary"
-          :loading="loading"
-          @click="requireLoadWaitToAuthRegisterUsers"
-        >刷新</el-button>
-        <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
-      </el-form-item>
-      <el-form-item label="选择成员">
-        <UserSelector
-          default-info="未选择"
-          style="display: inline; margin: 0 1rem 0 0"
-          @change="handleCurrentUserChange"
-        />
-      </el-form-item>
-      <el-form-item label="统计年份">
-        <el-date-picker
-          v-model="vacationYear"
-          type="year"
-          style="width: 7rem"
-        />
-      </el-form-item>
-      <el-form-item label="包含下级单位">
-        <el-switch v-model="MembersQuery.includeChild" />
-      </el-form-item>
-      <el-form-item label="选择单位">
-        <CompanySelector
-          v-model="iNowSelectCompany"
-          placeholder="选择需要检查的单位"
-          style="width: 20rem"
-        />
-      </el-form-item>
-    </el-form>
-  </el-card>
+  <el-form inline>
+    <el-form-item>
+      <el-button
+        type="primary"
+        :loading="loading"
+        @click="requireLoadWaitToAuthRegisterUsers"
+      >刷新</el-button>
+      <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
+    </el-form-item>
+    <el-form-item label="选择成员">
+      <UserSelector
+        default-info="未选择"
+        @change="handleCurrentUserChange"
+      />
+    </el-form-item>
+    <el-form-item label="统计年份">
+      <el-date-picker
+        v-model="vacationYear"
+        type="year"
+        style="width: 7rem"
+      />
+    </el-form-item>
+    <el-form-item label="包含下级单位">
+      <el-switch v-model="MembersQuery.includeChild" />
+    </el-form-item>
+    <el-form-item label="选择单位">
+      <CompanySelector
+        v-model="iNowSelectCompany"
+        placeholder="选择需要检查的单位"
+        style="width: 20rem"
+      />
+    </el-form-item>
+  </el-form>
 </template>
 
 <script>
@@ -101,7 +98,7 @@ export default {
     },
     iNowSelectCompany: {
       get() {
-        return this.innerNowSelectCompany
+        return this.innerNowSelectCompany || {}
       },
       set(v) {
         this.innerNowSelectCompany = v
@@ -143,13 +140,13 @@ export default {
       handler(v) {
         this.innerMembersQuery = v
       },
-      deep: true
+      deep: true,
+      immediate: true
     },
     innerMembersQuery: {
       handler(val) {
-        if (val) {
-          this.requireLoadWaitToAuthRegisterUsers()
-        }
+        if (!val) return
+        this.requireLoadWaitToAuthRegisterUsers()
       },
       deep: true
     },
@@ -197,7 +194,7 @@ export default {
     },
     // 刷新待认证人员列表
     async direct_refresh() {
-      const code = this.nowSelectCompany.code
+      const code = this.iNowSelectCompany.code
       const { MembersQuery, vacationYear } = this
       const { page } = MembersQuery
 

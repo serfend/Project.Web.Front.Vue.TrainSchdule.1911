@@ -106,7 +106,8 @@
       "application": {
         "title": "vacation apply",
         "auditStream": "audit stream",
-        "exportXls": "export Excel model"
+        "exportXls": "export Excel model",
+        "statisticsVacation": "statistics of vacations"
       },
       "users": {
         "title": "manage users",
