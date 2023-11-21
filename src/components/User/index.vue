@@ -26,6 +26,7 @@
           v-for="x in btn_actions"
           :key="x[0]"
           :content="x[0]"
+          :disabled="btn_disabled"
           placement="right"
         >
           <span><i :class="x[1]" @click="onHandleAction(x)" /></span>
@@ -79,6 +80,7 @@ export default {
     contactMeHasShow: false,
     isHover: false, // 是否悬浮展开了休假描述
     isOpened: false, // 是否展开了功能按钮
+    btn_disabled: true, // 在展开前不显示tooltip
     actions: [
       ['与此人联系', 'el-icon-phone-outline', 'handleContact'],
       [
@@ -151,6 +153,16 @@ export default {
         this.refreshAvatar()
       },
       immediate: true
+    },
+    isOpened: {
+      handler(val) {
+        this.btn_disabled = true
+        if (!val) return
+        // 动画完成后允许弹出tooltip
+        setTimeout(() => {
+          this.btn_disabled = false
+        }, 5e2)
+      }
     }
   },
   mounted() {
