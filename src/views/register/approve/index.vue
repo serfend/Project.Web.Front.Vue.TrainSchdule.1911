@@ -2,49 +2,21 @@
   <div>
     <div v-if="currentUser && currentUser.id">
       <el-card>
-        <el-card>
-          <el-form inline>
-            <el-form-item>
-              <el-button
-                type="primary"
-                :loading="loading"
-                @click="requireLoadWaitToAuthRegisterUsers"
-              >刷新</el-button>
-              <CompanyTypeSelector v-model="MembersQuery.userCompanyType" />
-            </el-form-item>
-            <el-form-item label="选择成员">
-              <UserSelector
-                :code.sync="nowSelectRealName"
-                default-info="未选择"
-                style="display: inline; margin: 0 1rem 0 0"
-                @change="handleCurrentChange"
-              />
-            </el-form-item>
-            <el-form-item label="统计年份">
-              <el-date-picker
-                v-model="vacationYear"
-                type="year"
-                style="width: 7rem"
-              />
-            </el-form-item>
-            <el-form-item label="包含下级单位">
-              <el-switch v-model="MembersQuery.includeChild" />
-            </el-form-item>
-            <el-form-item label="选择单位">
-              <CompanySelector
-                v-model="nowSelectCompany"
-                placeholder="选择需要检查的单位"
-                style="width: 20rem"
-              />
-            </el-form-item>
-          </el-form>
-        </el-card>
+        <UsersSelectorByCompany
+          ref="UsersSelectorByCompany"
+          :current-user.sync="current_user_entity"
+          :total-count.sync="MembersQueryTotalCount"
+          :now-select-company.sync="nowSelectCompany"
+          :members-query.sync="MembersQuery"
+          :list.sync="waitToAuthRegisterUsers"
+          :loading.sync="loading"
+        />
         <BatchOperation
           v-if="currentFocusUsers.length"
           ref="BatchOperation"
           v-model="currentFocusUsers"
           class="right-hover-panel flashing-layout-right"
-          @requireUpdate="requireLoadWaitToAuthRegisterUsers"
+          @requireUpdate="requireUpdate"
         />
         <el-table
           v-loading="loading"
@@ -126,7 +98,7 @@
           <Register
             v-if="detail_pane == '0'"
             :user-info="current_user_entity"
-            @requireUpdate="requireLoadWaitToAuthRegisterUsers"
+            @requireUpdate="requireUpdate"
             @requireHide="approve_show = false"
           />
         </el-tab-pane>
@@ -147,16 +119,10 @@
 </template>
 
 <script>
-import { getMembers } from '@/api/company'
-import { getUsersVacationLimit, getUserAvatar, getUserSummary } from '@/api/user/userinfo'
-import { checkUserValid } from '@/utils/validate'
-import { debounce } from '@/utils'
-import { companyTypes } from '../components/dictionary'
+import { getUserSummary } from '@/api/user/userinfo'
 export default {
   name: 'Approve',
   components: {
-    UserSelector: () => import('@/components/User/UserSelector'),
-    CompanySelector: () => import('@/components/Company/CompanySelector'),
     VacationDescription: () =>
       import('@/components/Vacation/VacationDescription'),
     Pagination: () => import('@/components/Pagination'),
@@ -166,10 +132,11 @@ export default {
     UserPermission: () => import('./UserPermission'),
     Loading: () => import('@/views/Loading'),
     BatchOperation: () => import('./BatchOperation'),
-    CompanyTypeSelector: () => import('../components/CompanyTypeSelector')
+    UsersSelectorByCompany: () => import('./UsersSelectorByCompany')
   },
   data: () => ({
     isFromUrl: false,
+    nowSelectCompany: null,
     MembersQuery: {
       userCompanyType: 0,
       includeChild: false,
@@ -178,16 +145,12 @@ export default {
         pageSize: 10
       }
     },
-    companyTypes,
-    nowSelectRealName: '', // 通过姓名选择器选中的人员
     MembersQueryTotalCount: 0,
     waitToAuthRegisterUsers: [],
     current_user_entity: null,
-    nowSelectCompany: null,
     loading: false,
     detail_pane: '',
-    currentFocusUsers: [],
-    vacationYear: new Date() // 统计的年份
+    currentFocusUsers: []
   }),
   computed: {
     currentUser() {
@@ -195,11 +158,6 @@ export default {
     },
     currentCmp() {
       return this.$store.state.user.companyid
-    },
-    requireLoadWaitToAuthRegisterUsers() {
-      return debounce(() => {
-        this.loadWaitToAuthRegisterUsers()
-      }, 500)
     },
     approve_show: {
       get() {
@@ -222,32 +180,6 @@ export default {
         this.not_login_show = !val
       },
       immediate: true
-    },
-    vacationYear: {
-      handler(v) {
-        this.requireLoadWaitToAuthRegisterUsers()
-      }
-    },
-    includeChild: {
-      handler(v) {
-        this.requireLoadWaitToAuthRegisterUsers()
-      }
-    },
-    nowSelectCompany: {
-      handler(val) {
-        if (!val) return
-        this.MembersQuery.page.pageIndex = 0
-        this.requireLoadWaitToAuthRegisterUsers()
-      },
-      immediate: true
-    },
-    MembersQuery: {
-      handler(val) {
-        if (val) {
-          this.requireLoadWaitToAuthRegisterUsers()
-        }
-      },
-      deep: true
     }
   },
   mounted() {
@@ -265,6 +197,13 @@ export default {
     f()
   },
   methods: {
+    requireUpdate() {
+      const c = this.$refs.UsersSelectorByCompany
+      if (!c) return
+      const f = c.refresh
+      if (!f) return
+      f()
+    },
     handleSelectionChange(v) {
       this.currentFocusUsers = v
     },
@@ -272,61 +211,6 @@ export default {
       // console.log('approve user change to', val)
       if (!val) return
       this.current_user_entity = val
-    },
-    async loadSingleUser(targets) {
-      const fn = []
-      const { vacationYear } = this
-      for (let i = 0; i < targets.length; i++) {
-        fn.push(
-          new Promise((resolve, reject) => {
-            const item = targets[i]
-            return Promise.all([
-              getUserAvatar(item.id),
-              getUsersVacationLimit({
-                userid: item.id,
-                vacationYear: vacationYear.getFullYear()
-              })
-            ])
-              .then(([avatar, vacation]) => {
-                item.avatar = avatar.url
-                item.vacation = vacation
-                resolve()
-              })
-              .catch(err => reject(err))
-          })
-        )
-      }
-      await Promise.all(fn)
-    },
-    loadUserList(list) {
-      const result = list.map(item => {
-        const obj = {
-          userHasShow: false,
-          avatar: '',
-          vacation: {},
-          accountAuthStatus: checkUserValid(item.inviteBy)
-        }
-        return Object.assign(item, obj)
-      })
-      return result
-    },
-    // 刷新待认证人员列表
-    async loadWaitToAuthRegisterUsers() {
-      this.loading = true
-      const code = this.nowSelectCompany.code
-      const { MembersQuery } = this
-      const { page } = MembersQuery
-      let q = Object.assign({ code }, this.MembersQuery)
-      q = Object.assign(q, page)
-      getMembers(q)
-        .then(async data => {
-          this.MembersQueryTotalCount = data.totalCount
-          this.waitToAuthRegisterUsers = this.loadUserList(data.list)
-          await this.loadSingleUser(this.waitToAuthRegisterUsers)
-        })
-        .finally(() => {
-          this.loading = false
-        })
     }
   }
 }

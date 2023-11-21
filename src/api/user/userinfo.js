@@ -179,6 +179,18 @@ export function getUserIdByRealName({
     ignoreError: ignoreErr
   })
 }
+const vacation_handle = (data) => {
+  const result = {
+    yearlyLength: 0,
+    nowTimes: 0,
+    leftLength: 0,
+    onTripTimes: 0,
+    maxTripTimes: 0,
+    ...data.vacationInfo,
+    additionals: data.additionals
+  }
+  return result
+}
 const url_getUsersVacationLimit = `${api}/vacationAddtional`
 /**
  * 获取用户休假限制时长和次数
@@ -206,15 +218,7 @@ export function getUsersVacationLimit({
           })
           .then(data => {
             const model = data.model || {}
-            const result = {
-              yearlyLength: 0,
-              nowTimes: 0,
-              leftLength: 0,
-              onTripTimes: 0,
-              maxTripTimes: 0,
-              ...model.vacationInfo,
-              additionals: model.additionals
-            }
+            const result = vacation_handle(model)
             res(result)
           })
           .catch(e => {
@@ -222,6 +226,28 @@ export function getUsersVacationLimit({
           })
       })
   )
+}
+
+export function getUsersVacationLimits({
+  userids,
+  vacationYear,
+  isPlan,
+  ignoreErr
+}) {
+  return new Promise((res, rej) => {
+    request.post(`${url_getUsersVacationLimit}s`, {
+      id: userids,
+      vacationYear,
+      isPlan,
+      ignoreErr
+    }).then(data => {
+      const dict = {}
+      data.list.map(x => {
+        dict[x.user] = vacation_handle(x)
+      })
+      res(dict)
+    }).catch(e => rej(e))
+  })
 }
 const url_getUserAvatar = `${api}/avatar`
 /**
