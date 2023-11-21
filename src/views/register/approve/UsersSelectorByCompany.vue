@@ -13,7 +13,7 @@
         <UserSelector
           default-info="未选择"
           style="display: inline; margin: 0 1rem 0 0"
-          @change="v => $emit('update:currentUser', v)"
+          @change="handleCurrentUserChange"
         />
       </el-form-item>
       <el-form-item label="统计年份">
@@ -39,7 +39,7 @@
 
 <script>
 import { getMembers } from '@/api/company'
-import { getUsersVacationLimits, getUserAvatar } from '@/api/user/userinfo'
+import { getUsersVacationLimits } from '@/api/user/userinfo'
 import { checkUserValid } from '@/utils/validate'
 import { debounce } from '@/utils'
 import { companyTypes } from '../components/dictionary'
@@ -154,9 +154,29 @@ export default {
         }
       },
       deep: true
+    },
+    currentUser: {
+      handler(v) {
+        // 此处不应该跟踪到单位，而是等到用户主动操作
+        // this.handleCurrentUserChange(v, false)
+      }, immediate: true
     }
   },
   methods: {
+    handleCurrentUserChange(v, raise_event = true) {
+      if (!v) return
+      if (raise_event) this.$emit('update:currentUser', v)
+      this.followCurrentUser()
+    },
+    followCurrentUser() {
+      setTimeout(() => {
+        const v = this.currentUser
+        if (!v) return
+        this.iNowSelectCompany = {
+          code: v.companyCode
+        }
+      }, 5e2)
+    },
     loadUserList(list) {
       const result = list.map(item => {
         const obj = {

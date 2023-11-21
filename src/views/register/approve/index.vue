@@ -190,17 +190,16 @@ export default {
     const f = async () => {
       const user_entity = await getUserSummary(usr)
       this.handleCurrentChange(user_entity)
-      this.nowSelectCompany = {
-        code: user_entity.companyCode
-      }
+      setTimeout(() => {
+        this.requireUpdate('followCurrentUser')
+      }, 5e2)
     }
     f()
   },
   methods: {
-    requireUpdate() {
+    requireUpdate(method = 'refresh') {
       const c = this.$refs.UsersSelectorByCompany
-      if (!c) return
-      const f = c.refresh
+      const f = c && c[method]
       if (!f) return
       f()
     },
@@ -208,7 +207,6 @@ export default {
       this.currentFocusUsers = v
     },
     handleCurrentChange(val) {
-      // console.log('approve user change to', val)
       if (!val) return
       this.current_user_entity = val
     }
