@@ -34,12 +34,11 @@
 </template>
 
 <script>
-import { companyTypes } from '../../components/dictionary'
 import { postUserCompany } from '@/api/user/userinfo'
 export default {
   name: 'BatchOperation',
   components: {
-    CompanyTypeSelector: () => import('../../components/CompanyTypeSelector'),
+    CompanyTypeSelector: () => import('@/components/Company/CompanyTypeSelector'),
     CompanySelector: () => import('@/components/Company/CompanySelector'),
     UserBatchSelector: () => import('@/components/User/UserBatchSelector'),
     AuthCode: () => import('@/components/AuthCode')
@@ -54,7 +53,6 @@ export default {
   data: () => ({
     loading: false,
     showMoveTo: false,
-    companyTypes,
     data: {
       companyType: null,
       modifyTo: null,

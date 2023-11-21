@@ -132,7 +132,7 @@ export default {
     UserPermission: () => import('./UserPermission'),
     Loading: () => import('@/views/Loading'),
     BatchOperation: () => import('./BatchOperation'),
-    UsersSelectorByCompany: () => import('./UsersSelectorByCompany')
+    UsersSelectorByCompany: () => import('@/components/Company/UsersSelectorByCompany')
   },
   data: () => ({
     isFromUrl: false,

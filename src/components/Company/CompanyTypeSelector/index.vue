@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { companyTypes } from '../dictionary'
+import { companyTypes } from './config'
 export default {
   name: 'CompanyTypeSelector',
   model: {

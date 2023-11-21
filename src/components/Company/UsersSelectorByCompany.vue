@@ -42,13 +42,12 @@ import { getMembers } from '@/api/company'
 import { getUsersVacationLimits } from '@/api/user/userinfo'
 import { checkUserValid } from '@/utils/validate'
 import { debounce } from '@/utils'
-import { companyTypes } from '../components/dictionary'
 export default {
   name: 'UsersSelectorByCompany',
   components: {
     UserSelector: () => import('@/components/User/UserSelector'),
     CompanySelector: () => import('@/components/Company/CompanySelector'),
-    CompanyTypeSelector: () => import('../components/CompanyTypeSelector')
+    CompanyTypeSelector: () => import('@/components/Company/CompanyTypeSelector')
   },
   props: {
     membersQuery: {
@@ -70,7 +69,6 @@ export default {
   data: () => ({
     inner_loading: false,
     innerNowSelectCompany: null,
-    companyTypes,
     innerMembersQuery: {
       userCompanyType: 0,
       includeChild: false,
