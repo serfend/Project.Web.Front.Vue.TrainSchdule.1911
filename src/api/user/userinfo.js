@@ -227,7 +227,7 @@ export function getUsersVacationLimit({
       })
   )
 }
-
+const url_getUsersVacationLimitOnlyVac = `${api}/vacationInfos`
 export function getUsersVacationLimits({
   userids,
   vacationYear,
@@ -235,7 +235,7 @@ export function getUsersVacationLimits({
   ignoreErr
 }) {
   return new Promise((res, rej) => {
-    request.post(`${url_getUsersVacationLimit}s`, {
+    request.post(url_getUsersVacationLimitOnlyVac, {
       id: userids,
       vacationYear,
       isPlan,
