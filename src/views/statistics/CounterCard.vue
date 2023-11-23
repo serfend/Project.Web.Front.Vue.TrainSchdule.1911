@@ -112,7 +112,6 @@ export default {
 .detail-value-value {
   @include base-element;
   color: #1f0000;
-  text-shadow: 0 1px #000, 1px 0 #000, -1px 0 #000, 0 -1px #000;
   height: 5rem;
 }
 
