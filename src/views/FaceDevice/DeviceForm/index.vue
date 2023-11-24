@@ -21,8 +21,8 @@
         <CascaderSelector
           v-model="inner_data.district_obj"
           :child-getter-method="locationChildren"
-          :value-name="'code'"
-          :label-name="'name'"
+          value-name="code"
+          label-name="name"
           width="20rem"
         />
       </el-form-item>

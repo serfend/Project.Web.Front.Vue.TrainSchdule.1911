@@ -13,9 +13,10 @@
     <el-form-item label="籍贯">
       <CascaderSelector
         :child-getter-method="locationChildren"
-        :value-name="'code'"
-        :label-name="'fullName'"
-        :place.sync="innerForm.hometown"
+        value-name="code"
+        label-name="name"
+        :emit-name="'fullName'"
+        :emit-value.sync="innerForm.hometown"
         :placeholder="innerForm.hometown"
         class="normal-form-item"
       />

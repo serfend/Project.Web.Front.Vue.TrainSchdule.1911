@@ -78,8 +78,8 @@
             :data="{ code: row.device.district, name: row.device.districtName }"
             :disabled="true"
             :child-getter-method="locationChildren"
-            :value-name="'code'"
-            :label-name="'name'"
+            value-name="code"
+            label-name="name"
             width="100%"
           />
         </template>

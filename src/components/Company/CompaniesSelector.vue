@@ -4,6 +4,8 @@
     v-model="companySelectItem"
     :default-select-first="defaultSelectFirst"
     :child-getter-method="companyChild"
+    value-name="code"
+    label-name="name"
     :multiple="true"
     :placeholder="placeholder"
   />

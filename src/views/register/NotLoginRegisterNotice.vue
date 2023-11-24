@@ -22,7 +22,7 @@ export default {
   components: { SvgIcon },
   methods: {
     handle_show_login_page() {
-      this.$router.push({ path: '/vacation/myApply' })
+      this.$router.push({ path: 'apply/vacation/myApply' })
     },
   },
 }

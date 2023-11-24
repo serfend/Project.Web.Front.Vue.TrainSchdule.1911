@@ -186,8 +186,8 @@
               <CascaderSelector
                 v-model="formApply.vacationPlace"
                 :child-getter-method="locationChildren"
-                :value-name="'code'"
-                :label-name="'name'"
+                value-name="code"
+                label-name="name"
                 :placeholder="
                   vacationPlaceDefault &&
                     vacationPlaceDefault.code == formApply.vacationPlace.code

@@ -2,6 +2,8 @@
   <CascaderSelector
     ref="companyInnerSelector"
     v-model="companySelectItem"
+    value-name="code"
+    label-name="name"
     :child-getter-method="companyChild"
     :placeholder="value.name||placeholder"
     @change="updateItem"

@@ -190,8 +190,8 @@
                 <CascaderSelector
                   v-model="queryForm.vacationAdminDivision"
                   :child-getter-method="locationChildren"
-                  :value-name="'code'"
-                  :label-name="'name'"
+                  value-name="code"
+                  label-name="name"
                   style="width:30rem"
                 />
               </el-form-item>

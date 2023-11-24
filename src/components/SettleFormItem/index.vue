@@ -25,8 +25,8 @@
       <el-tooltip content="请准确选中到区/县一级">
         <CascaderSelector
           v-model="innerForm.address"
-          :value-name="'code'"
-          :label-name="'name'"
+          value-name="code"
+          label-name="name"
           :placeholder="`${label}所在地`"
           :child-getter-method="locationChildren"
         />
