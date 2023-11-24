@@ -94,7 +94,6 @@ export default {
         return this.p_auditStatus
       },
       set(v) {
-        debugger
         this.p_auditStatus = v
         this.$emit('update:auditStatus', v)
       }

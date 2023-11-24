@@ -12,6 +12,8 @@ import { FormRecorder } from '@/utils/form'
 export default {
   Name: 'ApplySearchCommon',
   components: {
+    VacationTypeSelector: () =>
+      import('@/components/Vacation/VacationTypeSelector'),
     Flip: () => import('vue-flip'),
     CascaderSelector: () => import('@/components/CascaderSelector'),
     CompaniesSelector: () => import('@/components/Company/CompaniesSelector'),
@@ -21,18 +23,8 @@ export default {
     DutiesSelector: () => import('@/components/Duty/DutiesSelector')
   },
   props: {
-    list: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    pages: {
-      type: Object,
-      default() {
-        return this.innerPages
-      }
-    },
+    list: { type: Array, default: () => [] },
+    pages: { type: Object, default: () => this.innerPages },
     entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
@@ -66,7 +58,7 @@ export default {
     classItem: 'float-panel flashing',
     btnExitTransform: null,
     is_panel_active: false, // 判断当前面板是否激活
-    flip_run_timer: null, // 定时翻转面板
+    flip_run_timer: null // 定时翻转面板
   }),
   computed: {
     nowCountsMax() {
@@ -157,7 +149,10 @@ export default {
     }
     if (!this.queryForm) this.clearForm()
     this.queryFormStartRecord = true
-    this.settingsRecord = new FormRecorder('applySearchCommon.settings', this.settings)
+    this.settingsRecord = new FormRecorder(
+      'applySearchCommon.settings',
+      this.settings
+    )
     this.settings = this.settingsRecord.getRecord()
     this.driver = new Driver({
       closeBtnText: '我知道了'
@@ -198,7 +193,7 @@ export default {
     panelMouseLeave() {
       this.panel_out(false, 2e3)
     },
-    panelMouseActive () {
+    panelMouseActive() {
       this.is_panel_active = true
       this.panelMouseEnter()
     },
@@ -224,8 +219,9 @@ export default {
     },
     createQueryForm() {
       return {
-        _version: 5,
+        _version: 6,
         createTime: null,
+        requestType: null,
         stampLeaveTime: null,
         stampReturnTime: null,
         status: [], // 状态
@@ -234,6 +230,7 @@ export default {
         auditBy: null,
         nowAuditBy: null,
         createFor: null,
+        createBy: null,
         CreateCompanyItem: null,
         createCompany: [], // 申请单位
         dutiesType: null,

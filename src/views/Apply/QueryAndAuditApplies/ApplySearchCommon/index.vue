@@ -2,7 +2,7 @@
   <el-form
     v-if="queryForm"
     :class="classItem"
-    :style="{right:panel_right,cursor:panel_should_out?'':'pointer'}"
+    :style="{ right: panel_right, cursor: panel_should_out ? '' : 'pointer' }"
     @mouseenter.native="panelMouseEnter"
     @mousedown.native="panelMouseActive"
     @mouseleave.native="panelMouseLeave"
@@ -10,7 +10,13 @@
     <Flip v-model="isFlip" width="100%" height="100%">
       <template #front>
         <div style="width:35rem">
-          <div v-if="settings" :style="{transition:'all ease 0.5s',transform: btnExitTransform}">
+          <div
+            v-if="settings"
+            :style="{
+              transition: 'all ease 0.5s',
+              transform: btnExitTransform
+            }"
+          >
             <el-button type="danger" @click="panel_out(false)">关闭</el-button>
             <el-switch
               v-model="settings.manual_close_pannel"
@@ -21,7 +27,10 @@
           <el-tabs v-model="active_pane" type="border-card">
             <el-tab-pane label="状态">
               <el-form-item label>
-                <el-tooltip effect="light" content="仅单位的管理和数据分析人员需进行条件查询，其他人员默认将查询到本人可审批的申请">
+                <el-tooltip
+                  effect="light"
+                  content="仅单位的管理和数据分析人员需进行条件查询，其他人员默认将查询到本人可审批的申请"
+                >
                   <el-switch
                     v-model="adminQuery"
                     style="margin:0px 20px"
@@ -44,8 +53,12 @@
                     :label="item.desc"
                     :value="item.code"
                   >
-                    <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
-                    <span style="float: right; color: #e0e0e0; font-size: 10px">{{ item.code }}</span>
+                    <span :style="{ float: 'left', color: item.color }">{{
+                      item.desc
+                    }}</span>
+                    <span
+                      style="float: right; color: #e0e0e0; font-size: 10px"
+                    >{{ item.code }}</span>
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -58,14 +71,20 @@
                   clearable
                 >
                   <el-option
-                    v-for="(item,i) in Object.keys(executeStatus).map(s=>executeStatus[s])"
+                    v-for="(item, i) in Object.keys(executeStatus).map(
+                      s => executeStatus[s]
+                    )"
                     :key="i"
                     :value="item.value"
                     :label="item.alias"
                   >
                     <div v-if="item">
-                      <span :style="{'float': 'left','color':item.color}">{{ item.alias }}</span>
-                      <span style="float: right; color: #e0e0e0; font-size: 10px">{{ item.value }}</span>
+                      <span :style="{ float: 'left', color: item.color }">{{
+                        item.alias
+                      }}</span>
+                      <span
+                        style="float: right; color: #e0e0e0; font-size: 10px"
+                      >{{ item.value }}</span>
                     </div>
                     <div v-else>未知项{{ Object.keys(executeStatus)[i] }}</div>
                   </el-option>
@@ -85,8 +104,12 @@
                     :label="item.desc"
                     :value="item.code"
                   >
-                    <span :style="{'float': 'left','color':item.color}">{{ item.desc }}</span>
-                    <span style="float: right; color: #f0f0f0; font-size: 10px">{{ item.code }}</span>
+                    <span :style="{ float: 'left', color: item.color }">{{
+                      item.desc
+                    }}</span>
+                    <span
+                      style="float: right; color: #f0f0f0; font-size: 10px"
+                    >{{ item.code }}</span>
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -113,12 +136,24 @@
                   style="display:inline"
                 />
               </el-form-item>
-              <el-form-item label="创建人">
+              <el-form-item label="申请人">
                 <UserSelector
                   :code.sync="queryForm.createFor"
                   default-info="搜索成员"
                   style="display:inline"
                 />
+              </el-form-item>
+              <el-form-item label="代申请人">
+                <div style="display:flex">
+                  <el-tooltip content="当申请是由他人创建时，可筛选他人">
+                    <i class="el-icon-info blue--text" />
+                  </el-tooltip>
+                  <UserSelector
+                    :code.sync="queryForm.createBy"
+                    default-info="搜索成员"
+                    style="display:inline"
+                  />
+                </div>
               </el-form-item>
               <el-form-item label="已婚">
                 <el-tooltip content="测试功能,暂不稳定">
@@ -134,14 +169,24 @@
               </el-form-item>
             </el-tab-pane>
             <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="单位">
-              <el-form-item v-show="adminQuery" id="companiesSelector" label="来自单位">
-                <CompaniesSelector ref="companiesSelector" v-model="queryForm.CreateCompanyItem" />
+              <el-form-item
+                v-show="adminQuery"
+                id="companiesSelector"
+                label="来自单位"
+              >
+                <CompaniesSelector
+                  ref="companiesSelector"
+                  v-model="queryForm.CreateCompanyItem"
+                />
               </el-form-item>
               <el-form-item label="单位类别">
                 <CompanyTagSelector v-model="queryForm.companyType" />
               </el-form-item>
               <el-form-item label="职务类别">
-                <DutiesSelector :tag.sync="queryForm.dutiesType" :only-tag="true" />
+                <DutiesSelector
+                  :tag.sync="queryForm.dutiesType"
+                  :only-tag="true"
+                />
               </el-form-item>
               <el-form-item label="偏远单位">
                 <el-tooltip content="测试功能,暂不稳定">
@@ -150,7 +195,11 @@
                 <el-switch v-model="queryForm.isRemote" />
               </el-form-item>
             </el-tab-pane>
-            <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="申请内容">
+            <el-tab-pane
+              v-if="adminQuery"
+              :disabled="!adminQuery"
+              label="申请内容"
+            >
               <el-form-item v-show="adminQuery" label="创建时间">
                 <el-date-picker
                   v-model="queryForm.createTime"
@@ -162,8 +211,15 @@
                   clearable
                 />
               </el-form-item>
-              <el-form-item v-show="adminQuery" label="离队时间" label-width="120">
-                <el-tooltip effect="light" content="注意需要选中一个时间范围，例如5月2日到5月12日">
+              <el-form-item
+                v-show="adminQuery"
+                label="离队时间"
+                label-width="120"
+              >
+                <el-tooltip
+                  effect="light"
+                  content="注意需要选中一个时间范围，例如5月2日到5月12日"
+                >
                   <el-date-picker
                     v-model="queryForm.stampLeaveTime"
                     type="daterange"
@@ -175,7 +231,11 @@
                   />
                 </el-tooltip>
               </el-form-item>
-              <el-form-item v-show="adminQuery" label="归队时间" label-width="120">
+              <el-form-item
+                v-show="adminQuery"
+                label="归队时间"
+                label-width="120"
+              >
                 <el-date-picker
                   v-model="queryForm.stampReturnTime"
                   type="daterange"
@@ -204,9 +264,27 @@
                   style="width:80%;float:right"
                 />
               </el-form-item>
+              <el-form-item v-show="adminQuery" label="申请类型">
+                <VacationTypeSelector
+                  ref="typeSelector"
+                  v-model="queryForm.requestType"
+                  :entity-type="entityType"
+                  :check-filter="false"
+                  as-dialog
+                  :hide="true"
+                />
+              </el-form-item>
             </el-tab-pane>
-            <el-tab-pane v-if="adminQuery" :disabled="!adminQuery" label="授权码">
-              <AuthCode v-show="adminQuery" :form.sync="queryForm.auth" select-name="申请搜索" />
+            <el-tab-pane
+              v-if="adminQuery"
+              :disabled="!adminQuery"
+              label="授权码"
+            >
+              <AuthCode
+                v-show="adminQuery"
+                :form.sync="queryForm.auth"
+                select-name="申请搜索"
+              />
             </el-tab-pane>
           </el-tabs>
           <el-row style="margin:0.5rem">
@@ -236,10 +314,14 @@
               </el-button-group>
             </el-col>
             <el-col v-show="!adminQuery" :lg="24">
-              <el-button type="info" icon="el-icon-delete" @click="clearForm">清空查询</el-button>
+              <el-button
+                type="info"
+                icon="el-icon-delete"
+                @click="clearForm"
+              >清空查询</el-button>
               <el-button
                 type="success"
-                :icon="onLoading?'el-icon-loading':'el-icon-refresh-right'"
+                :icon="onLoading ? 'el-icon-loading' : 'el-icon-refresh-right'"
                 @click="requireSearchData"
               >刷新</el-button>
             </el-col>
@@ -249,12 +331,14 @@
       <template #back>
         <el-card style="width:35rem">
           <div style="text-align:center;height:10rem">
-            <span style="font-size:24px;font-weight:600;">当前为{{ adminQuery?'管理查询':'一般查询' }}</span>
+            <span
+              style="font-size:24px;font-weight:600;"
+            >当前为{{ adminQuery ? "管理查询" : "一般查询" }}</span>
             <el-divider />
             <el-button
               type="text"
               style="position: absolute;left: 0.5rem;top: 0;font-size:1.2rem;"
-              @click="isFlip=false"
+              @click="isFlip = false"
             >返回查询</el-button>
             <div v-if="adminQuery">
               <p>包含多个条件筛选的选项卡，您可以在其中设置不同的查询条件</p>
@@ -292,5 +376,5 @@ export default s
     opacity: 1;
   }
 }
-@import '@/styles/animation';
+@import "@/styles/animation";
 </style>

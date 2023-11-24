@@ -125,6 +125,7 @@ export function createQueryApplyModel({ data, pages, entityType }) {
   f.executeStatus = form.toQueryValue(data.executeStatus)
   f.auditBy = form.toQueryValue(data.auditBy)
   f.nowAuditBy = form.toQueryValue(data.nowAuditBy)
+  f.requestType = form.toQueryValue(data.requestType)
   f.createCompany = form.toQueryArrays(data.createCompany)
   f.dutiesType = form.toQueryValue(data.dutiesType)
   if (data.companyType && data.companyType.length) {
