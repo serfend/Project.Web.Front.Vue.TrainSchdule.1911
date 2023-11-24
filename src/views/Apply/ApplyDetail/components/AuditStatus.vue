@@ -1,7 +1,7 @@
 <template>
   <el-card v-if="detail" v-loading="loading" shadow="hover">
     <h3 slot="header">
-      <span>{{ `审批进度(${detail.auditSolution||'审批流程'})` }}</span>
+      <span>{{ `审批进度(${solutionRuleNames})` }}</span>
       <span>{{ detail.status == 20?'(已撤回)':null }}</span>
       <ApplyCompany :data="detail.baseInfo" />
     </h3>
@@ -132,6 +132,14 @@ export default {
     }
   },
   computed: {
+    solutionRuleNames() {
+      const not_found = '未知审批流程'
+      const detail = this.detail
+      if (!detail) return not_found
+      const { auditSolutionRule: a, auditSolution: b } = detail
+      if (!a && !b) return not_found
+      return `规则:${a} -> 应用审批流:${b}`
+    },
     statusDic () {
       return this.$store.state.vacation.statusDic
     },

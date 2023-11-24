@@ -2,7 +2,7 @@
   <div v-loading="loading" @mouseenter="init">
     <el-dialog :visible.sync="show">
       <template v-if="data" #title>
-        <h2>{{ data.auditSolution }}</h2>
+        <h2>{{ solutionRuleNames }}</h2>
         <div>{{ getCDdes(data.base,data.baseInfo) }}</div>
       </template>
       <ApplyAuditStreamPreview
@@ -37,6 +37,16 @@ export default {
     initilize: false,
     show: false
   }),
+  computed: {
+    solutionRuleNames() {
+      const not_found = '未知审批流程'
+      const data = this.data
+      if (!data) return not_found
+      const { auditSolutionRule: a, auditSolution: b } = data
+      if (!a && !b) return not_found
+      return `规则:${a} -> 应用审批流:${b}`
+    },
+  },
   watch: {
     id: {
       handler(val) {
