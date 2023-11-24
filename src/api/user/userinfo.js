@@ -232,6 +232,7 @@ export function getUsersVacationLimits({
   userids,
   vacationYear,
   isPlan,
+  useCache,
   ignoreErr
 }) {
   return new Promise((res, rej) => {
@@ -239,6 +240,7 @@ export function getUsersVacationLimits({
       id: userids,
       vacationYear,
       isPlan,
+      useCache,
       ignoreErr
     }).then(data => {
       const dict = {}

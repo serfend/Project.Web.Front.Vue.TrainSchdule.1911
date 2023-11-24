@@ -71,7 +71,8 @@ export default {
     nowSelectCompany: { type: Object, default: null },
     currentUser: { type: Object, default: null },
     totalCount: { type: Number, default: 0 },
-    list: { type: Array, default: null }
+    list: { type: Array, default: null },
+    useCache: { type: Boolean, default: false }
   },
   data: () => ({
     hide_pannel: false,
@@ -210,7 +211,7 @@ export default {
     // 刷新待认证人员列表
     async direct_refresh() {
       const code = this.iNowSelectCompany.code
-      const { MembersQuery, vacationYear } = this
+      const { MembersQuery, vacationYear, useCache } = this
       const { page } = MembersQuery
 
       let q = Object.assign({ code }, this.MembersQuery)
@@ -221,7 +222,8 @@ export default {
 
       const vacations = await getUsersVacationLimits({
         userids: list.map(x => x.id),
-        vacationYear: vacationYear.getFullYear()
+        vacationYear: vacationYear.getFullYear(),
+        useCache
       })
       list.map(x => {
         const vac = vacations[x.id]

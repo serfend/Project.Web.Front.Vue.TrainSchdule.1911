@@ -7,6 +7,7 @@
       :now-select-company.sync="nowSelectCompany"
       :list.sync="members"
       :loading.sync="loading"
+      :use-cache="true"
     />
     <div class="status-pannel">
       <h2>{{ currentCompany }}统计</h2>
