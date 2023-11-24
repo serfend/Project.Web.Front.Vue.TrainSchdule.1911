@@ -105,7 +105,7 @@ export default {
       handler(val) {
         console.log('auditStatus', val)
         this.p_auditStatus = val
-        this.solutionName = '审批流'
+        if (!this.solutionName) this.solutionName = '未知审批流'
         if (!val) return
         this.p_auditStatus = val.map(x => Object.assign({}, x))
         this.$nextTick(() => {
@@ -141,7 +141,6 @@ export default {
       this.solutionName = null
       auditStream(this.userid, this.entityTypeDesc || this.entityType)
         .then(data => {
-          debugger
           this.solutionName = data.solutionName
           this.innerAuditStatus = data.steps
           this.validateInfoInner = null
