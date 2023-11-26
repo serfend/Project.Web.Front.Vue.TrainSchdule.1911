@@ -25,10 +25,10 @@
         <b>备注：</b>
         <span>{{ innerData.description || "暂无" }}</span>
       </li>
-      <li>
+      <li v-if="innerData.additionals">
         <b>其他假期：</b>
         <el-tooltip
-          v-if="innerData.additionals && innerData.additionals.length > 0"
+          v-if="innerData.additionals.length > 0"
           effect="light"
           placement="right"
         >
