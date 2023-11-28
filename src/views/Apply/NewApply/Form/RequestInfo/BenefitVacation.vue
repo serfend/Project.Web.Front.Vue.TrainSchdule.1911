@@ -1,10 +1,20 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <div v-if="innerList && innerList.length > 0">
       <el-collapse v-model="nowIndex" accordion>
-        <el-collapse-item v-for="(item, index) in innerList" :key="index" :name="index">
+        <el-collapse-item
+          v-for="(item, index) in innerList"
+          :key="index"
+          :name="index"
+        >
           <template slot="title">
-            <span v-if="item.name && item.length">{{ item.name }} {{ item.length }}天</span>
+            <span v-if="item.name && item.length">
+              <span>{{ item.name }} {{ item.length }}天</span>
+              <el-tag v-if="item.options & 2">允许跨年</el-tag>
+              <el-tag v-else type="warning">不允许跨年</el-tag>
+              <el-tag v-if="item.officialWelfareId">官方假</el-tag>
+              <el-tag v-else type="warning">用户自报假</el-tag>
+            </span>
             <span v-else>请点击并填写其他假信息</span>
           </template>
           <el-form label-width="6rem">
@@ -17,7 +27,10 @@
               />
             </el-form-item>
             <el-form-item label="休假天数">
-              <el-input-number v-model.number="innerList[index].length" :min="1" />
+              <el-input-number
+                v-model.number="innerList[index].length"
+                :min="1"
+              />
             </el-form-item>
             <el-form-item label="其他假理由">
               <el-input
@@ -39,7 +52,11 @@
         </el-collapse-item>
       </el-collapse>
     </div>
-    <el-button icon="el-icon-plus" style="width: 100%" @click="addSingle">添加</el-button>
+    <el-button
+      icon="el-icon-plus"
+      style="width: 100%"
+      @click="addSingle"
+    >添加</el-button>
   </div>
 </template>
 
@@ -56,10 +73,28 @@ export default {
     list: { type: Array, default: () => [] }
   },
   data: () => ({
+    loading: false,
     benefitList: [],
     nowIndex: -1,
     innerList: []
   }),
+  computed: {
+    benefitDict() {
+      const { benefitOptionList } = this
+      const result = {}
+      if (!benefitOptionList) return result
+      benefitOptionList.map(x => {
+        result[x.name] = x
+      })
+      return result
+    },
+    benefitOptionList() {
+      // 创建新的实例以防原始配置被修改
+      const { benefitList } = this
+      if (!benefitList) return []
+      return benefitList.map(x => Object.assign({}, x))
+    }
+  },
   watch: {
     vacationType: {
       handler(val) {
@@ -76,7 +111,9 @@ export default {
     innerList: {
       handler(val) {
         this.$nextTick(() => {
-          this.$emit('change', this.innerList)
+          const list = this.innerList
+          if (list)list.map(x => this.checkValid(x))
+          this.$emit('change', list)
         })
       },
       deep: true
@@ -87,25 +124,58 @@ export default {
   },
   methods: {
     updateBenefit() {
-      benefitList(this.vacationType).then((data) => {
-        this.benefitList = data.list.map(x => ({
-          value: x.name,
-          length: x.length,
-          description: x.description
-        }))
-      })
+      this.loading = true
+      benefitList(this.vacationType)
+        .then(data => {
+          this.benefitList = data.list.map(x => {
+            const item = Object.assign(
+              {
+                value: x.name,
+                officialWelfareId: x.id // 标记为官方假
+              },
+              x
+            )
+            delete item.id
+            return item
+          })
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     querySearch(key, cb) {
-      if (!key) return cb(this.benefitList)
-      var results = this.benefitList
-        .filter(i => i.value.indexOf(key) > -1)
+      if (!key) return cb(this.benefitOptionList)
+      var results = this.benefitOptionList
+        .filter(i => i.name.indexOf(key) > -1)
         .map(i => Object.assign({}, i))
       cb(results)
     },
+    checkValid(item) {
+      if (this.isChecking) return
+      this.isChecking = true
+      try {
+        const { benefitDict } = this
+        const checkOfficial = benefitDict[item.name]
+        if (!checkOfficial) {
+          // 同步为空值
+          item.officialWelfareId = null
+          item.options = 0
+        }
+
+        if (checkOfficial) {
+          // 同步为官方假
+          item.name = checkOfficial.name
+          item.officialWelfareId = checkOfficial.officialWelfareId
+          item.options = checkOfficial.options
+        }
+      } finally {
+        this.isChecking = false
+      }
+    },
     selectChange(item) {
-      const list_item = this.list[this.nowIndex]
-      list_item.description = item.description
-      list_item.length = item.length
+      this.checkValid(item)
+      // 全部值赋值
+      this.innerList[this.nowIndex] = item
     },
     addSingle() {
       this.innerList.push({
@@ -113,6 +183,7 @@ export default {
         description: '填写其他假原因',
         length: 0
       })
+      this.nowIndex = this.innerList.length - 1
     },
     removeSingle(index) {
       this.innerList.splice(index, 1)
