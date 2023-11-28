@@ -29,9 +29,7 @@
                 <el-form-item v-if="innerData.status!==20" label="假期天数">
                   <span>共{{ total }}天 | </span>
                   <span>{{ `净假期${innerData.request.vacationLength}天 在途${innerData.request.onTripLength}天` }}</span>
-                  <el-tooltip v-for="a in innerData.request.additialVacations" :key="a.id" :content="`开始于${a.start}的${a.length}天${a.name},${a.description}`">
-                    <el-tag style="margin:10px">{{ `${a.length}天${a.name}` }}</el-tag>
-                  </el-tooltip>
+                  <VacAdditionalTags v-model="innerData.request.additialVacations" />
                 </el-form-item>
                 <el-form-item v-if="innerData.status!==20" label="休假地点">
                   {{ `${innerData.request.vacationPlace.name} ${innerData.request.vacationPlaceName==null?'无详细地址':innerData.request.vacationPlaceName}` }}
@@ -61,6 +59,7 @@ export default {
       import('@/components/ApplicationApply/ApplyAuditStreamPreviewLoader'),
     VacationType: () => import('@/components/Vacation/VacationType'),
     TransportationType: () => import('@/components/Vacation/TransportationType'),
+    VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags'),
     NoData: () => import('@/views/Loading/NoData')
   },
   props: {

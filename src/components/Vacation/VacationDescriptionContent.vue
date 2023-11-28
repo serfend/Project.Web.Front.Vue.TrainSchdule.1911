@@ -33,21 +33,7 @@
           placement="right"
         >
           <div slot="content">
-            <div v-for="(v, i) in innerData.additionals" :key="i">
-              <el-tooltip placement="right">
-                <template #content>
-                  <span v-if="!isOfficial(v)">用户个人创建</span>
-                  <span>{{ v.description }}</span>
-                </template>
-                <div :style="{ color: isOfficial(v) ? '#13ce66' : '#ff4949' }">
-                  <span>{{ parseTime(v.start) }}</span>
-                  <span>:</span>
-                  <span>{{ v.name }}</span>
-                  <span>{{ v.length }}</span>
-                  <span>天</span>
-                </div>
-              </el-tooltip>
-            </div>
+            <VacAdditionalTags v-model="innerData.additionals" :inline="false" />
           </div>
           <span>{{
             innerData.additionals.reduce((prev, cur) => prev + cur.length, 0)
@@ -71,7 +57,9 @@ import { parseTime } from '@/utils'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
 export default {
   name: 'VacationDescriptionContent',
-  components: {},
+  components: {
+    VacAdditionalTags: () => import('./VacAdditionalTags')
+  },
   props: {
     usersVacation: { type: Object, default: () => ({}) },
     userid: { type: String, default: null },
@@ -99,8 +87,19 @@ export default {
     }
   },
   methods: {
-    isOfficial(v) {
-      return v.officialAdditionId
+    getAdditional(a) {
+      const isOfficial = a.officialAdditionId
+      const isOfficialWelfare = a.officialWelfareId
+      const isOfficialAny = isOfficial || isOfficialWelfare
+      const desc = `开始于${parseTime(a.start)}的${a.length}天${a.name},${
+        a.description
+      }`
+      const prefix = isOfficialAny ? '' : '【用户自报假】'
+      return {
+        desc: `${prefix}${desc}`,
+        isOfficial,
+        isOfficialWelfare
+      }
     },
     updateVacation(data) {
       this.innerData = data

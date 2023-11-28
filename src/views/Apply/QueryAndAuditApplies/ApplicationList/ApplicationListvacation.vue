@@ -139,17 +139,7 @@
               <el-dropdown-item
                 v-if="row.request.onTripLength > 0"
               >路途{{ row.request.onTripLength }}天</el-dropdown-item>
-              <el-dropdown-item
-                v-for="(v, i) in row.request.additialVacations"
-                v-show="row.request.additialVacations.length > 0"
-                :key="i"
-              >
-                <el-tooltip :content="getAddiDesc(v)" placement="left">
-                  <el-tag
-                    :type="v.officialAdditionId ? 'primary' : 'warning'"
-                  >{{ v.name }} {{ v.length }}天</el-tag>
-                </el-tooltip>
-              </el-dropdown-item>
+              <VacAdditionalTags v-model="row.request.additialVacations" :inline="false" />
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -240,7 +230,8 @@ export default {
       import('@/views/Apply/ApplyDetail/IndayApplyDetail'),
     TransportationType: () =>
       import('@/components/Vacation/TransportationType'),
-    ApplyCompany: () => import('../../CommonComponents/ApplyCompany')
+    ApplyCompany: () => import('../../CommonComponents/ApplyCompany'),
+    VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags')
   },
   props: {
     list: {
@@ -307,11 +298,6 @@ export default {
     parseTime,
     relativeDate,
     datedifference,
-    getAddiDesc(v) {
-      let result = v.description
-      if (!v.officialAdditionId) result = `用户个人创建(非法定节假日):${result}`
-      return result
-    },
     check_has_additional(row) {
       if (!row) return false
       const { request } = row

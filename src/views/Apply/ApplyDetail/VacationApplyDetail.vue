@@ -121,19 +121,7 @@
                     detail.request.onTripLength
                   }天`
                 }}</span>
-                <el-tooltip
-                  v-for="a in detail.request.additialVacations"
-                  :key="a.id"
-                  :content="
-                    `开始于${parseTime(a.start)}的${a.length}天${a.name},${
-                      a.description
-                    }`
-                  "
-                >
-                  <el-tag style="margin-left: 10px">{{
-                    `${a.length}天${a.name}`
-                  }}</el-tag>
-                </el-tooltip>
+                <VacAdditionalTags v-model="detail.request.additialVacations" />
               </el-form-item>
               <el-form-item label="休假日期">
                 <span>
@@ -239,7 +227,8 @@ export default {
       import('@/components/Vacation/TransportationType'),
     ApplyExecuteRecords: () => import('../ApplyExecuteRecords'),
     VacationDescriptionContent: () =>
-      import('@/components/Vacation/VacationDescriptionContent')
+      import('@/components/Vacation/VacationDescriptionContent'),
+    VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags')
   },
   props: {
     showUser: { type: Boolean, default: true },
