@@ -132,6 +132,7 @@ export function createQueryApplyModel({ data, pages, entityType }) {
     f.companyType = form.toQueryArrays(data.companyType)
   }
   f.createFor = form.toQueryValue(data.createFor)
+  f.createBy = form.toQueryValue(data.createBy)
   f.vacationAdminDivision = form.toQueryStartEndByArray([
     data.vacationAdminDivision && data.vacationAdminDivision.code,
     0
