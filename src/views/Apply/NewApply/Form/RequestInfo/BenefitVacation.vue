@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <div v-if="innerList && innerList.length > 0">
+    <div v-if="anyItems">
       <el-collapse v-model="nowIndex" accordion>
         <el-collapse-item
           v-for="(item, index) in innerList"
@@ -18,6 +18,7 @@
             <span v-else>请点击并填写其他假信息</span>
           </template>
           <el-form label-width="6rem">
+
             <el-form-item label="其他假">
               <el-autocomplete
                 v-model="innerList[index].name"
@@ -57,6 +58,10 @@
       style="width: 100%"
       @click="addSingle"
     >添加</el-button>
+    <div v-if="anyItems">
+      <span>预览其他假：</span>
+      <VacAdditionalTags v-model="innerList" />
+    </div>
   </div>
 </template>
 
@@ -64,6 +69,9 @@
 import { benefitList } from '@/api/apply'
 export default {
   name: 'BenefitVacation',
+  components: {
+    VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags')
+  },
   model: {
     prop: 'list',
     event: 'change'
@@ -79,6 +87,10 @@ export default {
     innerList: []
   }),
   computed: {
+    anyItems() {
+      const { innerList } = this
+      return innerList && innerList.length > 0
+    },
     benefitDict() {
       const { benefitOptionList } = this
       const result = {}
@@ -144,10 +156,9 @@ export default {
         })
     },
     querySearch(key, cb) {
-      if (!key) return cb(this.benefitOptionList)
-      var results = this.benefitOptionList
-        .filter(i => i.name.indexOf(key) > -1)
-        .map(i => Object.assign({}, i))
+      let list = this.benefitOptionList
+      if (key) list = list.filter(i => i.name.indexOf(key) > -1)
+      const results = list.map(i => Object.assign({}, i)) // 去关联
       cb(results)
     },
     checkValid(item) {
@@ -163,10 +174,11 @@ export default {
         }
 
         if (checkOfficial) {
+          const copy = Object.assign({}, checkOfficial)
           // 同步为官方假
-          item.name = checkOfficial.name
-          item.officialWelfareId = checkOfficial.officialWelfareId
-          item.options = checkOfficial.options
+          item.name = copy.name
+          item.officialWelfareId = copy.officialWelfareId
+          item.options = copy.options
         }
       } finally {
         this.isChecking = false
