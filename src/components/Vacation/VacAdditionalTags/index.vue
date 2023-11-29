@@ -11,7 +11,7 @@
           <span>{{ v.desc }}</span>
         </template>
         <el-tag :type="v.tag_type">
-          <span>{{ v.name }}</span>
+          <span>{{ v.name || '无名称的额外假' }}</span>
           <span>{{ v.length }}天</span>
         </el-tag>
       </el-tooltip>
@@ -42,8 +42,9 @@ export default {
       const isOfficial = a.officialAdditionId
       const isOfficialWelfare = a.officialWelfareId
       const isOfficialAny = isOfficial || isOfficialWelfare
-      const desc_date = new Date(a.start).getFullYear() <= 2001 ? '' : `开始于${parseTime(a.start)}的`
-      const desc = `${desc_date}${a.length}天${a.name},${a.description}`
+      const invalid_date = !a.start || new Date(a.start).getFullYear() <= 2001
+      const desc_date = invalid_date ? '' : `开始于${parseTime(a.start)}的`
+      const desc = `${desc_date}${a.length}天${a.name},原因:${a.description}`
       let prefix = ''
       let tag_type = ''
       if (isOfficial) {
@@ -61,7 +62,7 @@ export default {
         tag_type,
         isOfficial,
         isOfficialWelfare,
-        isOfficialAny,
+        isOfficialAny
       }
       return Object.assign(result, a)
     }
