@@ -10,7 +10,7 @@
       class="flashing-alert"
       style="position:relative;z-index:2;"
     >
-      <el-form :model="formApply" label-width="5rem" :rules="rules">
+      <el-form ref="primaryForm" :model="formApply" label-width="5rem" :rules="rules">
         <el-form-item label="填报类型">
           <el-tooltip content="正式填报休假申请，审批通过后计入全年休假情况。">
             <el-radio v-model="mainStatus" :label="0" border>正式报假</el-radio>
@@ -30,15 +30,18 @@
         </el-form-item>
         <el-form-item
           v-if="mainStatus > 0 && (mainStatus & 4) > 0"
-          label="因公分休原因"
+          label="因"
           prop="forWorkReason"
         >
-          <el-input
-            v-model="formApply.forWorkReason"
-            :autosize="{ minRows: 2, maxRows: 8 }"
-            maxlength="30"
-            type="textarea"
-          />
+          <div style="display:flex">
+            <el-input
+              v-model="formApply.forWorkReason"
+              maxlength="30"
+              style="width:10rem"
+              placement="填写原因"
+            />
+            <span>工作原因，需分休。</span>
+          </div>
         </el-form-item>
         <el-form-item v-show="!(mainStatus & 2)" label="选择计划">
           <el-tooltip
@@ -570,26 +573,29 @@ export default {
         this.$message.error(items.join(' '))
         return
       }
-      s.vacationPlace = s.vacationPlace.code
-      this.loading = true
-      s = Object.assign({ lawVacationSet: this.lawVacations }, s)
-      postRequestInfo(s, this.entityType)
-        .then(data => {
-          this.$message.success('休假信息验证成功')
-          this.submitId = data.id
-          this.$emit('update:submitId', data.id)
-          this.$emit('update:mainStatus', this.mainStatus)
-          setTimeout(() => {
-            this.$emit('submited', true)
-          }, 200)
-        })
-        .catch(() => {
-          this.$emit('submited', false)
-        })
-        .finally(() => {
-          this.loading = false
-          this.anyChanged = false
-        })
+      this.$refs.primaryForm.validate(valid => {
+        if (!valid) return this.$message.error('无效的信息，请检查')
+        s.vacationPlace = s.vacationPlace.code
+        this.loading = true
+        s = Object.assign({ lawVacationSet: this.lawVacations }, s)
+        postRequestInfo(s, this.entityType)
+          .then(data => {
+            this.$message.success('休假信息验证成功')
+            this.submitId = data.id
+            this.$emit('update:submitId', data.id)
+            this.$emit('update:mainStatus', this.mainStatus)
+            setTimeout(() => {
+              this.$emit('submited', true)
+            }, 200)
+          })
+          .catch(() => {
+            this.$emit('submited', false)
+          })
+          .finally(() => {
+            this.loading = false
+            this.anyChanged = false
+          })
+      })
     },
     updateChange() {
       const caculaingDate = this.caculaingDate()
