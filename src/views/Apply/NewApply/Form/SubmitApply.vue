@@ -157,7 +157,7 @@ export default {
   props: {
     baseInfoId: { type: String, default: null },
     requestId: { type: String, default: null },
-    mainType: { type: Number, default: 0 },
+    mainStatus: { type: Number, default: 0 },
     disabled: { type: Boolean, default: false },
     entityType: { type: String, default: 'vacation' }
   },
@@ -241,9 +241,7 @@ export default {
     submitApply(actionStatus) {
       if (this.onLoading) return this.$message.info('提交中，请等待')
       this.errorMsg = null
-      const BaseId = this.baseInfoId
-      const RequestId = this.requestId
-      const main_type = this.mainType
+      const { baseInfoId, requestId, mainStatus, entityType } = this
       this.onLoading = true
       const doActionCb = data => {
         if (!data || !data.list) {
@@ -276,10 +274,10 @@ export default {
         }
       }
       submitApply({
-        RequestId,
-        BaseId,
-        isPlan: main_type === 2,
-        entityType: this.entityType,
+        requestId,
+        baseId: baseInfoId,
+        mainStatus,
+        entityType,
         Verify: {
           Code: 201700816
         }

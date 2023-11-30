@@ -10,16 +10,37 @@
       class="flashing-alert"
       style="position:relative;z-index:2;"
     >
-      <el-form label-width="5rem">
+      <el-form :model="formApply" label-width="5rem" :rules="rules">
         <el-form-item label="填报类型">
           <el-tooltip content="正式填报休假申请，审批通过后计入全年休假情况。">
-            <el-radio v-model="main_type" :label="0" border>正式报假</el-radio>
+            <el-radio v-model="mainStatus" :label="0" border>正式报假</el-radio>
+          </el-tooltip>
+          <el-tooltip
+            content="休探亲假且因公分休的，全年3次路途内的，不计入路途次数"
+          >
+            <el-radio
+              v-model="mainStatus"
+              :label="4"
+              border
+            >正式报假（因公）</el-radio>
           </el-tooltip>
           <el-tooltip content="用于填报年度休假计划，不计入全年休假情况。">
-            <el-radio v-model="main_type" :label="2" border>计划报假</el-radio>
+            <el-radio v-model="mainStatus" :label="2" border>计划报假</el-radio>
           </el-tooltip>
         </el-form-item>
-        <el-form-item v-show="main_type == 0" label="选择计划">
+        <el-form-item
+          v-if="mainStatus > 0 && (mainStatus & 4) > 0"
+          label="因公分休原因"
+          prop="forWorkReason"
+        >
+          <el-input
+            v-model="formApply.forWorkReason"
+            :autosize="{ minRows: 2, maxRows: 8 }"
+            maxlength="30"
+            type="textarea"
+          />
+        </el-form-item>
+        <el-form-item v-show="!(mainStatus & 2)" label="选择计划">
           <el-tooltip
             content="【开发中】您可以从之前填报的计划中直接选取作为正式填报项提交"
           >
@@ -29,7 +50,7 @@
           </el-tooltip>
         </el-form-item>
       </el-form>
-      <el-container v-show="main_type > -1">
+      <el-container v-show="mainStatus > -1">
         <el-main :style="{ filter: hideDetail ? 'blur(0.2rem)' : '' }">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
             <template
@@ -292,8 +313,14 @@ export default {
     isHover: false,
     anyChanged: false,
     nowMaxLength: 30,
-    main_type: -1, // 0:正式报 1:计划报
-    direct_select_apply: null
+    mainStatus: -1, // 0:正式报 1:无效 2:计划 4:因公
+    direct_select_apply: null,
+    rules: {
+      forWorkReason: [
+        { required: true, message: '请输入因公原因', trigger: 'blur' },
+        { min: 1, max: 30, message: '请输入因公原因', trigger: 'blur' }
+      ]
+    }
   }),
   computed: {
     theme() {
@@ -328,11 +355,6 @@ export default {
     },
     filtedBenefitList() {
       return this.benefitList.filter(i => i && i.name && i.length)
-    },
-    checkIsPlan() {
-      const i = this.main_type
-      const main_type_dict = { 0: false, 2: true }
-      return main_type_dict[i]
     }
   },
   watch: {
@@ -347,7 +369,7 @@ export default {
         })
       }
     },
-    main_type: {
+    mainStatus: {
       handler(val) {
         this.$nextTick(() => {
           this.updateChange()
@@ -452,11 +474,11 @@ export default {
     },
     // call by base info ,DO NOT REMOVE
     refreshVacation() {
-      const { userid, checkIsPlan } = this
+      const { userid, mainStatus } = this
       const vacationYear =
         (this.formApply && new Date(this.formApply.StampLeave).getFullYear()) ||
         new Date().getFullYear()
-      getUsersVacationLimit({ userid, vacationYear, checkIsPlan })
+      getUsersVacationLimit({ userid, vacationYear, mainStatus })
         .then(data => {
           this.usersvacation = data
         })
@@ -503,8 +525,8 @@ export default {
         vacationPlaceName: '',
         lawVacaion: [],
         reason: '',
-        ByTransportation: 0,
-        isPlan: null
+        forWorkReason: null,
+        ByTransportation: 0
       }
     },
     checkParamValid(params) {
@@ -532,7 +554,7 @@ export default {
      * 提交请求信息
      */
     submitRequestInfo() {
-      if (this.loading || !this.anyChanged || this.main_type === -1) return
+      if (this.loading || !this.anyChanged || this.mainStatus === -1) return
       this.submitId = null
       this.$emit('update:submitId', null)
 
@@ -541,7 +563,6 @@ export default {
 
       let s = Object.assign({ id: this.userid }, this.formApply)
 
-      s.isPlan = this.checkIsPlan
       s.vacationAdditionals = this.filtedBenefitList
       const items = this.checkParamValid(s)
       if (items.length > 0) {
@@ -557,7 +578,7 @@ export default {
           this.$message.success('休假信息验证成功')
           this.submitId = data.id
           this.$emit('update:submitId', data.id)
-          this.$emit('update:mainType', this.main_type)
+          this.$emit('update:mainStatus', this.mainStatus)
           setTimeout(() => {
             this.$emit('submited', true)
           }, 200)

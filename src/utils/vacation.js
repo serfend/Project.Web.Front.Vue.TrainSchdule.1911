@@ -1,10 +1,11 @@
 import { datedifference, parseTime, relativeDate } from './index'
 const handle_detail = {}
-handle_detail.vacation = (request) => {
+handle_detail.vacation = request => {
   let detail
   if (request) {
     const addtional = request.additialVacations
-    const ad_detail = addtional && addtional.reduce((prev, cur) => prev + cur.length, 0) || 0
+    const ad_detail =
+      (addtional && addtional.reduce((prev, cur) => prev + cur.length, 0)) || 0
     const on_trip = request.onTripLength || 0
     const date_length = request.vacationLength || 0
     const total = ad_detail + on_trip + date_length
@@ -19,7 +20,7 @@ handle_detail.vacation = (request) => {
   } else detail = '无详细信息'
   return detail.replace(' 00:00:00', '')
 }
-handle_detail.inday = (request) => {
+handle_detail.inday = request => {
   if (!request) return '无详情'
   const { stampLeave, stampReturn } = request
   const sl = relativeDate(stampLeave) + parseTime(stampLeave, '{h}:{i}:{s}')
@@ -37,22 +38,40 @@ export function get_item_summary(i, entityType) {
 
   return `${title}\n${detail}`
 }
-const MainStatus_IsPlan = 2
+export const MainStatus_IsPlan = 2
+export const MainStatus_IsLimitByWork = 4
 export function get_item_type(i) {
-  const result = {
-    isPlan: (i.mainStatus & MainStatus_IsPlan) > 0
+  if (!i) return {}
+  const mainStatus = Number(i.mainStatus)
+  return {
+    isPlan: (mainStatus & MainStatus_IsPlan) > 0,
+    isForWork: (mainStatus & MainStatus_IsLimitByWork) > 0
   }
-  return result
+}
+export function formatApplyItem (li) {
+  if (!li.request) return li
+  const stampLeave = new Date(li.request.stampLeave)
+  const stampReturn = new Date(li.request.stampReturn)
+  li.stampLeave = stampLeave
+  li.stampReturn = stampReturn
+  li.isReplentApply = stampLeave <= new Date(li.create)
+  li.type = get_item_type(li)
+  return li
 }
 const defaultExecuteStatusDict = {
   1: '已归队',
   2: '已召回',
   4: '推迟归队'
 }
-export function indayApplyExecuteStatusDesc (executeStatus, executeStatusDict = null) {
-  if (!executeStatusDict)executeStatusDict = defaultExecuteStatusDict
-  const desc = Object.keys(executeStatusDict).map(v => {
-    if (executeStatus & Number(v)) return executeStatusDict[v]
-  }).filter(x => x)
-  return (desc && desc.length) ? desc.join('\n') : '未确认'
+export function indayApplyExecuteStatusDesc(
+  executeStatus,
+  executeStatusDict = null
+) {
+  if (!executeStatusDict) executeStatusDict = defaultExecuteStatusDict
+  const desc = Object.keys(executeStatusDict)
+    .map(v => {
+      if (executeStatus & Number(v)) return executeStatusDict[v]
+    })
+    .filter(x => x)
+  return desc && desc.length ? desc.join('\n') : '未确认'
 }

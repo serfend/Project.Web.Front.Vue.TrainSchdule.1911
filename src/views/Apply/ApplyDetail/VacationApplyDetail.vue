@@ -67,22 +67,9 @@
         </h3>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
           <el-col :xl="8" :lg="10" :md="12" :sm="12" :xs="24">
-            <el-form v-if="detail.id" label-width="8rem">
+            <el-form v-if="detail.id" label-width="8rem" class="detail-form">
               <el-form-item label="基本">
-                <el-tag
-                  v-if="detail.request.vacationType"
-                  effect="dark"
-                  :type="
-                    detail.request.vacationType === '正休'
-                      ? 'primary'
-                      : 'danger'
-                  "
-                >{{ detail.request.vacationType }}</el-tag>
-                <el-tag
-                  v-if="detail.type.isPlan"
-                  color="#cccccc"
-                  class="white--text"
-                >计划</el-tag>
+                <VacationMainStatus v-model="detail" />
                 <div v-if="staticData.vacationStart">
                   <el-tooltip effect="light">
                     <template slot="content">
@@ -102,17 +89,15 @@
                     >距离离队时间:{{ -staticData.vacationSpent }}天</span>
                   </el-tooltip>
                 </div>
-                <span v-else>
-                  <el-tag
-                    v-if="statusDic[detail.status]"
-                    :color="statusDic[detail.status].color"
-                    class="white--text"
-                  >{{ statusDic[detail.status].desc }}</el-tag>
-                </span>
+                <AuditStatusTag v-else v-model="detail.status" />
               </el-form-item>
               <el-form-item label="原因">{{
-                detail.request.reason ? detail.request.reason : "未填写"
+                detail.request.reason || "未填写"
               }}</el-form-item>
+              <el-form-item
+                v-if="detail.requestExt && detail.type && detail.type.isForWork"
+                label="因公原因"
+              >{{ detail.requestExt.forWorkReason || "未填写" }}</el-form-item>
               <el-form-item label="创建时间">{{ detail.create }}</el-form-item>
               <el-form-item label="假期天数">
                 <span>共{{ total }}天 | </span>
@@ -208,9 +193,8 @@
 </template>
 
 <script>
-import { detail } from '@/api/apply/query'
+import { detail, requestInfo } from '@/api/apply/query'
 import { datedifference, parseTime } from '@/utils'
-import { get_item_type } from '@/utils/vacation'
 export default {
   name: 'ApplyDetail',
   components: {
@@ -228,7 +212,9 @@ export default {
     ApplyExecuteRecords: () => import('../ApplyExecuteRecords'),
     VacationDescriptionContent: () =>
       import('@/components/Vacation/VacationDescriptionContent'),
-    VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags')
+    VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags'),
+    VacationMainStatus: () => import('@/components/Vacation/VacationMainStatus'),
+    AuditStatusTag: () => import('./components/AuditStatusTag')
   },
   props: {
     showUser: { type: Boolean, default: true },
@@ -253,13 +239,9 @@ export default {
     }
   }),
   computed: {
-    statusDic() {
-      return this.$store.state.vacation.statusDic
-    },
     settle() {
       return this.detail.social.settle
     },
-
     percent() {
       const total = this.total
       const spent = this.spent
@@ -349,11 +331,17 @@ export default {
       const entityType = this.entityType
       const loadDetail = detail({ id, entityType }).then(data => {
         data.request = data.requestInfo
-        if (data.request) {
-          data.stampReturn = new Date(data.request.stampReturn)
-          data.stampLeave = new Date(data.request.stampLeave)
+        const { request } = data
+        if (request) {
+          data.stampReturn = new Date(request.stampReturn)
+          data.stampLeave = new Date(request.stampLeave)
+          requestInfo({
+            id: request.id,
+            entityType
+          }).then(r_info => {
+            this.$set(this.detail, 'requestExt', r_info.model)
+          })
         }
-        data.type = get_item_type(data)
         this.detail = data
         this.initstaticDataData()
       })
@@ -364,7 +352,13 @@ export default {
   }
 }
 </script>
-
+<style lang="scss">
+.detail-form {
+  .el-form-item {
+    margin-bottom: 0rem;
+  }
+}
+</style>
 <style lang="scss" scoped>
 .description-layout {
   width: 350px;

@@ -67,9 +67,11 @@ export default {
       return keys.map(i => types[i])
     },
     vacationTypesDic() {
-      return this.isVacation
+      const dict = this.isVacation
         ? this.$store.state.vacation.vacationTypes
         : this.$store.state.vacation.requestTypes
+      const result = Object.assign({}, dict)
+      return result
     }
   },
   watch: {

@@ -42,12 +42,7 @@
                   />
                   <div class="card-description">
                     <span>{{ format(i.create) }}</span>
-                    <el-tag
-                      v-if="statusDic[i.status]"
-                      size="mini"
-                      :color="statusDic[i.status].color"
-                      class="white--text"
-                    >{{ statusDic[i.status].desc }}</el-tag>
+                    <AuditStatusTag v-model="i.status" type="mini" />
                     <div
                       v-for="(desc,desc_index) in get_item_summary(i,entityType).split('\n')"
                       :key="desc_index"
@@ -104,7 +99,8 @@ export default {
     SvgIcon: () => import('@/components/SvgIcon'),
     indayApplyCard: () => import('./ApplyCard/IndayApplyCard'),
     vacationApplyCard: () => import('./ApplyCard/VacationApplyCard'),
-    ActionExamine: () => import('@/views/Apply/QueryAndAuditApplies/ActionExamine')
+    ActionExamine: () => import('@/views/Apply/QueryAndAuditApplies/ActionExamine'),
+    AuditStatusTag: () => import('@/views/Apply/ApplyDetail/components/AuditStatusTag')
   },
   props: {
     id: { type: String, default: null },
@@ -194,8 +190,6 @@ export default {
               r.totalLength = datedifference(r.stampReturn, r.stampLeave) + 1
               r.totalLengthHour = datedifference(r.stampReturn, r.stampLeave, 'hour') + 1
             }
-
-            x.statusDesc = this.statusDic[x.status].desc
 
             x.executeStatusDesc = indayApplyExecuteStatusDesc(x.executeStatus)
             return x

@@ -200,11 +200,11 @@ const url_getUsersVacationLimit = `${api}/vacationAddtional`
 export function getUsersVacationLimit({
   userid,
   vacationYear,
-  isPlan,
+  mainStatus,
   ignoreErr
 }) {
   return cached_data(
-    `${url_getUsersVacationLimit}/${userid}/${vacationYear}/${isPlan}`,
+    `${url_getUsersVacationLimit}/${userid}/${vacationYear}/${mainStatus}`,
     () =>
       new Promise((res, rej) => {
         request
@@ -212,7 +212,7 @@ export function getUsersVacationLimit({
             params: {
               id: userid,
               vacationYear,
-              isPlan
+              mainStatus
             },
             ignoreError: ignoreErr
           })
@@ -231,7 +231,7 @@ const url_getUsersVacationLimitOnlyVac = `${api}/vacationInfos`
 export function getUsersVacationLimits({
   userids,
   vacationYear,
-  isPlan,
+  mainStatus,
   useCache,
   ignoreErr
 }) {
@@ -239,7 +239,7 @@ export function getUsersVacationLimits({
     request.post(url_getUsersVacationLimitOnlyVac, {
       id: userids,
       vacationYear,
-      isPlan,
+      mainStatus,
       useCache,
       ignoreErr
     }).then(data => {

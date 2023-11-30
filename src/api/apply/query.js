@@ -201,7 +201,11 @@ export function querySelf({ pages, id, start, end, entityType }) {
     }
   })
 }
-
+export function requestInfo ({ id, ignoreError, entityType }) {
+  return request.get(`/apply/requestInfo/${entityType}`, {
+    params: { id }
+  })
+}
 /**
  *查询申请详情
  *

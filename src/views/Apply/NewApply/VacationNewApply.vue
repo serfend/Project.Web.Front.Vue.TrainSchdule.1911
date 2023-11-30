@@ -13,7 +13,7 @@
         v-show="nowStep >= 1"
         ref="RequestInfo"
         :submit-id.sync="formFinal.RequestId"
-        :main-type.sync="formFinal.mainType"
+        :main-status.sync="formFinal.mainStatus"
         :userid.sync="userid"
         :entity-type="entityType"
         :self-settle.sync="selfSettle"
@@ -24,7 +24,7 @@
       <SubmitApply
         :request-id="formFinal.RequestId"
         :base-info-id="formFinal.BaseInfoId"
-        :main-type="formFinal.mainType"
+        :main-status="formFinal.mainStatus"
         :entity-type="entityType"
         :disabled="nowStep < 2 || childOnLoading"
         class="card-column"
@@ -73,7 +73,7 @@ export default {
     formFinal: {
       BaseInfoId: null,
       RequestId: null,
-      mainType: -1
+      mainStatus: -1
     }
   }),
   watch: {
@@ -112,7 +112,7 @@ export default {
       this.formFinal = {
         BaseInfoId: null,
         RequestId: null,
-        mainType: -1
+        mainStatus: -1
       }
       this.onLoading = false
     },

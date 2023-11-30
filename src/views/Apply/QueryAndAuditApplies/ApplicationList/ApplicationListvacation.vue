@@ -139,7 +139,10 @@
               <el-dropdown-item
                 v-if="row.request.onTripLength > 0"
               >路途{{ row.request.onTripLength }}天</el-dropdown-item>
-              <VacAdditionalTags v-model="row.request.additialVacations" :inline="false" />
+              <VacAdditionalTags
+                v-model="row.request.additialVacations"
+                :inline="false"
+              />
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -148,37 +151,18 @@
       <el-table-column align="center" label="状态" width="80rem">
         <template v-if="rowCanShow(row)" slot-scope="{ row }">
           <ApplyAuditStreamPreviewLoader
-            v-if="row.statusDesc"
+            v-if="row"
             :id="row.id"
             :entity-type="entityType"
           >
-            <el-tag
-              slot="content"
-              :color="row.statusColor"
-              class="white--text"
-              size="mini"
-              style="cursor:pointer;margin-left:0.5rem"
-            >{{ row.statusDesc }}</el-tag>
+            <AuditStatusTag slot="content" v-model="row.status" type="mini" />
           </ApplyAuditStreamPreviewLoader>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
-        <template v-if="rowCanShow(row)" slot-scope="{ row }">
-          <span>
-            <el-tooltip content="此申请可能为休假结束后创建">
-              <el-tag
-                v-if="row.checkIfIsReplentApply"
-                size="mini"
-                color="#ff0000"
-                class="white--text"
-              >补充申请</el-tag>
-            </el-tooltip>
-            <el-tag
-              v-if="row.type.isPlan"
-              size="mini"
-              color="#cccccc"
-              class="white--text"
-            >计划</el-tag>
+        <template slot-scope="{ row }">
+          <span v-show="rowCanShow(row)">
+            <VacationMainStatus :show-primary="false" :data="row" />
             <slot :row="row" name="action" />
           </span>
         </template>
@@ -214,8 +198,8 @@
 
 <script>
 import { formatTime, relativeDate, parseTime, datedifference } from '@/utils'
-import { get_item_type } from '@/utils/vacation'
 import { get_apply_additional } from '@/api/apply/query'
+import { formatApplyItem } from '@/utils/vacation'
 export default {
   name: 'ApplicationList',
   components: {
@@ -231,7 +215,11 @@ export default {
     TransportationType: () =>
       import('@/components/Vacation/TransportationType'),
     ApplyCompany: () => import('../../CommonComponents/ApplyCompany'),
-    VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags')
+    VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags'),
+    VacationMainStatus: () =>
+      import('@/components/Vacation/VacationMainStatus'),
+    AuditStatusTag: () =>
+      import('@/views/Apply/ApplyDetail/components/AuditStatusTag')
   },
   props: {
     list: {
@@ -288,7 +276,7 @@ export default {
   watch: {
     list: {
       handler(val) {
-        this.formatedList = val.map(li => this.formatApplyItem(li))
+        this.formatedList = val.map(x => formatApplyItem(x))
       },
       deep: true
     }
@@ -360,20 +348,6 @@ export default {
         result.push(')')
       }
       return result.join(' ')
-    },
-    formatApplyItem(li) {
-      const statusObj = this.statusOptions[li.status]
-      li.statusDesc = statusObj ? statusObj.desc : '未知状态'
-      li.statusColor = statusObj ? statusObj.color : 'gray'
-      li.acessable = statusObj ? statusObj.acessable : []
-      if (!this.rowCanShow(li)) return li
-      const stampLeave = new Date(li.request.stampLeave)
-      const stampReturn = new Date(li.request.stampReturn)
-      li.stampLeave = stampLeave
-      li.stampReturn = stampReturn
-      li.checkIfIsReplentApply = stampLeave <= new Date(li.create)
-      li.type = get_item_type(li)
-      return li
     },
     countOtherTime(row) {
       return (

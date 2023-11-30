@@ -1,6 +1,11 @@
 <template>
-  <el-dialog v-loading="loading" :visible.sync="multiAuditFormShow" title="批量审核" append-to-body>
-    <div v-if="multiAuditForm.responseList.length>0">
+  <el-dialog
+    v-loading="loading"
+    :visible.sync="multiAuditFormShow"
+    title="批量审核"
+    append-to-body
+  >
+    <div v-if="multiAuditForm.responseList.length > 0">
       <el-form ref="auditForm" :model="auditForm">
         <el-form-item label="审核结果" align="left">
           <el-switch
@@ -24,13 +29,25 @@
       </el-form>
       <span slot="footer">
         <el-button-group style="width:100%">
-          <el-button style="width:50%" type="info" @click="multiAuditFormShow = false">取 消</el-button>
-          <el-button style="width:50%" type="success" @click="SubmitMultiAuditForm">确 定</el-button>
+          <el-button
+            style="width:50%"
+            type="info"
+            @click="multiAuditFormShow = false"
+          >取 消</el-button>
+          <el-button
+            style="width:50%"
+            type="success"
+            @click="SubmitMultiAuditForm"
+          >确 定</el-button>
         </el-button-group>
       </span>
 
       <el-collapse v-model="activeApply" style="overflow:auto" accordion>
-        <el-collapse-item v-for="r in multiAuditForm.responseList" :key="r.id" :name="r.id">
+        <el-collapse-item
+          v-for="r in multiAuditForm.responseList"
+          :key="r.id"
+          :name="r.id"
+        >
           <template slot="title">
             <el-switch
               v-model="r.action"
@@ -38,36 +55,63 @@
               :inactive-value="2"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              @change="r.modefiedByUser=true"
+              @change="r.modefiedByUser = true"
             />
-            <el-tag
-              :type="r.apply.type.isPlan?'info':'primary'"
-              class="info-tag"
-            >{{ r.apply.type.isPlan?'计划':'正式' }}</el-tag>
+            <VacationMainStatus :data="r" />
             <el-tag class="info-tag">{{ r.apply.base.realName }}</el-tag>
-            <el-tag class="info-tag">{{ r.apply.request.vacationPlace.name }}</el-tag>
+            <el-tag class="info-tag">{{
+              r.apply.request.vacationPlace.name
+            }}</el-tag>
             <el-tag
               class="info-tag"
-            >{{ datedifference(r.apply.request.stampReturn,r.apply.request.stampLeave) + 1 }}天{{ r.apply.request.onTripLength>0?`(路途${r.apply.request.onTripLength}天)`:'(无路途)' }}</el-tag>
+            >{{
+              datedifference(
+                r.apply.request.stampReturn,
+                r.apply.request.stampLeave
+              ) + 1
+            }}天{{
+              r.apply.request.onTripLength > 0
+                ? `(路途${r.apply.request.onTripLength}天)`
+                : "(无路途)"
+            }}</el-tag>
           </template>
           <el-form style>
             <el-form-item label="批复内容">
-              <el-input v-model="r.remark" type="textarea" @change="r.modefiedByUser=true" />
+              <el-input
+                v-model="r.remark"
+                type="textarea"
+                @change="r.modefiedByUser = true"
+              />
             </el-form-item>
             <el-form-item label="单位职务">
               {{ r.apply.base.companyName }}
               {{ r.apply.base.dutiesName }}
             </el-form-item>
-            <el-form-item label="休假原因">{{ r.apply.request.reason }}</el-form-item>
-            <el-form-item label="休假地点">{{ r.apply.request.vacationPlace.name }}</el-form-item>
-            <el-form-item label="离队时间">{{ r.apply.request.stampLeave }}</el-form-item>
-            <el-form-item label="归队时间">{{ r.apply.request.stampReturn }}</el-form-item>
+            <el-form-item label="休假原因">{{
+              r.apply.request.reason
+            }}</el-form-item>
+            <el-form-item label="休假地点">{{
+              r.apply.request.vacationPlace.name
+            }}</el-form-item>
+            <el-form-item label="离队时间">{{
+              r.apply.request.stampLeave
+            }}</el-form-item>
+            <el-form-item label="归队时间">{{
+              r.apply.request.stampReturn
+            }}</el-form-item>
             <el-form-item
               label="总天数"
-            >{{ datedifference(r.apply.request.stampReturn,r.apply.request.stampLeave) + 1 }}天</el-form-item>
-            <el-form-item
-              label="路途"
-            >{{ r.apply.request.onTripLength>0?`路途${r.apply.request.onTripLength}天`:'无路途' }}</el-form-item>
+            >{{
+              datedifference(
+                r.apply.request.stampReturn,
+                r.apply.request.stampLeave
+              ) + 1
+            }}天</el-form-item>
+            <el-form-item label="路途">{{
+              r.apply.request.onTripLength > 0
+                ? `路途${r.apply.request.onTripLength}天`
+                : "无路途"
+            }}</el-form-item>
             <div v-for="a in r.apply.request.additialvacations" :key="a.length">
               <el-tag>{{ a.name }}{{ a.length }}天</el-tag>
               {{ a.description }}
@@ -81,13 +125,13 @@
 </template>
 
 <script>
-import AuthCode from '@/components/AuthCode'
 import { datedifference } from '@/utils'
 import { audit } from '@/api/audit/handle'
 export default {
   name: 'AuditApplyMutilDialog',
   components: {
-    AuthCode
+    AuthCode: () => import('@/components/AuthCode'),
+    VacationMainStatus: () => import('@/components/Vacation/VacationMainStatus')
   },
   props: {
     show: {

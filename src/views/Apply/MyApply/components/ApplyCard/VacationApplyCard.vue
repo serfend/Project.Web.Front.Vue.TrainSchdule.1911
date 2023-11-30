@@ -17,8 +17,7 @@
             <div style="display:flex">
               <el-form style="min-width:22rem;max-width:30rem">
                 <el-form-item v-if="innerData.status!==20" label="休假类别">
-                  <VacationType v-model="innerData.request.vacationType" :entity-type="entityType" />
-                  <TransportationType v-model="innerData.request.byTransportation" />
+                  <VacationMainStatus :data="innerData" />
                 </el-form-item>
                 <el-form-item label="审批流程">
                   <ApplyAuditStreamPreviewLoader :id="innerData.id" :entity-type="entityType">
@@ -57,9 +56,8 @@ export default {
     ActionExamine: () => import('@/views/Apply/QueryAndAuditApplies/ActionExamine'),
     ApplyAuditStreamPreviewLoader: () =>
       import('@/components/ApplicationApply/ApplyAuditStreamPreviewLoader'),
-    VacationType: () => import('@/components/Vacation/VacationType'),
-    TransportationType: () => import('@/components/Vacation/TransportationType'),
     VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags'),
+    VacationMainStatus: () => import('@/components/Vacation/VacationMainStatus'),
     NoData: () => import('@/views/Loading/NoData')
   },
   props: {
@@ -94,9 +92,8 @@ export default {
   watch: {
     data: {
       handler (val) {
-        if (val) {
-          this.innerData = val
-        }
+        if (!val) return
+        this.innerData = val
       },
       immediate: true,
       deep: true
