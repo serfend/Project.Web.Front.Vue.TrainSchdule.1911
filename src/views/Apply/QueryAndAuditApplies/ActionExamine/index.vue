@@ -29,8 +29,8 @@
 
     <span v-if="isApplyAccepted" v-loading="loading">
       <span v-if="asOperation">
-        <el-tooltip v-if="entityTypeHasRecall" content="填写召回单交终审人审批完成后，确认召回生效">
-          <el-link v-if="shouldShowRecall" type="primary" @click="recallApply(true)">已召回</el-link>
+        <el-tooltip v-if="shouldShowRecall" content="填写召回单交终审人审批完成后，确认召回生效">
+          <el-link v-if="beenRecalled" type="primary" @click="recallApply(true)">已召回</el-link>
           <el-link v-else type="danger" @click="recallApply(false)">召回</el-link>
         </el-tooltip>
         <el-tooltip v-if="shouldShowExecuteBtn" :content="`${entityTypeReturnBeforeEnd?'':'请假结束后，'}确认实际归队时间`">
@@ -90,7 +90,12 @@ export default {
     entityTypeReturnBeforeEnd () {
       return !this.entityTypeHasRecall
     },
-    shouldShowRecall () {
+    shouldShowRecall() {
+      // 类型有召回，且未确认
+      const { entityTypeHasRecall, hasExecuteStatus } = this
+      return entityTypeHasRecall && !hasExecuteStatus
+    },
+    beenRecalled () {
       const { entityTypeHasRecall, row } = this
       return entityTypeHasRecall && row.recallId !== null
     },
