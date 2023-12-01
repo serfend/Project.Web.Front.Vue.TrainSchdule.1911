@@ -20,7 +20,7 @@
       >
         <template slot="action" slot-scope="{row}">
           <el-tooltip content="点击此处或双击空白处查看">
-            <el-link type="info" :href="detailUrl(row.id)" target="_blank">查看详情</el-link>
+            <el-link type="info" :href="detailUrl(row.id)" target="_blank">详情</el-link>
           </el-tooltip>
           <ActionExamine :row="row" :entity-type="entityType" @updated="requestUpdate([row])" />
           <ActionUser :row="row" :entity-type="entityType" @updated="requestUpdate([row])" />

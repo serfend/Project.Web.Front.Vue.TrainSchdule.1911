@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="iId||(currentUser&&currentUser.id)">
+    <div v-if="iId || (currentUser && currentUser.id)">
       <div v-if="!hideUserCard">
         <div v-if="!$slots.inner">
           <el-row class="row">
@@ -14,25 +14,28 @@
             <el-col>
               <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
                 <UserFormItem
-                  :data="iId?null:currentUser"
+                  :data="iId ? null : currentUser"
                   :userid="iId"
                   :direct-show-card="true"
                   :can-load-avatar="true"
                 />
               </el-col>
               <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
-                <ApplyOverview v-if="showVacationOverview" :userid="iId||currentUser.id" />
+                <ApplyOverview
+                  v-if="showVacationOverview"
+                  :userid="iId || currentUser.id"
+                />
               </el-col>
             </el-col>
           </el-row>
         </div>
         <div v-else>
-          <ApplyOverview :userid="iId||currentUser.id" class="row" />
+          <ApplyOverview :userid="iId || currentUser.id" class="row" />
           <el-row class="row">
             <el-col>
               <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
                 <UserFormItem
-                  :data="iId?null:currentUser"
+                  :data="iId ? null : currentUser"
                   :userid="iId"
                   :direct-show-card="true"
                   :can-load-avatar="true"
@@ -52,7 +55,7 @@
       />
     </div>
     <Login v-else />
-    <el-dialog :visible.sync="show_apply_new">
+    <el-dialog :visible.sync="show_apply_new" append-to-body>
       <component
         :is="`ApplyNew${entityType}`"
         v-if="show_apply_new"

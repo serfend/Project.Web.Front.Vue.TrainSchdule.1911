@@ -5,7 +5,7 @@
         <el-card v-show="show">
           <div v-if="innerData">
             <div class="action-row">
-              <el-button type="primary" plain @click="openDetail(innerData.id)">查看详情</el-button>
+              <el-button type="primary" plain @click="openDetail(innerData.id)">详情</el-button>
               <ActionUser
                 btn-type="danger"
                 :entity-type="entityType"

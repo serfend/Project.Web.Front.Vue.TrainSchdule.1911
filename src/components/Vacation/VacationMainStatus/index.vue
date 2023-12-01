@@ -4,20 +4,16 @@
       <VacationType :type="vacationType.desc" :entity-type="entityType" />
       <TransportationType :data="data.request.byTransportation" />
     </span>
-    <el-tooltip v-if="innerData.isReplentApply" content="此申请可能为外出结束后创建">
-      <el-tag size="mini" color="#ff0000" class="white--text">补充申请</el-tag>
-    </el-tooltip>
-    <span v-if="innerData.type">
-      <el-tag
-        v-if="innerData.type.isPlan"
-        color="#cccccc"
-        class="white--text"
-      >计划</el-tag>
-      <el-tag
-        v-if="innerData.type.isForWork"
-        color="#cccccc"
-        class="white--text"
-      >因公</el-tag>
+    <span v-if="innerData">
+      <el-tooltip
+        v-for="t in filtered_options"
+        :key="t.name"
+        :content="t.description"
+      >
+        <el-tag size="mini" :color="t.color" class="white--text">
+          {{ t.alias }}
+        </el-tag>
+      </el-tooltip>
     </span>
   </span>
 </template>
@@ -39,9 +35,40 @@ export default {
     entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
-    innerData: null
+    innerData: null,
+    options: [
+      {
+        name: 'isReplentApply',
+        condition: x => x.isReplentApply,
+        color: '#ff0000',
+        alias: '补',
+        description: '此申请可能为外出结束后创建'
+      },
+      {
+        name: 'isPlan',
+        condition: x => x.type.isPlan,
+        color: '#cccccc',
+        alias: '计',
+        description: '休假计划，不计算全年假'
+      },
+      {
+        name: 'isForWork',
+        condition: x => x.type.isForWork,
+        color: '#42c0c2',
+        alias: '公',
+        description: '因公分休，全年最多可3次不计路途'
+      }
+    ]
   }),
   computed: {
+    filtered_options() {
+      const { options, innerData } = this
+      const default_func = x => x.type[x.name]
+      return options.filter(x => {
+        const func = x.condition || default_func
+        return func(innerData)
+      })
+    },
     vacationType() {
       const result = {}
       const { data } = this
