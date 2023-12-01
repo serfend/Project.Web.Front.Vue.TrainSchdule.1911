@@ -19,6 +19,29 @@
 </template>
 <script>
 import { formatApplyItem } from '@/utils/vacation'
+const _options = [
+  {
+    name: 'isReplentApply',
+    condition: x => x.isReplentApply,
+    color: '#ff0000',
+    alias: '补',
+    description: x => `此申请可能为${x.vacationType.desc}结束后创建`
+  },
+  {
+    name: 'isPlan',
+    condition: x => x.type.isPlan,
+    color: '#cccccc',
+    alias: '计',
+    description: '休假计划，不计算全年假'
+  },
+  {
+    name: 'isForWork',
+    condition: x => x.type.isForWork,
+    color: '#42c0c2',
+    alias: '公',
+    description: '因公分休，全年最多可3次不计路途'
+  }
+]
 export default {
   name: 'VacationMainStatus',
   components: {
@@ -35,38 +58,23 @@ export default {
     entityType: { type: String, default: 'vacation' }
   },
   data: () => ({
-    innerData: null,
-    options: [
-      {
-        name: 'isReplentApply',
-        condition: x => x.isReplentApply,
-        color: '#ff0000',
-        alias: '补',
-        description: '此申请可能为外出结束后创建'
-      },
-      {
-        name: 'isPlan',
-        condition: x => x.type.isPlan,
-        color: '#cccccc',
-        alias: '计',
-        description: '休假计划，不计算全年假'
-      },
-      {
-        name: 'isForWork',
-        condition: x => x.type.isForWork,
-        color: '#42c0c2',
-        alias: '公',
-        description: '因公分休，全年最多可3次不计路途'
-      }
-    ]
+    innerData: null
   }),
   computed: {
     filtered_options() {
-      const { options, innerData } = this
+      const { innerData } = this
       const default_func = x => x.type[x.name]
-      return options.filter(x => {
+      const options = _options.filter(x => {
         const func = x.condition || default_func
         return func(innerData)
+      })
+      const check_func = ['description']
+      return options.map(x => {
+        const item = Object.assign({}, x)
+        check_func.map(func => {
+          if (typeof item[func] === 'function') item[func] = item[func](this)
+        })
+        return item
       })
     },
     vacationType() {
