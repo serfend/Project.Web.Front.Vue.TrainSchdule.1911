@@ -9,8 +9,15 @@
         <div class="text">
           <div class="header">{{ innerData.realName }}</div>
           <div class="subheader">
-            {{ innerData.companyName }}{{ innerData.dutiesName }}
+            <span> {{ innerData.companyName }}{{ innerData.dutiesName }}</span>
+            <div
+              v-if="innerData.companyOfManageCode !== innerData.companyCode"
+              class="l2"
+            >
+              编制:{{ innerData.companyOfManageName }}
+            </div>
           </div>
+
           <div class="description">{{ innerData.about }}</div>
         </div>
         <div
@@ -317,6 +324,10 @@ export default {
     font-weight: 600;
     color: #ffcda3;
     @include text-decorate;
+    .l2 {
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
   }
   .description {
     @include text-decorate;
@@ -332,6 +343,7 @@ export default {
   transform: translateY(-1.2rem);
   font-size: 0.8rem;
   color: #a3a3a3;
+  z-index: 14;
 }
 .content .btn {
   background-color: rgb(106, 106, 245);
