@@ -37,7 +37,7 @@
               <el-input
                 v-model="innerList[index].description"
                 type="textarea"
-                maxlength="30"
+                maxlength="50"
                 show-word-limit
               />
             </el-form-item>
