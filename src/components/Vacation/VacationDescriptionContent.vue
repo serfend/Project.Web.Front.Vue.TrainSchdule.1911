@@ -23,7 +23,7 @@
       </li>
       <li>
         <b>备注：</b>
-        <span>{{ innerData.description || "暂无" }}</span>
+        <span>{{ rawDescription || innerData.description || "暂无" }}</span>
       </li>
       <li v-if="innerData.additionals">
         <b>其他假期：</b>
@@ -43,6 +43,10 @@
       </li>
     </ul>
     <div v-else>
+      <div v-if="rawDescription" style="width:70%">
+        <div>- {{ rawDescription }}</div>
+        <el-divider />
+      </div>
       <h2>{{ loading_result }}</h2>
       <div>以下原因可能导致出现该情况：</div>
       <div>· 用户提交时个人信息不完善。</div>
@@ -63,6 +67,7 @@ export default {
   props: {
     usersVacation: { type: Object, default: () => ({}) },
     userid: { type: String, default: null },
+    rawDescription: { type: String, default: null },
     loadingResult: { type: String, default: null },
     smaller: { type: Boolean, default: true }
   },

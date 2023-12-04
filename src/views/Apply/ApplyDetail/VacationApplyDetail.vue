@@ -173,6 +173,7 @@
                 </div>
                 <VacationDescriptionContent
                   :users-vacation="detail.userVacationDescription"
+                  :raw-description="detail.requestExt.vacationDescription"
                 />
               </el-card>
             </el-collapse-transition>
