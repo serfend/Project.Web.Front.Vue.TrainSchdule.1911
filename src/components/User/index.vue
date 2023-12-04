@@ -7,7 +7,10 @@
       </div>
       <div class="content">
         <div class="text">
-          <div class="header">{{ innerData.realName }}</div>
+          <div class="header">
+            <span>{{ innerData.realName }}</span>
+            <span class="header-mini">{{ innerData.userTitle }}</span>
+          </div>
           <div class="subheader">
             <span> {{ innerData.companyName }}{{ innerData.dutiesName }}</span>
             <div
@@ -294,7 +297,7 @@ export default {
 .content::after {
   content: "";
   display: block;
-  width: 17rem;
+  width: 19rem;
   height: 11rem;
   z-index: -1;
   transform: translate(-1rem, -2rem) rotate(-8deg);
@@ -319,6 +322,10 @@ export default {
     line-height: 1.8rem;
     font-size: 1.8rem;
     color: #ffffff;
+    .header-mini {
+      font-size: 0.8rem;
+      color: #fdffd1;
+    }
   }
   .subheader {
     font-weight: 600;
@@ -350,7 +357,7 @@ export default {
   width: 3rem;
   height: 3rem;
   position: absolute;
-  right: 1.1rem;
+  right: 0.4rem;
   top: 2.1rem;
   border-radius: 50%;
   z-index: 3;
@@ -449,7 +456,7 @@ export default {
   position: absolute;
   width: 0;
   top: 0;
-  transform: translate(18.15rem, 2rem);
+  transform: translate(19rem, 2rem);
   transition-duration: 0.3s;
   box-shadow: 0 0 10px #fff;
   border: 5px #fff solid;
@@ -502,7 +509,7 @@ export default {
   opacity: 1;
 }
 @mixin delay-trans($rotate, $delay) {
-  transform: rotate($rotate) translateX(5rem);
+  transform: rotate($rotate) translateX(3rem);
   transition: transform 0.3s ease-out $delay;
   i {
     transform: rotate(-$rotate);
