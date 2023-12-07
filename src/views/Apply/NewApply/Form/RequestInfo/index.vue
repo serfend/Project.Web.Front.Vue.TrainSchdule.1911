@@ -330,10 +330,10 @@ export default {
       return this.$store.state.settings.theme
     },
     nowVacationType() {
-      const type = this.formApply && this.formApply.vacationType
-      return (
-        this.vacationTypes && this.vacationTypes.find(v => v.name === type)
-      )
+      const { formApply, vacationTypes } = this
+      const type = formApply && formApply.vacationType
+      if (!vacationTypes) return null
+      return vacationTypes.find(v => v.name === type)
     },
     // above 3 computed should remove in the future
     maxVacationLength() {

@@ -1,5 +1,9 @@
 <template>
-  <div :style="{transition:'all 0.5s'}" @mouseenter="isHover=true" @mouseleave="leaveCard">
+  <div
+    :style="{ transition: 'all 0.5s' }"
+    @mouseenter="isHover = true"
+    @mouseleave="leaveCard"
+  >
     <el-card
       v-loading="loading"
       header="请假信息"
@@ -7,11 +11,17 @@
       style="position:relative;z-index:2;"
     >
       <el-container v-if="formApply">
-        <el-main :style="{filter:hideDetail?'blur(0.2rem)':''}">
+        <el-main :style="{ filter: hideDetail ? 'blur(0.2rem)' : '' }">
           <CardTooltipAlert :accept="submitId" :accepting="anyChanged">
-            <template slot="content">注意根据个人需求选择合适的请假类型</template>
+            <template
+              slot="content"
+            >注意根据个人需求选择合适的请假类型</template>
           </CardTooltipAlert>
-          <el-alert v-if="formApply.isArchitect" center type="error">补充申请 申请将会被标记为【补充记录】</el-alert>
+          <el-alert
+            v-if="formApply.isArchitect"
+            center
+            type="error"
+          >补充申请 申请将会被标记为【补充记录】</el-alert>
           <el-form ref="formApply" :model="formApply" label-width="6rem">
             <el-form-item label="请假类型">
               <VacationTypeSelector
@@ -33,7 +43,11 @@
                 style="width:30rem"
               />
             </el-form-item>
-            <el-form-item label="离队时间" prop="StampLeave" :rules="[{required:true,trigger:'blur'}]">
+            <el-form-item
+              label="离队时间"
+              prop="StampLeave"
+              :rules="[{ required: true, trigger: 'blur' }]"
+            >
               <DatetimePicker
                 v-model="formApply.StampLeave"
                 type="datetime"
@@ -43,7 +57,11 @@
                 :locale-config="localeConfig"
               />
             </el-form-item>
-            <el-form-item label="归队时间" prop="StampReturn" :rules="[{required:true,trigger:'blur'}]">
+            <el-form-item
+              label="归队时间"
+              prop="StampReturn"
+              :rules="[{ required: true, trigger: 'blur' }]"
+            >
               <DatetimePicker
                 v-model="formApply.StampReturn"
                 type="datetime"
@@ -53,7 +71,10 @@
                 :locale-config="localeConfig"
               />
             </el-form-item>
-            <el-form-item label="目的地" :rules="[{required:true,trigger:'blur'}]">
+            <el-form-item
+              label="目的地"
+              :rules="[{ required: true, trigger: 'blur' }]"
+            >
               <CascaderSelector
                 v-model="formApply.vacationPlace"
                 :child-getter-method="locationChildren"
@@ -64,12 +85,17 @@
               />
             </el-form-item>
             <el-form-item label="详细地址">
-              <el-input v-model="formApply.vacationPlaceName" style="width:30rem" />
+              <el-input
+                v-model="formApply.vacationPlaceName"
+                style="width:30rem"
+              />
             </el-form-item>
             <el-form-item label="出行方式">
               <el-select v-model="formApply.ByTransportation">
                 <el-option
-                  v-for="i in Object.keys(transportationTypes).filter(t=>t!=='default')"
+                  v-for="i in Object.keys(transportationTypes).filter(
+                    t => t !== 'default'
+                  )"
                   :key="i"
                   :label="transportationTypes[i][1]"
                   :value="i"
@@ -84,10 +110,17 @@
         >
           <div
             class="mask"
-            :style="{filter:hideDetail?'':'blur(30px)',background:hideDetail?'#ffffff8f':''}"
+            :style="{
+              filter: hideDetail ? '' : 'blur(30px)',
+              background: hideDetail ? '#ffffff8f' : ''
+            }"
           >
             <svg-icon
-              :style="{transition:'all 0.5s',opacity:hideDetail?1:0,transform:hideDetail?'rotate(-360deg)':''}"
+              :style="{
+                transition: 'all 0.5s',
+                opacity: hideDetail ? 1 : 0,
+                transform: hideDetail ? 'rotate(-360deg)' : ''
+              }"
               icon-class="certification_f"
               style-normal="width:5em;height:5em;fill:#67C23A;color:#67C23A"
             />
@@ -178,6 +211,13 @@ export default {
     },
     currentUser() {
       return this.$store.state.user.data
+    },
+    nowSelectType() {
+      const { requestTypes } = this
+      if (!requestTypes) return null
+      const typer = this.$refs.typeSelector
+      const type = typer && typer.vNowSelect
+      return requestTypes.find(v => v.name === type)
     }
   },
   watch: {
@@ -201,13 +241,12 @@ export default {
       handler(val) {
         this.$emit('requestTypeUpdate', val)
         this.resetDefaultDate()
-        if (this.defaultDateRangeCallBack) {
-          const t = this.defaultDateRangeCallBack(new Date(), parseTime)
-          const f = this.formApply
-          if (f) {
-            f.StampLeave = t.start
-            f.StampReturn = t.end
-          }
+        if (!this.defaultDateRangeCallBack) return
+        const t = this.defaultDateRangeCallBack(new Date(), parseTime)
+        const f = this.formApply
+        if (f) {
+          f.StampLeave = t.start
+          f.StampReturn = t.end
         }
       }
     }
@@ -217,23 +256,21 @@ export default {
   },
   methods: {
     resetDefaultDate() {
-      const type = this.$refs.typeSelector
-      const t = type && type.nowVacationType
-      if (!t) return
-      let callback = t.defaultDateRange
+      const { nowSelectType } = this
+      if (!nowSelectType) return
+      const callback = nowSelectType.defaultDateRange
       if (callback) {
-        let sci_callback
-        do {
-          sci_callback = callback
-          callback = callback.replace(/new/g, '')
-        } while (sci_callback !== callback)
-        this.defaultDateRangeCallBack = new Function('v', 'parseTime', callback)
-      } else {
-        this.defaultDateRangeCallBack = v => {
-          const start = parseTime(+v + 86400e3, '{y}-{m}-{d} 08:00:00')
-          const end = parseTime(+v + 86400e3, '{y}-{m}-{d} 18:00:00')
-          return { start, end }
-        }
+        this.defaultDateRangeCallBack = new Function(
+          'v',
+          'parseTime',
+          callback
+        )
+        return
+      }
+      this.defaultDateRangeCallBack = v => {
+        const start = parseTime(+v + 86400e3, '{y}-{m}-{d} 08:00:00')
+        const end = parseTime(+v + 86400e3, '{y}-{m}-{d} 18:00:00')
+        return { start, end }
       }
     },
     resetSettle(val) {
@@ -290,7 +327,8 @@ export default {
         !params.vacationPlace.code ||
         params.vacationPlace.code.length < 6
       const stamp =
-        !params.StampLeave || new Date(params.StampLeave) < new Date('2000-1-1')
+        !params.StampLeave ||
+        new Date(params.StampLeave) < new Date('2000-1-1')
       const result = []
       if (id) result.push('基础信息未成功提交')
       if (place) {
@@ -347,5 +385,5 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/styles/animation';
+@import "@/styles/animation";
 </style>
