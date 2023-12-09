@@ -40,8 +40,8 @@ export default {
         callback(new Error('请输入新密码'))
       } else if (value === this.editPwd.oldPassword) {
         callback(new Error('新密码不能和旧密码相同'))
-      } else if (value.length > 16 || value.length < 8) {
-        callback(new Error('新密码必须8-16位数字与字母的组合'))
+      } else if (value.length < 8) {
+        callback(new Error('新密码必须不少于8位'))
       } else {
         if (this.editPwd.validatenewPassword !== '') {
           this.$refs.editPwd.validateField('validatenewPassword')
