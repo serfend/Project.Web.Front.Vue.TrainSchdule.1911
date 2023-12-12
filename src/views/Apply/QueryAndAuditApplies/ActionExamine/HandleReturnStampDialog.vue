@@ -1,19 +1,35 @@
 <template>
   <span>
-    <el-dialog v-if="asOperation" :visible.sync="innerShow" :title="`${displayName}完成时间`" append-to-body>
+    <el-dialog
+      v-if="asOperation"
+      :visible.sync="innerShow"
+      :title="`${displayName}完成时间`"
+      append-to-body
+    >
       <el-card v-loading="loading">
-        <ExecuteForm :data.sync="auditForm" :display-name="displayName" :only-view="onlyView" />
+        <ExecuteForm
+          :data.sync="auditForm"
+          :display-name="displayName"
+          :only-view="onlyView"
+        />
       </el-card>
       <span slot="footer">
         <el-button-group v-if="!onlyView">
-          <el-button type="info" @click="$emit('update:show',false)">取 消</el-button>
+          <el-button
+            type="info"
+            @click="$emit('update:show', false)"
+          >取 消</el-button>
           <el-button type="warning" @click="SubmitRecall">确 定</el-button>
         </el-button-group>
-        <el-button v-else @click="$emit('update:show',false)">取 消</el-button>
+        <el-button v-else @click="$emit('update:show', false)">取 消</el-button>
       </span>
     </el-dialog>
     <el-card v-else style="min-width:25rem">
-      <ExecuteForm :data.sync="auditForm" :display-name="displayName" :only-view="onlyView" />
+      <ExecuteForm
+        :data.sync="auditForm"
+        :display-name="displayName"
+        :only-view="onlyView"
+      />
     </el-card>
   </span>
 </template>
@@ -66,7 +82,8 @@ export default {
     'row.id': {
       handler(val) {
         const { userBase, base } = this.row
-        const userid = userBase && userBase.id || base.userId
+        const baseUser = userBase && userBase.id
+        const userid = baseUser || base.userId || base.id
         this.auditForm.handleTo = userid
       },
       immediate: true
@@ -92,7 +109,9 @@ export default {
       handler(val) {
         const { row, auditForm } = this
         const { recallData } = auditForm
-        const rawStampReturn = (recallData && recallData.stampReturn) || (row && row.request && row.request.stampReturn)
+        const rawStampReturn =
+          (recallData && recallData.stampReturn) ||
+          (row && row.request && row.request.stampReturn)
 
         this.$emit('requireUpdateReason', { stampReturn: val, rawStampReturn })
       },
@@ -149,7 +168,6 @@ export default {
           const { realName, id } = handleBy
           auditForm.recallData.create = create
           auditForm.stampReturn = returnStamp
-          const row = this.row
           auditForm.rawStampLeave = row && row.request.stampLeave
           auditForm.remark = reason
           auditForm.handleBy = id
@@ -163,5 +181,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>

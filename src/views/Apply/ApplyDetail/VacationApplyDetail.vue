@@ -66,7 +66,7 @@
           </span>
         </h3>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
-          <el-col :xl="8" :lg="10" :md="12" :sm="12" :xs="24">
+          <el-col :xl="7" :lg="10" :md="12" :sm="12" :xs="24">
             <el-form v-if="detail.id" label-width="8rem" class="detail-form">
               <el-form-item label="基本">
                 <VacationMainStatus v-model="detail" />
@@ -131,31 +131,23 @@
               </el-form-item>
             </el-form>
           </el-col>
-          <el-col :xl="8" :lg="8" hidden-md-only hidden-sm-only :xs="24">
-            <el-form label-width="8rem">
-              <SettleFormItem
-                :form.sync="settle.self"
-                disabled
-                label="本人所在地"
-              />
-              <SettleFormItem
-                :form.sync="settle.lover"
-                disabled
-                label="配偶所在地"
-              />
+          <el-col :xl="5" :lg="8" hidden-md-only hidden-sm-only :xs="24">
+            <el-form label-width="5rem" class="detail-form">
+              <SettleFormItem :form.sync="settle.self" disabled label="本人" />
+              <SettleFormItem :form.sync="settle.lover" disabled label="配偶" />
               <SettleFormItem
                 :form.sync="settle.parent"
                 disabled
-                label="父母所在地"
+                label="父母"
               />
               <SettleFormItem
                 :form.sync="settle.loversParent"
                 disabled
-                label="配偶父母所在地"
+                label="配偶父母"
               />
             </el-form>
           </el-col>
-          <el-col :xl="8" :lg="6" :md="4" :sm="12" :xs="24">
+          <el-col :xl="6" :lg="6" :md="4" :sm="12" :xs="24">
             <UserFormItem
               :userid="detail.base.id"
               :direct-show-card="true"
@@ -164,7 +156,7 @@
             />
             <el-collapse-transition>
               <el-card
-                v-if="detail && show_previous"
+                v-if="show_previous && detail && detail.requestExt"
                 shadow="never"
                 class="ribbon-container description-layout"
               >
@@ -178,13 +170,21 @@
               </el-card>
             </el-collapse-transition>
           </el-col>
+          <el-col :xl="6" hidden-lg-and-down>
+            <ActionExamine
+              :row="detail"
+              :entity-type="entityType"
+              :as-operation="false"
+              :enable-audit="false"
+            />
+          </el-col>
         </el-row>
       </el-card>
       <div class="content-card">
         <AuditStatus :loading="loading" :data="detail" />
       </div>
       <div v-if="detail && detail.id" class="content-card">
-        <ApplyExecuteRecords :id="detail.id" />
+        <ApplyExecuteRecords :data="detail" :entity-type="entityType" />
       </div>
       <div v-if="showComment && detail && detail.id" class="content-card">
         <ApplyComments :id="detail.id" />
@@ -214,8 +214,9 @@ export default {
     VacationDescriptionContent: () =>
       import('@/components/Vacation/VacationDescriptionContent'),
     VacAdditionalTags: () => import('@/components/Vacation/VacAdditionalTags'),
-    VacationMainStatus: () => import('@/components/Vacation/VacationMainStatus'),
-    AuditStatusTag: () => import('./components/AuditStatusTag')
+    VacationMainStatus: () =>
+      import('@/components/Vacation/VacationMainStatus'),
+    AuditStatusTag: () => import('./components/AuditStatusTag'),
   },
   props: {
     showUser: { type: Boolean, default: true },

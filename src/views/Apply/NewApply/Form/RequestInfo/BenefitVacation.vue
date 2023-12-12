@@ -209,7 +209,6 @@ export default {
     selectChange(item) {
       item.reasonModified = false // 发生变化时重置
       this.checkValid(item)
-      debugger
       // 全部值赋值
       const index = this.nowIndex
       this.innerList.splice(index, 1, item)

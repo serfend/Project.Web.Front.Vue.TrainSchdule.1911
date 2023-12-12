@@ -43,7 +43,7 @@
           </span>
         </h3>
         <el-row v-if="detail && detail.id && detail.status !== 20" :gutter="20">
-          <el-col :xl="8" :lg="10" :md="24" :sm="24" :xs="24">
+          <el-col :xl="8" :lg="10" :md="12" :sm="12" :xs="12">
             <el-form label-width="8rem">
               <el-form-item label="基本">
                 <el-tag
@@ -82,11 +82,19 @@
             </el-form>
           </el-col>
 
-          <el-col :xl="16" :lg="14" :md="24" :sm="24" :xs="24">
+          <el-col :xl="6" :lg="8" :md="12" :sm="12" :xs="12">
             <UserFormItem
               :userid="detail.base.id"
               :direct-show-card="true"
               :can-load-avatar="true"
+            />
+          </el-col>
+          <el-col :xl="6" :lg="6" :md="12" :sm="12" :xs="12" hidden-lg-and-down>
+            <ActionExamine
+              :row="detail"
+              :entity-type="entityType"
+              :as-operation="false"
+              :enable-audit="false"
             />
           </el-col>
         </el-row>
@@ -96,7 +104,7 @@
         <AuditStatus :loading="loading" :data="detail" />
       </div>
       <div v-if="detail && detail.id" class="content-card">
-        <ApplyExecuteRecords :id="detail.id" />
+        <ApplyExecuteRecords :data="detail" :entity-type="entityType" />
       </div>
       <div v-if="showComment && detail && detail.id" class="content-card">
         <ApplyComments :id="detail.id" />

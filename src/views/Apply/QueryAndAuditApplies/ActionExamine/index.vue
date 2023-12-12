@@ -110,8 +110,9 @@ export default {
       return (row.executeStatus & 1) && row.executeStatusId
     },
     shouldMoreThanOneCanShow () {
-      const { shouldShowRecall, hasExecuteStatus } = this
-      return shouldShowRecall && hasExecuteStatus
+      // 已召回 且 已归队 ， 则显示召回和确认情况
+      const { beenRecalled, hasExecuteStatus } = this
+      return beenRecalled && hasExecuteStatus
     },
     isApplyAccepted() {
       const { row } = this
@@ -119,11 +120,13 @@ export default {
     },
     requireShowExecuteStatus() {
       return debounce(() => {
-        this.loadRecallInfo()
+        // 无论是否有召回信息，都在加载后显示 召回/确认
+        this.loadRecallInfo().then(() => {
+
+        })
           .catch(e => {})
           .finally(() => {
-            if (this.asOperation) return
-            this.directShowForm()
+            this.showForm()
           })
       }, 5e2)
     }
@@ -155,10 +158,14 @@ export default {
           this.loading = false
         })
     },
+    showForm() {
+      if (this.asOperation) return // 填写信息栏目，则不直接展开
+      this.directShowForm()
+    },
     directShowForm () {
-      if (this.shouldMoreThanOneCanShow) return
-      if (this.shouldShowRecall) return this.recallApply(true)
-      if (this.hasExecuteStatus) return this.confirmExecuteStatus(true)
+      if (this.shouldMoreThanOneCanShow) return // 多板块则不直接展开
+      if (this.beenRecalled) return this.recallApply(true) // 已召回，则显示召回信息
+      if (this.hasExecuteStatus) return this.confirmExecuteStatus(true) // 已确认，则显示确认信息
     },
     requireUpdate () {
       this.$emit('updated')
