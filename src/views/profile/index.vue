@@ -73,8 +73,8 @@ export default {
   methods: {}
 }
 </script>
-<style lang="scss" >
-@import '@/styles/element-variables';
+<style scoped lang="scss">
+@import "@/styles/element-variables";
 .content {
   width: 60rem;
   margin: 2rem auto;
