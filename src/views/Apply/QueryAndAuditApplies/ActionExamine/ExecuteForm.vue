@@ -31,12 +31,25 @@
       />
     </el-form-item>
     <el-form-item :label="`${displayName}后时间`">
-      <el-date-picker v-model="auditForm.stampReturn" type="datetime" style="width:100%" />
+      <el-date-picker
+        v-model="auditForm.stampReturn"
+        :disabled="onlyView"
+        type="datetime"
+        style="width:100%"
+      />
     </el-form-item>
     <el-form-item label="备注">
-      <el-input v-model="auditForm.remark" placeholder="请输入备注" type="textarea" />
+      <el-input
+        v-model="auditForm.remark"
+        :disabled="onlyView"
+        placeholder="请输入备注"
+        type="textarea"
+      />
     </el-form-item>
-    <AuthCode :form.sync="auditForm.auth" :select-name="`${displayName} - 归队时间`" />
+    <AuthCode
+      :form.sync="auditForm.auth"
+      :select-name="`${displayName} - 归队时间`"
+    />
   </el-form>
 </template>
 
@@ -62,7 +75,9 @@ export default {
   }),
   computed: {
     auditForm: {
-      get() { return this.innerData },
+      get() {
+        return this.innerData
+      },
       set(v) {
         this.innerData = v
         this.$emit('change', v)
@@ -81,6 +96,4 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
