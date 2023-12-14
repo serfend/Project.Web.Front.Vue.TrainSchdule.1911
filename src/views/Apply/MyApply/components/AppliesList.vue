@@ -1,8 +1,8 @@
 <template>
-  <el-row class="row">
-    <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出登记卡</el-button>
+  <el-row>
     <el-card v-infinite-scroll="onScrollToBottom" style="position: relative;">
-      <el-row v-if="!hideAddBtn" class="card-row">
+      <el-button icon="el-icon-download" type="text" @click="downloadUserApplies">导出登记卡</el-button>
+      <el-row v-if="!hideAddBtn">
         <div class="card-title" style="color:#333;font-size:1.5rem">新增</div>
         <div class="card-description to-add" @click="user_add_new_item">
           <div style="background:#ccc;width:4rem;text-align:center">

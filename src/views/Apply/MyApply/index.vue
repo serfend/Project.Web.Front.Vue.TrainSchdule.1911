@@ -3,29 +3,36 @@
     <div v-if="iId || (currentUser && currentUser.id)">
       <div v-if="!hideUserCard">
         <div v-if="!$slots.inner">
-          <el-row class="row">
-            <UserSelector
-              :code.sync="iId"
-              :default-info="'查询其他人申请情况（需要权限）'"
-              style="display:inline"
-            />
-          </el-row>
-          <el-row :gutter="20" class="row">
-            <el-col>
-              <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+          <el-row :gutter="20" class="row" s>
+            <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
+              <div>
                 <UserFormItem
                   :data="iId ? null : currentUser"
                   :userid="iId"
                   :direct-show-card="true"
                   :can-load-avatar="true"
+                  :direct-expand-description="true"
                 />
-              </el-col>
-              <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
+                <el-button
+                  type="text"
+                  style="position:absolute;left:26rem;top:-0.5rem"
+                  @click="show_selector=true"
+                >查看其他人</el-button>
                 <ApplyOverview
                   v-if="showVacationOverview"
                   :userid="iId || currentUser.id"
+                  graph-type="circle"
                 />
-              </el-col>
+              </div>
+            </el-col>
+            <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
+              <AppliesList
+                :id.sync="iId"
+                ref="AppliesList"
+                :hide-add-btn="hideAddBtn"
+                :entity-type="entityType"
+                :show-apply-new.sync="show_apply_new"
+              />
             </el-col>
           </el-row>
         </div>
@@ -44,15 +51,15 @@
               <slot name="inner" />
             </el-col>
           </el-row>
+          <AppliesList
+            :id.sync="iId"
+            ref="AppliesList"
+            :hide-add-btn="hideAddBtn"
+            :entity-type="entityType"
+            :show-apply-new.sync="show_apply_new"
+          />
         </div>
       </div>
-      <AppliesList
-        :id.sync="iId"
-        ref="AppliesList"
-        :hide-add-btn="hideAddBtn"
-        :entity-type="entityType"
-        :show-apply-new.sync="show_apply_new"
-      />
     </div>
     <Login v-else />
     <el-dialog :visible.sync="show_apply_new" append-to-body>
@@ -63,6 +70,18 @@
         :single-column="true"
         @userSubmit="reload"
       />
+    </el-dialog>
+    <el-dialog :visible.sync="show_selector" append-to-body>
+      <template #title>
+        <h2>查询其他人</h2>
+      </template>
+      <el-row class="row">
+        <UserSelector
+          :code.sync="iId"
+          :default-info="'查询其他人申请情况（需要权限）'"
+          style="display:inline"
+        />
+      </el-row>
     </el-dialog>
   </div>
 </template>
@@ -88,7 +107,8 @@ export default {
   data: () => ({
     inner_id: null,
     loading: false,
-    show_apply_new: false
+    show_apply_new: false,
+    show_selector: false
   }),
   computed: {
     showVacationOverview() {

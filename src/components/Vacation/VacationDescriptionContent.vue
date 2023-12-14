@@ -69,7 +69,7 @@ export default {
     userid: { type: String, default: null },
     rawDescription: { type: String, default: null },
     loadingResult: { type: String, default: null },
-    smaller: { type: Boolean, default: true }
+    smaller: { type: Boolean, default: true },
   },
   data: () => ({
     loading: false,

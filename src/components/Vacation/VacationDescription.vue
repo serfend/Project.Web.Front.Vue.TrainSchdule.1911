@@ -8,7 +8,15 @@
           :loading-result.sync="loading_result"
         />
       </template>
-      <el-progress :percentage="percent" :color="getColor(percent)" />
+      <div :class="[isCircle?'progress-handler':'']">
+        <el-progress
+          :percentage="percent"
+          :stroke-width="10"
+          :color="getColor(percent)"
+          :type="graphType"
+          :format="format"
+        />
+      </div>
     </el-tooltip>
     <VacationDescriptionContent
       v-else
@@ -33,7 +41,9 @@ export default {
     thisTimeVacationLength: { type: Number, default: 0 },
     directShow: { type: Boolean, default: true },
     loadingResult: { type: String, default: null },
-    userid: { type: String, default: null }
+    userid: { type: String, default: null },
+    graphType: { type: String, default: 'line' },
+    title: { type: String, default: '休假率' }
   },
   data: () => ({
     innerUserVacation: {},
@@ -48,6 +58,9 @@ export default {
         this.innerLoadingResult = val
         this.$emit('update:loadingResult', val)
       }
+    },
+    isCircle() {
+      return this.graphType === 'circle'
     },
     percent() {
       var uv = this.innerUserVacation
@@ -77,7 +90,22 @@ export default {
     }
   },
   methods: {
-    getColor: (v) => getColorByPercentage(v, red, green)
+    format() {
+      const { title, percent, isCircle } = this
+      if (!isCircle) return `${percent}%`
+      return `${title}:${percent}%`
+    },
+    getColor: v => getColorByPercentage(v, red, green)
   }
 }
 </script>
+<style lang="scss">
+.progress-handler {
+  display: flex;
+  justify-content: center;
+  .el-progress-circle {
+    height: 23rem !important;
+    width: 23rem !important;
+  }
+}
+</style>
