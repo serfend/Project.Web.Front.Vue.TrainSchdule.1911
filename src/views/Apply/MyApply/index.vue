@@ -5,7 +5,8 @@
         <div v-if="!$slots.inner">
           <el-row :gutter="20" class="row" s>
             <el-col :xl="7" :lg="8" :md="9" :sm="10" :xs="24">
-              <div>
+              <div style="width:100%;opacity: 0;">commentsHERE</div>
+              <Sticky :sticky-top="55" style="overflow:hidden">
                 <UserFormItem
                   :data="iId ? null : currentUser"
                   :userid="iId"
@@ -23,7 +24,7 @@
                   :userid="iId || currentUser.id"
                   graph-type="circle"
                 />
-              </div>
+              </Sticky>
             </el-col>
             <el-col :xl="17" :lg="16" :md="15" :sm="14" :xs="24">
               <AppliesList
@@ -96,6 +97,7 @@ export default {
     UserSelector: () => import('@/components/User/UserSelector'),
     ApplyOverview: () => import('./components/ApplyOverview'),
     Login: () => import('@/views/login'),
+    Sticky: () => import('@/components/Sticky'),
     AppliesList: () => import('./components/AppliesList')
   },
   props: {
