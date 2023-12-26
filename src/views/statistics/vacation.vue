@@ -7,13 +7,19 @@
         v-loading="x.loading"
         class="slide-container list-item"
       >
-        <SingleStatistics :loading.sync="x.loading" />
-        <el-button
-          type="danger"
-          icon="el-icon-check"
-          class="slide-remove"
-          @click="cardRemove(index)"
-        >删除</el-button>
+        <SingleStatistics :callback-export-to-xls.sync="x.exportToXls" :loading.sync="x.loading" />
+        <div class="slide-remove">
+          <el-button
+            type="text"
+            icon="el-icon-download"
+            @click="x.exportToXls(index)"
+          >导出</el-button>
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            @click="cardRemove(index)"
+          >删除</el-button>
+        </div>
       </div>
     </transition-group>
     <el-button
@@ -42,12 +48,13 @@ export default {
       this.list.push({
         id: card,
         showBar: true,
-        loading: false
+        loading: false,
+        exportToXls: () => {}
       })
     },
     cardRemove(index) {
       this.list.splice(index, index + 1)
-    }
+    },
   }
 }
 </script>
