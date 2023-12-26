@@ -73,17 +73,16 @@ export default {
         return this.users_id.filter(i => dict[i])
       },
       set(val) {
-        val = val || []
-        const s = {}
-        val.forEach(i => (s[i] = true))
-        this.selected = s
+        this.directUpdateSelect(val)
+        this.updateSelected()
       }
     }
   },
   watch: {
     selectedUsers: {
       handler(val) {
-        this.innerSelectedUsers = this.get_users_id(val)
+        const users = this.get_users_id(val)
+        this.directUpdateSelect(users)
       },
       deep: true,
       immediate: true
@@ -98,6 +97,12 @@ export default {
     }
   },
   methods: {
+    directUpdateSelect(val) {
+      val = val || []
+      const s = {}
+      val.forEach(i => (s[i] = true))
+      this.selected = s
+    },
     get_users_id(v) {
       return v && v.map(i => i.id || i) || []
     },
@@ -106,8 +111,14 @@ export default {
       return item && item.currentStep
     },
     updateUserStatus() {},
+    updateSelected() {
+      const { selected } = this
+      const all = Object.keys(selected)
+      this.$emit('update:selectedUsers', all.filter(x => selected[x]))
+    },
     handleSelected(u, v) {
       this.$set(this.selected, u, v)
+      this.updateSelected()
     }
   }
 }

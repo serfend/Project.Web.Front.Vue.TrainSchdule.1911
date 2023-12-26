@@ -12,7 +12,6 @@
           :loading.sync="loading"
         />
         <BatchOperation
-          v-if="currentFocusUsers.length"
           ref="BatchOperation"
           v-model="currentFocusUsers"
           class="right-hover-panel flashing-layout-right"
