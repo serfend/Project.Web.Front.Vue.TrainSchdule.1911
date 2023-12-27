@@ -53,6 +53,12 @@
               type="success"
               @click="skimDetail"
             >查 看 详 情</el-button>
+            <el-button
+              v-show="submitId&&!showSuccessDialog"
+              size="mini"
+              type="success"
+              @click="showSuccessDialog=true"
+            >查看提交结果</el-button>
           </div>
         </span>
         <el-progress

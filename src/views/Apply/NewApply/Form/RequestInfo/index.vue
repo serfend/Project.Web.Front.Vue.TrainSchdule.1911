@@ -10,7 +10,12 @@
       class="flashing-alert"
       style="position:relative;z-index:2;"
     >
-      <el-form ref="primaryForm" :model="formApply" label-width="5rem" :rules="rules">
+      <el-form
+        ref="primaryForm"
+        :model="formApply"
+        label-width="5rem"
+        :rules="rules"
+      >
         <el-form-item label="填报类型">
           <el-tooltip content="正式填报休假申请，审批通过后计入全年休假情况。">
             <el-radio v-model="mainStatus" :label="0" border>正式报假</el-radio>
@@ -135,7 +140,10 @@
               v-if="nowVacationType && nowVacationType.caculateBenefit"
               label="其他假"
             >
-              <BenefitVacation v-model="benefitList" @change="requireUpdateChange" />
+              <BenefitVacation
+                v-model="benefitList"
+                @change="requireUpdateChange"
+              />
             </el-form-item>
             <el-form-item
               label="离队时间"
@@ -159,6 +167,13 @@
                   :locale-config="localeConfig"
                   @change="requireUpdateChange"
                 />
+                <el-button
+                  v-for="x in [1, -1, 7, -7]"
+                  :key="x"
+                  type="text"
+                  class="stampDeltaModify"
+                  @click="setApplyStamp(x)"
+                >{{ x > 0 ? "+" : "" }}{{ x }}</el-button>
                 <span>
                   <span style="margin-left:1rem">预计归队</span>
                   <el-date-picker
@@ -386,9 +401,7 @@ export default {
         const { vacationYear } = this
         if (vacationYear === val) return
         // 跳转到该年份的1月1
-        const target = parseTime(new Date(val, 0, 1), '{y}-{m}-{d}')
-        this.formApply.StampLeave = target
-        this.requireUpdateChange()
+        this.setApplyStamp(new Date(val, 0, 1))
       }
     },
     vacationTypes: {
@@ -452,6 +465,13 @@ export default {
   },
   methods: {
     locationChildren,
+    setApplyStamp(delta, field = 'StampLeave') {
+      const prev_val = new Date(this.formApply[field])
+      const is_delta = Math.abs(delta) < 10
+      const new_val = is_delta ? prev_val.getTime() + 86400e3 * delta : delta
+      this.formApply[field] = parseTime(new Date(new_val), '{y}-{m}-{d}')
+      if (field === 'StampLeave') this.requireUpdateChange()
+    },
     beforeSubmitApply() {
       this.checkTripAdvance(false)
     },
@@ -515,7 +535,9 @@ export default {
           if (this.tip_no_vacation) return
           this.tip_no_vacation = true
           const target = this.yearSelect + 1
-          this.$confirm(`本年度(${this.yearSelect})已无假可用，是否切换到${target}年度？`).then(() => {
+          this.$confirm(
+            `本年度(${this.yearSelect})已无假可用，是否切换到${target}年度？`
+          ).then(() => {
             this.yearSelect = target
           })
         })
@@ -550,7 +572,7 @@ export default {
     createNewRequest() {
       const types = this.vacationTypes
       return {
-        StampLeave: parseTime(+new Date() + 86400e3, '{y}-{m}-{d}'),
+        StampLeave: this.setApplyStamp(+new Date() + 86400e3),
         StampReturn: '',
         vacationLength: 0,
         OnTripLengthAdvance: 0,
@@ -640,7 +662,7 @@ export default {
       s = Object.assign({ lawVacationSet: lawVacations }, s)
       getStampReturn(s).then(data => {
         if (!data) return
-        this.formApply.StampReturn = parseTime(data.endDate, '{y}-{m}-{d}')
+        this.setApplyStamp(data.endDate, 'StampReturn')
         const des = data.descriptions ? data.descriptions : []
         const t1 = lawVacations.length !== des.length
         const t2 = des.find(i => {
