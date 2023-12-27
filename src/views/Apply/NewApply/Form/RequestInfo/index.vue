@@ -310,7 +310,7 @@ export default {
       onTripTimes: 0,
       maxTripTimes: 0
     },
-    tip_no_vacation: false,
+    tip_no_vacation: true,
     TipTripAdvance:
       '额外路途（以实际乘坐的车次所耗时间为准，不再取最慢车次时间，故一般为0天），需报业务部门审批通过后再行添加。',
     benefitList: [],
