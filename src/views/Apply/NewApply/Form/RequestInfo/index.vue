@@ -515,7 +515,7 @@ export default {
           if (this.tip_no_vacation) return
           this.tip_no_vacation = true
           const target = this.yearSelect + 1
-          this.$confirm(`本年度(${target})已无假可用，是否切换到${target}年度？`).then(() => {
+          this.$confirm(`本年度(${this.yearSelect})已无假可用，是否切换到${target}年度？`).then(() => {
             this.yearSelect = target
           })
         })
