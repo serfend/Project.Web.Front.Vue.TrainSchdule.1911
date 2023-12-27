@@ -78,6 +78,7 @@
                 :this-time-vacation-length="
                   nowVacationType.primary ? formApply.vacationLength : 0
                 "
+                :year-select.sync="yearSelect"
               />
             </el-form-item>
             <el-form-item label="休假类型">
@@ -106,7 +107,7 @@
                 :max="maxVacationLength"
                 :min="0"
                 :format-tooltip="v => `${v}/${maxVacationLength}天`"
-                @input="updateChange"
+                @input="requireUpdateChange"
               />
             </el-form-item>
             <el-form-item
@@ -118,7 +119,7 @@
                   v-model="formApply.OnTripLengthBase"
                   :min="0"
                   :max="2"
-                  @input="updateChange"
+                  @input="requireUpdateChange"
                 />
               </el-tooltip>
               <el-tooltip :content="TipTripAdvance">
@@ -126,7 +127,7 @@
                   v-model="formApply.OnTripLengthAdvance"
                   :min="0"
                   :max="14"
-                  @input="updateChange"
+                  @input="requireUpdateChange"
                 />
               </el-tooltip>
             </el-form-item>
@@ -134,7 +135,7 @@
               v-if="nowVacationType && nowVacationType.caculateBenefit"
               label="其他假"
             >
-              <BenefitVacation v-model="benefitList" @change="updateChange" />
+              <BenefitVacation v-model="benefitList" @change="requireUpdateChange" />
             </el-form-item>
             <el-form-item
               label="离队时间"
@@ -156,7 +157,7 @@
                   format="YYYY-MM-DD"
                   locale="zh-cn"
                   :locale-config="localeConfig"
-                  @change="updateChange"
+                  @change="requireUpdateChange"
                 />
                 <span>
                   <span style="margin-left:1rem">预计归队</span>
@@ -269,7 +270,7 @@
 
 <script>
 import { postRequestInfo, getStampReturn } from '@/api/apply/create'
-import { parseTime } from '@/utils'
+import { parseTime, debounce } from '@/utils'
 import { locationChildren } from '@/api/common/static'
 import { getUsersVacationLimit } from '@/api/user/userinfo'
 import localeConfig from '@/lang/locale-config'
@@ -301,6 +302,7 @@ export default {
     formApply: {}, // 通过Create创建
     vacationPlaceDefault: null,
     vacationTypes: null,
+    yearSelect: new Date().getFullYear(),
     usersvacation: {
       yearlyLength: 0,
       nowTimes: 0,
@@ -308,6 +310,7 @@ export default {
       onTripTimes: 0,
       maxTripTimes: 0
     },
+    tip_no_vacation: false,
     TipTripAdvance:
       '额外路途（以实际乘坐的车次所耗时间为准，不再取最慢车次时间，故一般为0天），需报业务部门审批通过后再行添加。',
     benefitList: [],
@@ -326,6 +329,12 @@ export default {
     }
   }),
   computed: {
+    vacationYear() {
+      const { formApply } = this
+      const leave = formApply && formApply.StampLeave
+      const vacationYear = new Date(leave || new Date()).getFullYear()
+      return vacationYear
+    },
     theme() {
       return this.$store.state.settings.theme
     },
@@ -344,7 +353,8 @@ export default {
         this.usersvacation.leftLength,
         type.maxLength
       )
-      return isPrimary ? leftLength : this.nowMaxLength
+      const r = isPrimary ? leftLength : this.nowMaxLength
+      return r > 0 ? r : 0
     },
     hideDetail() {
       return this.submitId && !this.isHover
@@ -358,9 +368,29 @@ export default {
     },
     filtedBenefitList() {
       return this.benefitList.filter(i => i && i.name && i.length)
+    },
+    requireUpdateChange() {
+      return debounce(() => {
+        this.updateChange()
+      }, 1e2)
     }
   },
   watch: {
+    userid: {
+      handler(v) {
+        this.tip_no_vacation = false // 换人则重置提醒
+      }
+    },
+    yearSelect: {
+      handler(val) {
+        const { vacationYear } = this
+        if (vacationYear === val) return
+        // 跳转到该年份的1月1
+        const target = parseTime(new Date(val, 0, 1), '{y}-{m}-{d}')
+        this.formApply.StampLeave = target
+        this.requireUpdateChange()
+      }
+    },
     vacationTypes: {
       handler(val) {
         if (!val) return
@@ -375,13 +405,13 @@ export default {
     mainStatus: {
       handler(val) {
         this.$nextTick(() => {
-          this.updateChange()
+          this.requireUpdateChange()
         })
       }
     },
     lawVacations: {
       handler(val) {
-        this.updateChange()
+        this.requireUpdateChange()
       },
       deep: true
     },
@@ -477,16 +507,19 @@ export default {
     },
     // call by base info ,DO NOT REMOVE
     refreshVacation() {
-      const { userid, mainStatus } = this
-      const vacationYear =
-        (this.formApply && new Date(this.formApply.StampLeave).getFullYear()) ||
-        new Date().getFullYear()
+      const { userid, mainStatus, vacationYear } = this
       getUsersVacationLimit({ userid, vacationYear, mainStatus })
         .then(data => {
           this.usersvacation = data
+          if (data && data.leftLength) return
+          if (this.tip_no_vacation) return
+          this.tip_no_vacation = true
+          const target = this.yearSelect + 1
+          this.$confirm(`本年度(${target})已无假可用，是否切换到${target}年度？`).then(() => {
+            this.yearSelect = target
+          })
         })
         .finally(() => {
-          this.vacationYear = vacationYear
           this.resetLoading()
         })
     },

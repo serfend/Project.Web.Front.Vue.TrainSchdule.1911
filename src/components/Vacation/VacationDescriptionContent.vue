@@ -67,6 +67,7 @@ export default {
   props: {
     usersVacation: { type: Object, default: () => ({}) },
     userid: { type: String, default: null },
+    vacationYear: { type: Number, default: null }, // 年度，默认空值
     rawDescription: { type: String, default: null },
     loadingResult: { type: String, default: null },
     smaller: { type: Boolean, default: true },
@@ -89,6 +90,11 @@ export default {
         this.refresh()
       },
       immediate: true
+    },
+    vacationYear: {
+      handler(val) {
+        this.refresh()
+      }
     }
   },
   methods: {
@@ -111,12 +117,12 @@ export default {
       this.loading_result = data ? null : '无休假信息相关记录'
     },
     refresh() {
-      const { userid } = this
+      const { userid, vacationYear } = this
       if (!userid) {
         return
       }
       this.loading = true
-      getUsersVacationLimit({ userid })
+      getUsersVacationLimit({ userid, vacationYear })
         .then(data => {
           this.updateVacation(data)
           this.$emit('update:usersVacation', this.innerData)

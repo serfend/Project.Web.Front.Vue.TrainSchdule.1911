@@ -6,16 +6,53 @@
           :userid="userid"
           :users-vacation.sync="innerUserVacation"
           :loading-result.sync="loading_result"
+          :vacation-year="nowSelectYear"
         />
       </template>
-      <div :class="[isCircle?'progress-handler':'']">
-        <el-progress
-          :percentage="percent"
-          :stroke-width="10"
-          :color="getColor(percent)"
-          :type="graphType"
-          :format="format"
-        />
+      <div :class="[isCircle ? 'progress-handler' : '', 'flex']">
+        <el-dropdown
+          v-if="showYearSelector"
+          trigger="click"
+          class="drop-menu"
+          @command="handleCommand"
+        >
+          <span class="el-dropdown-link">
+            {{ nowSelectYear }}<i class="el-icon-arrow-down" />
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              v-for="y in yearRange"
+              :key="y"
+              :command="y"
+              :class="[
+                'drop-menu-item',
+                nowSelectYear === y ? 'year-focus' : 'year-normal'
+              ]"
+            >{{ y }}</el-dropdown-item>
+            <el-dropdown-item divided>
+              <el-button
+                type="text"
+                icon="el-icon-arrow-down"
+                @click.stop="onSwitch(-10)"
+              >更早</el-button>
+              <el-button
+                type="text"
+                icon="el-icon-arrow-up"
+                @click.stop="onSwitch(10)"
+              >更晚</el-button>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <div class="full-width">
+          <el-progress
+            :percentage="percent"
+            :stroke-width="isCircle ? 10 : 5"
+            :color="getColor(percent)"
+            :type="graphType"
+            :format="format"
+            class="full-width"
+          />
+        </div>
       </div>
     </el-tooltip>
     <VacationDescriptionContent
@@ -31,6 +68,7 @@
 const red = [245, 108, 108]
 const green = [103, 194, 58]
 import { getColorByPercentage } from '@/utils'
+const currentYear = new Date().getFullYear()
 export default {
   name: 'VacationDescription',
   components: {
@@ -43,13 +81,25 @@ export default {
     loadingResult: { type: String, default: null },
     userid: { type: String, default: null },
     graphType: { type: String, default: 'line' },
-    title: { type: String, default: '休假率' }
+    title: { type: String, default: '休假率' },
+    showYearSelector: { type: Boolean, default: true },
+    yearSelect: { type: Number, default: null }
   },
   data: () => ({
     innerUserVacation: {},
-    innerLoadingResult: null
+    innerLoadingResult: null,
+    nowFocusYear: currentYear,
+    nowSelectYear: currentYear
   }),
   computed: {
+    yearRange() {
+      const { nowFocusYear } = this
+      const targetMax = nowFocusYear + 3
+      const allowMax = currentYear + 1
+      const max = targetMax > allowMax ? allowMax : nowFocusYear + 3
+      const result = new Array(6).fill(0).map((x, index) => max - index)
+      return result
+    },
     loading_result: {
       get() {
         return this.innerLoadingResult
@@ -87,9 +137,21 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    yearSelect: {
+      handler(v) {
+        this.nowSelectYear = v
+      }
     }
   },
   methods: {
+    handleCommand(x) {
+      this.nowSelectYear = x
+      this.$emit('update:yearSelect', x)
+    },
+    onSwitch(delta) {
+      this.nowFocusYear += delta
+    },
     format() {
       const { title, percent, isCircle } = this
       if (!isCircle) return `${percent}%`
@@ -100,6 +162,22 @@ export default {
 }
 </script>
 <style lang="scss">
+.full-width {
+  width: 100%;
+}
+.drop-menu {
+  cursor: pointer;
+  width: 4rem;
+}
+.flex {
+  display: flex;
+}
+.drop-menu-item {
+  text-align: center;
+}
+.year-focus {
+  color: #409eff;
+}
 .progress-handler {
   display: flex;
   justify-content: center;
